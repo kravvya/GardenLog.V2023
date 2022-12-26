@@ -1,0 +1,134 @@
+﻿@inject IMouseService mouseService;
+@inject IKeyService keyService;
+
+<rect x="@_x" y="@_y" @attributes="AdditionalAttributes" cursor=@_cursor @onmousedown=OnDown ></rect>
+
+@code {
+    double? _x;
+    double? _y;
+    string _cursor = "grab";
+    bool _isDown;
+    double _cursorX;
+    double _cursorY;
+
+    [Parameter]
+    public VisualComponent Component { get; set; }
+
+
+    [Parameter]
+    public double X
+    {
+        get { return _x ?? 0; }
+        set { if (!_x.HasValue || (!IsDown & XChanged.HasDelegate)) { _x = value; } }
+    }
+
+    [Parameter]
+    public double Y
+    {
+        get { return _y ?? 0; }
+        set { if (!_y.HasValue || (!IsDown & YChanged.HasDelegate)) { _y = value; } }
+    }
+
+    [Parameter] public EventCallback<double> XChanged { get; set; }
+
+    [Parameter] public EventCallback<double> YChanged { get; set; }
+
+    [Parameter] public EventCallback<VisualComponent> ComponentSelected { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        mouseService.OnMove += OnMove;
+        mouseService.OnUp += OnUpLeave;
+        mouseService.OnLeave += OnUpLeave;
+        keyService.OnKeyDown += OnKeyDown;
+
+        base.OnInitialized();
+    }
+
+
+    bool IsDown
+    {
+        get { return _isDown; }
+        set
+        {
+            _isDown = value;
+            _cursor = _isDown ? "grabbing" : "grab";
+        }
+    }
+
+    void OnDown(MouseEventArgs e)
+    {
+        IsDown = true;
+        _cursorX = e.ClientX;
+        _cursorY = e.ClientY;
+
+        ComponentSelected.InvokeAsync(Component);
+    }
+    void OnUpLeave(object? _, MouseEventArgs e){
+        IsDown = false;
+
+        double xMod = _x.Value % 48;
+        double yMod = _y.Value % 48;
+        while(xMod != 0)
+        {
+            _x += xMod > 24 ? 1: -1;
+            xMod = _x.Value % 48;
+        }
+        while (yMod != 0)
+        {
+            _y += yMod > 24 ? 1: -1;
+            yMod = _y.Value % 48;
+        }
+        XChanged.InvokeAsync(_x.Value);
+        YChanged.InvokeAsync(_y.Value);
+    }
+
+    void OnMove(object? _, MouseEventArgs e)
+    {
+        if (!IsDown)
+            return;
+
+        _x = _x - (_cursorX - e.ClientX);
+        _y = _y - (_cursorY - e.ClientY);
+
+        _cursorX = e.ClientX;
+        _cursorY = e.ClientY;
+
+        XChanged.InvokeAsync(_x.Value);
+        YChanged.InvokeAsync(_y.Value);
+    }
+
+    void OnKeyDown(object? _, KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                _y++;
+                YChanged.InvokeAsync(_y.Value);
+                break;
+            case "ArrowUp":
+                _y--;
+                YChanged.InvokeAsync(_y.Value);
+                break;
+            case "ArrowRight":
+                _x++;
+                XChanged.InvokeAsync(_x.Value);
+                break;
+            case "ArrowLeft":
+                _x--;
+                XChanged.InvokeAsync(_x.Value);
+                break;
+        }
+    }
+
+    public void Dispose()
+    {
+        mouseService.OnMove -= OnMove;
+        mouseService.OnUp -= OnUpLeave;
+        mouseService.OnLeave -= OnUpLeave;
+        keyService.OnKeyDown -= OnKeyDown;
+    }
+}

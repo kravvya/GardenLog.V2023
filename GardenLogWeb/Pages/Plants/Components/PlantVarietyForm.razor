@@ -1,0 +1,181 @@
+﻿@inject ILogger<PlantVarietyForm> _logger;
+@inject IVerifyService _verifyService;
+@inject IPlantService _plantService;
+@inject NavigationManager _navigationManager;
+
+<article id="plantVarietyForm">
+    <div class="container">
+        @if (isInitialized)
+        {
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                <FluentValidationValidator />
+                <CustomValidation @ref="customValidation" />
+                @*<ValidationSummary />*@
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="heirloom">Is Heirloom?</label>
+                        <div class="form-check form-switch">
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" id="heirloom" @bind-Value="@plantVariety.IsHeirloom" />
+                        </div>
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.IsHeirloom)" /></div>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="varietytname" class="form-label">Name</label>
+                        <InputText Class="form-control" @bind-Value="@plantVariety.Name" Id="varietytname" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Name)" /></div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="title" class="form-label">Title</label>
+                        <InputText Class="form-control" @bind-Value="@plantVariety.Title" Id="title" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Title)" /></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="description">Description</label>
+                        <InputTextArea Class="form-control" Id="description" @bind-Value="@plantVariety.Description" rows="3" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Description)" /></div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <FormCard>
+                            <Header>
+                                <label for="maturity">Maturity after(days)</label>
+                            </Header>
+                            <Body>
+                                <InputNumber class="form-control" id="maturity" @bind-Value="@plantVariety.DaysToMaturity" T="int?" />
+                                <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.DaysToMaturity)" /></div>
+                            </Body>
+                        </FormCard>
+                    </div>
+
+                    <div class="col-md-3">
+                        <FormCard>
+                            <Header>
+                                <label for="height">Height(in.)</label>
+                            </Header>
+                            <Body>
+                                <InputNumber Class="form-control" @bind-Value="@plantVariety.HeightInInches" id="height" />
+                                <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.HeightInInches)" /></div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9 col-md-7">
+                        <FormCard>
+                            <Header>
+                                <label for="MoistureRequirement">Watering Requirements</label>
+                            </Header>
+                            <Body>
+                                <InputRadioGroup @bind-Value="@plantVariety.MoistureRequirement" Name="MoistureRequirement">
+                                    @foreach (var item in moistureRequirementCodes)
+                                    {
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item.Key" checked="@(item.Key == plantVariety.MoistureRequirement)" Value="@item.Key" />
+                                        <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                    </div>
+                                    }
+                                <ValidationMessage For="@(() => plantVariety.MoistureRequirement)" />
+                            </InputRadioGroup>
+                        </Body>
+                    </FormCard>
+                </div>
+                <div class="col-sm-5 col-md-4">
+                    <FormCard>
+                        <Header>
+                            <label for="LightRequirement">Light Requirements</label>
+                        </Header>
+                        <Body>
+                            <InputRadioGroup @bind-Value="@plantVariety.LightRequirement" Name="LightRequirement">
+                                @foreach (var item in lightRequirementCodes)
+                                    {
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item.Key" checked="@(item.Key == plantVariety.LightRequirement)" Value="@item.Key" />
+                                        <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                    </div>
+                                    }
+                                <ValidationMessage For="@(() => plantVariety.LightRequirement)" />
+                            </InputRadioGroup>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="modal-footer justify-content-between">
+                   @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
+                    <span>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-default" @onclick="@(() => OnClose())">Cancel</button>
+                    </span>
+                </div>
+            </div>
+        </EditForm>
+        }
+    </div>
+</article>
+
+@code {
+    [Parameter] public Func<Task> OnClose { get; set; }
+
+    private PlantModel plant { get; set; }
+    private PlantVarietyModel plantVariety { get; set; }
+
+    private bool isInitialized = false;
+    private bool isEdit = false;
+    private CustomValidation customValidation;
+    private EditContext editContext;
+
+    protected IReadOnlyCollection<KeyValuePair<string, string>> lightRequirementCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
+
+    public void Initialize(PlantVarietyModel plantVariety, PlantModel plant)
+    {
+        this.plant = plant;
+        if (plantVariety == null)
+        {
+
+            this.plantVariety = new PlantVarietyModel();
+            this.plantVariety.PlantId = this.plant.PlantId;
+            this.plantVariety.LightRequirement = this.plant.LightRequirement;
+            this.plantVariety.MoistureRequirement = this.plant.MoistureRequirement;
+            isEdit = false;
+        }
+        else
+        {
+            this.plantVariety = plantVariety;
+            isEdit = true;
+
+        }
+        lightRequirementCodes = _verifyService.GetLightRequirementCodeList();
+        moistureRequirementCodes = _verifyService.GetMoistureRequirementCodeList();
+        editContext = new(this.plantVariety);
+        editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        isInitialized = true;
+        StateHasChanged();
+    }
+
+
+    protected async Task HandleValidSubmit()
+    {
+        _logger.Log(LogLevel.Information, "Plant Variety Form passed valdiate");
+
+        customValidation?.ClearErrors();
+
+        ApiResponse response = (isEdit) ? await _plantService.UpdatePlantVariety(plantVariety) : await _plantService.CreatePlantVariety(plantVariety);
+
+        if (response.ValidationProblems != null)
+        {
+            customValidation?.DisplayErrors(response.ValidationProblems);
+        }
+
+        if (response.IsSuccess)
+        {
+           await OnClose();
+        }
+    }
+
+    
+}

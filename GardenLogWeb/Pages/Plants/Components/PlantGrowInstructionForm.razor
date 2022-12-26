@@ -1,0 +1,269 @@
+﻿@inject ILogger<PlantGrowInstructionForm> _logger;
+@inject IVerifyService _verifyService;
+@inject IPlantService _plantService;
+@inject NavigationManager _navigationManager;
+
+<article id="plantGrowInstructionForm">
+    <div class="container">
+        @if (isInitialized)
+        {
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                <FluentValidationValidator />
+                <CustomValidation @ref="customValidation" />
+                @*<ValidationSummary />*@
+                <div class="row">
+                    <div class="col-lg-6 col-xl-5">
+                        <label for="HarvestSeason" class="form-label">Harvest Time</label>
+                        <div class="d-flex flex-nowrap">
+                            <InputRadioGroup @bind-Value="@growInstruction.HarvestSeason" Name="HarvestSeason" id="HarvestSeason">
+                                @foreach (var item in harvestSeasonCodes)
+                                {
+                                <InputRadio class="btn-check" type="radio" name="HarvestSeason" id="@item.Key" checked="@(item.Key == growInstruction.HarvestSeason)" Value="@item.Key" />
+                                <label class="btn btn-outline-primary" for="@item.Key">@item.Value</label>
+                                }                
+                 
+                            </InputRadioGroup>                            
+                        </div>
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.HarvestSeason)" /></div>
+                    </div>
+                    <div class="col-md-8 col-lg-6">
+                        <label for="varietytname" class="form-label">Name</label>
+                        <InputText Class="form-control" @bind-Value="@growInstruction.Name" Id="Name" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.Name)" /></div>
+                    </div>
+                </div>
+
+            <div class="row  mt-3">
+                  <div class="col-6 col-lg-3">
+                    <FormCard>
+                        <Header>
+                            <label for="PlantingMethod">Planting Method</label>
+                        </Header>
+                        <Body>
+                            <InputRadioGroup @bind-Value="@growInstruction.PlantingMethod" Name="PlantingMethod">
+                                @foreach (var item in plantingMethodCodes)
+                                    {
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="PlantingMethod" id="@item.Key" checked="@(item.Key == growInstruction.PlantingMethod)" Value="@item.Key" />
+                                        <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                    </div>
+                                    }               
+                                    
+                            </InputRadioGroup>
+                           <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingMethod)" /></div>            
+                        </Body>
+                    </FormCard>
+                </div>
+                  <div class="col-4 col-lg-3">
+                    <FormCard>
+                        <Header>
+                            <label for="SpacingInInches">Spacing(in.)</label>
+                        </Header>
+                        <Body>
+                            <InputNumber Class="form-control" @bind-Value="@growInstruction.SpacingInInches" id="SpacingInInches" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.SpacingInInches)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+                <div class="col-lg-5">
+                    <FormCard>
+                        <Header>
+                            <label for="PlantingDepthInInches">Planting Depth</label>
+                        </Header>
+                        <Body>
+                            <InputRadioGroup @bind-Value="@growInstruction.PlantingDepthInInches" Name="PlantingDepthInInches">
+                                @foreach (var item in plantingDepthCodes)
+                                    {
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="PlantingDepthInInches" id="@item.Key" checked="@(item.Key == growInstruction.PlantingDepthInInches)" Value="@item.Key" />
+                                        <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                    </div>
+                                    }           
+                                    
+                            </InputRadioGroup>
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingDepthInInches)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+              
+            </div>
+
+            <div class="row mt-3">              
+                <div class="col-lg-6">
+                    <FormCard>
+                        <Header>
+                            <label for="StartSeedWeeksAheadOfWeatherCondition">When to Seed?</label>
+                        </Header>
+                        <Body>
+                            <div class="row">
+                                <div class="col-3">
+                                    <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksAheadOfWeatherCondition" id="StartSeedWeeksAheadOfWeatherCondition" />
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedWeeksAheadOfWeatherCondition)" /></div>
+                                </div>
+                                <div class="col-3"> weeks(s)</div>
+                                <div class="col-5">
+                                    <InputSelect @bind-Value="@growInstruction.StartSeedAheadOfWeatherCondition" Name="StartSeedAheadOfWeatherCondition">
+                                        @foreach (var item in weatherConditionCodes)
+                                            {
+                                            <option Value="@item.Key">@item.Value</option>
+                                            }
+                                        <ValidationMessage For="@(() => growInstruction.StartSeedAheadOfWeatherCondition)" />
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </Body>
+                    </FormCard>
+                </div>
+                <div class="col-lg-3">
+                    <FormCard>
+                        <Header>
+                            <label for="SpacingInInches">How many weeks?</label>
+                        </Header>
+                        <Body>
+                            <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksRange" id="StartSeedWeeksRange" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedWeeksRange)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="StartSeedInstructions">Start Seed Instructions</label>
+                    <InputTextArea Class="form-control" Id="StartSeedInstructions" @bind-Value="@growInstruction.StartSeedInstructions" rows="3" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedInstructions)" /></div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-6">
+                    <FormCard>
+                        <Header>
+                            <label for="TransplantWeeksAheadOfWeatherCondition">When to Transplant?</label>
+                        </Header>
+                        <Body>
+                            <div class="row">
+                                <div class="col-3">
+                                    <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksAheadOfWeatherCondition" id="TransplantWeeksAheadOfWeatherCondition" />
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.TransplantWeeksAheadOfWeatherCondition)" /></div>
+                                </div>
+                                <div class="col-3"> weeks(s)</div>
+                                <div class="col-5">
+                                    <InputSelect @bind-Value="@growInstruction.TransplantAheadOfWeatherCondition" Name="TransplantAheadOfWeatherCondition">
+                                        @foreach (var item in weatherConditionCodes)
+                                            {
+                                            <option Value="@item.Key">@item.Value</option>
+                                            }
+                                        <ValidationMessage For="@(() => growInstruction.TransplantAheadOfWeatherCondition)" />
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </Body>
+                    </FormCard>
+                </div>
+                <div class="col-lg-3">
+                    <FormCard>
+                        <Header>
+                            <label for="TransplantWeeksRange">How many weeks?</label>
+                        </Header>
+                        <Body>
+                            <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksRange" id="TransplantWeeksRange" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.TransplantWeeksRange)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
+            
+
+            <div class="row mt-3">
+                <div class="col">
+                    <label for="GrowingInstructions">Growing Instructions</label>
+                    <InputTextArea Class="form-control" Id="GrowingInstructions" @bind-Value="@growInstruction.GrowingInstructions" rows="3" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.GrowingInstructions)" /></div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <label for="HarvestInstructions">Harvest Instructions</label>
+                    <InputTextArea Class="form-control" Id="HarvestInstructions" @bind-Value="@growInstruction.HarvestInstructions" rows="3" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.HarvestInstructions)" /></div>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <div class="modal-footer justify-content-between">
+                   @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
+                    <span>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-default" @onclick="@(() => OnClose())">Cancel</button>
+                    </span>
+                </div>
+            </div>
+        </EditForm>
+        }
+    </div>
+</article>
+
+
+@code {
+    [Parameter] public Func<Task> OnClose { get; set; }
+
+    private PlantModel plant { get; set; }
+    private PlantGrowInstructionModel growInstruction { get; set; }
+
+    private bool isInitialized = false;
+    private bool isEdit = false;
+    private CustomValidation customValidation;
+    private EditContext editContext;
+
+    protected IReadOnlyCollection<KeyValuePair<string, string>> plantingDepthCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> plantingMethodCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> weatherConditionCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> harvestSeasonCodes { get; set; }
+
+    public void Initialize(PlantGrowInstructionModel instruction, PlantModel plant)
+    {
+        this.plant = plant;
+        if (instruction == null)
+        {
+
+            this.growInstruction = new PlantGrowInstructionModel();
+            this.growInstruction.PlantId = this.plant.PlantId;
+            this.growInstruction.PlantingDepthInInches = "Unspecified";
+            isEdit = false;
+        }
+        else
+        {
+            this.growInstruction = instruction;
+            isEdit = true;
+
+        }
+        plantingDepthCodes = _verifyService.GetPlantingDepthCodeList(false);
+        plantingMethodCodes = _verifyService.GetPlantingMethodCodeList(true);
+        weatherConditionCodes = _verifyService.GetWeatherConditionCodeList(false);
+        harvestSeasonCodes = _verifyService.GetHarvestSeasonCodeList(true);
+
+        editContext = new(this.growInstruction);
+        editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        isInitialized = true;
+        StateHasChanged();
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        _logger.Log(LogLevel.Information, "Plant Grow Instructions Form passed valdiate");
+
+        customValidation?.ClearErrors();
+
+        ApiResponse response = (isEdit) ? await _plantService.UpdatePlantGrowInstruction(this.growInstruction) : await _plantService.CreatePlantGrowInstruction(this.growInstruction);
+
+        if (response.ValidationProblems != null)
+        {
+            customValidation?.DisplayErrors(response.ValidationProblems);
+        }
+
+        if (response.IsSuccess)
+        {
+            await OnClose();
+        }
+    }
+}

@@ -1,0 +1,99 @@
+﻿@page "/addplantvariety/{PlantId}"
+@page "/editplantvariety/{PlantId}/variety/{PlantVarietyId}"
+@using GardenLogWeb.Pages.Plants.Components;
+
+@inject ILogger<PlantVarietyFormPage> _logger
+@inject IPlantService _plantService
+@inject NavigationManager _navigationManager
+
+<Page Title="@title" Description="@description" BreadcrumbLinks="@breacrumbLinks">
+    <PageContent>
+        <PlantVarietyForm OnClose=@ClosePage @ref="plantVarietyForm" />
+    </PageContent>
+</Page>
+
+@code {
+    [Parameter] public string PlantId { get; set; }
+    [Parameter] public string PlantVarietyId { get; set; }
+
+    private List<BreadcrumbLink> breacrumbLinks = new();
+
+    private PlantModel plant { get; set; }
+    private PlantVarietyModel plantVariety { get; set; }
+    private PlantVarietyForm plantVarietyForm { get; set; }
+
+    private string title { get; set; }
+    private string description { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        plant = await GetPlant(PlantId);
+
+        if (plant == null)
+        {
+            NavigateToPlants();
+            return;
+        }
+
+        breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
+        breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetViewPlantUrl(PlantId), false));
+
+        if (string.IsNullOrWhiteSpace(PlantVarietyId))
+        {
+            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.PlantName} Variety", _navigationManager.GetCreatePlantVarietyUrl(PlantId), true));
+            title = $"Add {plant.PlantName} Variety";
+            description = "";// $"Add {plant.PlantName} Variety";
+            plantVarietyForm.Initialize(null, plant);
+        }
+        else
+        {
+            plantVariety = await GetPlantVariety(PlantId, PlantVarietyId);
+            breacrumbLinks.Add(new BreadcrumbLink($"Edit {plantVariety.Name}", _navigationManager.GetEditPlantVarietyUrl(PlantId, PlantVarietyId), true));
+            title = $"Edit {plantVariety.Name}";
+            description = "";// $"Add {plant.PlantName} Variety";
+            plantVarietyForm.Initialize(plantVariety, plant);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task<PlantModel> GetPlant(string plantId)
+    {
+        PlantModel plant = null;
+
+        if (!string.IsNullOrWhiteSpace(plantId))
+        {
+            plant = await _plantService.GetPlant(plantId, false);
+        }
+        return plant;
+    }
+
+    private async Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVarietyId)
+    {
+        PlantVarietyModel plantVariety = null;
+
+        plantVariety = await _plantService.GetPlantVariety(plantId, plantVarietyId);
+
+        return plantVariety;
+    }
+
+    protected async Task ClosePage()
+    {
+        await Task.Delay(1);
+        if (!string.IsNullOrWhiteSpace(PlantVarietyId))
+        {
+            _navigationManager.NavigateToPlantVariety(PlantId, PlantVarietyId);
+        }
+        else
+        {
+            _navigationManager.NavigateToViewPlant(PlantId);
+        }
+    }
+
+    protected void NavigateToPlants()
+    {
+        _navigationManager.NavigateToPlants();
+
+    }
+    }

@@ -1,0 +1,94 @@
+﻿@inject ILogger<PlantVarietyList> _logger;
+@inject IPlantService _plantService;
+@inject IGardenLogToastService _toastService;
+@inject NavigationManager _navigationManager;
+@inject IImageService _imageService;
+
+<article id="plantVarietyList">
+
+    <ModalView OnCloseModal="CloseViewModal" @ref="PlantVarietyViewModal">
+        <Body>
+            <PlantVarietyQuickView Plant=@Plant PlantVariety=@PlantVarietyInView />
+        </Body>
+    </ModalView>
+
+    <div class="container">
+        <div class="row">
+            @if (PlantVarieties == null)
+            {
+                <p><em>Empty</em></p>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    @foreach (var variety in PlantVarieties.OrderBy(c => c.Name))
+                    {
+                        <div class="col">
+                            <div class="card h-100 border border-1" style="border-color: @Plant.Color !important;">
+
+                                <img class="img-fluid " src="@_imageService.GetRawImageUrl(variety.ImageFileName)" alt="@variety.ImageLabel" title="@variety.ImageLabel">
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <div>@variety.Name</div>
+                                        <div>@variety.Title</div>
+                                    </p>
+                                </div>
+                                <div class="card-footer" style="background-color: @Plant.Color;">
+                                    <button type="button" class="btn btn-link p-0" title="Variety Detail" @onclick="@(() => OpenPlantVarietyView(variety))">
+                                        <span class="oi oi-pencil">View</span>
+                                    </button>
+                                    <button type="button" class="btn btn-link p-0" title="Edit Variety" @onclick="@(() => EditPlantVariety(variety))">
+                                        <span class="oi oi-pencil">Edit</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+</article>
+@code {
+
+    [Parameter] public PlantModel Plant { get; set; }
+
+    private PlantVarietyModel PlantVarietyInView = null;
+
+    private IList<PlantVarietyModel> PlantVarieties { get; set; }
+
+    private ModalView PlantVarietyViewModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PlantVarietyInView = null;
+        PlantVarieties = await _plantService.GetPlantVarieties(Plant.PlantId, true);
+        StateHasChanged();
+    }
+
+    private void EditPlantVariety(PlantVarietyModel variety)
+    {
+        _navigationManager.NavigateToEditPlantVariety(variety.PlantId, variety.PlantVarietyId);
+    }
+
+    private void OpenPlantVarietyView(PlantVarietyModel variety)
+    {
+        _navigationManager.NavigateToPlantVariety(variety.PlantId, variety.PlantVarietyId);
+    }
+
+    private async Task OpenViewModal(PlantVarietyModel variety)
+    {
+        PlantVarietyInView = variety;
+        await PlantVarietyViewModal?.OpenModal(variety.Name, Plant.Color);
+        StateHasChanged();
+    }
+
+    private async Task CloseViewModal()
+    {
+        await PlantVarietyViewModal?.CloseModal();
+        PlantVarietyInView = null;
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,226 @@
+﻿@page "/addplant"
+@page "/editplant/{PlantId}"
+
+@inject ILogger<PlantFormPage> _logger;
+@inject IVerifyService _verifyService;
+@inject IPlantService _plantService;
+@inject NavigationManager _navigationManager;
+
+<Page Title="@title" Description="@description" BreadcrumbLinks="@breacrumbLinks">
+    <PageContent>
+        <article id="plantForm">
+            <div class="container">
+                @if (IsInitialized)
+                {
+                    <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                        <FluentValidationValidator />
+                        <CustomValidation @ref="customValidation" />
+                        @*<ValidationSummary />*@
+                        <div class="col-md-1">
+                            <label for="color" class="form-label">Select color</label>
+                            <ColorSelector Id="color" @bind-Color="plant.Color" Title="Select color" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Color)" /></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="plantname" class="form-label">Name</label>
+                            <InputText Class="form-control" @bind-Value="@plant.PlantName" Id="plantname" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.PlantName)" /></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="type">What type of Plant?</label>
+                            <div class="row">
+                                <div class="col-12">
+                                    <InputRadioGroup @bind-Value="@plant.Type" Name="Type" id="type">
+                                        @foreach (var item in plantTypeCodes)
+                                        {
+                                        <InputRadio class="btn-check" type="radio" name="Type" id="@item.Key" checked="@(item.Key == plant.Type)" Value="@item.Key" />
+                                        <label class="btn btn-outline-primary" for="@item.Key">@item.Value</label>
+                                        }
+                                    <ValidationMessage For="@(() => plant.Type)" />
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="description">Description</label>
+                        <InputTextArea Class="form-control" Id="description" @bind-Value="@plant.Description" rows="3" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Description)" /></div>
+                    </div>
+                    <div class="col-12">
+                        <label for="tip">Garden Tips</label>
+                        <InputTextArea Class="form-control" Id="tip" @bind-Value="@plant.GardenTip" rows="3" />
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => plant.GardenTip)" /></div>
+                    </div>
+                    <div class="col-md-4">
+                        <FormCard>
+                            <Header>
+                                <label for="Lifecyle">Lifecycle</label>
+                            </Header>
+                            <Body>
+                                <InputRadioGroup @bind-Value="@plant.Lifecycle" Name="Lifecyle">
+                                    @foreach (var item in plantLifeCyclesCodes)
+                                        {
+                                        <div class="form-check form-check-inline">
+                                            <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item.Key" checked="@(item.Key == plant.Lifecycle)" Value="@item.Key" />
+                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                        </div>
+                                        }
+                                    <ValidationMessage For="@(() => plant.Lifecycle)" />
+                                </InputRadioGroup>
+                            </Body>
+                        </FormCard>
+                    </div>
+                    <div class="col-md-2">
+                        <FormCard>
+                            <Header>
+                                <label for="LightRequirement">Light Requirements</label>
+                            </Header>
+                            <Body>
+                                <InputRadioGroup @bind-Value="@plant.LightRequirement" Name="LightRequirement">
+                                    @foreach (var item in lightRequirementCodes)
+                                        {
+                                        <div class="form-check form-check-inline">
+                                            <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item.Key" checked="@(item.Key == plant.LightRequirement)" Value="@item.Key" />
+                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                        </div>
+                                        }
+                                    <ValidationMessage For="@(() => plant.LightRequirement)" />
+                                </InputRadioGroup>
+                            </Body>
+                        </FormCard>
+                    </div>
+                     <div class="col-md-3">
+                        <FormCard>
+                            <Header>
+                                <label for="MoistureRequirement">Moisture Requirements</label>
+                            </Header>
+                            <Body>
+                                <InputRadioGroup @bind-Value="@plant.MoistureRequirement" Name="MoistureRequirement">
+                                    @foreach (var item in moistureRequirementCodes)
+                                        {
+                                        <div class="form-check form-check-inline">
+                                            <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item.Key" checked="@(item.Key == plant.MoistureRequirement)" Value="@item.Key" />
+                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                        </div>
+                                        }
+                                    <ValidationMessage For="@(() => plant.MoistureRequirement)" />
+                                </InputRadioGroup>
+                            </Body>
+                        </FormCard>
+                    </div>
+                    <div class="col-md-2">
+                        <FormCard>
+                            <Header>
+                                <label for="type">Seeds viable for (yrs)</label>
+                            </Header>
+                            <Body>
+                                <InputNumber Class="form-control" @bind-Value="@plant.SeedViableForYears" Id="seed-viable-for-years" />
+                                <div class="invalid-feedback"><ValidationMessage For="@(() => plant.PlantName)" /></div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                    <div class="col-12">
+                        <div class="modal-footer justify-content-between">
+                            <span>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-default" @onclick="@(() => ClosePage())">Cancel</button>
+                            </span>
+                        </div>
+                    </div>
+                </EditForm>
+                }
+            </div>
+        </article>
+    </PageContent>
+</Page>
+
+@code {
+
+    [Parameter]
+    public string PlantId { get; set; }
+
+    private PlantModel plant { get; set; }
+    private string title { get; set; }
+    private string description { get; set; }
+
+    private bool IsInitialized = false;
+    private bool isEdit = false;
+    private CustomValidation customValidation;
+    private EditContext editContext;
+
+
+    protected IReadOnlyCollection<KeyValuePair<string, string>> plantLifeCyclesCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> plantTypeCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> lightRequirementCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
+
+    private List<BreadcrumbLink> breacrumbLinks = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
+        plantLifeCyclesCodes = _verifyService.GetPlantLifecycleCodeList(true);
+        plantTypeCodes = _verifyService.GetPlantTypeCodeList(true);
+        lightRequirementCodes = _verifyService.GetLightRequirementCodeList(true);
+        moistureRequirementCodes = _verifyService.GetMoistureRequirementCodeList(true);
+
+        if (string.IsNullOrEmpty(PlantId))
+        {            
+            breacrumbLinks.Add(new BreadcrumbLink("Add Plant", _navigationManager.GetCreatePlantUrl(), true));
+            plant = new PlantModel();
+            plant.Color = _plantService.GetRandomPlantColor();
+            isEdit = false;
+            title = $"Add Plant";
+            description = $"";
+        }
+        else
+        {
+            plant = await _plantService.GetPlant(PlantId, false);
+
+            if (plant == null)
+            {
+                ClosePage();
+                return;
+            }
+            else
+            {
+                breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetEditPlantUrl(PlantId), true));
+                isEdit = true;
+                title = $"Edit {plant.PlantName}";
+                description = $"";
+            }
+
+        }
+
+        editContext = new(plant);
+        editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        IsInitialized = true;
+        StateHasChanged();
+    }
+
+
+
+    protected async Task HandleValidSubmit()
+    {
+        _logger.Log(LogLevel.Information, "Plant Form passed validations");
+        customValidation?.ClearErrors();
+
+        ApiResponse response = (isEdit) ? await _plantService.UpdatePlant(plant) : await _plantService.CreatePlant(plant);
+
+        if (response.ValidationProblems != null)
+        {
+            customValidation?.DisplayErrors(response.ValidationProblems);
+        }
+
+        if (response.IsSuccess)
+        {
+            ClosePage();
+        }
+    }
+
+    protected void ClosePage()
+    {
+        _navigationManager.NavigateToPlants();
+
+    }
+}

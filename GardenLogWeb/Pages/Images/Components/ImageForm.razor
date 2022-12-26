@@ -1,0 +1,110 @@
+﻿@inject ILogger<ImageForm> _logger
+@inject IImageService _imageService
+
+<article id="imageForm">
+    <div class="container">
+        @if (IsInitialized)
+        {
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                <FluentValidationValidator />
+                <CustomValidation @ref="customValidation" />
+                <ValidationSummary />
+
+                <div class="col-10">
+                    <label for="fileUpload" class="form-label">File</label>
+                    <InputFile OnChange="@OnInputFileChange" accept="image/*" id="fileUpload" disabled=@(IsDisabled) />
+                </div>
+                <div class="progress" style="display:@ProgressDisplay">
+                    <div class="progress-bar bg-success" role="progressbar" style="@($"width: {Progress}%")" aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">@Progress</div>
+                </div>
+                <div class="col-md-5">
+                    <label for="title" class="form-label">Label</label>
+                    <InputText Class="form-control" @bind-Value="@Image.Label" Id="title" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => Image.Label)" /></div>
+                </div>
+
+                <div class="col-12">
+                    <div class="modal-footer">
+                        <span>
+                            <button type="submit" class="btn btn-primary" disabled="@(!IsDisabled)">Save</button>
+                            <button type="button" class="btn btn-default" @onclick="@(() => OnClose())">Cancel</button>
+                        </span>
+                    </div>
+                </div>
+            </EditForm>
+        }
+    </div>
+</article>
+@code {
+    [Parameter] public Func<Task> OnClose { get; set; }
+
+    private string Progress;
+    private long FileSize;
+    private string ProgressDisplay = "none;";
+    private ImageModel Image { get; set; }
+    private bool IsInitialized = false;
+    private bool IsDisabled = false;
+
+    private CustomValidation customValidation;
+    private EditContext editContext;
+
+    public void Initialize(string relatedEntityType, string relatedEntityId)
+    {
+        Image = new ImageModel();
+        Image.RelatedEntityType = relatedEntityType;
+        Image.RelatedEntityId = relatedEntityId;
+
+        //Image.FileName = $"{image.RelatedEntityType}_{image.RelatedEntityId}_{DateTime.Now}{Path.GetExtension(image.FileName)}";
+
+        editContext = new(Image);
+        editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        IsInitialized = true;
+        StateHasChanged();
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        _logger.Log(LogLevel.Information, "Image Form passed valdiate");
+
+        customValidation?.ClearErrors();
+
+        ApiResponse response = await _imageService.CreateImage(Image);
+
+        if (response.ValidationProblems != null)
+        {
+            customValidation?.DisplayErrors(response.ValidationProblems);
+        }
+
+        if (response.IsSuccess)
+        {
+            await OnClose();
+        }
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var file = e.GetMultipleFiles().FirstOrDefault();
+        if (file != null)
+        {
+            FileSize = e.File.Size;
+            ProgressDisplay = "";
+            Image.ImageName = $"{Image.RelatedEntityType}_{Image.RelatedEntityId}_{DateTime.Now.Ticks}";
+            Image.FileName = $"{Image.ImageName}{Path.GetExtension(e.File.Name)}";
+            Image.FileType = e.File.ContentType;            
+            await _imageService.UploadFile(file, UpdateProgress, Image.FileName);
+            IsDisabled = true;
+            ProgressDisplay = "none;";
+            StateHasChanged();
+
+        }
+    }
+
+    private void UpdateProgress(long progress)
+    {
+        Progress = (100.0 * progress / FileSize).ToString("0");
+        StateHasChanged();
+    }
+
+
+}

@@ -1,0 +1,110 @@
+﻿@page "/viewplant/{PlantId}"
+
+@inject IPlantService _plantService;
+@inject NavigationManager _navigationManager;
+@inject IImageService _imageService;
+
+@if (Plant != null)
+{
+    <Page Title="@Title" Description="@Description">
+        <PageContent>
+            <article id="plantView">
+                <div class="col-md-8">
+                    <div>
+                        <div class="plant-image">
+                            <img class="d-block" style="width: 400px; !important;" src="@_imageService.GetRawImageUrl(Plant.ImageFileName)" alt="@Plant.ImageLabel" />
+                        </div>
+                        <div class="plant-image-thumbnail">
+                            @foreach (var image in Plant.Images)
+                            {
+                                <img class="img-fluid img-thumbnail" @key="image.ImageId" src="@_imageService.GetThumbnailImageUrl(image.FileName)" alt="@image.Label" @onclick="@(() => ReplaceImage(image))" />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="col-md-4">
+                        <div>
+                            <div class="plant-facts">
+                                <h3 class="plant-facts_heading">Quick Facts</h3>
+                                <dl class="plant-facts__list">
+                                    <dt class="plant-facts_term">Sun Requirements</dt>
+                                    <dd class="plant-facts_definition">@Plant.LightRequirement</dd>
+                                    <dt class="plant-facts_term">Lifecycle</dt>
+                                    <dd class="plant-facts_definition">@Plant.Lifecycle</dd>
+                                    <dt class="plant-facts_term">Type</dt>
+                                    <dd class="plant-facts_definition">@Plant.Type</dd>
+                                    <dt class="plant-facts_term">Seed Viability (yrs)</dt>
+                                    <dd class="plant-facts_definition">@Plant.SeedViableForYears</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="plant-details">
+                            <h3 class="plant-facts_heading">Description</h3>
+                            <p>
+                                @Plant.Description
+                            </p>
+
+                            <h3 class="plant-facts_heading">Garden Tips</h3>
+                            <p>
+                                @Plant.GardenTip
+                            </p>
+
+                            <h3 class="plant-facts_heading">Varieties</h3>
+                            <p>
+                                <PlantVarietyList Plant=@Plant />
+                            </p>
+
+                            <h3 class="plant-facts_heading">Gorwing Instructions</h3>
+                            <p>
+                                <PlantGrowInstructionList Plant=@Plant />
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <PlantViewFooter Plant=@Plant Close=@ClosePage />
+                </div>
+            </article>
+        </PageContent>
+    </Page>
+}
+
+@code {
+    [Parameter]
+    public string PlantId { get; set; }
+
+    private PlantModel Plant { get; set; }
+    private string Title { get; set; }
+    private string Description { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Plant = await _plantService.GetPlant(PlantId, true);
+
+        if (Plant == null)
+        {
+            ClosePage();
+        }
+
+        Title = $"{Plant.PlantName} Details";
+        Description = $"{Plant.PlantName} Details";
+
+    }
+
+    private void ReplaceImage(ImageModel newImage)
+    {
+        Plant.ImageFileName = newImage.FileName;
+        Plant.ImageLabel = newImage.Label;
+        StateHasChanged();
+    }
+
+    protected void ClosePage()
+    {
+        _navigationManager.NavigateToPlants();
+
+    }
+}

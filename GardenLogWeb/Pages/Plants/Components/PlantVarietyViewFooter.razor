@@ -1,0 +1,65 @@
+﻿@inject NavigationManager _navigationManager
+@inject IImageService _imageService
+
+@if (PlantVariety != null && !string.IsNullOrWhiteSpace(PlantVariety.PlantVarietyId))
+{
+    <ModalView OnCloseModal="CloseImageFormModal" @ref="ImageFormModal">
+        <Body>
+            <ImageForm OnClose=@CloseImageFormModal @ref=ImageForm />
+        </Body>
+    </ModalView>
+
+    <div>
+        <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())">
+            <span class="oi oi-image" aria-hidden="true"></span> Add Image
+        </button>
+        <button type="button" class="btn btn-danger" @onclick="@(() => OnEdit())">
+            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => OnClose())">Close</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public PlantModel Plant { get; set; }
+
+    [Parameter]
+    public PlantVarietyModel PlantVariety { get; set; }
+
+    [Parameter]
+    public Func<Task> OnClose { get; set; }
+
+    private ModalView ImageFormModal { get; set; }
+    private ImageForm ImageForm { get; set; }
+
+    private async Task OnAddPlantVarietyImage()
+    {
+        ImageForm.Initialize(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, PlantVariety.PlantVarietyId);
+        await ImageFormModal?.OpenModal(PlantVariety.Name, Plant.Color);
+        StateHasChanged();
+    }
+
+    private void OnEdit()
+    {
+        _navigationManager.NavigateToEditPlantVariety(PlantVariety.PlantId, PlantVariety.PlantVarietyId);
+    }
+
+    private async Task CloseImageFormModal()
+    {
+        await ImageFormModal?.CloseModal();
+        var images = await _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, PlantVariety.PlantVarietyId, false);
+
+        if (images.Count > 0)
+        {
+            PlantVariety.Images = images;
+            var image = PlantVariety.Images.FirstOrDefault();
+            if (image != null && string.IsNullOrWhiteSpace(PlantVariety.ImageFileName))
+            {
+                PlantVariety.ImageFileName = image.FileName;
+                PlantVariety.ImageLabel = image.Label;
+            }
+        }
+        StateHasChanged();
+    }
+}
