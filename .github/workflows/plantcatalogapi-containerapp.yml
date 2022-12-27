@@ -51,7 +51,7 @@ jobs:
         acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         containerAppName: ${{ env.CONTAINER_APP_NAME }}
         resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-        appSourcePath: ${{ github.workspace }}
+        appSourcePath: ${{ github.workspace }}/PlantCatalog.Api
         acrUsername: ${{ secrets.REGISTRY_USERNAME }}
         acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
         
