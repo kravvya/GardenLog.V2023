@@ -36,28 +36,38 @@ jobs:
   #       tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
   #       file: ${{ env.DOCKER_FILE_PATH }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    # needs: build
-    steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - run: echo "Going to deploy  {{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} to ${{ env.CONTAINER_APP_NAME }}"
-    - name: Deploy to containerapp
-      uses: azure/container-apps-deploy-action@v0
-      with:
-        acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        containerAppName: ${{ env.CONTAINER_APP_NAME }}
-        resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-        appSourcePath: ${{ github.workspace }}/PlantCatalog.Api
-        acrUsername: ${{ secrets.REGISTRY_USERNAME }}
-        acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
-        dockerfilePath: Dockerfile
-        containerAppEnvironment: GardenLog-dev
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   # needs: build
+  #   steps:
+    # - name: Azure Login
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - run: echo "Going to deploy  ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} to ${{ env.CONTAINER_APP_NAME }}"
+    # - name: Deploy to containerapp
+    #   uses: azure/container-apps-deploy-action@v0
+    #   with:
+    #     acrName: gardenlogcontainerregistry.azurecr.io
+    #     containerAppName: ${{ env.CONTAINER_APP_NAME }}
+    #     resourceGroup: ${{ secrets.RESOURCE_GROUP }}
+    #     appSourcePath: ${{ github.workspace }}/PlantCatalog.Api
+    #     acrUsername: ${{ secrets.REGISTRY_USERNAME }}
+    #     acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
+    #     dockerfilePath: Dockerfile
+    #     containerAppEnvironment: GardenLog-dev
 
         
-    - name: logout
-      run: >
-        az logout
+    # - name: logout
+    #   run: >
+    #     az logout
+  login:
+      runs-on: ubuntu-latest
+      steps:
+        -
+          name: Login to ACR
+          uses: docker/login-action@v2
+          with:
+            registry: gardenlogcontainerregistry.azurecr.io
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
