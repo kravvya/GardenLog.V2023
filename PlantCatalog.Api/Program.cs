@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Builder;
+using System.Xml;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,7 +19,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
