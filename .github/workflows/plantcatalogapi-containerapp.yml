@@ -51,7 +51,9 @@ jobs:
         acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         containerAppName: ${{ env.CONTAINER_APP_NAME }}
         resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-        imageToDeploy: gardenlogcontainerregistry.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+        appSourcePath: ${{ github.workspace }}/PlantCatalog.Api
+        acrUsername: ${{ secrets.REGISTRY_USERNAME }}
+        acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
         
     - name: logout
       run: >
