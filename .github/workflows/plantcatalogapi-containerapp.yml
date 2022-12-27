@@ -12,29 +12,29 @@ env:
   DOCKER_FILE_PATH: PlantCatalog.Api/Dockerfile
   PROJECT_NAME_FOR_DOCKER: plantcatalogapi
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    # checkout the repo
-    - name: Checkout to the branch
-      uses: actions/checkout@main
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   # checkout the repo
+  #   - name: Checkout to the branch
+  #     uses: actions/checkout@main
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+  #   - name: Set up Docker Buildx
+  #     uses: docker/setup-buildx-action@v1
 
-    - name: Log in to container registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+  #   - name: Log in to container registry
+  #     uses: docker/login-action@v1
+  #     with:
+  #       registry: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+  #       username: ${{ secrets.REGISTRY_USERNAME }}
+  #       password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
-        file: ${{ env.DOCKER_FILE_PATH }}
+  #   - name: Build and push container image to registry
+  #     uses: docker/build-push-action@v2
+  #     with:
+  #       push: true
+  #       tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+  #       file: ${{ env.DOCKER_FILE_PATH }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -54,6 +54,9 @@ jobs:
         appSourcePath: ${{ github.workspace }}/PlantCatalog.Api
         acrUsername: ${{ secrets.REGISTRY_USERNAME }}
         acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
+        dockerfilePath: Dockerfile
+        containerAppEnvironment: GardenLog-dev
+
         
     - name: logout
       run: >
