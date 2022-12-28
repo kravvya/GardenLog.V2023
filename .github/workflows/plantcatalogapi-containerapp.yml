@@ -53,7 +53,7 @@ jobs:
         resourceGroup: ${{ secrets.RESOURCE_GROUP }}
         acrUsername: ${{ secrets.REGISTRY_USERNAME }}
         acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
-        imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+        imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
         
     - name: logout
       run: >
