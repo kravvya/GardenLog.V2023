@@ -12,6 +12,7 @@ on:
     paths:
       - "PlantCatalog.Api"
   workflow_dispatch:
+
 env:
   CONTAINER_APP_CONTAINER_NAME: plantcatalogapi-container
   CONTAINER_APP_NAME: plantcatalogapi-containerapp
