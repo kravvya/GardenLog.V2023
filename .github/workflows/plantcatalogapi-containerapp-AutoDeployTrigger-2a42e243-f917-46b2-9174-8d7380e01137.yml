@@ -7,9 +7,7 @@ on:
     branches: 
       [ main ]
     paths:
-    - '**'
-    - '.github/workflows/plantcatalogapi-containerapp-AutoDeployTrigger-2a42e243-f917-46b2-9174-8d7380e01137.yml'
-
+      - "PlantCatalog.Api"
   # Allow mannually trigger 
   workflow_dispatch:      
 
