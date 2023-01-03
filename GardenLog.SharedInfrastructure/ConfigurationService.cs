@@ -23,20 +23,23 @@ namespace GardenLog.SharedInfrastructure
 
         public MongoSettings GetPlantCatalogMongoSettings()
         {
-            // var settings = new MongoSettings();
-            // _configuration.GetSection(MongoSettings.SECTION).Bind(settings);
-            var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
+             var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
 
             if (string.IsNullOrWhiteSpace(mongoSettings.Password))
+            {
+                _logger.LogWarning("DB PASSWORD is not found. Will try environment");
                 mongoSettings.Password = _configuration.GetValue<string>(MongoSettings.PASSWORD_SECRET);
+            }
 
             if (string.IsNullOrWhiteSpace(mongoSettings.Password))
-                _logger.LogCritical("DB passwqord is not found. Do not expect any good things to happen");
+            {
+                _logger.LogCritical("DB PASSWORD is not found. Do not expect any good things to happen");
+            }
             else
+            {
                 _logger.LogInformation("DB PASSWORD WAS LOCATED! YEHAA");
-
-            return _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();          
-          //  return settings;
+            }
+            return mongoSettings;  
         }
 
 
