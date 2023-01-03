@@ -18,7 +18,8 @@ using System.Text.Json.Serialization;
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.WithSpan()
-    .WriteTo.Console(new JsonFormatter())
+    //.WriteTo.Console(new JsonFormatter())
+    .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
     .CreateLogger();
    // .CreateBootstrapLogger();
 Log.Information("Starting up PlantCatalog.Api");
