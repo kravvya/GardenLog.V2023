@@ -38,22 +38,10 @@ namespace PlantCatalog.IntegrationTest.Clients
 
         }
 
-        public async Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants()
+        public async Task<HttpResponseMessage> GetAllPlants()
         {
             var url = $"{this._baseUrl}{Routes.GetAllPlants}/";
-            var response = await this._httpClient.GetAsync(url);
-
-            response.EnsureSuccessStatusCode();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-                {
-                    new JsonStringEnumConverter(),
-                },
-            };
-            return await response.Content.ReadFromJsonAsync<List<PlantViewModel>>(options);
+           return await this._httpClient.GetAsync(url);           
         }
 
         private static CreatePlantCommand PopulateCreatePlantCommand(string name)

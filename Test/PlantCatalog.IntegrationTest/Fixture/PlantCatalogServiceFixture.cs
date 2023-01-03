@@ -1,18 +1,17 @@
-﻿using PlantCatalog.IntegrationTest.Clients;
-
-namespace PlantCatalog.IntegrationTest.Fixture;
+﻿namespace PlantCatalog.IntegrationTest.Fixture;
 
 public class PlantCatalogServiceFixture : PlantCatalogApplicationFactory<Program>, IDisposable
 {
     private bool _disposedValue;
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly PlantCatalogApplicationFactory<Program> _factory;
     
 
     public PlantCatalogServiceFixture()
     {
-        _factory= new WebApplicationFactory<Program>();
-        _factory.ConfigureAwait(false);
+        _factory= new PlantCatalogApplicationFactory<Program>();
+        _factory.ConfigureAwait(true);
 
+        FixtureId = Guid.NewGuid().ToString();
         
         var client = _factory.CreateClient();
 
@@ -20,6 +19,7 @@ public class PlantCatalogServiceFixture : PlantCatalogApplicationFactory<Program
     }
 
     public PlantCatalogClient PlantCatalogClient { get; init; }
+    public string FixtureId { get; init; }
 
     protected virtual void Dispose(bool disposing)
     {
