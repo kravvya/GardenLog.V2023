@@ -17,7 +17,7 @@ on:
 env:
   CONTAINER_APP_CONTAINER_NAME: plantcatalogapi-container
   CONTAINER_APP_NAME: plantcatalogapi-containerapp
-  DOCKER_FILE_PATH: PlantCatalog.Api/Dockerfile
+  DOCKER_FILE_PATH: PlantCatalog/PlantCatalog.Api/Dockerfile
   PROJECT_NAME_FOR_DOCKER: plantcatalogapi
 
 jobs:
