@@ -26,11 +26,14 @@ namespace GardenLog.SharedInfrastructure
             // var settings = new MongoSettings();
             // _configuration.GetSection(MongoSettings.SECTION).Bind(settings);
             var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
+
             if (string.IsNullOrWhiteSpace(mongoSettings.Password))
                 mongoSettings.Password = _configuration.GetValue<string>(MongoSettings.PASSWORD_SECRET);
 
             if (string.IsNullOrWhiteSpace(mongoSettings.Password))
                 _logger.LogCritical("DB passwqord is not found. Do not expect any good things to happen");
+            else
+                _logger.LogInformation("DB PASSWORD WAS LOCATED! YEHAA");
 
             return _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();          
           //  return settings;
