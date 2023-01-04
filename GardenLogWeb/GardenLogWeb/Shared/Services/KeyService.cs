@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 
-namespace GardenLogWeb.Services
+namespace GardenLogWeb.Shared.Services
 {
     public interface IKeyService
     {

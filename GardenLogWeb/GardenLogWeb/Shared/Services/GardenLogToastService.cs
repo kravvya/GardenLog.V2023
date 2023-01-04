@@ -1,7 +1,7 @@
 ﻿//Todo - look for different Toast implemenation
 using Blazored.Toast.Services;
 
-namespace GardenLogWeb.Services;
+namespace GardenLogWeb.Shared.Services;
 
 public interface IGardenLogToastService
 {

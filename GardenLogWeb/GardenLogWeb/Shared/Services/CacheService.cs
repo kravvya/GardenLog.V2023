@@ -1,4 +1,4 @@
-﻿namespace GardenLogWeb.Services;
+﻿namespace GardenLogWeb.Shared.Services;
 
 public interface ICacheService
 {
@@ -15,7 +15,7 @@ public class CacheService : ICacheService
     {
         if (_cache.ContainsKey(key))
         {
-            var cacheItem = (CacheItem)_cache[key];
+            var cacheItem = _cache[key];
             if (cacheItem.ExporeAfter.HasValue && cacheItem.ExporeAfter.Value < DateTime.Now)
             {
                 _cache.Remove(key);
@@ -27,7 +27,7 @@ public class CacheService : ICacheService
             }
         }
 
-        value = default(TItem);
+        value = default;
         return false;
 
     }
@@ -57,6 +57,6 @@ public class CacheService : ICacheService
         return value;
     }
 
-    private record CacheItem(Object Item, DateTime? ExporeAfter);
+    private record CacheItem(object Item, DateTime? ExporeAfter);
 
 }
