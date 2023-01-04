@@ -10,8 +10,10 @@ on:
     branches: 
       - main
     paths:
-      - "PlantCatalog.Api"
-
+      - "PlantCatalog.Api/**"
+  pull_request:
+    paths:
+      - 'PlantCatalog.Api/**'
   workflow_dispatch:
 
 env:
