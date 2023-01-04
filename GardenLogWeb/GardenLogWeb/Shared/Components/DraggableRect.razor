@@ -21,7 +21,7 @@
         get { return _x ?? 0; }
         set { if (!_x.HasValue || (!IsDown & XChanged.HasDelegate)) { _x = value; } }
     }
-
+       
     [Parameter]
     public double Y
     {
