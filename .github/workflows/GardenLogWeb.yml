@@ -1,4 +1,4 @@
-name: Deploy to GitHub pages
+name: Deploy GardenLogWeb
 run-name: ${{ github.actor }} is deploying to GitHub pages using GitHub Actions 🚀
 on:
   push:
