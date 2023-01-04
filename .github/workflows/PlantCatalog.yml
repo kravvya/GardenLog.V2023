@@ -23,7 +23,7 @@ env:
   PROJECT_NAME_FOR_DOCKER: plantcatalogapi
 
 jobs:
-  Explore-GitHub-Actions:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -37,7 +37,7 @@ jobs:
     env:
       mongodb-password: ${{ secrets.mongodb_password }}
 
-    needs: Explore-GitHub-Actions
+    needs: setup
     steps:
     # checkout the repo
     - name: Checkout to the branch
