@@ -7,6 +7,7 @@ global using GardenLogWeb.Services;
 global using GardenLogWeb.Shared.Extensions;
 global using GardenLogWeb.Shared.Services;
 global using PlantCatalog.Contract;
+global using PlantCatalog.Contract.ViewModels; 
 
 namespace GardenLogWeb;
 

@@ -1,6 +1,5 @@
 ﻿using GardenLog.SharedInfrastructure.MongoDB;
 using MongoDB.Driver;
-using PlantCatalog.Contract.Base;
 using PlantCatalog.Contract.ViewModels;
 using PlantCatalog.Domain.PlantAggregate;
 

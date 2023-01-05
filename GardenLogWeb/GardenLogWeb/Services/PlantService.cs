@@ -107,21 +107,7 @@ public class PlantService : IPlantService
         return plants;
     }
 
-    private async Task<List<PlantModel>> GetAllPlants()
-    {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
-
-        var response = await httpClient.ApiGetAsync<List<PlantModel>>(Routes.GetAllPlants);
-
-        if (!response.IsSuccess)
-        {
-            _toastService.ShowToast("Unable to get Plants", GardenLogToastLevel.Error);
-            return null;
-        }
-
-        return response.Response;
-    }
-
+   
     public async Task<PlantModel> GetPlant(string plantId, bool useCache)
     {
         PlantModel plant = null;
@@ -137,7 +123,7 @@ public class PlantService : IPlantService
         {
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-            var response = await httpClient.ApiGetAsync<GetPlantResponse>(string.Format(Routes.GetPlantById, plantId));
+            var response = await httpClient.ApiGetAsync<GetPlantResponse>(Routes.GetPlantById.Replace("{id}", plantId));
 
             if (!response.IsSuccess)
             {
@@ -176,7 +162,6 @@ public class PlantService : IPlantService
             _toastService.ShowToast($"Plant created. Plant id is {plant.PlantId}", GardenLogToastLevel.Success);
         }
 
-
         return response;
     }
 
@@ -184,7 +169,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiPutAsync(string.Format(Routes.UpdatePlant, plant.PlantId), plant);
+        var response = await httpClient.ApiPutAsync(Routes.UpdatePlant.Replace("{id}",plant.PlantId), plant);
 
         if (response.ValidationProblems != null)
         {
@@ -198,7 +183,7 @@ public class PlantService : IPlantService
         {
             await AddOrUpdateToPlantList(plant);
 
-            _toastService.ShowToast($"{plant.PlantName} is successfully updated.", GardenLogToastLevel.Success);
+            _toastService.ShowToast($"{plant.Name} is successfully updated.", GardenLogToastLevel.Success);
         }
 
         return response;
@@ -208,7 +193,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiDeleteAsync(string.Format(Routes.DeletePlant, id));
+        var response = await httpClient.ApiDeleteAsync(Routes.DeletePlant.Replace("{id}", id));
 
         if (response.ValidationProblems != null)
         {
@@ -542,6 +527,21 @@ public class PlantService : IPlantService
     #endregion
 
     #region Private Plant Functions
+    private async Task<List<PlantModel>> GetAllPlants()
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+
+        var response = await httpClient.ApiGetAsync<List<PlantModel>>(Routes.GetAllPlants);
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Plants", GardenLogToastLevel.Error);
+            return null;
+        }
+
+        return response.Response;
+    }
+
     private async Task AddOrUpdateToPlantList(PlantModel plant)
     {
         var plants = (await GetPlants(false));

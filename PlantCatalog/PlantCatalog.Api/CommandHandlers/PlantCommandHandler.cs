@@ -6,6 +6,7 @@ namespace PlantCatalog.Api.CommandHandlers;
 public interface IPlantCommandHandler
 {
     Task<string> CreatePlant(CreatePlantCommand request);
+    Task<string> DeletePlant(string id);
     Task<string> UpdatePlant(UpdatePlantCommand request);
 }
 
@@ -77,5 +78,17 @@ public class PlantCommandHandler : IPlantCommandHandler
         await _plantRepository.SaveChangesAsync();
 
         return plant.Id;
+    }
+
+    public async Task<string> DeletePlant(string id)
+    {
+        _logger.LogInformation("Received request to delete plant {@id}", id);
+
+
+        _plantRepository.Delete(id);
+
+        await _plantRepository.SaveChangesAsync();
+
+        return id;
     }
 }

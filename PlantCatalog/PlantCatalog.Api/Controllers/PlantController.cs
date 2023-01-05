@@ -40,6 +40,25 @@ public class PlantController : Controller
     }
 
     [HttpGet()]
+    [ActionName("GetIdByPlantName")]
+    [Route(Routes.GetIdByPlantName)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<PlantViewModel>> GetPlantIdByPlantName(string name)
+    {
+        var id = await _queryHandler.GetPlantIdByPlantName(name);
+
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            return Ok(id);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet()]
     [ActionName("GetAllPlants")]
     [Route(Routes.GetAllPlants)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantViewModel>), (int)HttpStatusCode.OK)]
@@ -93,6 +112,24 @@ public class PlantController : Controller
             ModelState.AddModelError(ex.ParamName, ex.Message);
             return BadRequest(ModelState);
         }
+
+        return BadRequest();
+    }
+
+    [HttpDelete()]
+    [Route(Routes.DeletePlant)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DeletelantAsync(string id)
+    {
+
+        string result = await _handler.DeletePlant(id);
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            return Ok(true);
+        }
+
 
         return BadRequest();
     }

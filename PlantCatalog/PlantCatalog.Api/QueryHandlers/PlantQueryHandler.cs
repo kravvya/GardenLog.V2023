@@ -10,6 +10,7 @@ public interface IPlantQueryHandler
 {
     Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants();
     Task<PlantViewModel> GetPlantByPlantId(string plantId);
+    Task<string> GetPlantIdByPlantName(string nane);
 }
 
 public class PlantQueryHandler : IPlantQueryHandler
@@ -28,9 +29,15 @@ public class PlantQueryHandler : IPlantQueryHandler
     public async Task<PlantViewModel> GetPlantByPlantId(string plantId)
     {
         _logger.LogInformation($"Received request to get plant by plantid: {plantId}");
-        var plant =  await _plantRepository.GetByIdAsync(plantId);
+        var plant = await _plantRepository.GetByIdAsync(plantId);
 
         return _mapper.Map<PlantViewModel>(plant);
+    }
+
+    public async Task<string> GetPlantIdByPlantName(string nane)
+    {
+        _logger.LogInformation($"Received request to get plant id by plant name: {nane}");
+        return await _plantRepository.GetIdByNameAsync(nane);
     }
 
     public async Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants()
