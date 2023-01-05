@@ -20,8 +20,28 @@ public class PlantController : Controller
 
 
     #region Plant
+    [HttpGet()]
+    [ActionName("GetPlantById")]
+    [Route(Routes.GetPlantById)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(PlantViewModel), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<PlantViewModel>> GetPlantByIdAsync(string id)
+    {
+        var plant = await _queryHandler.GetPlantByPlantId(id);
 
-    [HttpGet(Name = "GetAllPlants")]
+        if (plant != null)
+        {
+            return Ok(plant);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet()]
+    [ActionName("GetAllPlants")]
+    [Route(Routes.GetAllPlants)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantViewModel>>> GetAllPlantsAsync()
     {
@@ -30,6 +50,7 @@ public class PlantController : Controller
     }
     // POST: api/Plants
     [HttpPost]
+    [Route(Routes.CreatePlant)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantAsync([FromBody] CreatePlantCommand command)
@@ -52,8 +73,8 @@ public class PlantController : Controller
         return BadRequest();
     }
 
-    // PUT: api/Plants/{id}
-    [HttpPut("{id}")]
+    [HttpPut()]
+    [Route(Routes.UpdatePlant)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantAsync([FromBody] UpdatePlantCommand command)

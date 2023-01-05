@@ -1,7 +1,4 @@
-﻿using GardenLogWeb.Shared.Extensions;
-using GardenLogWeb.Shared.Services;
-
-namespace GardenLogWeb.Services;
+﻿namespace GardenLogWeb.Services;
 
 public interface IPlantService
 {
@@ -34,7 +31,7 @@ public class PlantService : IPlantService
     private readonly ICacheService _cacheService;
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
-    private const string PLANT_ROUTE = "/plant";
+    
     private const string PLANT_VARIETY_ROUTE = "/plant/{0}/PlantVarieties";
     private const string PLANT_GROW_INSTRUCTIONS_ROUTE = "/plant/{0}/GrowInstructions";
     private Random _random = new Random();
@@ -68,33 +65,34 @@ public class PlantService : IPlantService
             _logger.LogInformation("Plants not in cache or forceRefresh");
 
             var plantsTask = GetAllPlants();
-            var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT, false);
+            //TODO add Image Service
+            //var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT, false);
 
-            await Task.WhenAll(plantsTask, imagesTask);
-
+            //await Task.WhenAll(plantsTask, imagesTask);
+            await Task.WhenAll(plantsTask);
 
             plants = plantsTask.Result;
-            var images = imagesTask.Result;
+            //var images = imagesTask.Result;
 
             if (plants.Count > 0)
             {
 
-                foreach (var plant in plants)
-                {
-                    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
+                //foreach (var plant in plants)
+                //{
+                //    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
 
-                    var image = plant.Images.FirstOrDefault();
-                    if (image != null)
-                    {
-                        plant.ImageFileName = image.FileName;
-                        plant.ImageLabel = image.Label;
-                    }
-                    else
-                    {
-                        plant.ImageFileName = ImageService.NO_IMAGE;
-                        plant.ImageLabel = "Add image";
-                    }
-                }
+                //    var image = plant.Images.FirstOrDefault();
+                //    if (image != null)
+                //    {
+                //        plant.ImageFileName = image.FileName;
+                //        plant.ImageLabel = image.Label;
+                //    }
+                //    else
+                //    {
+                //        plant.ImageFileName = ImageService.NO_IMAGE;
+                //        plant.ImageLabel = "Add image";
+                //    }
+                //}
 
                 // Save data in cache.
                 _cacheService.Set(PLANTS_KEY, plants, DateTime.Now.AddMinutes(10));
@@ -111,9 +109,9 @@ public class PlantService : IPlantService
 
     private async Task<List<PlantModel>> GetAllPlants()
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantModel>>(PLANT_ROUTE);
+        var response = await httpClient.ApiGetAsync<List<PlantModel>>(Routes.GetAllPlants);
 
         if (!response.IsSuccess)
         {
@@ -137,9 +135,9 @@ public class PlantService : IPlantService
 
         if (plant == null)
         {
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-            var response = await httpClient.ApiGetAsync<GetPlantResponse>($"{PLANT_ROUTE}/{plantId}");
+            var response = await httpClient.ApiGetAsync<GetPlantResponse>(string.Format(Routes.GetPlantById, plantId));
 
             if (!response.IsSuccess)
             {
@@ -157,9 +155,9 @@ public class PlantService : IPlantService
 
     public async Task<ApiObjectResponse<string>> CreatePlant(PlantModel plant)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiPostAsync(PLANT_ROUTE, plant);
+        var response = await httpClient.ApiPostAsync(Routes.CreatePlant, plant);
 
 
         if (response.ValidationProblems != null)
@@ -184,9 +182,9 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> UpdatePlant(PlantModel plant)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiPutAsync($"{PLANT_ROUTE}/{plant.PlantId}", plant);
+        var response = await httpClient.ApiPutAsync(string.Format(Routes.UpdatePlant, plant.PlantId), plant);
 
         if (response.ValidationProblems != null)
         {
@@ -208,9 +206,9 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> DeletePlant(string id)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiDeleteAsync($"{PLANT_ROUTE}/id={id}");
+        var response = await httpClient.ApiDeleteAsync(string.Format(Routes.DeletePlant, id));
 
         if (response.ValidationProblems != null)
         {
@@ -243,7 +241,7 @@ public class PlantService : IPlantService
 
         if (plantVarietyList == null)
         {
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
             var response = await httpClient.ApiGetAsync<GetPLantVarietiesResponse>(string.Format(PLANT_VARIETY_ROUTE, plantId));
 
@@ -320,7 +318,7 @@ public class PlantService : IPlantService
 
     private async Task<PlantVarietyModel> GetPlantVarietyFromServer(string plantId, string plantVerietyId)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
         string route = string.Format(PLANT_VARIETY_ROUTE, plantId) + $"/{plantVerietyId}";
         var response = await httpClient.ApiGetAsync<GetPLantVarietyResponse>(route);
 
@@ -335,7 +333,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiObjectResponse<string>> CreatePlantVariety(PlantVarietyModel variety)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         var response = await httpClient.ApiPostAsync(string.Format(PLANT_VARIETY_ROUTE, variety.PlantId), variety);
 
@@ -360,7 +358,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> UpdatePlantVariety(PlantVarietyModel variety)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         string route = string.Format(PLANT_VARIETY_ROUTE, variety.PlantId) + $"/{variety.PlantVarietyId}";
 
@@ -386,7 +384,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> DeletePlantVariety(string plantId, string id)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         string route = string.Format(PLANT_VARIETY_ROUTE, plantId) + $"/{id}";
 
@@ -423,7 +421,7 @@ public class PlantService : IPlantService
 
         if (plantGrowInstructionsList == null)
         {
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
             var response = await httpClient.ApiGetAsync<GetPLantGrowInstructionsResponse>(string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId));
 
@@ -447,7 +445,7 @@ public class PlantService : IPlantService
 
         string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId) + $"/{growInstructionId}";
 
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         var response = await httpClient.ApiGetAsync<GetPLantGrowInstructionResponse>(route);
 
@@ -467,7 +465,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         var response = await httpClient.ApiPostAsync(string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantGrowInstruction.PlantId), plantGrowInstruction);
 
@@ -493,7 +491,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantGrowInstruction.PlantId) + $"/{plantGrowInstruction.PlantGrowInstructionId}";
 
@@ -519,7 +517,7 @@ public class PlantService : IPlantService
 
     public async Task<ApiResponse> DeletePlantGrowInstruction(string plantId, string id)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId) + $"/{id}";
 

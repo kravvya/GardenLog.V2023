@@ -36,7 +36,7 @@ public class ImageService : IImageService
     }
     public async Task<List<ImageModel>> GetImages(string entityType, bool FilterUserOnly)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
 
         var response = await httpClient.ApiGetAsync<List<ImageModel>>($"{IMAGE_ROUTE}?RelatedEntityType={entityType}&FilterUserOnly={FilterUserOnly}");
 
@@ -45,7 +45,7 @@ public class ImageService : IImageService
 
     public async Task<List<ImageModel>> GetImages(string entityType, string entityId, bool FilterUserOnly)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
 
         var response = await httpClient.ApiGetAsync<List<ImageModel>>($"{IMAGE_ROUTE}?RelatedEntityType={entityType}&RelatedEntityId={entityId}&FilterUserOnly={FilterUserOnly}");
 
@@ -56,7 +56,7 @@ public class ImageService : IImageService
     {
         var request = new ImageRelatedEntities() { Requests = entities };
 
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
         var response = await httpClient.ApiPostAsync<List<ImageModel>>($"{IMAGE_ROUTE}/search/batch", request);
 
         return response.Response;
@@ -64,7 +64,7 @@ public class ImageService : IImageService
 
     public async Task<ApiObjectResponse<string>> CreateImage(ImageModel image)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
 
         var response = await httpClient.ApiPostAsync(IMAGE_ROUTE, image);
 
@@ -130,7 +130,7 @@ public class ImageService : IImageService
 
     private async Task<string> GetSasToken(string fileName)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.GARDENLOG_WEB_SERVER);
+        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
         var httpResponseMessage = await httpClient.GetAsync($"/files/tokens/{fileName}");
 
         httpResponseMessage.EnsureSuccessStatusCode();

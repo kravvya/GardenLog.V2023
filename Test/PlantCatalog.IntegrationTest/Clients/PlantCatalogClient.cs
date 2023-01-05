@@ -1,17 +1,6 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
-using Newtonsoft.Json;
 using PlantCatalog.Contract;
 using PlantCatalog.Contract.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Threading.Tasks;
-using PlantCatalog.Contract.ViewModels;
-using System.Net.Http.Json;
 
 namespace PlantCatalog.IntegrationTest.Clients
 {
@@ -28,7 +17,7 @@ namespace PlantCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> CreatePlantCommand(string name)
         {
-            var url = $"{this._baseUrl}{Routes.CreatePlant}/";
+            var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlant}/";
 
             var createPlantCommand = PopulateCreatePlantCommand(name);
 
@@ -40,7 +29,7 @@ namespace PlantCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> GetAllPlants()
         {
-            var url = $"{this._baseUrl}{Routes.GetAllPlants}/";
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetAllPlants}/";
            return await this._httpClient.GetAsync(url);           
         }
 

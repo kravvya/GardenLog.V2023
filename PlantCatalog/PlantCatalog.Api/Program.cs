@@ -36,6 +36,8 @@ try
     builder.Services.AddFluentValidationClientsideAdapters();
     builder.Services.AddValidatorsFromAssemblyContaining<CreatePlantCommandValidator>();
 
+    builder.Services.AddAutoMapper(typeof(Program));
+
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

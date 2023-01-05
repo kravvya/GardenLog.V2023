@@ -33,7 +33,7 @@ else
     serviceUrl = "https://localhost:44304/";
 };
 
-builder.Services.AddHttpClient("GardenLog.Server", client => client.BaseAddress = new Uri(serviceUrl));
+builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));
 
 //todo Research validators
 //builder.Services.AddValidatorsFromAssemblyContaining<PlantModelValidator>();
