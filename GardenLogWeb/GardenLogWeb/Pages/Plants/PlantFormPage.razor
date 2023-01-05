@@ -23,8 +23,8 @@
                         </div>
                         <div class="col-md-4">
                             <label for="plantname" class="form-label">Name</label>
-                            <InputText Class="form-control" @bind-Value="@plant.PlantName" Id="plantname" />
-                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.PlantName)" /></div>
+                            <InputText Class="form-control" @bind-Value="@plant.Name" Id="plantname" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Name)" /></div>
                         </div>
                         <div class="col-md-4">
                             <label for="type">What type of Plant?</label>
@@ -33,7 +33,7 @@
                                     <InputRadioGroup @bind-Value="@plant.Type" Name="Type" id="type">
                                         @foreach (var item in plantTypeCodes)
                                         {
-                                        <InputRadio class="btn-check" type="radio" name="Type" id="@item.Key" checked="@(item.Key == plant.Type)" Value="@item.Key" />
+                                        <InputRadio class="btn-check" type="radio" name="Type" id="@item.Key" checked="@(item.Key == plant.Type.ToString())" Value="@item.Key" />
                                         <label class="btn btn-outline-primary" for="@item.Key">@item.Value</label>
                                         }
                                     <ValidationMessage For="@(() => plant.Type)" />
@@ -61,7 +61,7 @@
                                     @foreach (var item in plantLifeCyclesCodes)
                                         {
                                         <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item.Key" checked="@(item.Key == plant.Lifecycle)" Value="@item.Key" />
+                                            <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item.Key" checked="@(item.Key == plant.Lifecycle.ToString())" Value="@item.Key" />
                                             <label class="form-check-label" for="@item.Key">@item.Value</label>
                                         </div>
                                         }
@@ -80,7 +80,7 @@
                                     @foreach (var item in lightRequirementCodes)
                                         {
                                         <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item.Key" checked="@(item.Key == plant.LightRequirement)" Value="@item.Key" />
+                                            <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item.Key" checked="@(item.Key == plant.LightRequirement.ToString())" Value="@item.Key" />
                                             <label class="form-check-label" for="@item.Key">@item.Value</label>
                                         </div>
                                         }
@@ -99,7 +99,7 @@
                                     @foreach (var item in moistureRequirementCodes)
                                         {
                                         <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item.Key" checked="@(item.Key == plant.MoistureRequirement)" Value="@item.Key" />
+                                            <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item.Key" checked="@(item.Key == plant.MoistureRequirement.ToString())" Value="@item.Key" />
                                             <label class="form-check-label" for="@item.Key">@item.Value</label>
                                         </div>
                                         }
@@ -115,7 +115,7 @@
                             </Header>
                             <Body>
                                 <InputNumber Class="form-control" @bind-Value="@plant.SeedViableForYears" Id="seed-viable-for-years" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => plant.PlantName)" /></div>
+                                <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Name)" /></div>
                             </Body>
                         </FormCard>
                     </div>
@@ -184,9 +184,9 @@
             }
             else
             {
-                breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetEditPlantUrl(PlantId), true));
+                breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetEditPlantUrl(PlantId), true));
                 isEdit = true;
-                title = $"Edit {plant.PlantName}";
+                title = $"Edit {plant.Name}";
                 description = $"";
             }
 

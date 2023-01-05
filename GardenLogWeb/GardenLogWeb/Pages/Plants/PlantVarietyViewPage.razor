@@ -37,12 +37,12 @@
         }
 
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetViewPlantUrl(PlantId), false));
+        breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetViewPlantUrl(PlantId), false));
 
         plantVariety = await GetPlantVariety(PlantId, PlantVarietyId);
         breacrumbLinks.Add(new BreadcrumbLink($"{plantVariety.Name}", _navigationManager.GetEditPlantVarietyUrl(PlantId, PlantVarietyId), true));
         title = $"{plantVariety.Name}";
-        description = "";// $"Add {plant.PlantName} Variety";
+        description = "";// $"Add {plant.Name} Variety";
         plantVarietyView.Initialize(plantVariety, plant);
 
         StateHasChanged();

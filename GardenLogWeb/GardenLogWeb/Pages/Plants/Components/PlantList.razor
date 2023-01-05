@@ -106,16 +106,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var plant in _plants.OrderBy(p => p.PlantName))
+                                @foreach (var plant in _plants.OrderBy(p => p.Name))
                                 {
                                     if (IsVisible(plant))
                                     {
                                         <tr style="border-width: 2px; border-color: @(plant.Color);" @key="plant.PlantId">
-                                            <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.PlantName</span></a></td>
+                                            <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.Name</span></a></td>
                                             <td class="col-1"><img src="./images/@(plant.LightRequirement).png" alt="plant.LightRequirement" title="plant.LightRequirement" class="img-fluid" /></td>
                                             <td class="col-1"><img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" /><img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid"></td>
                                             <td class="col-2 text-start">
-                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement) <br />
+                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
                                                 <span class="fw-bold" >Varieties:</span> @plant.VarietyCount<br />
                                                 <span class="fw-bold" >Instructions: </span>@plant.GrowCount
                                             </td>
@@ -140,18 +140,18 @@
                         </table>
                     </div>
                     <div class="row d-block d-sm-none">
-                        @foreach (var plant in _plants.OrderBy(p => p.PlantName))
+                        @foreach (var plant in _plants.OrderBy(p => p.Name))
                         {
                             if (IsVisible(plant))
                             {
                                 <div class="col-sm-6">
                                     <div class="card bg-light mb-2" style="border-color:  @(plant.Color);">
                                         <div class="card-header" style="background-color:  @(plant.Color);">
-                                            <a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.PlantName</span></a>
+                                            <a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.Name</span></a>
                                         </div>
                                         <div class="card-body row">
                                             <div class="col">
-                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement) <br />
+                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
                                                 <span class="fw-bold" >Varieties:</span> @plant.VarietyCount<br />
                                                 <span class="fw-bold" >Instructions: </span>@plant.GrowCount
                                             </div>

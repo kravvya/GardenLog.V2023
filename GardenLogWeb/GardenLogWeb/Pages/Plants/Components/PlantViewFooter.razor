@@ -35,7 +35,7 @@
      private async Task OnAddPlantImage()
     {
          ImageForm.Initialize(RelatedEntityTypes.RELATED_ENTITY_PLANT, Plant.PlantId);
-        await ImageFormModal?.OpenModal(Plant.PlantName, Plant.Color);
+        await ImageFormModal?.OpenModal(Plant.Name, Plant.Color);
         StateHasChanged();
     }
 

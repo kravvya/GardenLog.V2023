@@ -36,13 +36,13 @@
         }
 
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetViewPlantUrl(PlantId), false));
+        breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetViewPlantUrl(PlantId), false));
 
         if (string.IsNullOrWhiteSpace(PlantGrowInstructionId))
         {
-            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.PlantName} Grow Instruction", _navigationManager.GetCreatePlantGrowInstructionUrl(PlantId), true));
-            title = $"Add {plant.PlantName} Grow Instruction";
-            description = "";// $"Add {plant.PlantName} Variety";
+            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.Name} Grow Instruction", _navigationManager.GetCreatePlantGrowInstructionUrl(PlantId), true));
+            title = $"Add {plant.Name} Grow Instruction";
+            description = "";// $"Add {plant.Name} Variety";
             plantGrowInstructionForm.Initialize(null, plant);
         }
         else
@@ -50,7 +50,7 @@
             plantGrowInstruction = await GetPlantGrowInstruction(PlantId, PlantGrowInstructionId);
             breacrumbLinks.Add(new BreadcrumbLink($"Edit {plantGrowInstruction.Name}", _navigationManager.GetEditPlantGrowInstructionUrl(PlantId, PlantGrowInstructionId), true));
             title = $"Edit {plantGrowInstruction.Name}";
-            description = "";// $"Add {plant.PlantName} Variety";
+            description = "";// $"Add {plant.Name} Variety";
             plantGrowInstructionForm.Initialize(plantGrowInstruction, plant);
         }
 

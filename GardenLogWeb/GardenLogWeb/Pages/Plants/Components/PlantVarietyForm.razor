@@ -139,8 +139,8 @@
 
             this.plantVariety = new PlantVarietyModel();
             this.plantVariety.PlantId = this.plant.PlantId;
-            this.plantVariety.LightRequirement = this.plant.LightRequirement;
-            this.plantVariety.MoistureRequirement = this.plant.MoistureRequirement;
+            this.plantVariety.LightRequirement = this.plant.LightRequirement.ToString();
+            this.plantVariety.MoistureRequirement = this.plant.MoistureRequirement.ToString();
             isEdit = false;
         }
         else

@@ -37,13 +37,13 @@
         }
 
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        breacrumbLinks.Add(new BreadcrumbLink(plant.PlantName, _navigationManager.GetViewPlantUrl(PlantId), false));
+        breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetViewPlantUrl(PlantId), false));
 
         if (string.IsNullOrWhiteSpace(PlantVarietyId))
         {
-            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.PlantName} Variety", _navigationManager.GetCreatePlantVarietyUrl(PlantId), true));
-            title = $"Add {plant.PlantName} Variety";
-            description = "";// $"Add {plant.PlantName} Variety";
+            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.Name} Variety", _navigationManager.GetCreatePlantVarietyUrl(PlantId), true));
+            title = $"Add {plant.Name} Variety";
+            description = "";// $"Add {plant.Name} Variety";
             plantVarietyForm.Initialize(null, plant);
         }
         else
@@ -51,7 +51,7 @@
             plantVariety = await GetPlantVariety(PlantId, PlantVarietyId);
             breacrumbLinks.Add(new BreadcrumbLink($"Edit {plantVariety.Name}", _navigationManager.GetEditPlantVarietyUrl(PlantId, PlantVarietyId), true));
             title = $"Edit {plantVariety.Name}";
-            description = "";// $"Add {plant.PlantName} Variety";
+            description = "";// $"Add {plant.Name} Variety";
             plantVarietyForm.Initialize(plantVariety, plant);
         }
 
