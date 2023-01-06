@@ -14,10 +14,10 @@ public class PlantFilter
 
     public PlantFilter(IVerifyService verifyService)
     {
-        var plantLifeCyclesCodes = verifyService.GetPlantLifecycleCodeList(true);
-        var plantTypeCodes = verifyService.GetPlantTypeCodeList(true);
-        var lightRequirementCodes = verifyService.GetLightRequirementCodeList(true);
-        var moistureRequirementCodes = verifyService.GetMoistureRequirementCodeList(true);
+        var plantLifeCyclesCodes = verifyService.GetCodeList<PlantLifecycleEnum>(true);
+        var plantTypeCodes = verifyService.GetCodeList<PlantTypeEnum>(true);
+        var lightRequirementCodes = verifyService.GetCodeList<LightRequirementEnum>(true);
+        var moistureRequirementCodes = verifyService.GetCodeList<MoistureRequirementEnum>(true);
 
         foreach (var code in plantLifeCyclesCodes)
         {
@@ -40,9 +40,4 @@ public class PlantFilter
         }
     }
 
-}
-
-public record CheckableEnum(KeyValuePair<string, string> EnumItem)
-{
-    public bool IsSelected;
 }

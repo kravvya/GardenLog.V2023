@@ -1,6 +1,4 @@
-﻿using PlantCatalog.Contract.Enum;
-
-namespace PlantCatalog.Contract.Base;
+﻿namespace PlantCatalog.Contract.Base;
 
 
 public abstract record PlantBase

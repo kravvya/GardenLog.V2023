@@ -128,7 +128,7 @@ public class PlantService : IPlantService
         {
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-            var response = await httpClient.ApiGetAsync<GetPlantResponse>(Routes.GetPlantById.Replace("{id}", plantId));
+            var response = await httpClient.ApiGetAsync<PlantModel>(Routes.GetPlantById.Replace("{id}", plantId));
 
             if (!response.IsSuccess)
             {
@@ -136,7 +136,7 @@ public class PlantService : IPlantService
                 return null;
             }
 
-            plant = response.Response.Plant;
+            plant = response.Response;
 
             await AddOrUpdateToPlantList(plant);
         }
@@ -708,12 +708,12 @@ public class PlantService : IPlantService
 //    // public IReadOnlyCollection<ImageViewModel> PlantImages { get; set; }
 //}
 
-public class GetPlantResponse
-{
-    public PlantModel Plant { get; set; }
+//public class GetPlantResponse
+//{
+//    public PlantModel Plant { get; set; }
 
-    // public IReadOnlyCollection<ImageViewModel> PlantImages { get; set; }
-}
+//    // public IReadOnlyCollection<ImageViewModel> PlantImages { get; set; }
+//}
 
 public class GetPLantVarietiesResponse
 {

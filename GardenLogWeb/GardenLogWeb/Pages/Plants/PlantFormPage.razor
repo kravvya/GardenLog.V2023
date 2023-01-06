@@ -31,103 +31,121 @@
                             <div class="row">
                                 <div class="col-12">
                                     <InputRadioGroup @bind-Value="@plant.Type" Name="Type" id="type">
-                                        @foreach (var item in plantTypeCodes)
+                                        @foreach (var item in Enum.GetValues<PlantTypeEnum>().Where(p => p != PlantTypeEnum.Unspecified))
                                         {
-                                        <InputRadio class="btn-check" type="radio" name="Type" id="@item.Key" checked="@(item.Key == plant.Type.ToString())" Value="@item.Key" />
-                                        <label class="btn btn-outline-primary" for="@item.Key">@item.Value</label>
+                                            <InputRadio class="btn-check" type="radio" name="Type" id="@item" Value="@item" />
+                                            <label class="btn btn-outline-primary" for="@item">@(plantTypesCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
                                         }
-                                    <ValidationMessage For="@(() => plant.Type)" />
-                                </InputRadioGroup>
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Type)" /></div>
+                                    </InputRadioGroup>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <label for="description">Description</label>
-                        <InputTextArea Class="form-control" Id="description" @bind-Value="@plant.Description" rows="3" />
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Description)" /></div>
-                    </div>
-                    <div class="col-12">
-                        <label for="tip">Garden Tips</label>
-                        <InputTextArea Class="form-control" Id="tip" @bind-Value="@plant.GardenTip" rows="3" />
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => plant.GardenTip)" /></div>
-                    </div>
-                    <div class="col-md-4">
-                        <FormCard>
-                            <Header>
-                                <label for="Lifecyle">Lifecycle</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@plant.Lifecycle" Name="Lifecyle">
-                                    @foreach (var item in plantLifeCyclesCodes)
-                                        {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item.Key" checked="@(item.Key == plant.Lifecycle.ToString())" Value="@item.Key" />
-                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
-                                        </div>
-                                        }
-                                    <ValidationMessage For="@(() => plant.Lifecycle)" />
-                                </InputRadioGroup>
-                            </Body>
-                        </FormCard>
-                    </div>
-                    <div class="col-md-2">
-                        <FormCard>
-                            <Header>
-                                <label for="LightRequirement">Light Requirements</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@plant.LightRequirement" Name="LightRequirement">
-                                    @foreach (var item in lightRequirementCodes)
-                                        {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item.Key" checked="@(item.Key == plant.LightRequirement.ToString())" Value="@item.Key" />
-                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
-                                        </div>
-                                        }
-                                    <ValidationMessage For="@(() => plant.LightRequirement)" />
-                                </InputRadioGroup>
-                            </Body>
-                        </FormCard>
-                    </div>
-                     <div class="col-md-3">
-                        <FormCard>
-                            <Header>
-                                <label for="MoistureRequirement">Moisture Requirements</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@plant.MoistureRequirement" Name="MoistureRequirement">
-                                    @foreach (var item in moistureRequirementCodes)
-                                        {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item.Key" checked="@(item.Key == plant.MoistureRequirement.ToString())" Value="@item.Key" />
-                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
-                                        </div>
-                                        }
-                                    <ValidationMessage For="@(() => plant.MoistureRequirement)" />
-                                </InputRadioGroup>
-                            </Body>
-                        </FormCard>
-                    </div>
-                    <div class="col-md-2">
-                        <FormCard>
-                            <Header>
-                                <label for="type">Seeds viable for (yrs)</label>
-                            </Header>
-                            <Body>
-                                <InputNumber Class="form-control" @bind-Value="@plant.SeedViableForYears" Id="seed-viable-for-years" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Name)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
-                    <div class="col-12">
-                        <div class="modal-footer justify-content-between">
-                            <span>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                                <button type="button" class="btn btn-default" @onclick="@(() => ClosePage())">Cancel</button>
-                            </span>
+                        <div class="col-12">
+                            <label for="description">Description</label>
+                            <InputTextArea Class="form-control" Id="description" @bind-Value="@plant.Description" rows="3" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Description)" /></div>
                         </div>
-                    </div>
-                </EditForm>
+                        <div class="col-12">
+                            <label for="tip">Garden Tips</label>
+                            <InputTextArea Class="form-control" Id="tip" @bind-Value="@plant.GardenTip" rows="3" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.GardenTip)" /></div>
+                        </div>
+                        <div class="col-md-2">
+                            <FormCard>
+                                <Header>
+                                    <label for="Lifecyle">Lifecycle</label>
+                                </Header>
+                                <Body>
+                                    <InputRadioGroup @bind-Value="@plant.Lifecycle" Name="Lifecyle">
+                                        @foreach (var item in Enum.GetValues<PlantLifecycleEnum>().Where(p => p != PlantLifecycleEnum.Unspecified))
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item" Value="@item" />
+                                                <label class="form-check-label" for="@item">@(plantLifeCyclesCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                            </div>
+                                        }
+                                        <ValidationMessage For="@(() => plant.Lifecycle)" />
+                                    </InputRadioGroup>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-2">
+                            <FormCard>
+                                <Header>
+                                    <label for="Tolerances">Tolerances</label>
+                                </Header>
+                                <Body>
+                                    @foreach (var tolerance in GrowToleranceEnums)
+                                    {
+                                        <div class="form-check">
+                                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key"   />
+                                            <label class="form-check-label" for="@tolerance.EnumItem.Key">
+                                                @tolerance.EnumItem.Value
+                                            </label>
+                                        </div>
+                                    }
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-2">
+                            <FormCard>
+                                <Header>
+                                    <label for="LightRequirement">Light Requirements</label>
+                                </Header>
+                                <Body>
+                                    <InputRadioGroup @bind-Value="@plant.LightRequirement" Name="LightRequirement">
+                                        @foreach (var item in Enum.GetValues<LightRequirementEnum>().Where(p => p != LightRequirementEnum.Unspecified))
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item"  Value="@item" />
+                                                <label class="form-check-label" for="@item">@(lightRequirementCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                            </div>
+                                        }
+                                        <ValidationMessage For="@(() => plant.LightRequirement)" />
+                                    </InputRadioGroup>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-3">
+                            <FormCard>
+                                <Header>
+                                    <label for="MoistureRequirement">Moisture Requirements</label>
+                                </Header>
+                                <Body>
+                                    <InputRadioGroup @bind-Value="@plant.MoistureRequirement" Name="MoistureRequirement">
+                                        @foreach (var item in Enum.GetValues<MoistureRequirementEnum>().Where(p => p != MoistureRequirementEnum.Unspecified))
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item" Value="@item" />
+                                                <label class="form-check-label" for="@item">@(moistureRequirementCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                            </div>
+                                        }
+                                        <ValidationMessage For="@(() => plant.MoistureRequirement)" />
+                                    </InputRadioGroup>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-2">
+                            <FormCard>
+                                <Header>
+                                    <label for="type">Seeds viable for (yrs)</label>
+                                </Header>
+                                <Body>
+                                    <InputNumber Class="form-control" @bind-Value="@plant.SeedViableForYears" Id="seed-viable-for-years" />
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Name)" /></div>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-12">
+                            <div class="modal-footer justify-content-between">
+                                <span>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-default" @onclick="@(() => ClosePage())">Cancel</button>
+                                </span>
+                            </div>
+                        </div>
+                    </EditForm>
                 }
             </div>
         </article>
@@ -150,22 +168,30 @@
 
 
     protected IReadOnlyCollection<KeyValuePair<string, string>> plantLifeCyclesCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> plantTypeCodes { get; set; }
     protected IReadOnlyCollection<KeyValuePair<string, string>> lightRequirementCodes { get; set; }
     protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> growToleranceCodes { get; set; }
+    protected IReadOnlyCollection<KeyValuePair<string, string>> plantTypesCodes { get; set; }
+    public List<CheckableEnum> GrowToleranceEnums { get; set; } = new();
 
     private List<BreadcrumbLink> breacrumbLinks = new();
 
     protected override async Task OnInitializedAsync()
     {
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        plantLifeCyclesCodes = _verifyService.GetPlantLifecycleCodeList(true);
-        plantTypeCodes = _verifyService.GetPlantTypeCodeList(true);
-        lightRequirementCodes = _verifyService.GetLightRequirementCodeList(true);
-        moistureRequirementCodes = _verifyService.GetMoistureRequirementCodeList(true);
+        plantLifeCyclesCodes = _verifyService.GetCodeList<PlantLifecycleEnum>(true);
+        lightRequirementCodes = _verifyService.GetCodeList<LightRequirementEnum>(true);
+        moistureRequirementCodes = _verifyService.GetCodeList<MoistureRequirementEnum>(true);
+        growToleranceCodes = _verifyService.GetCodeList<GrowToleranceEnum>(true);
+        plantTypesCodes = _verifyService.GetCodeList<PlantTypeEnum>(true);
+
+        foreach (var code in growToleranceCodes)
+        {
+            GrowToleranceEnums.Add(new CheckableEnum(code));
+        }
 
         if (string.IsNullOrEmpty(PlantId))
-        {            
+        {
             breacrumbLinks.Add(new BreadcrumbLink("Add Plant", _navigationManager.GetCreatePlantUrl(), true));
             plant = new PlantModel();
             plant.Color = _plantService.GetRandomPlantColor();
@@ -185,6 +211,9 @@
             else
             {
                 breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetEditPlantUrl(PlantId), true));
+
+                GrowToleranceEnums.ForEach(item => item.IsSelected = plant.GrowTolerance.HasFlag(Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key)));
+
                 isEdit = true;
                 title = $"Edit {plant.Name}";
                 description = $"";
@@ -204,6 +233,18 @@
     {
         _logger.Log(LogLevel.Information, "Plant Form passed validations");
         customValidation?.ClearErrors();
+
+        foreach (var item in GrowToleranceEnums)
+        {
+            if (item.IsSelected)
+            {
+                plant.GrowTolerance |= Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key);
+            }
+            else
+            {
+                plant.GrowTolerance &= ~Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key);
+            }
+        }
 
         ApiResponse response = (isEdit) ? await _plantService.UpdatePlant(plant) : await _plantService.CreatePlant(plant);
 

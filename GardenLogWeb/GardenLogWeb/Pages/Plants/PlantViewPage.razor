@@ -27,15 +27,15 @@
                         <dl class="plant-facts_list row mt-2 mt-lg-0">
                             <div class="plant-facts-item row mt-1">
                                 <dt class="plant-facts_term  col-sm-4">Sun Requirements</dt>
-                                <dd class="plant-facts_definition col">@_verifyService.GetLightRequirementDescription(Plant.LightRequirement.ToString())</dd>
+                                <dd class="plant-facts_definition col">@(_verifyService.GetDescription<LightRequirementEnum>(Plant.LightRequirement.ToString()))</dd>
                             </div>
                             <div class="plant-facts-item row mt-1">
                                 <dt class="plant-facts_term  col-sm-4">Lifecycle</dt>
-                                <dd class="plant-facts_definition col">@_verifyService.GetPlantLifecycleDescription(Plant.Lifecycle.ToString())</dd>
+                                <dd class="plant-facts_definition col">@(_verifyService.GetDescription<PlantLifecycleEnum>(Plant.Lifecycle.ToString()))</dd>
                             </div>
                             <div class="plant-facts-item row mt-1">
                                 <dt class="plant-facts_term  col-sm-4">Type</dt>
-                                <dd class="plant-facts_definition col">@_verifyService.GetPlantTypeDescription(Plant.Type.ToString())</dd>
+                                <dd class="plant-facts_definition col">@(_verifyService.GetDescription<PlantTypeEnum>(Plant.Type.ToString()))</dd>
                             </div>
                             <div class="plant-facts-item row mt-1">
                                 <dt class="plant-facts_term  col-sm-4">Seed Viability (yrs)</dt>

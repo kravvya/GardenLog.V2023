@@ -88,8 +88,8 @@
         this.plant = plant;
         this.plantVariety = plantVariety;
 
-        lightRequirementCodes = _verifyService.GetLightRequirementCodeList();
-        moistureRequirementCodes = _verifyService.GetMoistureRequirementCodeList();
+        lightRequirementCodes = _verifyService.GetCodeList < LightRequirementEnum>();
+        moistureRequirementCodes = _verifyService.GetCodeList < MoistureRequirementEnum>();
 
         isInitialized = true;
         StateHasChanged();

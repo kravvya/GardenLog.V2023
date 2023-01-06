@@ -1,35 +1,12 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using GardenLogWeb.Shared.Services;
+﻿using System.Reflection;
 
 namespace GardenLogWeb.Services;
 
 public interface IVerifyService
 {
-    IReadOnlyCollection<KeyValuePair<string, string>> GetHarvestSeasonCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetHarvestSeasonCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetLightRequirementCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetLightRequirementCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetMoistureRequirementCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetMoistureRequirementCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingDepthCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingDepthCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingMethodCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingMethodCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantLifecycleCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantLifecycleCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantTypeCodeList();
-    IReadOnlyCollection<KeyValuePair<string, string>> GetPlantTypeCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetWeatherConditionCodeList(bool excludeDefault);
-    IReadOnlyCollection<KeyValuePair<string, string>> GetWeatherConditionCodeList();
-    string GetHarvestDescription(string key);
-    string GetWeatherConditionDescription(string key);
-    string GetPlantingMethodDescription(string key);
-    string GetPlantingDepthDescription(string key);
-    string GetMoistureRequirementDescription(string key);
-    string GetLightRequirementDescription(string key);
-    string GetPlantTypeDescription(string key);
-    string GetPlantLifecycleDescription(string key);
+    IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>(bool excludeDefault) where TENUM : Enum;
+    IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>() where TENUM : Enum;
+    string GetDescription<TENUM>(string key) where TENUM : Enum;
 }
 
 public class VerifyService : IVerifyService
@@ -42,116 +19,19 @@ public class VerifyService : IVerifyService
         _cacheService = cacheService;
     }
 
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantLifecycleCodeList(bool excludeDefault)
+    public IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>(bool excludeDefault) where TENUM: Enum
     {
-        return GetEnumList(typeof(PlantLifecycleEnum), excludeDefault);
+        return GetEnumList(typeof(TENUM), excludeDefault);
     }
 
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantLifecycleCodeList()
+    public IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>() where TENUM : Enum
     {
-        return GetEnumList(typeof(PlantLifecycleEnum));
+        return GetEnumList(typeof(TENUM));
     }
 
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantTypeCodeList(bool excludeDefault)
+    public string GetDescription<TENUM>(string key) where TENUM: Enum
     {
-        return GetEnumList(typeof(PlantTypeEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantTypeCodeList()
-    {
-        return GetEnumList(typeof(PlantTypeEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetLightRequirementCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(LightRequirementEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetLightRequirementCodeList()
-    {
-        return GetEnumList(typeof(LightRequirementEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetMoistureRequirementCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(MoistureRequirementEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetMoistureRequirementCodeList()
-    {
-        return GetEnumList(typeof(MoistureRequirementEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingDepthCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(PlantingDepthEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingDepthCodeList()
-    {
-        return GetEnumList(typeof(PlantingDepthEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingMethodCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(PlantingMethodEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetPlantingMethodCodeList()
-    {
-        return GetEnumList(typeof(PlantingMethodEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetWeatherConditionCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(WeatherConditionEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetWeatherConditionCodeList()
-    {
-        return GetEnumList(typeof(WeatherConditionEnum));
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetHarvestSeasonCodeList(bool excludeDefault)
-    {
-        return GetEnumList(typeof(HarvestSeasonEnum), excludeDefault);
-    }
-
-    public IReadOnlyCollection<KeyValuePair<string, string>> GetHarvestSeasonCodeList()
-    {
-        return GetEnumList(typeof(HarvestSeasonEnum));
-    }
-    public string GetLightRequirementDescription(string key)
-    {
-        return this.GetLightRequirementCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetMoistureRequirementDescription(string key)
-    {
-        return this.GetMoistureRequirementCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetPlantingDepthDescription(string key)
-    {
-        return this.GetPlantingDepthCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetPlantingMethodDescription(string key)
-    {
-        return this.GetPlantingMethodCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetWeatherConditionDescription(string key)
-    {
-        return this.GetWeatherConditionCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetHarvestDescription(string key)
-    {
-        return this.GetHarvestSeasonCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetPlantTypeDescription(string key)
-    {
-        return this.GetPlantTypeCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
-    }
-    public string GetPlantLifecycleDescription(string key)
-    {
-        return this.GetPlantLifecycleCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
+        return this.GetCodeList<TENUM>().FirstOrDefault(l => l.Key.Equals(key))!.Value;
     }
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType)

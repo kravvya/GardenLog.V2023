@@ -62,7 +62,8 @@ try
                     {
                         policy.WithOrigins("https://kravvya.github.io",
                             "https://localhost:7014")
-                                .WithMethods("PUT", "DELETE", "GET", "POST");
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
                     });
     });
 

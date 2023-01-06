@@ -1,8 +1,10 @@
 using Blazored.Toast;
 using GardenLogWeb;
+using FluentValidation;
 using GardenLogWeb.Shared.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using PlantCatalog.Contract.Validators;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,7 +22,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IVerifyService, VerifyService>();
 builder.Services.AddScoped<IGardenService, GardenService>();
 
-
+builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<IGardenLogToastService, GardenLogToastService>();
 
 string serviceUrl = "";
@@ -35,8 +37,7 @@ else
 
 builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));
 
-//todo Research validators
-//builder.Services.AddValidatorsFromAssemblyContaining<PlantModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<PlantModelValidator>();
 
 builder.Services.AddBlazoredToast();
 

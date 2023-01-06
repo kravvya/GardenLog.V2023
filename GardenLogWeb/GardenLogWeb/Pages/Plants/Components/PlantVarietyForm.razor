@@ -149,8 +149,8 @@
             isEdit = true;
 
         }
-        lightRequirementCodes = _verifyService.GetLightRequirementCodeList();
-        moistureRequirementCodes = _verifyService.GetMoistureRequirementCodeList();
+        lightRequirementCodes = _verifyService.GetCodeList < LightRequirementEnum>();
+        moistureRequirementCodes = _verifyService.GetCodeList < MoistureRequirementEnum>();
         editContext = new(this.plantVariety);
         editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
         isInitialized = true;
