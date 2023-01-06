@@ -1,11 +1,20 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GardenLogWeb.Shared.Extensions;
 
 public static class HttpClientExtensions
 {
+    public static readonly JsonSerializerOptions OPTIONS =  new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
+    static HttpClientExtensions()
+    {
+        OPTIONS.Converters.Add(new JsonStringEnumConverter());
+    }
+
     public static async Task<ApiObjectResponse<TObject>> ApiGetAsync<TObject>(this HttpClient httpClient, string requestUri)
         where TObject : new()
     {
@@ -73,7 +82,7 @@ public static class HttpClientExtensions
 
         if (result.IsSuccessStatusCode && !typeof(TObject).ToString().Equals("System.String"))
         {
-            response.Response = await result.Content.ReadFromJsonAsync<TObject>();
+            response.Response = await result.Content.ReadFromJsonAsync<TObject>(OPTIONS);
         }
         else if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {

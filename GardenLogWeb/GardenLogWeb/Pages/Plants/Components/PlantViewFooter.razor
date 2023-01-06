@@ -8,17 +8,12 @@
         </Body>
     </ModalView>
 
-    <div>
-        <button type="button" class="btn btn-danger" @onclick="@(() => OnAddVariety())">
-            <span aria-hidden="true"></span> Add Variety
-        </button>
-        <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantImage())">
-            <span class="oi oi-image" aria-hidden="true"></span> Add Image
-        </button>
-        <button type="button" class="btn btn-danger" @onclick="@(() => OnEdit())">
-            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
-        </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => Close())">Close</button>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-primary" title="Edit Plant"  @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
+        <button type="button" class="btn btn-secondary" title="Add Variety" @onclick="@(() => OnAddVariety())"><span class="bi bi-flower1">&nbsp;</span></button>
+        <button type="button" class="btn btn-secondary" title="Add Growing Instruction" ><span class="bi bi-journals">&nbsp;</span></button>
+        <button type="button" class="btn btn-info" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+        <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => Close())"><span class="bi bi-x-circle">&nbsp;</span></button>
     </div>
 
 }

@@ -20,7 +20,7 @@
                             </label>
                         </div>
                     }
-                    <a id="clear-lifecycle" onclick=@(() => Clear(_filter.PlantLifecycleEnums))>Clear</a>
+                    <a id="clear-lifecycle" role='button' onclick=@(() => Clear(_filter.PlantLifecycleEnums))>Clear</a>
                 </div>
                 <div id="type-filter" class="my-3 mx-1">
                     <h5 class="text-uppercase text-primary">Type</h5>
@@ -33,7 +33,7 @@
                             </label>
                         </div>
                     }
-                    <a  id="clear-type" onclick=@(() => Clear(_filter.PlantTypeEnums))>Clear</a>
+                    <a id="clear-type" role='button' onclick=@(() => Clear(_filter.PlantTypeEnums))>Clear</a>
                 </div>
                 <div id="light-filter" class="my-3 mx-1">
                     <h5 class="text-uppercase text-primary">Conditions</h5>
@@ -46,7 +46,7 @@
                             </label>
                         </div>
                     }
-                    <a id="clear-light" onclick=@(() => Clear(_filter.MoistureRequirementEnums))>Clear</a>
+                    <a id="clear-light" role='button' onclick=@(() => Clear(_filter.LightRequirementEnums))>Clear</a>
                 </div>
                 <div id="light-filter" class="my-3 mx-1">
                     <h5 class="text-uppercase text-primary">Watering</h5>
@@ -59,7 +59,7 @@
                             </label>
                         </div>
                     }
-                    <a id="clear-light" onclick=@(() => Clear(_filter.LightRequirementEnums))>Clear</a>
+                    <a id="clear-moisture" role='button' onclick=@(() => Clear(_filter.MoistureRequirementEnums))>Clear</a>
                 </div>
             </div>
         </EditForm>
@@ -80,7 +80,8 @@
                         <div class="p-2"><img src="./images/Berry.png" alt="Berry" title="Berry" class="img-fluid" /><br />Berry</div>
                         <div class="pt-3 ps-2"><img src="./images/Perennial.png" alt="Perennial" title="Perennial" class="img-fluid"><br />Perennial</div>
                         <div class="pt-3 ps-2"><img src="./images/Biennial.png" alt="Biennial" title="Biennial" class="img-fluid"><br />Biennial</div>
-                        <div class="pt-3 ps-2"><img src="./images/Annual.png" alt="Annual" title="Annual" class="img-fluid"><br />Annual</div>
+                        <div class="pt-3 ps-2"><img src="./images/Cool.png" alt="Cool Annual" title="Cool Annual" class="img-fluid"><br />Cool Annual</div>
+                        <div class="pt-3 ps-2"><img src="./images/Warm.png" alt="Warm Annaual" title="Warm Annual" class="img-fluid"><br />Warm Annual</div>
                     </div>
                 </div>
 
@@ -111,13 +112,13 @@
                                     if (IsVisible(plant))
                                     {
                                         <tr style="border-width: 2px; border-color: @(plant.Color);" @key="plant.PlantId">
-                                            <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.Name</span></a></td>
-                                            <td class="col-1"><img src="./images/@(plant.LightRequirement).png" alt="plant.LightRequirement" title="plant.LightRequirement" class="img-fluid" /></td>
+                                            <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><span class="lead fw-bold">@plant.Name</span></a></td>
+                                            <td class="col-1"><img src="./images/@(plant.LightRequirement).png" alt="@plant.LightRequirement" title="@plant.LightRequirement" class="img-fluid" /></td>
                                             <td class="col-1"><img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" /><img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid"></td>
                                             <td class="col-2 text-start">
                                                 <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
-                                                <span class="fw-bold" >Varieties:</span> @plant.VarietyCount<br />
-                                                <span class="fw-bold" >Instructions: </span>@plant.GrowCount
+                                                <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
+                                                <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowCount)
                                             </td>
                                             <td class="col-3">
                                                 <button type="button" class="btn btn-outline-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
@@ -147,17 +148,17 @@
                                 <div class="col-sm-6">
                                     <div class="card bg-light mb-2" style="border-color:  @(plant.Color);">
                                         <div class="card-header" style="background-color:  @(plant.Color);">
-                                            <a @onclick=@(() => ViewPlant(plant)) class="text-dark"><span class="lead fw-bold">@plant.Name</span></a>
+                                            <a @onclick=@(() => ViewPlant(plant)) class="text-dark" role='button'><span class="lead fw-bold">@plant.Name</span></a>
                                         </div>
                                         <div class="card-body row">
                                             <div class="col">
                                                 <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
-                                                <span class="fw-bold" >Varieties:</span> @plant.VarietyCount<br />
-                                                <span class="fw-bold" >Instructions: </span>@plant.GrowCount
+                                                <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
+                                                <span class="fw-bold" >Instructions:</span>@DoNotDisplayZero(plant.GrowCount)
                                             </div>
 
                                             <div class="col">
-                                                <img src="./images/@(plant.LightRequirement).png" alt="plant.LightRequirement" title="plant.LightRequirement" class="img-fluid" />
+                                                <img src="./images/@(plant.LightRequirement).png" alt="@plant.LightRequirement" title="@plant.LightRequirement" class="img-fluid" />
                                                 <img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" />
                                                 <img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid">
                                             </div>
@@ -194,16 +195,16 @@
 
     public bool IsVisible(PlantModel plant)
     {
-        if (_filter.LightRequirementEnums.Exists(cb => cb.IsSelected) && !_filter.LightRequirementEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.LightRequirement)))
+        if (_filter.LightRequirementEnums.Exists(cb => cb.IsSelected) && !_filter.LightRequirementEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.LightRequirement.ToString())))
             return false;
 
-        if (_filter.PlantTypeEnums.Exists(cb => cb.IsSelected) && !_filter.PlantTypeEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.Type)))
+        if (_filter.PlantTypeEnums.Exists(cb => cb.IsSelected) && !_filter.PlantTypeEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.Type.ToString())))
             return false;
 
-        if (_filter.PlantLifecycleEnums.Exists(cb => cb.IsSelected) && !_filter.PlantLifecycleEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.Lifecycle)))
+        if (_filter.PlantLifecycleEnums.Exists(cb => cb.IsSelected) && !_filter.PlantLifecycleEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.Lifecycle.ToString())))
             return false;
 
-        if (_filter.MoistureRequirementEnums.Exists(cb => cb.IsSelected) && !_filter.MoistureRequirementEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.MoistureRequirement)))
+        if (_filter.MoistureRequirementEnums.Exists(cb => cb.IsSelected) && !_filter.MoistureRequirementEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.MoistureRequirement.ToString())))
             return false;
 
         return true;
@@ -212,6 +213,12 @@
     public string GetDescription(List<CheckableEnum> list, string code)
     {
         return list.FirstOrDefault(c => c.EnumItem.Key.Equals(code))?.EnumItem.Value;
+    }
+
+    public string DoNotDisplayZero(int count)
+    {
+        var response = count > 0 ? count.ToString() : string.Empty;
+        return response;
     }
 
     public void Clear(List<CheckableEnum> options)

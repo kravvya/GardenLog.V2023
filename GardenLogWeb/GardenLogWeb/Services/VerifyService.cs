@@ -28,6 +28,8 @@ public interface IVerifyService
     string GetPlantingDepthDescription(string key);
     string GetMoistureRequirementDescription(string key);
     string GetLightRequirementDescription(string key);
+    string GetPlantTypeDescription(string key);
+    string GetPlantLifecycleDescription(string key);
 }
 
 public class VerifyService : IVerifyService
@@ -143,12 +145,19 @@ public class VerifyService : IVerifyService
     {
         return this.GetHarvestSeasonCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
     }
+    public string GetPlantTypeDescription(string key)
+    {
+        return this.GetPlantTypeCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
+    }
+    public string GetPlantLifecycleDescription(string key)
+    {
+        return this.GetPlantLifecycleCodeList().FirstOrDefault(l => l.Key.Equals(key))!.Value;
+    }
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType)
     {
         return GetEnumList(genericEnumType, false);
     }
-
 
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType, bool excludeDefault)
@@ -190,111 +199,3 @@ public class VerifyService : IVerifyService
     }
 }
 
-public enum HarvestSeasonEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Spring")]
-    Spring = 1,
-    [Description("Early Summer")]
-    EarlySummer = 2,
-    [Description("Summer")]
-    Summer = 3,
-    [Description("Fall")]
-    Fall = 4,
-    [Description("Late Fall")]
-    LateFall = 5
-}
-
-public enum LightRequirementEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Full Shade")]
-    FullShade = 1,
-    [Description("Part Shade")]
-    PartShade = 2,
-    [Description("Full Sun")]
-    FullSun = 3
-}
-public enum MoistureRequirementEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Drout Tolerant")]
-    DroutTolerant = 1,
-    [Description("At least 1in per week")]
-    InchPerWeek = 2,
-    [Description("1 to 2 in per week")]
-    TwoInchPerWeek = 3,
-    [Description("Consistent Moisture")]
-    ConsistentMoisture = 4
-
-}
-public enum PlantingDepthEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("On Surface")]
-    Surface = 1,
-    [Description("1/16 in")]
-    Depth16th = 2,
-    [Description("1/8 in")]
-    Depth8th = 3,
-    [Description("1/4 in")]
-    Depth4th = 4,
-    [Description("1/2 in")]
-    Depth2 = 5,
-    [Description("1 in")]
-    Depth1 = 6
-}
-public enum PlantingMethodEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Direct Seed")]
-    DirectSeed = 1,
-    [Description("Start Indoors")]
-    SeedIndoors = 2
-
-}
-public enum PlantLifecycleEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Annual")]
-    Annual = 1,
-    [Description("Biennial")]
-    Biennial = 2,
-    [Description("Perennial")]
-    Perennial = 3
-}
-public enum PlantTypeEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Vegetable")]
-    Vegetable = 1,
-    [Description("Berry")]
-    Berry = 2,
-    [Description("Flower")]
-    Flower = 3,
-    [Description("Herb")]
-    Herb = 4
-}
-public enum WeatherConditionEnum : int
-{
-    [Description("Unspecified")]
-    Unspecified = 0,
-    [Description("Before last frost")]
-    BeforeLastFrost = 1,
-    [Description("Before first frost")]
-    BeforeFirstFrost = 2,
-    [Description("In Early Spring")]
-    EarlySpring = 3,
-    [Description("In Warm Soil")]
-    WarmSoil = 4,
-    [Description("After danger of frost")]
-    AfterDangerOfFrost = 5,
-    MidSummer = 6
-}

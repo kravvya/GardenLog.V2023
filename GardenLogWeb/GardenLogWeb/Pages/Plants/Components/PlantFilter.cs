@@ -1,4 +1,6 @@
-﻿namespace GardenLogWeb.Pages.Plants.Components;
+﻿
+
+namespace GardenLogWeb.Pages.Plants.Components;
 
 public class PlantFilter
 {
@@ -7,6 +9,8 @@ public class PlantFilter
     public List<CheckableEnum> PlantTypeEnums { get; set; } = new();
     public List<CheckableEnum> LightRequirementEnums { get; set; } = new();
     public List<CheckableEnum> MoistureRequirementEnums { get; set; } = new();
+
+    public PlantLifecycleEnum PlantLifecycle { get; set; }
 
     public PlantFilter(IVerifyService verifyService)
     {

@@ -55,6 +55,17 @@ try
     builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();
     builder.Services.AddScoped<IPlantQueryHandler, PlantQueryHandler>();
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: "glWebPolicy",
+                    policy =>
+                    {
+                        policy.WithOrigins("https://kravvya.github.io",
+                            "https://localhost:7014")
+                                .WithMethods("PUT", "DELETE", "GET", "POST");
+                    });
+    });
+
     //TODO Add Healthchecks!!!!
 
     var app = builder.Build();
@@ -70,6 +81,8 @@ try
     //app.UseHttpsRedirection();
 
     app.UseAuthorization();
+
+    app.UseCors("glWebPolicy");
 
     app.MapControllers();
 

@@ -6,9 +6,9 @@ public enum PlantLifecycleEnum: int
 {
     [Description("Unspecified")]
     Unspecified = 0,
-    [Description("Cool")]
+    [Description("Cool Annual")]
     Cool = 1,
-    [Description("Warm")]
+    [Description("Warm Annual")]
     Warm = 2,
     [Description("Biennial")]
     Biennial = 3,
