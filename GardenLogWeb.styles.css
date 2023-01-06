@@ -101,3 +101,12 @@ svg .bbox-handle[b-8fnu6zxx74] {
         right: 4px;
         top: 20px
     }
+/* /Pages/Plants/PlantViewPage.razor.rz.scp.css */
+.plant-facts_list .plant-facts_term[b-cuaxitcr2w] {
+    color: #709a41;
+    text-transform: uppercase;
+}
+
+.plant-facts_list .plant-facts-item[b-cuaxitcr2w] {
+    border-bottom: 2px solid #c5c5c5;
+}
