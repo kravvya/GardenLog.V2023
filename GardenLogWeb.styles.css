@@ -103,6 +103,49 @@ svg .bbox-handle[b-8fnu6zxx74] {
         right: 4px;
         top: 20px
     }
+/* /Pages/Plants/PlantFormPage.razor.rz.scp.css */
+.tags[b-xqtb7n7hnk] {
+    border: 1px solid #709a41;
+    box-sizing: border-box;
+    padding: 0em 0.5em;
+    display: -webkit-box;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: inherit;
+    border-radius: 5px;
+}
+
+    .tags > ul[b-xqtb7n7hnk] {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .tags ul li[b-xqtb7n7hnk] {
+        margin: 0.5em 0.2em;
+        padding: 0.5em;
+        color: white;
+        background-color: #709a41;
+        border-radius: 5px;
+    }
+    .tags ul li a[b-xqtb7n7hnk] {
+        padding: 0.5em;
+    }
+
+    .tags input[b-xqtb7n7hnk] {
+        padding: 0.9em 0.5em;
+        box-sizing: border-box;
+        -webkit-box-flex: 1;
+        flex-grow: 1;
+        border: none;
+        outline: none;
+        font-size: inherit;
+        font-family: inherit;
+        color: inherit;
+        overflow: visible;
+    }
 /* /Pages/Plants/PlantViewPage.razor.rz.scp.css */
 .plant-facts_list .plant-facts_term[b-cuaxitcr2w] {
     color: #709a41;
