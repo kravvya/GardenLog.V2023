@@ -13,13 +13,29 @@ public class Plant : BaseEntity, IAggregateRoot
     public string GardenTip { get; private set; }
     public int? SeedViableForYears { get; private set; }
 
+    private readonly List<string> _tags = new();
+    public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
+
     private readonly List<GrowInstruction> _growingInstructions = new();
     public IReadOnlyCollection<GrowInstruction> GrowingInstructions => _growingInstructions.AsReadOnly();
 
-    private readonly List<PlantSubGroup> _subGroups= new();
-    public IReadOnlyCollection<PlantSubGroup> SubGroups => _subGroups.AsReadOnly();
-
     private Plant() { }
+
+    private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement, LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears, List<string> Tags)//, List<GrowInstruction> GrowingInstructions)
+    {
+        this.Name = Name;
+        this.Description = Description;
+        this.Color = Color;
+        this.Lifecycle = Lifecycle;
+        this.Type = Type;
+        this.MoistureRequirement = MoistureRequirement;
+        this.LightRequirement = LightRequirement;
+        this.GrowTolerance = GrowTolerance;
+        this.GardenTip = GardenTip;
+        this.SeedViableForYears = SeedViableForYears;
+        _tags = Tags;
+       // _growingInstructions= GrowingInstructions;
+    }
 
     public static Plant Create(
         string name,
@@ -31,7 +47,8 @@ public class Plant : BaseEntity, IAggregateRoot
         LightRequirementEnum lightRequirement,
         GrowToleranceEnum growTolerance,
         string gardenTip,
-        int? seedViableForYears
+        int? seedViableForYears,
+        IList<string> tags
         )
     {
         var plant = new Plant()
@@ -48,6 +65,8 @@ public class Plant : BaseEntity, IAggregateRoot
             GardenTip = gardenTip,
             SeedViableForYears = seedViableForYears
         };
+
+        plant._tags.AddRange(tags);
 
         plant.DomainEvents.Add(
             new PlantEvent(plant, PlantEventTriggerEnum.PlantCreated, new TriggerEntity(EntityTypeEnum.Plant, plant.Id)));
@@ -66,7 +85,8 @@ public class Plant : BaseEntity, IAggregateRoot
         LightRequirementEnum lightRequirement,
         GrowToleranceEnum growTolerance,
         string gardenTip,
-        int? seedViableForYears)
+        int? seedViableForYears,
+        List<string> tags)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Description = description ?? throw new ArgumentNullException(nameof(description));
@@ -78,6 +98,17 @@ public class Plant : BaseEntity, IAggregateRoot
         GrowTolerance = growTolerance;
         GardenTip = gardenTip;
         SeedViableForYears = seedViableForYears;
+
+        var elementsToRemove = this._tags.Where(t => !tags.Contains(t));
+        if(elementsToRemove.Any())
+        {
+            //logic to do something in case if tags are in us
+            this._tags.RemoveAll(t => elementsToRemove.Contains(t));
+        }
+
+         tags.RemoveAll(t => this._tags.Contains(t));
+
+        this._tags.AddRange(tags);
 
         this.DomainEvents.Add(
            new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new TriggerEntity(EntityTypeEnum.Plant, this.Id)));

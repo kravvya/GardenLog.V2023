@@ -9,6 +9,9 @@ using MongoDB.Driver.Linq;
 using PlantCatalog.Contract.Base;
 using PlantCatalog.Contract.ViewModels;
 using PlantCatalog.Domain.PlantAggregate;
+using System.Drawing;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace PlantCatalog.Infrustructure.Data;
 
@@ -45,7 +48,7 @@ public class PlantDBContext : IMongoDBContext<Plant>
 
         MongoUrlBuilder bldr = new MongoUrlBuilder();
         bldr.Scheme = MongoDB.Driver.Core.Configuration.ConnectionStringScheme.MongoDBPlusSrv;
-        bldr.UseTls= true;
+        bldr.UseTls = true;
         bldr.Server = new MongoServerAddress(_settings.Server);
         bldr.Username = _settings.UserName;
         bldr.Password = _settings.Password;
@@ -67,7 +70,7 @@ public class PlantDBContext : IMongoDBContext<Plant>
 
         BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
     }
-    
+
     private void OnModelCreating()
     {
         BsonClassMap.RegisterClassMap<Plant>(p =>
@@ -83,8 +86,13 @@ public class PlantDBContext : IMongoDBContext<Plant>
             p.MapMember(m => m.Type).SetSerializer(new EnumSerializer<PlantTypeEnum>(BsonType.String));
             p.MapMember(m => m.MoistureRequirement).SetSerializer(new EnumSerializer<MoistureRequirementEnum>(BsonType.String));
             p.MapMember(m => m.LightRequirement).SetSerializer(new EnumSerializer<LightRequirementEnum>(BsonType.String));
-           // p.MapMember(m => m.GrowTolerance).SetSerializer(new EnumSerializer<GrowToleranceEnum>(BsonType.String));
+            // p.MapMember(m => m.GrowTolerance).SetSerializer(new EnumSerializer<GrowToleranceEnum>(BsonType.String));
             p.MapMember(m => m.GrowTolerance).SetSerializer(new EnumToStringArraySerializer<GrowToleranceEnum>());
+            p.MapProperty(m => m.Tags);
+
+            var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+            var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
+            p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id" && c.Name != "GrowingInstructions").Select(c => c.Name).ToArray());
 
         });
 
@@ -96,26 +104,26 @@ public class PlantDBContext : IMongoDBContext<Plant>
             p.UnmapMember(m => m.DomainEvents);
         });
 
-       BsonClassMap.RegisterClassMap<GrowInstruction>(g =>
-        {
-            g.AutoMap();
-            g.SetIgnoreExtraElements(true);
-            g.MapMember(m => m.PlantingDepthInInches).SetSerializer(new EnumSerializer<PlantingDepthEnum>(BsonType.String));
-            g.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
-            g.MapMember(m => m.StartSeedAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
-            g.MapMember(m => m.HarvestSeason).SetSerializer(new EnumSerializer<HarvestSeasonEnum>(BsonType.String));
-            g.MapMember(m => m.TransplantAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
-            g.MapMember(m => m.FertilizerAtPlanting).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
-            g.MapMember(m => m.Fertilizer).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
+        BsonClassMap.RegisterClassMap<GrowInstruction>(g =>
+         {
+             g.AutoMap();
+             g.SetIgnoreExtraElements(true);
+             g.MapMember(m => m.PlantingDepthInInches).SetSerializer(new EnumSerializer<PlantingDepthEnum>(BsonType.String));
+             g.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
+             g.MapMember(m => m.StartSeedAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
+             g.MapMember(m => m.HarvestSeason).SetSerializer(new EnumSerializer<HarvestSeasonEnum>(BsonType.String));
+             g.MapMember(m => m.TransplantAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
+             g.MapMember(m => m.FertilizerAtPlanting).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
+             g.MapMember(m => m.Fertilizer).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
 
 
-        });
+         });
 
         BsonClassMap.RegisterClassMap<PlantBase>(p =>
         {
             p.AutoMap();
             //ignore elements not in the document 
-            p.SetIgnoreExtraElements(true);            
+            p.SetIgnoreExtraElements(true);
             p.MapMember(m => m.Lifecycle).SetSerializer(new EnumSerializer<PlantLifecycleEnum>(BsonType.String));
             p.MapMember(m => m.Type).SetSerializer(new EnumSerializer<PlantTypeEnum>(BsonType.String));
             p.MapMember(m => m.MoistureRequirement).SetSerializer(new EnumSerializer<MoistureRequirementEnum>(BsonType.String));
@@ -149,6 +157,6 @@ public class PlantDBContext : IMongoDBContext<Plant>
             await Session.CommitTransactionAsync();
         }
 
-        return commands.Count;;
+        return commands.Count; ;
     }
 }

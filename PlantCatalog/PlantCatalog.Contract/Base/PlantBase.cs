@@ -1,4 +1,6 @@
-﻿namespace PlantCatalog.Contract.Base;
+﻿using System.ComponentModel;
+
+namespace PlantCatalog.Contract.Base;
 
 
 public abstract record PlantBase
@@ -23,5 +25,7 @@ public abstract record PlantBase
     public string GardenTip { get; set; }
 
     public int? SeedViableForYears { get; set; }
+
+    public List<string> Tags { get; set; } = new();
 
 }

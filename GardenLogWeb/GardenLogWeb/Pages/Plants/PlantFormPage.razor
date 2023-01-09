@@ -79,7 +79,7 @@
                                     @foreach (var tolerance in GrowToleranceEnums)
                                     {
                                         <div class="form-check">
-                                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key"   />
+                                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key" />
                                             <label class="form-check-label" for="@tolerance.EnumItem.Key">
                                                 @tolerance.EnumItem.Value
                                             </label>
@@ -98,7 +98,7 @@
                                         @foreach (var item in Enum.GetValues<LightRequirementEnum>().Where(p => p != LightRequirementEnum.Unspecified))
                                         {
                                             <div class="form-check form-check-inline">
-                                                <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item"  Value="@item" />
+                                                <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item" Value="@item" />
                                                 <label class="form-check-label" for="@item">@(lightRequirementCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
                                             </div>
                                         }
@@ -129,11 +129,29 @@
                         <div class="col-md-2">
                             <FormCard>
                                 <Header>
-                                    <label for="type">Seeds viable for (yrs)</label>
+                                    <label for="seed-viable-for-years">Seeds viable for (yrs)</label>
                                 </Header>
                                 <Body>
                                     <InputNumber Class="form-control" @bind-Value="@plant.SeedViableForYears" Id="seed-viable-for-years" />
                                     <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Name)" /></div>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-10">
+                            <FormCard>
+                                <Header>
+                                    <label for="type">Plant Characteristics</label>
+                                </Header>
+                                <Body>
+                                    <div class="tags" role="group" aria-label="Plant Characteristics">
+                                        <ul Id="plant-characteristics-tags">
+                                            @foreach (var tag in plant.Tags)
+                                            {
+                                                <li style="background-color:@plant.Color">@tag<a role='button' onclick=@(() => RemoveTag(tag))>×</a></li>
+                                            }
+                                        </ul>
+                                        <input @bind:get="newTag" @bind:set="OnTagInput" @ref="inputTag" />
+                                    </div>
                                 </Body>
                             </FormCard>
                         </div>
@@ -160,6 +178,9 @@
     private PlantModel plant { get; set; }
     private string title { get; set; }
     private string description { get; set; }
+
+    private ElementReference inputTag;
+    private string newTag = string.Empty;
 
     private bool IsInitialized = false;
     private bool isEdit = false;
@@ -227,7 +248,17 @@
         StateHasChanged();
     }
 
-
+    private void OnTagInput(string value)
+    {
+        plant.Tags.Add(value.Trim());
+        newTag = string.Empty;
+        inputTag.FocusAsync();
+    }
+    private void RemoveTag(string tag)
+    {
+        plant.Tags.RemoveAll(t => t == tag);
+        StateHasChanged();
+    }
 
     protected async Task HandleValidSubmit()
     {

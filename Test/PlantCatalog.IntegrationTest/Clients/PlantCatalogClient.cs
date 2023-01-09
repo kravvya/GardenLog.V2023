@@ -75,7 +75,8 @@ namespace PlantCatalog.IntegrationTest.Clients
                 MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroutTolerant,
                 Name = name,
                 SeedViableForYears = 10,
-                Type = Contract.Enum.PlantTypeEnum.Vegetable
+                Type = Contract.Enum.PlantTypeEnum.Vegetable,
+                Tags= new List<string>() { "Bush", "Pole"}
 
             };
         }

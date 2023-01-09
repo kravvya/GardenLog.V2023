@@ -41,7 +41,8 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.LightRequirement,
             request.GrowTolerance,
             request.GardenTip,
-            request.SeedViableForYears);
+            request.SeedViableForYears,
+            request.Tags);
 
         _plantRepository.Add(plant);
 
@@ -71,7 +72,8 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.LightRequirement,
             request.GrowTolerance,
             request.GardenTip,
-            request.SeedViableForYears);
+            request.SeedViableForYears,
+            request.Tags);
 
         _plantRepository.Update(plant);
 
