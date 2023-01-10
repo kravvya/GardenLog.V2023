@@ -1,12 +1,8 @@
 ﻿using GardenLog.SharedInfrastructure.MongoDB;
-using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PlantCatalog.Contract.ViewModels;
 using PlantCatalog.Domain.PlantAggregate;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
-using static MongoDB.Bson.Serialization.Serializers.SerializerHelper;
 
 namespace PlantCatalog.Infrustructure.Data.Repositories
 {

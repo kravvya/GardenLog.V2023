@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using PlantCatalog.Contract.ViewModels;
-using PlantCatalog.Domain.PlantAggregate;
-
-namespace PlantCatalog.IntegrationTest;
+﻿namespace PlantCatalog.IntegrationTest;
 
 public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
 {
@@ -10,7 +6,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     private readonly PlantCatalogClient _plantCatalogClient;
     private const string TEST_PLANT_NAME = "Blackmelon";
     private const string TEST_GROW_INSTRUCTION_NAME = "Start at home and pick in the Summer";
-    private const string TEST_DELETE_GROW_INSTRUCTION_NAME = "Go buy something fromt he store";
+    private const string TEST_DELETE_GROW_INSTRUCTION_NAME = "Go buy something fromt the store";
     private const string TEST_DELETE_PLANT_NAME = "DeletePlantName";
 
     public PlantCatalogTests(PlantCatalogServiceFixture fixture, ITestOutputHelper output)
