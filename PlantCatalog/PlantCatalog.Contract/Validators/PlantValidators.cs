@@ -13,3 +13,12 @@ public class PlantValidator<T> : AbstractValidator<T>
         RuleFor(command => command.Type).NotEmpty().WithMessage("Plant type has to be selected");
     }
 }
+
+public class PlantGrowInstructionValidator<T> : AbstractValidator<T>
+    where T : PlantGrowInstructionBase
+{
+    public PlantGrowInstructionValidator()
+    {
+        RuleFor(command => command.Name).NotEmpty().Length(3, 50);
+    }
+}

@@ -7,11 +7,13 @@ public interface IVerifyService
     IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>(bool excludeDefault) where TENUM : Enum;
     IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>() where TENUM : Enum;
     string GetDescription<TENUM>(string key) where TENUM : Enum;
+    IReadOnlyCollection<Color> GetPlantVarietyColors();
 }
 
 public class VerifyService : IVerifyService
 {
     private const string KEY_TEMPLATE = "Verify_{0}";
+    private const string COLOR_KEY = "Colors";
     private readonly ICacheService _cacheService;
 
     public VerifyService(ICacheService cacheService)
@@ -32,6 +34,30 @@ public class VerifyService : IVerifyService
     public string GetDescription<TENUM>(string key) where TENUM: Enum
     {
         return this.GetCodeList<TENUM>().FirstOrDefault(l => l.Key.Equals(key))!.Value;
+    }
+
+    public IReadOnlyCollection<Color> GetPlantVarietyColors()
+    {
+        List<Color> colors = null;
+        if (!_cacheService.TryGetValue<List<Color>>(COLOR_KEY, out colors))
+        {
+            colors = new List<Color>();
+            colors.Add(new Color("Black", "#000000", "#f8f9fa"));
+            colors.Add(new Color("Brown", "#A0522D", "#f8f9fa"));
+            colors.Add(new Color("Blue-Green", "#0d98ba", "#f8f9fa"));
+            colors.Add(new Color("Green", "#008000", "#f8f9fa"));
+            colors.Add(new Color("White", "#f8f9fa", "#212529"));
+            colors.Add(new Color("Purple", "#800080", "#f8f9fa"));
+            colors.Add(new Color("Red", "#FF0000", "#f8f9fa"));
+            colors.Add(new Color("Speckled", "#e8d7c1", "#f8f9fa"));
+            colors.Add(new Color("Yellow", "#FFFF00", "#212529"));
+            colors.Add(new Color("Multi", "#808000", "#f8f9fa"));
+
+            // Save data in cache.
+            _cacheService.Set(COLOR_KEY, colors, DateTime.Now.AddMinutes(10));
+        }
+
+        return colors;
     }
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType)

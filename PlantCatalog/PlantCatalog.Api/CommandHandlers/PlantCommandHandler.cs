@@ -1,13 +1,19 @@
-﻿using PlantCatalog.Contract.Commands;
+﻿using MediatR;
+using Microsoft.AspNetCore.WebUtilities;
+using MongoDB.Driver;
+using PlantCatalog.Contract.Commands;
 using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.Api.CommandHandlers;
 
 public interface IPlantCommandHandler
 {
+    Task<string> AddPlantGrowInstruction(CreatePlantGrowInstructionCommand command);
     Task<string> CreatePlant(CreatePlantCommand request);
     Task<string> DeletePlant(string id);
+    Task<string> DeletePlantGrowInstruction(string plantId, string id);
     Task<string> UpdatePlant(UpdatePlantCommand request);
+    Task<string> UpdatePlantGrowInstruction(UpdatePlantGrowInstructionCommand command);
 }
 
 public class PlantCommandHandler : IPlantCommandHandler
@@ -42,7 +48,8 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.GrowTolerance,
             request.GardenTip,
             request.SeedViableForYears,
-            request.Tags);
+            request.Tags,
+            request.VarietyColors);
 
         _plantRepository.Add(plant);
 
@@ -73,7 +80,8 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.GrowTolerance,
             request.GardenTip,
             request.SeedViableForYears,
-            request.Tags);
+            request.Tags,
+            request.VarietyColors);
 
         _plantRepository.Update(plant);
 
@@ -88,6 +96,69 @@ public class PlantCommandHandler : IPlantCommandHandler
 
 
         _plantRepository.Delete(id);
+
+        await _plantRepository.SaveChangesAsync();
+
+        return id;
+    }
+
+    public async Task<String> AddPlantGrowInstruction(CreatePlantGrowInstructionCommand command)
+    {
+        _logger.LogInformation("Received request to create plant grow instructions {@plantgrowinstruction}", command);
+        try
+        {
+            var plant = await _plantRepository.GetByIdAsync(command.PlantId);
+
+            if (plant.GrowInstructions.Any(g => g.Name == command.Name))
+            {
+                throw new ArgumentException("Grow Instruction with this name already exists", nameof(command.Name));
+            }
+
+            var growId = plant.AddPlantGrowInstruction(command);
+
+            _plantRepository.AddPlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id== growId));
+
+            await _plantRepository.SaveChangesAsync();
+
+            return growId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception adding plant grow instruction", ex);
+            throw;
+        }
+       
+    }
+
+    public async Task<String> UpdatePlantGrowInstruction(UpdatePlantGrowInstructionCommand command)
+    {
+        _logger.LogInformation("Received request to create plant grow instructions {@plantgrowinstruction}", command);
+        var plant = await _plantRepository.GetByIdAsync(command.PlantId);
+
+        if (plant.GrowInstructions.Any(g => g.Name == command.Name && g.Id != command.PlantGrowInstructionId))
+        {
+            throw new ArgumentException("Grow Instruction with this name already exists", nameof(command.Name));
+        }
+
+        plant.UpdatePlantGrowInstructions(command);
+
+        _plantRepository.UpdatePlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id == command.PlantGrowInstructionId));
+
+        await _plantRepository.SaveChangesAsync();
+
+        return command.PlantGrowInstructionId;
+    }
+
+    public async Task<String> DeletePlantGrowInstruction(string plantId, string id)
+    {
+        _logger.LogInformation($"Received request to delete plant grow instructions {plantId} and {id}");
+        var plant = await _plantRepository.GetByIdAsync(plantId);
+
+        var grow = plant.GrowInstructions.First(g => g.Id == id);
+
+        plant.DeletePlantGrowInstruction(id);
+
+        _plantRepository.DeletePlantGrowInstruction(plantId, grow);
 
         await _plantRepository.SaveChangesAsync();
 

@@ -53,7 +53,7 @@ namespace GardenLog.SharedInfrastructure.MongoDB
             AddCommand(() => _context.Collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), entity));
         }
 
-        private void AddCommand(Func<Task> func)
+        protected void AddCommand(Func<Task> func)
         {
             _commands.Add(func);
         }

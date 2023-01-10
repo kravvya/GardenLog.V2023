@@ -1,4 +1,6 @@
-﻿namespace PlantCatalog.Domain.PlantAggregate;
+﻿using PlantCatalog.Contract.Commands;
+
+namespace PlantCatalog.Domain.PlantAggregate;
 
 public class Plant : BaseEntity, IAggregateRoot
 {
@@ -12,16 +14,26 @@ public class Plant : BaseEntity, IAggregateRoot
     public GrowToleranceEnum GrowTolerance { get; private set; }
     public string GardenTip { get; private set; }
     public int? SeedViableForYears { get; private set; }
+    public int GrowInstructionsCount
+    {
+        get{
+            return _growInstructions.Count();
+        }
+    }
+
 
     private readonly List<string> _tags = new();
     public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
 
-    private readonly List<GrowInstruction> _growingInstructions = new();
-    public IReadOnlyCollection<GrowInstruction> GrowingInstructions => _growingInstructions.AsReadOnly();
+    private readonly List<string> _varietyColors = new();
+    public IReadOnlyCollection<string> VarietyColors => _varietyColors.AsReadOnly();
+
+    private readonly List<PlantGrowInstruction> _growInstructions = new();
+    public IReadOnlyCollection<PlantGrowInstruction> GrowInstructions => _growInstructions.AsReadOnly();
 
     private Plant() { }
 
-    private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement, LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears, List<string> Tags)//, List<GrowInstruction> GrowingInstructions)
+    private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement, LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions)
     {
         this.Name = Name;
         this.Description = Description;
@@ -34,7 +46,8 @@ public class Plant : BaseEntity, IAggregateRoot
         this.GardenTip = GardenTip;
         this.SeedViableForYears = SeedViableForYears;
         _tags = Tags;
-       // _growingInstructions= GrowingInstructions;
+        _varietyColors = VarietyColors;
+        _growInstructions = GrowInstructions;
     }
 
     public static Plant Create(
@@ -48,7 +61,8 @@ public class Plant : BaseEntity, IAggregateRoot
         GrowToleranceEnum growTolerance,
         string gardenTip,
         int? seedViableForYears,
-        IList<string> tags
+        IList<string> tags,
+        IList<string> varietyColors
         )
     {
         var plant = new Plant()
@@ -67,6 +81,7 @@ public class Plant : BaseEntity, IAggregateRoot
         };
 
         plant._tags.AddRange(tags);
+        plant._varietyColors.AddRange(varietyColors);
 
         plant.DomainEvents.Add(
             new PlantEvent(plant, PlantEventTriggerEnum.PlantCreated, new TriggerEntity(EntityTypeEnum.Plant, plant.Id)));
@@ -86,7 +101,8 @@ public class Plant : BaseEntity, IAggregateRoot
         GrowToleranceEnum growTolerance,
         string gardenTip,
         int? seedViableForYears,
-        List<string> tags)
+        List<string> tags,
+        List<string> varietyColors)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Description = description ?? throw new ArgumentNullException(nameof(description));
@@ -99,19 +115,25 @@ public class Plant : BaseEntity, IAggregateRoot
         GardenTip = gardenTip;
         SeedViableForYears = seedViableForYears;
 
-        var elementsToRemove = this._tags.Where(t => !tags.Contains(t));
-        if(elementsToRemove.Any())
-        {
-            //logic to do something in case if tags are in us
-            this._tags.RemoveAll(t => elementsToRemove.Contains(t));
-        }
-
-         tags.RemoveAll(t => this._tags.Contains(t));
-
-        this._tags.AddRange(tags);
+        UpdateCollection<string>(this._tags, tags);
+        UpdateCollection<string>(this._varietyColors, varietyColors);
 
         this.DomainEvents.Add(
            new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new TriggerEntity(EntityTypeEnum.Plant, this.Id)));
+    }
+
+    private static void UpdateCollection<T>(List<T> existingList, List<T> newList)
+    {
+        var elementsToRemove = existingList.Where(t => !newList.Contains(t));
+        if (elementsToRemove.Any())
+        {
+            //logic to do something in case if tags are in use
+            existingList.RemoveAll(t => elementsToRemove.Contains(t));
+        }
+
+        newList.RemoveAll(t => existingList.Contains(t));
+
+        existingList.AddRange(newList);
     }
 
     #region Events
@@ -132,17 +154,29 @@ public class Plant : BaseEntity, IAggregateRoot
 
     #region Grow Instructions
 
-    public void AddGrowinInstruction(GrowInstruction instructions)
+    public string AddPlantGrowInstruction(CreatePlantGrowInstructionCommand command)
     {
-        this._growingInstructions.Add(instructions);
+        var instruction = PlantGrowInstruction.Create(command);
+
+        this._growInstructions.Add(instruction);
 
         this.DomainEvents.Add(
-          new PlantEvent(this, PlantEventTriggerEnum.GrowInstructionAddedToPlant, new TriggerEntity(EntityTypeEnum.GrowingInstruction, instructions.Id)));
+          new PlantEvent(this, PlantEventTriggerEnum.GrowInstructionAddedToPlant, new TriggerEntity(EntityTypeEnum.GrowingInstruction, instruction.Id)));
+
+        return instruction.Id;
     }
 
-    public void UpdatePlantGrowInstructions(GrowInstructionUpdateDto dto)
+    public void UpdatePlantGrowInstructions(UpdatePlantGrowInstructionCommand command)
     {
-        this.GrowingInstructions.First(i => i.Id == dto.PlantGrowInstructionId).Update(dto, AddChildDomainEvent);
+        this.GrowInstructions.First(i => i.Id == command.PlantGrowInstructionId).Update(command, AddChildDomainEvent);
+    }
+
+    public void DeletePlantGrowInstruction(string plantGrowInstructionId)
+    {
+        this._growInstructions.RemoveAll(i => i.Id == plantGrowInstructionId);
+
+        AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
+
     }
 
     #endregion

@@ -10,7 +10,7 @@
     <PageContent>
         <article id="plantForm">
             <div class="container">
-                @if (IsInitialized)
+                @if (isInitialized)
                 {
                     <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
                         <FluentValidationValidator />
@@ -76,7 +76,7 @@
                                     <label for="Tolerances">Tolerances</label>
                                 </Header>
                                 <Body>
-                                    @foreach (var tolerance in GrowToleranceEnums)
+                                    @foreach (var tolerance in growToleranceEnums)
                                     {
                                         <div class="form-check">
                                             <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key" />
@@ -126,6 +126,7 @@
                                 </Body>
                             </FormCard>
                         </div>
+
                         <div class="col-md-2">
                             <FormCard>
                                 <Header>
@@ -140,7 +141,7 @@
                         <div class="col-md-10">
                             <FormCard>
                                 <Header>
-                                    <label for="type">Plant Characteristics</label>
+                                    <label for="plant-characteristics-tags">Plant Characteristics</label>
                                 </Header>
                                 <Body>
                                     <div class="tags" role="group" aria-label="Plant Characteristics">
@@ -151,6 +152,24 @@
                                             }
                                         </ul>
                                         <input @bind:get="newTag" @bind:set="OnTagInput" @ref="inputTag" />
+                                    </div>
+                                </Body>
+                            </FormCard>
+                        </div>
+                        <div class="col-md-10">
+                            <FormCard>
+                                <Header>
+                                    <label for="type">Variety Colors</label>
+                                </Header>
+                                <Body>
+                                    <div class="variety-colors" role="group" aria-label=">Variety Colors">
+                                        @foreach (var color in varietyColors)
+                                            {
+                                                <div class="form-check form-check-inline color">
+                                                <input class="btn-check" type="checkbox" id="@color.Name" value="@color.Name" autocomplete="off" onclick=@(() => ToggleVarietyColor(color))>
+                                                    <label class="btn btn-outline-dark" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
+                                                </div>
+                                            }
                                     </div>
                                 </Body>
                             </FormCard>
@@ -182,7 +201,7 @@
     private ElementReference inputTag;
     private string newTag = string.Empty;
 
-    private bool IsInitialized = false;
+    private bool isInitialized = false;
     private bool isEdit = false;
     private CustomValidation customValidation;
     private EditContext editContext;
@@ -193,7 +212,10 @@
     protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
     protected IReadOnlyCollection<KeyValuePair<string, string>> growToleranceCodes { get; set; }
     protected IReadOnlyCollection<KeyValuePair<string, string>> plantTypesCodes { get; set; }
-    public List<CheckableEnum> GrowToleranceEnums { get; set; } = new();
+    protected IReadOnlyCollection<Color> varietyColors { get; set; }
+
+    public List<CheckableEnum> growToleranceEnums { get; set; } = new();
+
 
     private List<BreadcrumbLink> breacrumbLinks = new();
 
@@ -205,10 +227,11 @@
         moistureRequirementCodes = _verifyService.GetCodeList<MoistureRequirementEnum>(true);
         growToleranceCodes = _verifyService.GetCodeList<GrowToleranceEnum>(true);
         plantTypesCodes = _verifyService.GetCodeList<PlantTypeEnum>(true);
+        varietyColors = _verifyService.GetPlantVarietyColors();
 
         foreach (var code in growToleranceCodes)
         {
-            GrowToleranceEnums.Add(new CheckableEnum(code));
+            growToleranceEnums.Add(new CheckableEnum(code));
         }
 
         if (string.IsNullOrEmpty(PlantId))
@@ -233,7 +256,7 @@
             {
                 breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetEditPlantUrl(PlantId), true));
 
-                GrowToleranceEnums.ForEach(item => item.IsSelected = plant.GrowTolerance.HasFlag(Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key)));
+                growToleranceEnums.ForEach(item => item.IsSelected = plant.GrowTolerance.HasFlag(Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key)));
 
                 isEdit = true;
                 title = $"Edit {plant.Name}";
@@ -244,7 +267,7 @@
 
         editContext = new(plant);
         editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
-        IsInitialized = true;
+        isInitialized = true;
         StateHasChanged();
     }
 
@@ -260,12 +283,33 @@
         StateHasChanged();
     }
 
+    private string GetStyleBasedOnColor(Color color)
+    {
+        if (plant.VarietyColors.Contains(color.Name))
+        {
+            return $"color:{color.FontColor}; background-color:{color.BackgroundColor}";
+        }
+        return string.Empty;
+    }
+
+    private void ToggleVarietyColor(Color color)
+    {
+        if (plant.VarietyColors.Contains(color.Name))
+        {
+            plant.VarietyColors.Remove(color.Name);
+        }
+        else
+        {
+            plant.VarietyColors.Add(color.Name);
+        }
+        StateHasChanged();
+    }
     protected async Task HandleValidSubmit()
     {
         _logger.Log(LogLevel.Information, "Plant Form passed validations");
         customValidation?.ClearErrors();
 
-        foreach (var item in GrowToleranceEnums)
+        foreach (var item in growToleranceEnums)
         {
             if (item.IsSelected)
             {

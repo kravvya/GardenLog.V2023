@@ -6,8 +6,9 @@
         PlantUpdated = 2,
         GrowInstructionAddedToPlant = 3,
         GrowInstructionUpdated = 4,
-        PlantVarietyCreated = 5,
-        PlantVarietyUpdated = 6
+        GrowInstructionDeleted = 5,
+        PlantVarietyCreated = 6,
+        PlantVarietyUpdated = 7
 
     }
 }

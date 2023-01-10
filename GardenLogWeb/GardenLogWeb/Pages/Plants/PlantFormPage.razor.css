@@ -40,3 +40,8 @@
         color: inherit;
         overflow: visible;
     }
+
+    .variety-colors > .color{
+        margin-right: 0.2em;
+        padding-left: 0;
+    }

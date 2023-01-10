@@ -10,4 +10,9 @@ public static class Routes
     public const string UpdatePlant = PlantCatalogBase + "/{id}";
     public const string DeletePlant = PlantCatalogBase + "/{id}";
 
+    public const string GetPlantGrowInstructions = PlantCatalogBase + "/{plantId}/GrowInstructions";
+    public const string GetPlantGrowInstruction = PlantCatalogBase + "/{plantId}/GrowInstructions/{id}";
+    public const string CreatePlantGrowInstruction = PlantCatalogBase + "/{plantId}/GrowInstructions";
+    public const string UpdatePlantGrowInstructions = PlantCatalogBase + "/{plantId}/GrowInstructions/{id}";
+    public const string DeletePlantGrowInstructions = PlantCatalogBase + "/{plantId}/GrowInstructions/{id}";
 }

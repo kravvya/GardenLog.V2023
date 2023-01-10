@@ -1,6 +1,7 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using PlantCatalog.Contract;
 using PlantCatalog.Contract.Commands;
+using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.IntegrationTest.Clients
 {
@@ -15,6 +16,7 @@ namespace PlantCatalog.IntegrationTest.Clients
             _httpClient = httpClient;
         }
 
+        #region Plant
         public async Task<HttpResponseMessage> GetPlantIdByPlantName(string name)
         {
             var url = $"{this._baseUrl.OriginalString}{Routes.GetIdByPlantName}";
@@ -76,9 +78,84 @@ namespace PlantCatalog.IntegrationTest.Clients
                 Name = name,
                 SeedViableForYears = 10,
                 Type = Contract.Enum.PlantTypeEnum.Vegetable,
-                Tags= new List<string>() { "Bush", "Pole"}
+                Tags= new List<string>() { "Bush", "Pole"},
+                VarietyColors= new List<string>() { "Black"}
 
             };
         }
+        #endregion
+
+        #region Plant Grow Instruction
+
+        public async Task<HttpResponseMessage> CreatePlantGrowInstruction(string plantId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlantGrowInstruction}";
+
+            var createPlantGrowInstructionCommand = PopulateCreatePlantGrowInstructionCommand(plantId);
+
+            using var requestContent = createPlantGrowInstructionCommand.ToJsonStringContent();
+
+            return await this._httpClient.PostAsync(url, requestContent);
+
+        }
+
+        public async Task<HttpResponseMessage> UpdatePlantGrowInstruction(PlantGrowInstructionViewModel grow)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.UpdatePlantGrowInstructions}";
+
+            using var requestContent = grow.ToJsonStringContent();
+
+            return await this._httpClient.PutAsync(url.Replace("{plantId}", grow.PlantId).Replace("{id}", grow.PlantGrowInstructionId), requestContent);
+        }
+
+        public async Task<HttpResponseMessage> DeletePlantGrowInstruction(string plantId,string id)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.DeletePlantGrowInstructions}";
+
+            return await this._httpClient.DeleteAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
+        }
+
+        public async Task<HttpResponseMessage> GetPlantGrowInstructions(string plantId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantGrowInstructions}";
+            return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId));
+        }
+
+        public async Task<HttpResponseMessage> GetPlantGrowInstruction(string plantId, string id)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantGrowInstruction}";
+            return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
+        }
+
+        private static CreatePlantGrowInstructionCommand PopulateCreatePlantGrowInstructionCommand (string plantId)
+        {
+            return new CreatePlantGrowInstructionCommand()
+            {
+                PlantId = plantId,
+                DaysToSproutMax = 7,
+                DaysToSproutMin = 1,
+                FertilizeFrequencyForSeedlingsInWeeks = 1,
+                FertilizeFrequencyInWeeks = 4,
+                Fertilizer = Contract.Enum.FertilizerEnum.AllPurpose,
+                FertilizerAtPlanting = Contract.Enum.FertilizerEnum.Nitrogen,
+                FertilizerForSeedlings = Contract.Enum.FertilizerEnum.Nitrogen,
+                GrowingInstructions = "Should be easy. grows by itself.",
+                HarvestInstructions = "Pick one at a time",
+                HarvestSeason = Contract.Enum.HarvestSeasonEnum.Summer,
+                Name = "Start at home and pick in the Summer",
+                PlantingDepthInInches = Contract.Enum.PlantingDepthEnum.Depth8th,
+                PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors,
+                SpacingInInches = 24,
+                StartSeedAheadOfWeatherCondition = Contract.Enum.WeatherConditionEnum.BeforeLastFrost,
+                StartSeedInstructions = "One per cell",
+                StartSeedWeeksAheadOfWeatherCondition = 2,
+                StartSeedWeeksRange = 4,
+                TransplantAheadOfWeatherCondition = Contract.Enum.WeatherConditionEnum.AfterDangerOfFrost,
+                TransplantWeeksAheadOfWeatherCondition = 0,
+                TransplantWeeksRange = 4
+            };
+        }
+
+        #endregion
     }
 }

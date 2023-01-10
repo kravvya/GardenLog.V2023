@@ -16,8 +16,9 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
     }
 
+    #region Plant
     [Fact]
-    public async Task Post_Plant_ShouldCreateNewProduct()
+    public async Task Post_Plant_MayCreateNewProduct()
     {
         var response = await _plantCatalogClient.CreatePlant(TEST_PLANT_NAME);
 
@@ -153,4 +154,88 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         Assert.NotNull(testPlant);
     }
 
+    #endregion
+
+    #region Plant Grow Instruction
+
+    [Fact]
+    public async Task Post_PlantGrowInstruction_MayCreateNew()
+    {
+        var response = await _plantCatalogClient.GetPlantIdByPlantName(TEST_PLANT_NAME);
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Plant to update was found with service responded with {response.StatusCode} code and {returnString} message");
+
+        if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(returnString))
+        {
+            _output.WriteLine($"Plant to add new grow instruction is not found. Will create new one");
+            response = await _plantCatalogClient.CreatePlant(TEST_PLANT_NAME);
+
+            returnString = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
+        }
+
+        response = await _plantCatalogClient.CreatePlantGrowInstruction(returnString);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Assert.NotEmpty(returnString);
+            Assert.True(Guid.TryParse(returnString, out var plantGrowInstructionId));
+        }
+        else
+        {
+            Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
+            returnString = await response.Content.ReadAsStringAsync();
+            Assert.NotEmpty(returnString);
+            Assert.Contains("Grow Instruction with this name already exists", returnString);
+        }
+    }
+
+    [Fact]
+    public async Task Put_PlantGrowInstruction_ShouldUpdate()
+    {
+        var response = await _plantCatalogClient.GetPlantIdByPlantName(TEST_PLANT_NAME);
+
+        var plantId = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Plant to update was found with service responded with {response.StatusCode} code and {plantId} message");
+
+        if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(plantId))
+        {
+            _output.WriteLine($"Plant to update is not found. Will create new one");
+            response = await _plantCatalogClient.CreatePlant(TEST_PLANT_NAME);
+
+            plantId = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine($"Service responded with {response.StatusCode} code and {plantId} message");
+        }
+
+        response = await _plantCatalogClient.GetPlantGrowInstructions(plantId);
+       
+        _output.WriteLine($"Service responded with {response.StatusCode} code");
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+        };
+        var growInstructions = await response.Content.ReadFromJsonAsync<List<PlantGrowInstructionViewModel>>(options);
+
+        var grow = growInstructions.First();
+        grow.DaysToSproutMin += 1;
+
+        response = await _plantCatalogClient.UpdatePlantGrowInstruction(grow);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+    }
+    #endregion
 }

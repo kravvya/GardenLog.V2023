@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using GardenLogWeb.Models;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 namespace GardenLogWeb.Services;
@@ -40,6 +41,7 @@ public class PlantService : IPlantService
     private const string PLANT_GROW_INSTRUCTIONS_ROUTE = "/plant/{0}/GrowInstructions";
     private Random _random = new Random();
     private const string PLANTS_KEY = "Plants";
+   
     private const string PLANT_VARIETY_KEY = "Plant_{0}_Variety";
     private const string PLANT_GROW_INSTRUCTION_KEY = "Plant_{0}_GrowInstruction";
 
