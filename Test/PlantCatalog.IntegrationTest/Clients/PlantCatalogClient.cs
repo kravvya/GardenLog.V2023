@@ -87,11 +87,11 @@ namespace PlantCatalog.IntegrationTest.Clients
 
         #region Plant Grow Instruction
 
-        public async Task<HttpResponseMessage> CreatePlantGrowInstruction(string plantId)
+        public async Task<HttpResponseMessage> CreatePlantGrowInstruction(string plantId, string name)
         {
             var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlantGrowInstruction}";
 
-            var createPlantGrowInstructionCommand = PopulateCreatePlantGrowInstructionCommand(plantId);
+            var createPlantGrowInstructionCommand = PopulateCreatePlantGrowInstructionCommand(plantId, name);
 
             using var requestContent = createPlantGrowInstructionCommand.ToJsonStringContent();
 
@@ -127,7 +127,7 @@ namespace PlantCatalog.IntegrationTest.Clients
             return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
         }
 
-        private static CreatePlantGrowInstructionCommand PopulateCreatePlantGrowInstructionCommand (string plantId)
+        private static CreatePlantGrowInstructionCommand PopulateCreatePlantGrowInstructionCommand (string plantId, string name)
         {
             return new CreatePlantGrowInstructionCommand()
             {
@@ -142,7 +142,7 @@ namespace PlantCatalog.IntegrationTest.Clients
                 GrowingInstructions = "Should be easy. grows by itself.",
                 HarvestInstructions = "Pick one at a time",
                 HarvestSeason = Contract.Enum.HarvestSeasonEnum.Summer,
-                Name = "Start at home and pick in the Summer",
+                Name = name,
                 PlantingDepthInInches = Contract.Enum.PlantingDepthEnum.Depth8th,
                 PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors,
                 SpacingInInches = 24,

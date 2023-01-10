@@ -150,6 +150,30 @@ public class PlantDBContext : IMongoDBContext<Plant>
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
             p.MapMember(m => m.PlantGrowInstructionId).SetElementName("_id");
+         
+        });
+
+        BsonClassMap.RegisterClassMap<PlantGrowInstructionBase>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+           
+            p.MapMember(m => m.PlantingDepthInInches).SetSerializer(new EnumSerializer<PlantingDepthEnum>(BsonType.String));
+            p.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
+            p.MapMember(m => m.StartSeedAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
+            p.MapMember(m => m.HarvestSeason).SetSerializer(new EnumSerializer<HarvestSeasonEnum>(BsonType.String));
+            p.MapMember(m => m.TransplantAheadOfWeatherCondition).SetSerializer(new EnumSerializer<WeatherConditionEnum>(BsonType.String));
+            p.MapMember(m => m.FertilizerAtPlanting).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
+            p.MapMember(m => m.FertilizerForSeedlings).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
+            p.MapMember(m => m.Fertilizer).SetSerializer(new EnumSerializer<FertilizerEnum>(BsonType.String));
+        });
+
+        BsonClassMap.RegisterClassMap<PlantGrowInstructionViewModelProjection>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
 
         });
     }
@@ -172,3 +196,6 @@ public class PlantDBContext : IMongoDBContext<Plant>
         return commands.Count; ;
     }
 }
+
+
+public record PlantGrowInstructionViewModelProjection(string _id, List<PlantGrowInstructionViewModel> GrowInstructions);

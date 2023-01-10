@@ -116,7 +116,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
             var growId = plant.AddPlantGrowInstruction(command);
 
-            _plantRepository.AddPlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id== growId));
+            _plantRepository.AddPlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id== growId), plant.GrowInstructionsCount);
 
             await _plantRepository.SaveChangesAsync();
 
@@ -154,11 +154,9 @@ public class PlantCommandHandler : IPlantCommandHandler
         _logger.LogInformation($"Received request to delete plant grow instructions {plantId} and {id}");
         var plant = await _plantRepository.GetByIdAsync(plantId);
 
-        var grow = plant.GrowInstructions.First(g => g.Id == id);
-
         plant.DeletePlantGrowInstruction(id);
 
-        _plantRepository.DeletePlantGrowInstruction(plantId, grow);
+        _plantRepository.DeletePlantGrowInstruction(plantId, id, plant.GrowInstructionsCount);
 
         await _plantRepository.SaveChangesAsync();
 

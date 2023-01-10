@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using PlantCatalog.Contract.ViewModels;
+using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.IntegrationTest;
 
@@ -7,6 +9,8 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     private readonly ITestOutputHelper _output;
     private readonly PlantCatalogClient _plantCatalogClient;
     private const string TEST_PLANT_NAME = "Blackmelon";
+    private const string TEST_GROW_INSTRUCTION_NAME = "Start at home and pick in the Summer";
+    private const string TEST_DELETE_GROW_INSTRUCTION_NAME = "Go buy something fromt he store";
     private const string TEST_DELETE_PLANT_NAME = "DeletePlantName";
 
     public PlantCatalogTests(PlantCatalogServiceFixture fixture, ITestOutputHelper output)
@@ -71,9 +75,9 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
 
             _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
         }
-        
-        response = await _plantCatalogClient.GetPlant(returnString); 
-         returnString = await response.Content.ReadAsStringAsync();
+
+        response = await _plantCatalogClient.GetPlant(returnString);
+        returnString = await response.Content.ReadAsStringAsync();
         _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
 
         var options = new JsonSerializerOptions
@@ -86,7 +90,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         };
         var plant = await response.Content.ReadFromJsonAsync<PlantViewModel>(options);
 
-        plant.SeedViableForYears +=1;
+        plant.SeedViableForYears += 1;
 
         response = await _plantCatalogClient.UpdatePlant(plant);
 
@@ -110,7 +114,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(returnString))
         {
             _output.WriteLine($"Plant to delete is not found. Will create new one");
-             response = await _plantCatalogClient.CreatePlant(TEST_DELETE_PLANT_NAME);
+            response = await _plantCatalogClient.CreatePlant(TEST_DELETE_PLANT_NAME);
 
             returnString = await response.Content.ReadAsStringAsync();
 
@@ -161,22 +165,10 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     [Fact]
     public async Task Post_PlantGrowInstruction_MayCreateNew()
     {
-        var response = await _plantCatalogClient.GetPlantIdByPlantName(TEST_PLANT_NAME);
+        var plantId = await GetPlantIdToWorkWith(TEST_PLANT_NAME);
+
+        var response = await _plantCatalogClient.CreatePlantGrowInstruction(plantId, TEST_GROW_INSTRUCTION_NAME);
         var returnString = await response.Content.ReadAsStringAsync();
-
-        _output.WriteLine($"Plant to update was found with service responded with {response.StatusCode} code and {returnString} message");
-
-        if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(returnString))
-        {
-            _output.WriteLine($"Plant to add new grow instruction is not found. Will create new one");
-            response = await _plantCatalogClient.CreatePlant(TEST_PLANT_NAME);
-
-            returnString = await response.Content.ReadAsStringAsync();
-
-            _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
-        }
-
-        response = await _plantCatalogClient.CreatePlantGrowInstruction(returnString);
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -193,27 +185,110 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     }
 
     [Fact]
+    public async Task Get_PlantGrowInstruction_All()
+    {
+        var growInstructions = await GetPlantGrowInstructionsToWorkWith();
+
+      
+        Assert.NotNull(growInstructions);
+        _output.WriteLine($"Found '{growInstructions.First().Name}' grow instruction");
+        Assert.NotEmpty(growInstructions.First().HarvestInstructions);
+    }
+
+    [Fact]
+    public async Task Get_PlantGrowInstruction_One()
+    {
+        var growInstructions = await GetPlantGrowInstructionsToWorkWith();
+
+        var original = growInstructions.First(g => g.Name == TEST_GROW_INSTRUCTION_NAME);
+
+        if (growInstructions.Count == 1)
+        {
+            //create new grow instruction to make sure we only get one back
+            var response = await _plantCatalogClient.CreatePlantGrowInstruction(original.PlantId, TEST_DELETE_GROW_INSTRUCTION_NAME);
+        }
+
+        var growInstruction = await GetPlantGrowInstructionToWorkWith(original.PlantId, original.PlantGrowInstructionId);
+               
+        _output.WriteLine($"Found '{growInstruction.Name}' grow instruction");
+        Assert.Equal(original.Name, growInstruction.Name);
+    }
+
+    [Fact]
     public async Task Put_PlantGrowInstruction_ShouldUpdate()
     {
-        var response = await _plantCatalogClient.GetPlantIdByPlantName(TEST_PLANT_NAME);
+        var grow = (await GetPlantGrowInstructionsToWorkWith()).First(g => g.Name == TEST_GROW_INSTRUCTION_NAME);
 
+        //Step 3 update grow Instruction
+
+        grow.DaysToSproutMin += 1;
+
+        var response = await _plantCatalogClient.UpdatePlantGrowInstruction(grow);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+    }
+
+    [Fact]
+    public async Task Put_PlantGrowInstruction_ShouldDelete()
+    {
+        var grow = (await GetPlantGrowInstructionsToWorkWith()).First(g => g.Name == TEST_DELETE_GROW_INSTRUCTION_NAME);
+
+        Assert.NotNull(grow);
+
+        //Step 3 update grow Instruction
+
+        grow.DaysToSproutMin += 1;
+
+        var response = await _plantCatalogClient.DeletePlantGrowInstruction(grow.PlantId, grow.PlantGrowInstructionId);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service to delete plant grow instruction responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+    }
+
+   
+    #endregion
+
+    #region Shared Private Functions
+    private async Task<string> GetPlantIdToWorkWith(string plantName)
+    {
+        //Step 1 - Get Plant to work with
+        var response = await _plantCatalogClient.GetPlantIdByPlantName(plantName);
         var plantId = await response.Content.ReadAsStringAsync();
-
-        _output.WriteLine($"Plant to update was found with service responded with {response.StatusCode} code and {plantId} message");
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(plantId))
         {
-            _output.WriteLine($"Plant to update is not found. Will create new one");
-            response = await _plantCatalogClient.CreatePlant(TEST_PLANT_NAME);
+            _output.WriteLine($"Plant is not found. Will create new one");
+            response = await _plantCatalogClient.CreatePlant(plantName);
 
             plantId = await response.Content.ReadAsStringAsync();
 
-            _output.WriteLine($"Service responded with {response.StatusCode} code and {plantId} message");
+            _output.WriteLine($"Service to create plant responded with {response.StatusCode} code and {plantId} message");
+        }
+        else
+        {
+            _output.WriteLine($"Plant was found with service responded with {response.StatusCode} code and {plantId} message");
         }
 
-        response = await _plantCatalogClient.GetPlantGrowInstructions(plantId);
-       
-        _output.WriteLine($"Service responded with {response.StatusCode} code");
+        return plantId;
+    }
+
+    private async Task<List<PlantGrowInstructionViewModel>> GetPlantGrowInstructionsToWorkWith()
+    {
+        var plantId = await GetPlantIdToWorkWith(TEST_PLANT_NAME);
+
+        //Step 2 - Get Grow Instruction to update
+        var response = await _plantCatalogClient.GetPlantGrowInstructions(plantId);
+
+        _output.WriteLine($"Service to get all plant grow instructions responded with {response.StatusCode} code");
 
         var options = new JsonSerializerOptions
         {
@@ -225,17 +300,31 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         };
         var growInstructions = await response.Content.ReadFromJsonAsync<List<PlantGrowInstructionViewModel>>(options);
 
-        var grow = growInstructions.First();
-        grow.DaysToSproutMin += 1;
+        Assert.NotNull(growInstructions);
+        Assert.NotEmpty(growInstructions);
 
-        response = await _plantCatalogClient.UpdatePlantGrowInstruction(grow);
+        return growInstructions;
+    }
 
-        var returnString = await response.Content.ReadAsStringAsync();
+    private async Task<PlantGrowInstructionViewModel> GetPlantGrowInstructionToWorkWith(string plantId, string growId)
+    {
+        var response = await _plantCatalogClient.GetPlantGrowInstruction(plantId, growId);
 
-        _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
+        _output.WriteLine($"Service to get single plant grow instruction responded with {response.StatusCode} code");
 
-        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
-        Assert.NotEmpty(returnString);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+        };
+        var growInstruction = await response.Content.ReadFromJsonAsync<PlantGrowInstructionViewModel>(options);
+
+        Assert.NotNull(growInstruction);
+
+        return growInstruction;
     }
     #endregion
 }

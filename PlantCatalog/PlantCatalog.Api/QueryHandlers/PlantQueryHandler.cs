@@ -57,18 +57,11 @@ public class PlantQueryHandler : IPlantQueryHandler
     public async Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId)
     {
         _logger.LogInformation($"Received request to get plant grow instructions for {plantId}");
-        List<PlantGrowInstructionViewModel> response = new();
-
+     
         try
         {
-            var data = await _plantRepository.GetPlantGrowInstractions(plantId);
-            foreach (var entry in data)
-            {
-                var grow = _mapper.Map<PlantGrowInstructionViewModel>(entry);
-                grow.PlantId = plantId;
-                response.Add(grow);
-            }
-            return response;
+            return await _plantRepository.GetPlantGrowInstractions(plantId);
+          
         }
         catch (Exception ex)
         {
@@ -82,12 +75,16 @@ public class PlantQueryHandler : IPlantQueryHandler
     {
         _logger.LogInformation($"Received request to get plant grow instruction for {plantId} and {id}");
 
-        var data =  await _plantRepository.GetPlantGrowInstraction(plantId, id);
+        try
+        {
+            return  await _plantRepository.GetPlantGrowInstraction(plantId, id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception readding grow instruction for {plantId} and {id}", ex);
+            throw;
+        }
 
-        var grow = _mapper.Map<PlantGrowInstructionViewModel>(data);
-        grow.PlantId = plantId;
-
-        return grow;
     }
 
     #endregion
