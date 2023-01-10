@@ -146,6 +146,11 @@ svg .bbox-handle[b-8fnu6zxx74] {
         color: inherit;
         overflow: visible;
     }
+
+    .variety-colors > .color[b-xqtb7n7hnk]{
+        margin-right: 0.2em;
+        padding-left: 0;
+    }
 /* /Pages/Plants/PlantViewPage.razor.rz.scp.css */
 .plant-facts_list .plant-facts_term[b-cuaxitcr2w] {
     color: #709a41;
