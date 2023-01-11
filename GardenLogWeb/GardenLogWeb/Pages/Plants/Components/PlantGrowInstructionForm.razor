@@ -65,8 +65,8 @@
                                 <label for="Fertilizer">Fertilization Schedule</label>
                             </Header>
                             <Body>
-                                <div class="row">
-                                    <div class="col-sm-10 col-md-4">
+                                <div class="d-flex justify-content-start flex-wrap mb-3">
+                                    <div class="p-2">
                                         <InputSelect @bind-Value="@growInstruction.Fertilizer" Name="Fertilizer">
                                             @foreach (var item in Enum.GetValues<FertilizerEnum>())
                                             {
@@ -74,76 +74,39 @@
                                             }
                                         </InputSelect>
                                     </div>
-                                    <div class="col-sm-3 col-md-2"> every </div>
-                                    <div class="col-sm-5 col-md-3">
+                                    <div class="p-2"> <span>every</span> </div>
+                                    <div class="p-2">
                                         <InputNumber Class="form-control" @bind-Value="@growInstruction.FertilizeFrequencyInWeeks" id="FertilizeFrequencyInWeeks" />
                                     </div>
-                                    <div class="col-sm-4 col-md-3"> week(s) </div>                                   
+                                    <div class="p-2"> <span>week(s)</span> </div>
                                 </div>
                             </Body>
                         </FormCard>
                     </div>
                 </div>
 
-                <div class="row  mt-3">
-                    <div class="col-6 col-lg-3">
-                        <FormCard>
+                <div class="row mt-3" id="seed-instructions" hidden="@HideSeedInstructions">
+                    <div class="col-11">
+                        <FormCard Class="border-primary" HeaderClass="text-bg-primary">
                             <Header>
-                                <label for="PlantingMethod">Planting Method</label>
+                                <label for="StartSeedWeeksAheadOfWeatherCondition">Grow Seeding Instructions</label>
                             </Header>
                             <Body>
-                                <InputRadioGroup @bind-Value="@growInstruction.PlantingMethod" Name="PlantingMethod">
-                                    @foreach (var item in Enum.GetValues<PlantingMethodEnum>().Where(p => p != PlantingMethodEnum.Unspecified))
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="PlantingMethod" id="@item" Value="@item" />
-                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
-                                        </div>
-                                    }
+                                <div class="d-flex justify-content-start flex-wrap mb-3">
 
-                                </InputRadioGroup>
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingMethod)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
-
-                    <div class="col-lg-5">
-                        <FormCard>
-                            <Header>
-                                <label for="PlantingDepthInInches">Planting Depth</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@growInstruction.PlantingDepthInInches" Name="PlantingDepthInInches">
-                                    @foreach (var item in Enum.GetValues<PlantingDepthEnum>().Where(p => p != PlantingDepthEnum.Unspecified))
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="PlantingDepthInInches" id="@item" Value="@item" />
-                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
-                                        </div>
-                                    }
-
-                                </InputRadioGroup>
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingDepthInInches)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
-
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col-lg-6">
-                        <FormCard>
-                            <Header>
-                                <label for="StartSeedWeeksAheadOfWeatherCondition">When to Seed?</label>
-                            </Header>
-                            <Body>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksAheadOfWeatherCondition" id="StartSeedWeeksAheadOfWeatherCondition" />
-                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedWeeksAheadOfWeatherCondition)" /></div>
+                                    <div class="p-2">
+                                        <span>Start </span>
                                     </div>
-                                    <div class="col-3"> weeks(s)</div>
-                                    <div class="col-5">
+
+                                    <div class="p-2">
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksAheadOfWeatherCondition" id="StartSeedWeeksAheadOfWeatherCondition" />
+                                    </div>
+
+                                    <div class="p-2">
+                                        <span> weeks(s)</span>
+                                    </div>
+
+                                    <div class="p-2">
                                         <InputSelect @bind-Value="@growInstruction.StartSeedAheadOfWeatherCondition" Name="StartSeedAheadOfWeatherCondition">
                                             @foreach (var item in Enum.GetValues<WeatherConditionEnum>().Where(p => p != WeatherConditionEnum.Unspecified))
                                             {
@@ -152,44 +115,115 @@
                                             <ValidationMessage For="@(() => growInstruction.StartSeedAheadOfWeatherCondition)" />
                                         </InputSelect>
                                     </div>
+
+                                    <div class="p-2">
+                                        <span> for </span>
+                                    </div>
+
+                                    <div class="p-2">
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksRange" id="StartSeedWeeksRange" />
+                                    </div>
+
+                                    <div class="p-2">
+                                        <span> week(s)</span>
+                                    </div>
+                                    <div class="p-2">
+                                        <InputSelect @bind-Value="@growInstruction.PlantingDepthInInches" Name="PlantingDepthInInches">
+                                            @foreach (var item in Enum.GetValues<PlantingDepthEnum>().Where(p => p != PlantingDepthEnum.Unspecified))
+                                            {
+                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                                            }
+                                        </InputSelect>
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingDepthInInches)" /></div>
+                                    </div>
+
+                                    <div class="p-2">
+                                        <span> deep</span>
+                                    </div>
                                 </div>
+
+                                <div class="d-flex justify-content-start flex-wrap">
+                                    <div class="p-2">
+                                        <FormCard>
+                                            <Header>
+                                                <label for="FertilizerForSeedling">Fertilization Schedule for Seedlings</label>
+                                            </Header>
+                                            <Body>
+                                                <div class="d-flex justify-content-start flex-wrap mb-3">
+                                                    <div class="p-2">
+                                                        <InputSelect @bind-Value="@growInstruction.FertilizerForSeedlings" Name="FertilizerForSeedlings">
+                                                            @foreach (var item in Enum.GetValues<FertilizerEnum>())
+                                                            {
+                                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                                                            }
+                                                        </InputSelect>
+                                                    </div>
+                                                    <div class="p-2"> <span>every</span> </div>
+                                                    <div class="p-2">
+                                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.FertilizeFrequencyForSeedlingsInWeeks" id="FertilizeFrequencyInWeeks" />
+                                                    </div>
+                                                    <div class="p-2"> <span>week(s)</span> </div>
+                                                </div>
+                                            </Body>
+                                        </FormCard>
+                                    </div>
+                                    <div class="p-2">
+                                        <FormCard>
+                                            <Header>
+                                                <label for="DaysToSprout">Days to sprout</label>
+                                            </Header>
+                                            <Body>
+                                                <div class="d-flex justify-content-start flex-wrap mb-3">
+                                                    <div class="p-2"> <span>From</span> </div>
+                                                    <div class="p-2">
+                                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.DaysToSproutMin" id="DaysToSproutMin" />
+                                                    </div>
+                                                    <div class="p-2"> <span>to</span> </div>
+                                                    <div class="p-2">
+                                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.DaysToSproutMax" id="DaysToSproutMax" />
+                                                    </div>
+                                                </div>
+                                            </Body>
+                                        </FormCard>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="StartSeedInstructions">Start Seed Instructions</label>
+                                        <InputTextArea Class="form-control" Id="StartSeedInstructions" @bind-Value="@growInstruction.StartSeedInstructions" rows="3" />
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedInstructions)" /></div>
+                                    </div>
+                                </div>
+
                             </Body>
                         </FormCard>
-                    </div>
-                    <div class="col-lg-3">
-                        <FormCard>
-                            <Header>
-                                <label for="SpacingInInches">How many weeks?</label>
-                            </Header>
-                            <Body>
-                                <InputNumber Class="form-control" @bind-Value="@growInstruction.StartSeedWeeksRange" id="StartSeedWeeksRange" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedWeeksRange)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label for="StartSeedInstructions">Start Seed Instructions</label>
-                        <InputTextArea Class="form-control" Id="StartSeedInstructions" @bind-Value="@growInstruction.StartSeedInstructions" rows="3" />
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.StartSeedInstructions)" /></div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col-lg-6">
-                        <FormCard>
+                <div class="row mt-3" id="transplant-instructions" hidden="@HideTransplantInstructions">
+                    <div class="col-11">
+                        <FormCard Class="border-secondary" HeaderClass="text-bg-secondary">
                             <Header>
-                                <label for="TransplantWeeksAheadOfWeatherCondition">When to Transplant?</label>
+                                <label for="StartSeedWeeksAheadOfWeatherCondition">Transplant Instructions</label>
                             </Header>
                             <Body>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksAheadOfWeatherCondition" id="TransplantWeeksAheadOfWeatherCondition" />
-                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.TransplantWeeksAheadOfWeatherCondition)" /></div>
+                                <div class="d-flex justify-content-start flex-wrap mb-3">
+
+                                    <div class="p-2">
+                                        <span>Start </span>
                                     </div>
-                                    <div class="col-3"> weeks(s)</div>
-                                    <div class="col-5">
+
+                                    <div class="p-2">
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksAheadOfWeatherCondition" id="TransplantWeeksAheadOfWeatherCondition" />
+                                    </div>
+
+                                    <div class="p-2">
+                                        <span> weeks(s)</span>
+                                    </div>
+
+                                    <div class="p-2">
                                         <InputSelect @bind-Value="@growInstruction.TransplantAheadOfWeatherCondition" Name="TransplantAheadOfWeatherCondition">
                                             @foreach (var item in Enum.GetValues<WeatherConditionEnum>().Where(p => p != WeatherConditionEnum.Unspecified))
                                             {
@@ -198,24 +232,24 @@
                                             <ValidationMessage For="@(() => growInstruction.TransplantAheadOfWeatherCondition)" />
                                         </InputSelect>
                                     </div>
+
+                                    <div class="p-2">
+                                        <span> for </span>
+                                    </div>
+
+                                    <div class="p-2">
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksRange" id="TransplantWeeksRange" />
+                                    </div>
+
+                                    <div class="p-2">
+                                        <span> week(s)</span>
+                                    </div>
                                 </div>
                             </Body>
                         </FormCard>
                     </div>
-                    <div class="col-lg-3">
-                        <FormCard>
-                            <Header>
-                                <label for="TransplantWeeksRange">How many weeks?</label>
-                            </Header>
-                            <Body>
-                                <InputNumber Class="form-control" @bind-Value="@growInstruction.TransplantWeeksRange" id="TransplantWeeksRange" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.TransplantWeeksRange)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
                 </div>
-
-
+                                
                 <div class="row mt-3">
                     <div class="col">
                         <label for="GrowingInstructions">Growing Instructions</label>
@@ -244,7 +278,6 @@
         }
     </div>
 </article>
-
 
 @code {
     [Parameter] public Func<Task> OnClose { get; set; }
@@ -279,6 +312,16 @@
         editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
         isInitialized = true;
         StateHasChanged();
+    }
+
+    protected bool HideSeedInstructions
+    {
+        get { return this.growInstruction.PlantingMethod == PlantingMethodEnum.Transplanting; }
+    }
+
+    protected bool HideTransplantInstructions
+    {
+        get { return this.growInstruction.PlantingMethod == PlantingMethodEnum.DirectSeed; }
     }
 
     protected async Task HandleValidSubmit()

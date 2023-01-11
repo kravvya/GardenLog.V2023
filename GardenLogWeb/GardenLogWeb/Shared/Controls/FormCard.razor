@@ -1,5 +1,5 @@
-﻿<div class="card">
-    <div class="card-header">
+﻿<div class="card @Class">
+    <div class="card-header @HeaderClass">
         @Header
     </div>
     <div class="card-body">
@@ -16,4 +16,10 @@
 
     [Parameter]
     public RenderFragment Body { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public string HeaderClass { get; set; }
 }
