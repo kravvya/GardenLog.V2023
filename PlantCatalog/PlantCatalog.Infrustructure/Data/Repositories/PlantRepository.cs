@@ -59,9 +59,16 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
                .As<PlantGrowInstructionViewModelProjection>()
                .FirstAsync();
 
-            data.GrowInstructions.ForEach(g => g.PlantId = data._id);
-           
-            return data.GrowInstructions;
+            if (data.GrowInstructions?.Count() > 0)
+            {
+                data.GrowInstructions.ForEach(g => g.PlantId = data._id);
+
+                return data.GrowInstructions;
+            }
+            else
+            {
+                return new List<PlantGrowInstructionViewModel>();
+            }
         }
 
         public async Task<PlantGrowInstructionViewModel> GetPlantGrowInstraction(string plantId, string id)

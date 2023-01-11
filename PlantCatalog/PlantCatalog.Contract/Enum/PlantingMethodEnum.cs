@@ -9,7 +9,9 @@ namespace PlantCatalog.Contract.Enum
         [Description("Direct Seed outdoors")]
         DirectSeed = 1,
         [Description("Start Seed Indoors")]
-        SeedIndoors = 2
-    
+        SeedIndoors = 2,
+        [Description("Transplating")]
+        Transplanting = 3
+
     }
 }

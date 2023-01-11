@@ -65,11 +65,11 @@ public class PlantVariety : BaseEntity
         Set<GrowToleranceEnum>(() => this.GrowTolerance, dto.GrowTolerance);
         Set<string>(() => this.Title, dto.Title);
 
-        if (SubGroup.Id != dto.SubGroup.PlantSubGroupId)
-        {
-            SubGroup = new SubGroup() { Id = dto.SubGroup.PlantSubGroupId, Name = dto.SubGroup.Name };
-            AddDomainEvent("SubGroup");
-        }
+        //if (SubGroup.Id != dto.SubGroup.PlantSubGroupId)
+        //{
+        //    SubGroup = new SubGroup() { Id = dto.SubGroup.PlantSubGroupId, Name = dto.SubGroup.Name };
+        //    AddDomainEvent("SubGroup");
+        //}
         
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

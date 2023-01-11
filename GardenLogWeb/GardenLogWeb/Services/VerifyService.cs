@@ -7,6 +7,7 @@ public interface IVerifyService
     IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>(bool excludeDefault) where TENUM : Enum;
     IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>() where TENUM : Enum;
     string GetDescription<TENUM>(string key) where TENUM : Enum;
+    string GetDescription<TENUM>(TENUM value) where TENUM : Enum;
     IReadOnlyCollection<Color> GetPlantVarietyColors();
 }
 
@@ -31,9 +32,14 @@ public class VerifyService : IVerifyService
         return GetEnumList(typeof(TENUM));
     }
 
-    public string GetDescription<TENUM>(string key) where TENUM: Enum
+    public string GetDescription<TENUM>(string key) where TENUM : Enum
     {
         return this.GetCodeList<TENUM>().FirstOrDefault(l => l.Key.Equals(key))!.Value;
+    }
+
+    public string GetDescription<TENUM>(TENUM value) where TENUM : Enum
+    {
+        return this.GetCodeList<TENUM>().FirstOrDefault(l => l.Key.Equals(value.ToString()))!.Value;
     }
 
     public IReadOnlyCollection<Color> GetPlantVarietyColors()
@@ -64,7 +70,6 @@ public class VerifyService : IVerifyService
     {
         return GetEnumList(genericEnumType, false);
     }
-
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType, bool excludeDefault)
     {
@@ -103,5 +108,8 @@ public class VerifyService : IVerifyService
         }
         return GenericEnum.ToString();
     }
+
+
+    
 }
 

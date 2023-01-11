@@ -19,10 +19,10 @@ public interface IPlantService
     Task<ApiResponse> UpdatePlantVariety(PlantVarietyModel variety);
     Task<ApiResponse> DeletePlantVariety(string plantId, string id);
 
-    Task<List<PlantGrowInstructionModel>> GetPlantGrowInstructions(string plantId, bool useCache);
-    Task<PlantGrowInstructionModel> GetPlantGrowInstruction(string plantId, string growInstructionId);
-    Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction);
-    Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction);
+    Task<List<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId, bool useCache);
+    Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId);
+    Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction);
+    Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction);
     Task<ApiResponse> DeletePlantGrowInstruction(string plantId, string id);
 
     string GetRandomPlantColor();
@@ -38,7 +38,6 @@ public class PlantService : IPlantService
 
 
     private const string PLANT_VARIETY_ROUTE = "/plant/{0}/PlantVarieties";
-    private const string PLANT_GROW_INSTRUCTIONS_ROUTE = "/plant/{0}/GrowInstructions";
     private Random _random = new Random();
     private const string PLANTS_KEY = "Plants";
    
@@ -113,7 +112,6 @@ public class PlantService : IPlantService
 
         return plants;
     }
-
 
     public async Task<PlantModel> GetPlant(string plantId, bool useCache)
     {
@@ -402,47 +400,48 @@ public class PlantService : IPlantService
     #endregion
 
     #region Public Plant Grow Instruction Functions
-    public async Task<List<PlantGrowInstructionModel>> GetPlantGrowInstructions(string plantId, bool useCache)
+
+    public async Task<List<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId, bool useCache)
     {
-        return new List<PlantGrowInstructionModel>();
+        List<PlantGrowInstructionViewModel> plantGrowInstructionsList = null;
 
-        //List<PlantGrowInstructionModel> plantGrowInstructionsList = null;
-        //string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
+        string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
-        //if (useCache)
-        //{
-        //    _cacheService.TryGetValue<List<PlantGrowInstructionModel>>(cacheKey, out plantGrowInstructionsList);
-        //}
+        if (useCache)
+        {
+            _cacheService.TryGetValue<List<PlantGrowInstructionViewModel>>(cacheKey, out plantGrowInstructionsList);
+        }
 
-        //if (plantGrowInstructionsList == null)
-        //{
-        //    var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+        if (plantGrowInstructionsList == null)
+        {
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+            var url = Routes.GetPlantGrowInstructions.Replace("{plantId}", plantId);
 
-        //    var response = await httpClient.ApiGetAsync<GetPLantGrowInstructionsResponse>(string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId));
+            var response = await httpClient.ApiGetAsync<List<PlantGrowInstructionViewModel>>(url);
 
-        //    if (!response.IsSuccess)
-        //    {
-        //        _toastService.ShowToast("Unable to get Plant Grow Instructions", GardenLogToastLevel.Error);
-        //        return null;
-        //    }
+            if (!response.IsSuccess)
+            {
+                _toastService.ShowToast("Unable to get Plant Grow Instructions", GardenLogToastLevel.Error);
+                return null;
+            }
 
-        //    plantGrowInstructionsList = response.Response.GrowInstructions;
+            plantGrowInstructionsList = response.Response;
 
-        //    AddPlanGrowInstructionsToCache(plantId, plantGrowInstructionsList);
-        //}
+            AddPlanGrowInstructionsToCache(plantId, plantGrowInstructionsList);
+        }
 
-        //return plantGrowInstructionsList;
+        return plantGrowInstructionsList;
     }
 
-    public async Task<PlantGrowInstructionModel> GetPlantGrowInstruction(string plantId, string growInstructionId)
+    public async Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId)
     {
-        PlantGrowInstructionModel growInstruction = null;
+        PlantGrowInstructionViewModel growInstruction = null;
 
-        string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId) + $"/{growInstructionId}";
+        string route = Routes.GetPlantGrowInstruction.Replace("{plantId}", plantId).Replace("{id}", growInstructionId);
 
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<GetPLantGrowInstructionResponse>(route);
+        var response = await httpClient.ApiGetAsync<PlantGrowInstructionViewModel>(route);
 
         if (!response.IsSuccess)
         {
@@ -450,19 +449,19 @@ public class PlantService : IPlantService
             return null;
         }
 
-        growInstruction = response.Response.GrowInstruction;
+        growInstruction = response.Response;
 
         await AddOrUpdateToPlantGrowInstructionList(growInstruction);
-
 
         return growInstruction;
     }
 
-    public async Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction)
+    public async Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiPostAsync(string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantGrowInstruction.PlantId), plantGrowInstruction);
+        var route = Routes.CreatePlantGrowInstruction.Replace("{plantId}", plantGrowInstruction.PlantId);
+        var response = await httpClient.ApiPostAsync(route, plantGrowInstruction); 
 
 
         if (response.ValidationProblems != null)
@@ -480,15 +479,14 @@ public class PlantService : IPlantService
             _toastService.ShowToast($"Grow Instructions added. Instruction id is {plantGrowInstruction.PlantGrowInstructionId}", GardenLogToastLevel.Success);
         }
 
-
         return response;
     }
 
-    public async Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionModel plantGrowInstruction)
+    public async Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantGrowInstruction.PlantId) + $"/{plantGrowInstruction.PlantGrowInstructionId}";
+        string route = Routes.UpdatePlantGrowInstructions.Replace("{plantId}", plantGrowInstruction.PlantId).Replace("{id}", plantGrowInstruction.PlantGrowInstructionId);
 
         var response = await httpClient.ApiPutAsync(route, plantGrowInstruction);
 
@@ -514,7 +512,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        string route = string.Format(PLANT_GROW_INSTRUCTIONS_ROUTE, plantId) + $"/{id}";
+        string route = Routes.DeletePlantGrowInstructions.Replace("{plantId}", plantId).Replace("{id}", id);
 
         var response = await httpClient.ApiDeleteAsync(route);
 
@@ -653,7 +651,8 @@ public class PlantService : IPlantService
     #endregion
 
     #region Private Plant Grow Instructions
-    private async Task AddOrUpdateToPlantGrowInstructionList(PlantGrowInstructionModel growInstructionModel)
+
+    private async Task AddOrUpdateToPlantGrowInstructionList(PlantGrowInstructionViewModel growInstructionModel)
     {
         var plantGrowInstructions = await GetPlantGrowInstructions(growInstructionModel.PlantId, true);
 
@@ -670,18 +669,18 @@ public class PlantService : IPlantService
         }
     }
 
-    private List<PlantGrowInstructionModel> GetPlantGrowInstructionsFromCache(string plantId)
+    private List<PlantGrowInstructionViewModel> GetPlantGrowInstructionsFromCache(string plantId)
     {
         string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
-        List<PlantGrowInstructionModel> plantGrowInstructions = null;
+        List<PlantGrowInstructionViewModel> plantGrowInstructions = null;
 
-        _cacheService.TryGetValue<List<PlantGrowInstructionModel>>(cacheKey, out plantGrowInstructions);
+        _cacheService.TryGetValue<List<PlantGrowInstructionViewModel>>(cacheKey, out plantGrowInstructions);
 
         return plantGrowInstructions;
     }
 
-    private void AddPlanGrowInstructionsToCache(string plantId, List<PlantGrowInstructionModel> plantGrowInstructions)
+    private void AddPlanGrowInstructionsToCache(string plantId, List<PlantGrowInstructionViewModel> plantGrowInstructions)
     {
         string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
@@ -703,20 +702,6 @@ public class PlantService : IPlantService
 
 }
 
-//public class GetAllPlantsResponse
-//{
-//    public List<PlantModel> Plants { get; set; }
-
-//    // public IReadOnlyCollection<ImageViewModel> PlantImages { get; set; }
-//}
-
-//public class GetPlantResponse
-//{
-//    public PlantModel Plant { get; set; }
-
-//    // public IReadOnlyCollection<ImageViewModel> PlantImages { get; set; }
-//}
-
 public class GetPLantVarietiesResponse
 {
     public List<PlantVarietyModel> Varieties { get; set; }
@@ -727,11 +712,3 @@ public class GetPLantVarietyResponse
     public PlantVarietyModel Variety { get; set; }
 }
 
-public class GetPLantGrowInstructionsResponse
-{
-    public List<PlantGrowInstructionModel> GrowInstructions { get; set; }
-}
-public class GetPLantGrowInstructionResponse
-{
-    public PlantGrowInstructionModel GrowInstruction { get; set; }
-}

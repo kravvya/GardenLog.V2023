@@ -34,7 +34,7 @@
                                         @foreach (var item in Enum.GetValues<PlantTypeEnum>().Where(p => p != PlantTypeEnum.Unspecified))
                                         {
                                             <InputRadio class="btn-check" type="radio" name="Type" id="@item" Value="@item" />
-                                            <label class="btn btn-outline-primary" for="@item">@(plantTypesCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                            <label class="btn btn-outline-primary" for="@item">@(_verifyService.GetDescription(item))</label>
                                         }
                                         <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Type)" /></div>
                                     </InputRadioGroup>
@@ -62,7 +62,7 @@
                                         {
                                             <div class="form-check form-check-inline">
                                                 <InputRadio class="form-check-input" type="radio" name="Lifecyle" id="@item" Value="@item" />
-                                                <label class="form-check-label" for="@item">@(plantLifeCyclesCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                                <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                             </div>
                                         }
                                         <ValidationMessage For="@(() => plant.Lifecycle)" />
@@ -99,7 +99,7 @@
                                         {
                                             <div class="form-check form-check-inline">
                                                 <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item" Value="@item" />
-                                                <label class="form-check-label" for="@item">@(lightRequirementCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                                <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                             </div>
                                         }
                                         <ValidationMessage For="@(() => plant.LightRequirement)" />
@@ -118,7 +118,7 @@
                                         {
                                             <div class="form-check form-check-inline">
                                                 <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item" Value="@item" />
-                                                <label class="form-check-label" for="@item">@(moistureRequirementCodes.FirstOrDefault(v => v.Key == item.ToString()).Value)</label>
+                                                <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                             </div>
                                         }
                                         <ValidationMessage For="@(() => plant.MoistureRequirement)" />
@@ -206,30 +206,19 @@
     private CustomValidation customValidation;
     private EditContext editContext;
 
-
-    protected IReadOnlyCollection<KeyValuePair<string, string>> plantLifeCyclesCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> lightRequirementCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> growToleranceCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> plantTypesCodes { get; set; }
     protected IReadOnlyCollection<Color> varietyColors { get; set; }
 
     public List<CheckableEnum> growToleranceEnums { get; set; } = new();
-
 
     private List<BreadcrumbLink> breacrumbLinks = new();
 
     protected override async Task OnInitializedAsync()
     {
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        plantLifeCyclesCodes = _verifyService.GetCodeList<PlantLifecycleEnum>(true);
-        lightRequirementCodes = _verifyService.GetCodeList<LightRequirementEnum>(true);
-        moistureRequirementCodes = _verifyService.GetCodeList<MoistureRequirementEnum>(true);
-        growToleranceCodes = _verifyService.GetCodeList<GrowToleranceEnum>(true);
-        plantTypesCodes = _verifyService.GetCodeList<PlantTypeEnum>(true);
+              
         varietyColors = _verifyService.GetPlantVarietyColors();
 
-        foreach (var code in growToleranceCodes)
+        foreach (var code in _verifyService.GetCodeList<GrowToleranceEnum>(true))
         {
             growToleranceEnums.Add(new CheckableEnum(code));
         }

@@ -47,10 +47,10 @@
 }
 
 @code {
-    [Parameter] public PlantGrowInstructionModel GrowInstruction { get; set; }
+    [Parameter] public PlantGrowInstructionViewModel GrowInstruction { get; set; }
     [Parameter] public bool IsOpen { get; set; }
 
-    private string GetPlantingDetail(PlantGrowInstructionModel grow)
+    private string GetPlantingDetail(PlantGrowInstructionViewModel grow)
     {
         System.Text.StringBuilder sb = new();
         if (grow.PlantingDepthInInches.Equals("Unspecified"))
@@ -69,7 +69,7 @@
         return sb.ToString();
     }
 
-    private string GetSeedingDetails(PlantGrowInstructionModel grow)
+    private string GetSeedingDetails(PlantGrowInstructionViewModel grow)
     {
 
         System.Text.StringBuilder sb = new();
@@ -88,7 +88,7 @@
         return sb.ToString();
     }
 
-    private string GetTransplantDetails(PlantGrowInstructionModel grow)
+    private string GetTransplantDetails(PlantGrowInstructionViewModel grow)
     {
 
         System.Text.StringBuilder sb = new();
@@ -123,12 +123,12 @@
         return IsOpen ? "show" : "";
     }
 
-    private void EditPlantGrowInstruction(PlantGrowInstructionModel grow)
+    private void EditPlantGrowInstruction(PlantGrowInstructionViewModel grow)
     {
         _navigationManager.NavigateToEditPlantGrowInstruction(grow.PlantId, grow.PlantGrowInstructionId);
     }
 
-    private void OpenPlantGrowInstructionView(PlantGrowInstructionModel grow)
+    private void OpenPlantGrowInstructionView(PlantGrowInstructionViewModel grow)
     {
         _navigationManager.NavigateToPlantGrowInstruction(grow.PlantId, grow.PlantGrowInstructionId);
     }

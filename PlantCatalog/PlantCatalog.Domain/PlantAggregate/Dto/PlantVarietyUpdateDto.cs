@@ -13,6 +13,5 @@
         public MoistureRequirementEnum MoistureRequirement { get; init; }
         public LightRequirementEnum LightRequirement { get; init; }
         public GrowToleranceEnum GrowTolerance { get; init; }
-        public PlantSubGroupUpdateDto SubGroup { get; set; }
     }
 }

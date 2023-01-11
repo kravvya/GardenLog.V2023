@@ -11,49 +11,43 @@
                 <FluentValidationValidator />
                 <CustomValidation @ref="customValidation" />
                 @*<ValidationSummary />*@
-                <div class="row">
-                    <div class="col-lg-6 col-xl-5">
-                        <label for="HarvestSeason" class="form-label">Harvest Time</label>
-                        <div class="d-flex flex-nowrap">
-                            <InputRadioGroup @bind-Value="@growInstruction.HarvestSeason" Name="HarvestSeason" id="HarvestSeason">
-                                @foreach (var item in harvestSeasonCodes)
-                                {
-                                    <InputRadio class="btn-check" type="radio" name="HarvestSeason" id="@item.Key" checked="@(item.Key == growInstruction.HarvestSeason)" Value="@item.Key" />
-                                    <label class="btn btn-outline-primary" for="@item.Key">@item.Value</label>
-                                }
+                <div class="row mt-3">
 
-                            </InputRadioGroup>
-                        </div>
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.HarvestSeason)" /></div>
+                    <div class="col-md-4 col-lg-2">
+                        <label for="PlantingMethod" class="form-label">Planting Method</label>
+                        <InputSelect @bind-Value="growInstruction.PlantingMethod">
+                            @foreach (var item in Enum.GetValues<PlantingMethodEnum>().Where(p => p != PlantingMethodEnum.Unspecified))
+                            {
+                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                            }
+                        </InputSelect>
                     </div>
-                    <div class="col-md-8 col-lg-6">
+
+                    <div class="col-md-7 col-lg-4">
                         <label for="varietytname" class="form-label">Name</label>
                         <InputText Class="form-control" @bind-Value="@growInstruction.Name" Id="Name" />
                         <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.Name)" /></div>
                     </div>
+
+                    <div class="col-md-10 col-lg-6">
+                        <label for="HarvestSeason" class="form-label">Target Harvest Season</label>
+                        <div class="row">
+                            <div class="col-12">
+                                <InputRadioGroup @bind-Value="@growInstruction.HarvestSeason" Name="HarvestSeason" id="HarvestSeason">
+                                    @foreach (var item in Enum.GetValues<HarvestSeasonEnum>().Where(p => p != HarvestSeasonEnum.Unspecified))
+                                    {
+                                        <InputRadio class="btn-check" type="radio" name="HarvestSeason" id="@item" Value="@item" />
+                                        <label class="btn btn-outline-primary" for="@item">@(_verifyService.GetDescription(item))</label>
+                                    }
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.HarvestSeason)" /></div>
+                    </div>
+
                 </div>
 
-                <div class="row  mt-3">
-                    <div class="col-6 col-lg-3">
-                        <FormCard>
-                            <Header>
-                                <label for="PlantingMethod">Planting Method</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@growInstruction.PlantingMethod" Name="PlantingMethod">
-                                    @foreach (var item in plantingMethodCodes)
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="PlantingMethod" id="@item.Key" checked="@(item.Key == growInstruction.PlantingMethod)" Value="@item.Key" />
-                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
-                                        </div>
-                                    }
-
-                                </InputRadioGroup>
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingMethod)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
+                <div class="row mt-3">
                     <div class="col-4 col-lg-3">
                         <FormCard>
                             <Header>
@@ -65,6 +59,54 @@
                             </Body>
                         </FormCard>
                     </div>
+                    <div class="col-8 col-lg-6">
+                        <FormCard>
+                            <Header>
+                                <label for="Fertilizer">Fertilization Schedule</label>
+                            </Header>
+                            <Body>
+                                <div class="row">
+                                    <div class="col-sm-10 col-md-4">
+                                        <InputSelect @bind-Value="@growInstruction.Fertilizer" Name="Fertilizer">
+                                            @foreach (var item in Enum.GetValues<FertilizerEnum>())
+                                            {
+                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+                                    <div class="col-sm-3 col-md-2"> every </div>
+                                    <div class="col-sm-5 col-md-3">
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.FertilizeFrequencyInWeeks" id="FertilizeFrequencyInWeeks" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-3"> week(s) </div>                                   
+                                </div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                </div>
+
+                <div class="row  mt-3">
+                    <div class="col-6 col-lg-3">
+                        <FormCard>
+                            <Header>
+                                <label for="PlantingMethod">Planting Method</label>
+                            </Header>
+                            <Body>
+                                <InputRadioGroup @bind-Value="@growInstruction.PlantingMethod" Name="PlantingMethod">
+                                    @foreach (var item in Enum.GetValues<PlantingMethodEnum>().Where(p => p != PlantingMethodEnum.Unspecified))
+                                    {
+                                        <div class="form-check form-check-inline">
+                                            <InputRadio class="form-check-input" type="radio" name="PlantingMethod" id="@item" Value="@item" />
+                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
+                                        </div>
+                                    }
+
+                                </InputRadioGroup>
+                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantingMethod)" /></div>
+                            </Body>
+                        </FormCard>
+                    </div>
+
                     <div class="col-lg-5">
                         <FormCard>
                             <Header>
@@ -72,11 +114,11 @@
                             </Header>
                             <Body>
                                 <InputRadioGroup @bind-Value="@growInstruction.PlantingDepthInInches" Name="PlantingDepthInInches">
-                                    @foreach (var item in plantingDepthCodes)
+                                    @foreach (var item in Enum.GetValues<PlantingDepthEnum>().Where(p => p != PlantingDepthEnum.Unspecified))
                                     {
                                         <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="PlantingDepthInInches" id="@item.Key" checked="@(item.Key == growInstruction.PlantingDepthInInches)" Value="@item.Key" />
-                                            <label class="form-check-label" for="@item.Key">@item.Value</label>
+                                            <InputRadio class="form-check-input" type="radio" name="PlantingDepthInInches" id="@item" Value="@item" />
+                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                         </div>
                                     }
 
@@ -103,9 +145,9 @@
                                     <div class="col-3"> weeks(s)</div>
                                     <div class="col-5">
                                         <InputSelect @bind-Value="@growInstruction.StartSeedAheadOfWeatherCondition" Name="StartSeedAheadOfWeatherCondition">
-                                            @foreach (var item in weatherConditionCodes)
+                                            @foreach (var item in Enum.GetValues<WeatherConditionEnum>().Where(p => p != WeatherConditionEnum.Unspecified))
                                             {
-                                                <option Value="@item.Key">@item.Value</option>
+                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
                                             }
                                             <ValidationMessage For="@(() => growInstruction.StartSeedAheadOfWeatherCondition)" />
                                         </InputSelect>
@@ -149,9 +191,9 @@
                                     <div class="col-3"> weeks(s)</div>
                                     <div class="col-5">
                                         <InputSelect @bind-Value="@growInstruction.TransplantAheadOfWeatherCondition" Name="TransplantAheadOfWeatherCondition">
-                                            @foreach (var item in weatherConditionCodes)
+                                            @foreach (var item in Enum.GetValues<WeatherConditionEnum>().Where(p => p != WeatherConditionEnum.Unspecified))
                                             {
-                                                <option Value="@item.Key">@item.Value</option>
+                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
                                             }
                                             <ValidationMessage For="@(() => growInstruction.TransplantAheadOfWeatherCondition)" />
                                         </InputSelect>
@@ -208,27 +250,22 @@
     [Parameter] public Func<Task> OnClose { get; set; }
 
     private PlantModel plant { get; set; }
-    private PlantGrowInstructionModel growInstruction { get; set; }
+    private PlantGrowInstructionViewModel growInstruction { get; set; }
 
     private bool isInitialized = false;
     private bool isEdit = false;
     private CustomValidation customValidation;
     private EditContext editContext;
 
-    protected IReadOnlyCollection<KeyValuePair<string, string>> plantingDepthCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> plantingMethodCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> weatherConditionCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> harvestSeasonCodes { get; set; }
-
-    public void Initialize(PlantGrowInstructionModel instruction, PlantModel plant)
+    public void Initialize(PlantGrowInstructionViewModel instruction, PlantModel plant)
     {
         this.plant = plant;
         if (instruction == null)
         {
 
-            this.growInstruction = new PlantGrowInstructionModel();
+            this.growInstruction = new PlantGrowInstructionViewModel();
             this.growInstruction.PlantId = this.plant.PlantId;
-            this.growInstruction.PlantingDepthInInches = "Unspecified";
+            //this.growInstruction.PlantingDepthInInches = "Unspecified";
             isEdit = false;
         }
         else
@@ -237,10 +274,6 @@
             isEdit = true;
 
         }
-        plantingDepthCodes = _verifyService.GetCodeList<PlantingDepthEnum>(false);
-        plantingMethodCodes = _verifyService.GetCodeList<PlantingMethodEnum>(true);
-        weatherConditionCodes = _verifyService.GetCodeList<WeatherConditionEnum>(false);
-        harvestSeasonCodes = _verifyService.GetCodeList<HarvestSeasonEnum>(true);
 
         editContext = new(this.growInstruction);
         editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
