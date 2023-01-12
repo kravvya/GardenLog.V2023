@@ -1,51 +1,55 @@
 ﻿using GardenLog.SharedKernel.Interfaces;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using System.Windows.Input;
 
 namespace GardenLog.SharedInfrastructure.MongoDB
 {
-    public abstract class BaseRepository<T> : IRepository<T> where T : class, IAggregateRoot
+    public abstract class BaseRepository<T> : IRepository<T> where T : class, IEntity
     {
-        private readonly IMongoCollectionContext<T> _context;
+        protected IMongoCollection<T> Collection { get; }
         private readonly ILogger<BaseRepository<T>> _logger;
-       
+        protected readonly IUnitOfWork _unitOfWork;
 
-        public BaseRepository(IMongoCollectionContext<T> context, ILogger<BaseRepository<T>> logger)
+        public BaseRepository(IUnitOfWork unitOfWork, ILogger<BaseRepository<T>> logger)
         {
-            _context = context;
-            _logger = logger;           
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+
+            //It is very importent to register models before getting Collection. Run into issues, when get collection was automatically mapping documents. 
+            _logger.LogInformation("Setting up Mongo Context");
+            OnModelCreating();
+
+            _logger.LogInformation("Setting up Mongo Context");
+            Collection = GetCollection();
         }
 
         public void Add(T entity)
         {
-            AddCommand(() => _context.Collection.InsertOneAsync(entity));
+            AddCommand(() => Collection.InsertOneAsync(entity));
         }
 
         public void Delete(string id)
         {
-            AddCommand(() => _context.Collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", id)));
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+            AddCommand(() => Collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", id)));
         }
 
         public async Task<T> GetByIdAsync(string id)
         {
-            var data = await _context.Collection.FindAsync(Builders<T>.Filter.Eq("_id", id));
+            var data = await Collection.FindAsync(Builders<T>.Filter.Eq("_id", id));
             return data.SingleOrDefault();
         }
 
        public void Update(T entity)
         {
-            AddCommand(() => _context.Collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), entity));
+            AddCommand(() => Collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), entity));
         }
 
         protected void AddCommand(Func<Task> func)
         {
-            _context.UnitOfWork.AddCommand(func);
+            _unitOfWork.AddCommand(func);
         }
+
+        protected abstract IMongoCollection<T> GetCollection();
+        protected abstract void OnModelCreating();
     }
 }

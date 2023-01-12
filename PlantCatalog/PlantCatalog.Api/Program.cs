@@ -51,10 +51,10 @@ try
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
-    builder.Services.AddSingleton<IMongoCollectionContext<Plant>, PlantCollectionContext>();
-    builder.Services.AddSingleton<IMongoCollectionContext<PlantVariety>, PlantVarietyCollectionContext>();
 
-    builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+    builder.Services.AddSingleton<IPlantRepository, PlantRepository>();
+    builder.Services.AddSingleton<IPlantVarietyRepository, PlantVarietyRepository>();
+
     builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();
     builder.Services.AddScoped<IPlantQueryHandler, PlantQueryHandler>();
 

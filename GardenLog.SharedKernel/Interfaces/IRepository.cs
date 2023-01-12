@@ -1,6 +1,6 @@
 ﻿namespace GardenLog.SharedKernel.Interfaces;
 
-public interface IRepository<T>  where T : class, IAggregateRoot
+public interface IRepository<T>  where T : class, IEntity
 {
     void Add(T entity);
     Task<T> GetByIdAsync(string id);

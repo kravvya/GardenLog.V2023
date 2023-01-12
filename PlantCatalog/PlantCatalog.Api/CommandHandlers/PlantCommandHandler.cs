@@ -1,9 +1,4 @@
 ﻿using GardenLog.SharedKernel.Interfaces;
-using MediatR;
-using Microsoft.AspNetCore.WebUtilities;
-using MongoDB.Driver;
-using PlantCatalog.Contract.Commands;
-using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.Api.CommandHandlers;
 
@@ -21,12 +16,14 @@ public class PlantCommandHandler : IPlantCommandHandler
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPlantRepository _plantRepository;
+    private readonly IPlantVarietyRepository _plantVarietyrepository;
     private readonly ILogger<PlantCommandHandler> _logger;
 
-    public PlantCommandHandler(IUnitOfWork unitOfWork, IPlantRepository repository, ILogger<PlantCommandHandler> logger)
+    public PlantCommandHandler(IUnitOfWork unitOfWork, IPlantRepository repository, IPlantVarietyRepository plantVarietyrepository, ILogger<PlantCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _plantRepository = repository;
+        _plantVarietyrepository = plantVarietyrepository;
         _logger = logger;
     }
 
