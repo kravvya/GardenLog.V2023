@@ -13,10 +13,10 @@ namespace PlantCatalog.Api.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IMongoDBContext<Plant> _context;
+        private readonly IMongoCollectionContext<Plant> _context;
         private readonly IPlantRepository _repository;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IMongoDBContext<Plant> context, IPlantRepository repository)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IMongoCollectionContext<Plant> context, IPlantRepository repository)
         {
             _logger = logger;
             _context = context;

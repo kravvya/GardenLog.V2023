@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using MediatR;
-using PlantCatalog.Contract.ViewModels;
-using PlantCatalog.Domain.PlantAggregate;
-using PlantCatalog.Domain.PlantAggregate.Dto;
-using SharpCompress.Common;
 
 namespace PlantCatalog.Api.QueryHandlers;
 

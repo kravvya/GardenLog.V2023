@@ -30,6 +30,39 @@ namespace GardenLog.SharedKernel
             }
         }
 
+
+        public void SetCollection<T>(Expression<Func<List<T>>> prop, List<T> newList)
+        {
+            bool changed = false;
+            var expr = (MemberExpression)prop.Body;
+            var mem = (PropertyInfo)expr.Member;
+
+            var existingList = (List<T>)prop.Compile().Target;
+
+            var elementsToRemove = existingList.Where(t => !newList.Contains(t));
+            if (elementsToRemove.Any())
+            {
+                //logic to do something in case if tags are in use
+                existingList.RemoveAll(t => elementsToRemove.Contains(t));
+                changed = true;
+            }
+
+            changed = newList.RemoveAll(t => existingList.Contains(t)) > 0 ;
+            
+
+            existingList.AddRange(newList);
+
+            if (newList.Count > 0)
+            {
+                changed = true;
+            }
+
+            if (changed)
+            {
+                AddDomainEvent(mem.Name);
+            }
+        }
+
         protected abstract void AddDomainEvent(string attributeName);
     }
 }

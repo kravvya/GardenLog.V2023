@@ -36,18 +36,15 @@ public record UpdatePlantGrowInstructionCommand : PlantGrowInstructionBase
     public string PlantGrowInstructionId { get; init; }
 }
 
-public class CreatePlantGrowInstructionCommandValidator : PlantGrowInstructionValidator<CreatePlantGrowInstructionCommand>
+#endregion
+
+#region Plant Variety Grow Instruction Commands
+public record CreatePlantVarietyCommand : PlantVarietyBase
+{ }
+
+public record UpdatePlantVarietyCommand : PlantVarietyBase
 {
-    public CreatePlantGrowInstructionCommandValidator()
-    {
-    }
+    public string PlantVarietyId { get; init; }
 }
 
-public class UpdatePlantGrowInstructionCommandValidator : PlantGrowInstructionValidator<UpdatePlantGrowInstructionCommand>
-{
-    public UpdatePlantGrowInstructionCommandValidator()
-    {
-        RuleFor(command => command.PlantGrowInstructionId).NotEmpty().Length(3, 50);
-    }
-}
 #endregion

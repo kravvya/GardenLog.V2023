@@ -1,7 +1,11 @@
-﻿namespace PlantCatalog.Domain.PlantAggregate;
+﻿using PlantCatalog.Contract.Commands;
 
-public class PlantVariety : BaseEntity
+namespace PlantCatalog.Domain.PlantAggregate;
+
+public class PlantVariety : BaseEntity, IEntity
 {
+    public string PlantId { get; private set; }
+    public string PlantName { get; set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
     public int? DaysToMaturityMin { get; private set; }
@@ -12,12 +16,19 @@ public class PlantVariety : BaseEntity
     public MoistureRequirementEnum MoistureRequirement { get; private set; }
     public LightRequirementEnum LightRequirement { get; private set; }
     public GrowToleranceEnum GrowTolerance { get; private set; }
-    public SubGroup SubGroup { get; private set; }
+
+    private readonly List<string> _tags = new();
+    public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
+
+    private readonly List<string> _colors = new();
+    public IReadOnlyCollection<string> Colors => _colors.AsReadOnly();
+
 
     private PlantVariety() { }
 
     public static PlantVariety Create(
-        string id,
+        string plantId, 
+        string plantName,
         string name,
         string description,
         int? daysToMaturityMin,
@@ -28,12 +39,16 @@ public class PlantVariety : BaseEntity
         LightRequirementEnum lightRequirement,
         GrowToleranceEnum growToleranceEnum,
         string title,
-        SubGroup subGroup
+        List<string> tags,
+        List<string> colors,
+         Action<PlantEventTriggerEnum, TriggerEntity> addPlantEvent
       )
     {
-        return new PlantVariety()
+        var variety =  new PlantVariety()
         {
-            Id = id,
+            Id = Guid.NewGuid().ToString(),
+            PlantName = plantName,
+            PlantId = plantId,
             Name = name ?? throw new ArgumentNullException(nameof(name)),
             Description = description ?? throw new ArgumentNullException(nameof(description)),
             DaysToMaturityMin = daysToMaturityMin,
@@ -43,34 +58,39 @@ public class PlantVariety : BaseEntity
             MoistureRequirement = moistureRequirement,
             LightRequirement = lightRequirement,
             GrowTolerance = growToleranceEnum,
-            Title = title,
-            SubGroup = subGroup
+            Title = title
         };
+        variety._tags.AddRange(tags);
+        variety._colors.AddRange(colors);
 
+        if (variety.DomainEvents != null && variety.DomainEvents.Count > 0)
+        {
+            variety.DomainEvents.Clear();
+            addPlantEvent(PlantEventTriggerEnum.PlantVarietyCreated, new TriggerEntity(EntityTypeEnum.PlantVariety, variety.Id));
+        }
+
+        return variety;
     }
 
     public void Update(
-        PlantVarietyUpdateDto dto,
+        UpdatePlantVarietyCommand command,
         Action<PlantEventTriggerEnum, TriggerEntity> addPlantEvent
     )
     {
-        Set<string>(() => this.Name, dto.Name);
-        Set<string>(() => this.Description, dto.Description);
-        Set<int?>(() => this.DaysToMaturityMin, dto.DaysToMaturityMin);
-        Set<int?>(() => this.DaysToMaturityMax, dto.DaysToMaturityMax);
-        Set<int?>(() => this.HeightInInches, dto.HeightInInches);
-        Set<bool>(() => this.IsHeirloom, dto.IsHeirloom);
-        Set<MoistureRequirementEnum>(() => this.MoistureRequirement, dto.MoistureRequirement);
-        Set<LightRequirementEnum>(() => this.LightRequirement, dto.LightRequirement);
-        Set<GrowToleranceEnum>(() => this.GrowTolerance, dto.GrowTolerance);
-        Set<string>(() => this.Title, dto.Title);
+        Set<string>(() => this.Name, command.Name);
+        Set<string>(() => this.Description, command.Description);
+        Set<int?>(() => this.DaysToMaturityMin, command.DaysToMaturityMin);
+        Set<int?>(() => this.DaysToMaturityMax, command.DaysToMaturityMax);
+        Set<int?>(() => this.HeightInInches, command.HeightInInches);
+        Set<bool>(() => this.IsHeirloom, command.IsHeirloom);
+        Set<MoistureRequirementEnum>(() => this.MoistureRequirement, command.MoistureRequirement);
+        Set<LightRequirementEnum>(() => this.LightRequirement, command.LightRequirement);
+        Set<GrowToleranceEnum>(() => this.GrowTolerance, command.GrowTolerance);
+        Set<string>(() => this.Title, command.Title);
 
-        //if (SubGroup.Id != dto.SubGroup.PlantSubGroupId)
-        //{
-        //    SubGroup = new SubGroup() { Id = dto.SubGroup.PlantSubGroupId, Name = dto.SubGroup.Name };
-        //    AddDomainEvent("SubGroup");
-        //}
-        
+        SetCollection<string>(() => this._tags, command.Tags);
+        SetCollection<string>(() => this._colors, command.Colors);
+
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
             this.DomainEvents.Clear();
@@ -83,12 +103,8 @@ public class PlantVariety : BaseEntity
         this.DomainEvents.Add(
             new PlantChildEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new TriggerEntity(EntityTypeEnum.GrowingInstruction, this.Id)));
     }
-}
 
-public record SubGroup
-{
-    public string Id { get; init; }
-    public string Name { get; init; }   
+   
 }
 
 

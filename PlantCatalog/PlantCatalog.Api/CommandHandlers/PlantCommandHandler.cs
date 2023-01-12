@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using GardenLog.SharedKernel.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.WebUtilities;
 using MongoDB.Driver;
 using PlantCatalog.Contract.Commands;
@@ -18,11 +19,13 @@ public interface IPlantCommandHandler
 
 public class PlantCommandHandler : IPlantCommandHandler
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IPlantRepository _plantRepository;
     private readonly ILogger<PlantCommandHandler> _logger;
 
-    public PlantCommandHandler(IPlantRepository repository, ILogger<PlantCommandHandler> logger)
+    public PlantCommandHandler(IUnitOfWork unitOfWork, IPlantRepository repository, ILogger<PlantCommandHandler> logger)
     {
+        _unitOfWork = unitOfWork;
         _plantRepository = repository;
         _logger = logger;
     }
@@ -53,7 +56,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         _plantRepository.Add(plant);
 
-        await _plantRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return plant.Id;
     }
@@ -85,7 +88,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         _plantRepository.Update(plant);
 
-        await _plantRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return plant.Id;
     }
@@ -97,7 +100,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         _plantRepository.Delete(id);
 
-        await _plantRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return id;
     }
@@ -118,7 +121,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
             _plantRepository.AddPlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id== growId), plant.GrowInstructionsCount);
 
-            await _plantRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return growId;
         }
@@ -144,7 +147,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         _plantRepository.UpdatePlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id == command.PlantGrowInstructionId));
 
-        await _plantRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return command.PlantGrowInstructionId;
     }
@@ -158,7 +161,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         _plantRepository.DeletePlantGrowInstruction(plantId, id, plant.GrowInstructionsCount);
 
-        await _plantRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return id;
     }

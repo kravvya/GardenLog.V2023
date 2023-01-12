@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using GardenLog.SharedInfrastructure;
 using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
+using GardenLog.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using PlantCatalog.Contract.Validators;
 using PlantCatalog.Domain.PlantAggregate;
@@ -49,7 +50,9 @@ try
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IMongoDBContext<Plant>, PlantDBContext>();
+    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoCollectionContext<Plant>, PlantCollectionContext>();
+    builder.Services.AddSingleton<IMongoCollectionContext<PlantVariety>, PlantVarietyCollectionContext>();
 
     builder.Services.AddScoped<IPlantRepository, PlantRepository>();
     builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();

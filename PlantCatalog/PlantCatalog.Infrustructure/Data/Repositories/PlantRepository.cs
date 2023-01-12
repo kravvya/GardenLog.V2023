@@ -8,10 +8,10 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
 {
     public class PlantRepository : BaseRepository<Plant>, IPlantRepository
     {
-        private readonly IMongoDBContext<Plant> _context;
+        private readonly IMongoCollectionContext<Plant> _context;
         private readonly ILogger<PlantRepository> _logger;
 
-        public PlantRepository(IMongoDBContext<Plant> context, ILogger<PlantRepository> logger)
+        public PlantRepository(IMongoCollectionContext<Plant> context, ILogger<PlantRepository> logger)
             : base(context, logger)
         {
             _context = context;
