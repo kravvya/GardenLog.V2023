@@ -31,13 +31,14 @@ namespace GardenLog.SharedKernel
         }
 
 
-        public void SetCollection<T>(Expression<Func<List<T>>> prop, List<T> newList)
+        public void SetCollection<T>(Expression<Func<List<T>>> prop, List<T> newList, string propertyName)
         {
             bool changed = false;
             var expr = (MemberExpression)prop.Body;
-            var mem = (PropertyInfo)expr.Member;
 
-            var existingList = (List<T>)prop.Compile().Target;
+            var func = prop.Compile();
+
+            var existingList = (List<T>)func();
 
             var elementsToRemove = existingList.Where(t => !newList.Contains(t));
             if (elementsToRemove.Any())
@@ -59,7 +60,7 @@ namespace GardenLog.SharedKernel
 
             if (changed)
             {
-                AddDomainEvent(mem.Name);
+                AddDomainEvent(propertyName);
             }
         }
 

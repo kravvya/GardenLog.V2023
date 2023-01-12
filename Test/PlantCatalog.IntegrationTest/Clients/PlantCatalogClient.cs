@@ -157,5 +157,68 @@ namespace PlantCatalog.IntegrationTest.Clients
         }
 
         #endregion
+
+        #region Plant Variety
+
+        public async Task<HttpResponseMessage> CreatePlantVariety(string plantId, string name)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlantVariety}";
+
+            var createPlantVarietyCommand = PopulateCreatePlantVarietyCommand(plantId, name);
+
+            using var requestContent = createPlantVarietyCommand.ToJsonStringContent();
+
+            return await this._httpClient.PostAsync(url, requestContent);
+
+        }
+
+        public async Task<HttpResponseMessage> UpdatePlantVariety(PlantVarietyViewModel variety)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.UpdatePlantVariety}";
+
+            using var requestContent = variety.ToJsonStringContent();
+
+            return await this._httpClient.PutAsync(url.Replace("{plantId}", variety.PlantId).Replace("{id}", variety.PlantVarietyId), requestContent);
+        }
+
+        public async Task<HttpResponseMessage> DeletePlantVariety(string plantId, string id)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.DeletePlantVariety}";
+
+            return await this._httpClient.DeleteAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
+        }
+
+        public async Task<HttpResponseMessage> GetPlantVarieties(string plantId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantVarieties}";
+            return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId));
+        }
+
+        public async Task<HttpResponseMessage> GetPlantVariety(string plantId, string id)
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantVariety}";
+            return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
+        }
+
+        private static CreatePlantVarietyCommand PopulateCreatePlantVarietyCommand(string plantId, string name)
+        {
+            return new CreatePlantVarietyCommand()
+            {
+                PlantId = plantId,
+                Name = name,
+                Colors= new List<string> (){"Black"},
+                DaysToMaturityMax= 100,
+                DaysToMaturityMin= 1,
+                Description ="Black new Variety",
+                GrowTolerance = Contract.Enum.GrowToleranceEnum.LightFrost,
+                HeightInInches= 100,
+                IsHeirloom= true,
+                LightRequirement=Contract.Enum.LightRequirementEnum.FullShade,
+                MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroutTolerant,
+                Tags= new List<string>() { "Dark"},
+                Title = "Very Black Variety"
+            };
+        }
+        #endregion
     }
 }

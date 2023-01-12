@@ -12,7 +12,7 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
 {
     public class PlantVarietyRepository : BaseRepository<PlantVariety>, IPlantVarietyRepository
     {
-        private const string PLANT_VARIETY_COLLECTION_NAME = "PlantCatalog-Collection";
+        private const string PLANT_VARIETY_COLLECTION_NAME = "PlantVarietyCatalog-Collection";
         private readonly ILogger<PlantVarietyRepository> _logger;
 
         public PlantVarietyRepository(IUnitOfWork unitOfWork, ILogger<PlantVarietyRepository> logger)
@@ -49,12 +49,21 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
             return string.Empty;
         }
 
-        public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetAllPlantVarieties(string plantId)
+        public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties(string plantId)
         {
             var data = await Collection
                .Find<PlantVariety>(Builders<PlantVariety>.Filter.Eq("PlantId", plantId))
                .As<PlantVarietyViewModel>()
                .ToListAsync();
+
+            return data;
+        }
+
+        public async Task<long> GetCountOfPlantVarieties(string plantId)
+        {
+            var data = await Collection
+               .Find<PlantVariety>(Builders<PlantVariety>.Filter.Eq("PlantId", plantId))
+                .CountDocumentsAsync();
 
             return data;
         }
@@ -102,6 +111,7 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
                 p.MapProperty(m => m.Colors).SetDefaultValue(new List<string>());
             });
         }
+
     }
 
 }

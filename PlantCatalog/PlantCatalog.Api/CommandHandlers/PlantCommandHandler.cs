@@ -5,27 +5,31 @@ namespace PlantCatalog.Api.CommandHandlers;
 public interface IPlantCommandHandler
 {
     Task<string> AddPlantGrowInstruction(CreatePlantGrowInstructionCommand command);
+    Task<string> AddPlantVariety(CreatePlantVarietyCommand request);
     Task<string> CreatePlant(CreatePlantCommand request);
     Task<string> DeletePlant(string id);
+    Task<string> DeletePlantVariety(string plantId, string id);
     Task<string> DeletePlantGrowInstruction(string plantId, string id);
     Task<string> UpdatePlant(UpdatePlantCommand request);
     Task<string> UpdatePlantGrowInstruction(UpdatePlantGrowInstructionCommand command);
+    Task<string> UpdatePlantVariety(UpdatePlantVarietyCommand request);
 }
 
 public class PlantCommandHandler : IPlantCommandHandler
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPlantRepository _plantRepository;
-    private readonly IPlantVarietyRepository _plantVarietyrepository;
+    private readonly IPlantVarietyRepository _plantVarietyRepository;
     private readonly ILogger<PlantCommandHandler> _logger;
 
     public PlantCommandHandler(IUnitOfWork unitOfWork, IPlantRepository repository, IPlantVarietyRepository plantVarietyrepository, ILogger<PlantCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _plantRepository = repository;
-        _plantVarietyrepository = plantVarietyrepository;
+        _plantVarietyRepository = plantVarietyrepository;
         _logger = logger;
     }
+
 
     public async Task<string> CreatePlant(CreatePlantCommand request)
     {
@@ -157,6 +161,70 @@ public class PlantCommandHandler : IPlantCommandHandler
         plant.DeletePlantGrowInstruction(id);
 
         _plantRepository.DeletePlantGrowInstruction(plantId, id, plant.GrowInstructionsCount);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return id;
+    }
+
+    public async Task<string> AddPlantVariety(CreatePlantVarietyCommand request)
+    {
+        _logger.LogInformation("Received request to create a new plan variety {@plantVariety}", request);
+
+        var existingPlanVarietyId = await _plantVarietyRepository.GetIdByNameAsync(request.PlantId, request.Name);
+        if (!string.IsNullOrEmpty(existingPlanVarietyId))
+        {
+            throw new ArgumentException($"Plant Variety  '{request.Name}' with this name already exists", nameof(request.Name));
+        }
+
+        var plant = await _plantRepository.GetByIdAsync(request.PlantId);
+        if(plant == null)
+        {
+            throw new ArgumentException($"Plant with this name already exists", nameof(request.Name));
+        }
+
+        var variety = plant.AddPlantVariety(request);
+
+        _plantRepository.Update(plant);
+        _plantVarietyRepository.Add(variety);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return variety.Id;
+    }
+
+    public async Task<string> UpdatePlantVariety(UpdatePlantVarietyCommand request)
+    {
+        _logger.LogInformation("Received request to update plant variety {@plantVariety}", request);
+
+        var existingPlantVarietyId = await _plantVarietyRepository.GetIdByNameAsync(request.PlantId,request.Name);
+        if (!string.IsNullOrEmpty(existingPlantVarietyId) && existingPlantVarietyId != request.PlantVarietyId)
+        {
+            throw new ArgumentException("Another plant variety with this name already exists", nameof(request.Name));
+        }
+
+        var plant = await _plantRepository.GetByIdAsync(request.PlantId);
+        var plantVariety = await _plantVarietyRepository.GetByIdAsync(request.PlantVarietyId);
+
+        plant.UpdatePlantVariety(request, plantVariety);
+
+        _plantVarietyRepository.Update(plantVariety);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return plantVariety.Id;
+    }
+
+    public async Task<string> DeletePlantVariety(string plantId, string id)
+    {
+        _logger.LogInformation("Received request to delete plant variety {@id}", id);
+
+        var plant = await _plantRepository.GetByIdAsync(plantId);
+
+        plant.DeletePlantVariety(id);
+
+        _plantRepository.Update(plant);
+        _plantVarietyRepository.Delete(id);
 
         await _unitOfWork.SaveChangesAsync();
 

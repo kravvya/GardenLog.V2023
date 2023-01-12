@@ -6,6 +6,7 @@ public interface IPlantRepository : IRepository<Plant>
 {
     void AddPlantGrowInstruction(string plantId, PlantGrowInstruction growInstruction, int growInstructionsCount);
     void DeletePlantGrowInstruction(string plantId, string id, int growInstructionsCount);
+    Task<bool> ExistsAsync(string plantId);
     Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants();
     Task<Plant> GetByNameAsync(string plantName);
     Task<string> GetIdByNameAsync(string plantName);

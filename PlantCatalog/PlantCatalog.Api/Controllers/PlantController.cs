@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace PlantCatalog.Api.Controllers;
 
@@ -28,15 +29,23 @@ public class PlantController : Controller
     [ProducesResponseType(typeof(PlantViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantViewModel>> GetPlantByIdAsync(string id)
     {
-        var plant = await _queryHandler.GetPlantByPlantId(id);
+        try
+        {
+            var plant = await _queryHandler.GetPlantByPlantId(id);
 
-        if (plant != null)
-        {
-            return Ok(plant);
+            if (plant != null)
+            {
+                return Ok(plant);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return NotFound();
+            _logger.LogCritical($"Exceptin getting plant {id}", ex);
+            throw;
         }
     }
 
@@ -69,7 +78,7 @@ public class PlantController : Controller
 
     }
 
-    // POST: api/Plants
+
     [HttpPost]
     [Route(Routes.CreatePlant)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -145,7 +154,7 @@ public class PlantController : Controller
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantGrowInstructionViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantGrowInstructionViewModel>>> GetPlantGrowInstructionsByPlantIdAsync(string plantId)
     {
-       return Ok(await _queryHandler.GetPlantGrowInstructions(plantId));
+        return Ok(await _queryHandler.GetPlantGrowInstructions(plantId));
     }
 
     [HttpGet()]
@@ -155,7 +164,7 @@ public class PlantController : Controller
     [ProducesResponseType(typeof(PlantGrowInstructionViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantGrowInstruction>> GetPlantGrowInstructionByIdAsync(string plantId, string id)
     {
-       var grow = await _queryHandler.GetPlantGrowInstruction(plantId, id);
+        var grow = await _queryHandler.GetPlantGrowInstruction(plantId, id);
 
         if (grow != null)
         {
@@ -219,10 +228,105 @@ public class PlantController : Controller
     [Route(Routes.DeletePlantGrowInstructions)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> DeletelantAsync(string plantId, string id)
+    public async Task<IActionResult> DeletePlantGrowInstructionAsync(string plantId, string id)
     {
 
         string result = await _handler.DeletePlantGrowInstruction(plantId, id);
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            return Ok(true);
+        }
+
+        return BadRequest();
+    }
+    #endregion
+
+    #region Plant Variety
+    [HttpGet()]
+    [ActionName("GetPlantVarietiesByPlantId")]
+    [Route(Routes.GetPlantVarieties)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<IList<PlantVarietyViewModel>>> GetPlantVarietiesByPlantIdAsync(string plantId)
+    {
+        return Ok(await _queryHandler.GetPlantVarieties(plantId));
+    }
+
+    [HttpGet()]
+    [ActionName("GetPlantVarietyById")]
+    [Route(Routes.GetPlantVariety)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<PlantVarietyViewModel>> GetPlantVarietyByIdAsync(string plantId, string id)
+    {
+        var variety = await _queryHandler.GetPlantVariety(plantId, id);
+
+        if (variety != null)
+        {
+            return Ok(variety);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPost()]
+    [Route(Routes.CreatePlantVariety)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> PostPlantVarietyAsync([FromBody] CreatePlantVarietyCommand command)
+    {
+        try
+        {
+            string result = await _handler.AddPlantVariety(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPut()]
+    [Route(Routes.UpdatePlantVariety)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> PutPlantVarietyAsync([FromBody] UpdatePlantVarietyCommand command)
+    {
+        try
+        {
+            string result = await _handler.UpdatePlantVariety(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+        return BadRequest();
+    }
+
+    [HttpDelete()]
+    [Route(Routes.DeletePlantVariety)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DeletelantAsync(string plantId, string id)
+    {
+
+        string result = await _handler.DeletePlantVariety(plantId, id);
 
         if (!string.IsNullOrWhiteSpace(result))
         {

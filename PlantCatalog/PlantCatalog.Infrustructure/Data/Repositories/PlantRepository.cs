@@ -46,6 +46,14 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
         return string.Empty;
     }
 
+    public async Task<bool> ExistsAsync(string plantId)
+    {
+        var data = await Collection
+            .Find<Plant>(Builders<Plant>.Filter.Eq("_id", plantId))
+            .CountDocumentsAsync();
+        return data == 1;
+    }
+
     public async Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants()
     {
         var data = await Collection
@@ -153,10 +161,12 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapProperty(m => m.VarietyColors).SetDefaultValue(new List<string>());
             p.MapProperty(m => m.GrowInstructions).SetDefaultValue(new List<PlantGrowInstruction>());
             p.MapProperty(m => m.GrowInstructionsCount);
+            p.MapProperty(m => m.VarietyCount).SetDefaultValue(0);
+           
 
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
-            p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id" && c.Name != "GrowInstructionsCount").Select(c => c.Name).ToArray());
+            p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id" ).Select(c => c.Name).ToArray());
 
         });
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.Api.QueryHandlers;
 
@@ -9,17 +10,21 @@ public interface IPlantQueryHandler
     Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string id);
     Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId);
     Task<string> GetPlantIdByPlantName(string nane);
+    Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties(string plantId);
+    Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string id);
 }
 
 public class PlantQueryHandler : IPlantQueryHandler
 {
     private readonly IPlantRepository _plantRepository;
+    private readonly IPlantVarietyRepository _varietyRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<PlantQueryHandler> _logger;
 
-    public PlantQueryHandler(IPlantRepository repository, IMapper mapper, ILogger<PlantQueryHandler> logger)
+    public PlantQueryHandler(IPlantRepository repository, IPlantVarietyRepository varietyRepository, IMapper mapper, ILogger<PlantQueryHandler> logger)
     {
         _plantRepository = repository;
+        _varietyRepository = varietyRepository;
         _mapper = mapper;
         _logger = logger;
     }
@@ -73,6 +78,45 @@ public class PlantQueryHandler : IPlantQueryHandler
         try
         {
             return  await _plantRepository.GetPlantGrowInstraction(plantId, id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception readding grow instruction for {plantId} and {id}", ex);
+            throw;
+        }
+
+    }
+
+    #endregion
+
+    #region Plant Variety
+
+    public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties(string plantId)
+    {
+        _logger.LogInformation($"Received request to get plant varieties for {plantId}");
+
+        try
+        {
+            return await _varietyRepository.GetPlantVarieties(plantId);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception readding plant varieties for {plantId}", ex);
+            throw;
+        }
+
+    }
+
+    public async Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string id)
+    {
+        _logger.LogInformation($"Received request to get plant variety for {plantId} and {id}");
+
+        try
+        {
+            var variety =  await _varietyRepository.GetByIdAsync(id);
+            return _mapper.Map<PlantVarietyViewModel>(variety);
+
         }
         catch (Exception ex)
         {

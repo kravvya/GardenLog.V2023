@@ -27,47 +27,28 @@ public class PlantVariety : BaseEntity, IEntity
     private PlantVariety() { }
 
     public static PlantVariety Create(
-        string plantId, 
-        string plantName,
-        string name,
-        string description,
-        int? daysToMaturityMin,
-        int? daysToMaturityMax,
-        int? heightInInches,
-        bool isHeirloom,
-        MoistureRequirementEnum moistureRequirement,
-        LightRequirementEnum lightRequirement,
-        GrowToleranceEnum growToleranceEnum,
-        string title,
-        List<string> tags,
-        List<string> colors,
-         Action<PlantEventTriggerEnum, TriggerEntity> addPlantEvent
+        CreatePlantVarietyCommand command,
+        string plantName
       )
     {
         var variety =  new PlantVariety()
         {
             Id = Guid.NewGuid().ToString(),
             PlantName = plantName,
-            PlantId = plantId,
-            Name = name ?? throw new ArgumentNullException(nameof(name)),
-            Description = description ?? throw new ArgumentNullException(nameof(description)),
-            DaysToMaturityMin = daysToMaturityMin,
-            DaysToMaturityMax= daysToMaturityMax,
-            HeightInInches = heightInInches,
-            IsHeirloom = isHeirloom,
-            MoistureRequirement = moistureRequirement,
-            LightRequirement = lightRequirement,
-            GrowTolerance = growToleranceEnum,
-            Title = title
+            PlantId = command.PlantId,
+            Name = command.Name ?? throw new ArgumentNullException(nameof(command.Name)),
+            Description = command.Description ?? throw new ArgumentNullException(nameof(command.Description)),
+            DaysToMaturityMin = command.DaysToMaturityMin,
+            DaysToMaturityMax= command.DaysToMaturityMax,
+            HeightInInches = command.HeightInInches,
+            IsHeirloom = command.IsHeirloom,
+            MoistureRequirement = command.MoistureRequirement,
+            LightRequirement = command.LightRequirement,
+            GrowTolerance = command.GrowTolerance,
+            Title = command.Title
         };
-        variety._tags.AddRange(tags);
-        variety._colors.AddRange(colors);
-
-        if (variety.DomainEvents != null && variety.DomainEvents.Count > 0)
-        {
-            variety.DomainEvents.Clear();
-            addPlantEvent(PlantEventTriggerEnum.PlantVarietyCreated, new TriggerEntity(EntityTypeEnum.PlantVariety, variety.Id));
-        }
+        variety._tags.AddRange(command.Tags);
+        variety._colors.AddRange(command.Colors);
 
         return variety;
     }
@@ -88,8 +69,8 @@ public class PlantVariety : BaseEntity, IEntity
         Set<GrowToleranceEnum>(() => this.GrowTolerance, command.GrowTolerance);
         Set<string>(() => this.Title, command.Title);
 
-        SetCollection<string>(() => this._tags, command.Tags);
-        SetCollection<string>(() => this._colors, command.Colors);
+        SetCollection<string>(() => this._tags, command.Tags, "Tags");
+        SetCollection<string>(() => this._colors, command.Colors, "Colors");
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

@@ -20,7 +20,7 @@ public class Plant : BaseEntity, IAggregateRoot
             return _growInstructions.Count();
         }
     }
-
+    public int VarietyCount { get; private set; }
 
     private readonly List<string> _tags = new();
     public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
@@ -33,7 +33,9 @@ public class Plant : BaseEntity, IAggregateRoot
 
     private Plant() { }
 
-    private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement, LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions)
+    private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement
+        ,LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears
+        ,int GrowInstructionCount, int VarietyCount, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions)
     {
         this.Name = Name;
         this.Description = Description;
@@ -45,6 +47,7 @@ public class Plant : BaseEntity, IAggregateRoot
         this.GrowTolerance = GrowTolerance;
         this.GardenTip = GardenTip;
         this.SeedViableForYears = SeedViableForYears;
+        this.VarietyCount= VarietyCount;
         _tags = Tags;
         _varietyColors = VarietyColors;
         _growInstructions = GrowInstructions;
@@ -175,7 +178,36 @@ public class Plant : BaseEntity, IAggregateRoot
     {
         this._growInstructions.RemoveAll(i => i.Id == plantGrowInstructionId);
 
-        AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
+        AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionDeleted, new TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
+
+    }
+
+    #endregion
+
+    #region Plant Variety
+
+    public PlantVariety AddPlantVariety(CreatePlantVarietyCommand command)
+    {
+        var variety = PlantVariety.Create(command, this.Name);
+        this.VarietyCount += 1;
+                
+        this.DomainEvents.Add(
+          new PlantEvent(this, PlantEventTriggerEnum.PlantVarietyCreated, new TriggerEntity(EntityTypeEnum.PlantVariety, variety.Id)));
+
+        return variety;
+    }
+
+    public void UpdatePlantVariety(UpdatePlantVarietyCommand command, PlantVariety variety)
+    {
+        
+        variety.Update(command, AddChildDomainEvent);
+    }
+
+    public void DeletePlantVariety(string varietyId)
+    {
+        this.VarietyCount -= 1;
+
+        AddChildDomainEvent(PlantEventTriggerEnum.PlantVarietyDeleted, new TriggerEntity(EntityTypeEnum.PlantVariety, varietyId));
 
     }
 
