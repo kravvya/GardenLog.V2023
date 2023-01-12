@@ -285,6 +285,15 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     {
         var plantId = await GetPlantIdToWorkWith(TEST_PLANT_NAME);
 
+        var varieties = await GetPlantVarietiesToWorkWith(plantId);
+
+        var original = varieties.FirstOrDefault(v => v.Name.Equals(TEST_VARIETY_NAME));
+
+        if (original != null)
+        {
+            var response = await _plantCatalogClient.DeletePlantVariety(original.PlantId, original.PlantVarietyId);
+        }
+
         var varietyId = await CreatePLantVarietyToWorkWith(plantId, TEST_VARIETY_NAME);
     }
 
