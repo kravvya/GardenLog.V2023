@@ -8,10 +8,3 @@ public record PlantModel : PlantViewModel
     public string ImageFileName { get; set; }
     public string ImageLabel { get; set; }
 }
-
-public class PlantModelValidator : PlantValidator<PlantModel>
-{
-    public PlantModelValidator()
-    {
-    }
-}

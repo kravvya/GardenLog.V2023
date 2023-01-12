@@ -19,7 +19,6 @@
   <ItemGroup>
     <Folder Include="Pages\Images\" />
     <Folder Include="Shared\Extensions\" />
-    <Folder Include="Shared\Controls\" />
     <Folder Include="wwwroot\css\bootstrap\" />
   </ItemGroup>
 

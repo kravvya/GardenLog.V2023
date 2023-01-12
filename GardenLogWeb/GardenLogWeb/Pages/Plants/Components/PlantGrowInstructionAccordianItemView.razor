@@ -4,41 +4,82 @@
 @if (GrowInstruction != null)
 {
     <div class="accordion-item">
-        <h2 class="accordion-header" id="@(GrowInstruction.PlantGrowInstructionId)header">
-            <button class="accordion-button @(IsCollapsed())" type="button" data-bs-toggle="collapse" data-bs-target="#@(GrowInstruction.PlantGrowInstructionId)" aria-expanded="@IsOpen.ToString()" aria-controls="@GrowInstruction.PlantGrowInstructionId">
-                <span class="lead fw-bold">@GrowInstruction.Name - @(_verifyService.GetDescription<PlantingMethodEnum>(GrowInstruction.PlantingMethod)) to harvest in @(_verifyService.GetDescription<HarvestSeasonEnum>(GrowInstruction.HarvestSeason)))</span>
+        <h2 class="accordion-header" id="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)header">
+            <button class="accordion-button @(IsCollapsed())" type="button" data-bs-toggle="collapse" data-bs-target="#@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" aria-expanded="@IsOpen.ToString()" aria-controls="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)">
+                <span class="lead fw-bold">@(_verifyService.GetDescription<PlantingMethodEnum>(GrowInstruction.PlantingMethod)) to harvest in the @(_verifyService.GetDescription<HarvestSeasonEnum>(GrowInstruction.HarvestSeason))</span>
             </button>
         </h2>
-        <div id="@GrowInstruction.PlantGrowInstructionId" class="accordion-collapse collapse @(IsShow())" aria-labelledby="@GrowInstruction.PlantGrowInstructionId" data-bs-parent="#growInstructions">
+        <div id="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" class="accordion-collapse collapse @(IsShow())" aria-labelledby="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" data-bs-parent="#growInstructions">
             <div class="accordion-body">
-                <dl class="row">
-                    <dt class="col-sm-3">Planting</dt>
-                    <dd class="col-sm-9">@GetPlantingDetail(GrowInstruction)</dd>
+                <dl class="row grow-facts-list">
+                    <div class="grow-facts-item row">
+                        <dt class="col-sm-3 grow-facts-term">@_verifyService.GetDescription(GrowInstruction.PlantingMethod)</dt>
+                        <dd class="col-sm-9">@GetHarvestDetail(GrowInstruction)</dd>
+                    </div>
+
                     @if (GrowInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue)
                     {
-                        <dt class="col-sm-3">Start Seeds</dt>
-                        <dd class="col-sm-9">@GetSeedingDetails(GrowInstruction)</dd>
+                        <div class="grow-facts-item row">
+                            <dt class="col-sm-3 grow-facts-term">Start Seeding</dt>
+                            <dd class="col-sm-9 grow-facts-definition">@GetSeedingDetails(GrowInstruction)</dd>
+                        </div>
+                        <div class="grow-facts-item row">
+                            <dt class="col-sm-3 grow-facts-term">Seeding</dt>
+                            <dd class="col-sm-9 grow-facts-definition">@GrowInstruction.StartSeedInstructions</dd>
+                        </div>
+
+                        @if (GrowInstruction.FertilizerForSeedlings != FertilizerEnum.Unspecified)
+                        {
+                            <div class="grow-facts-item row">
+                                <dt class="col-sm-3 grow-facts-term">Fertilize Sidlings</dt>
+                                <dd class="col-sm-9 grow-facts-definition">@GetSidlingsFertilizeDetail(GrowInstruction)</dd>
+                            </div>
+                        }
+
+                        @if (GrowInstruction.DaysToSproutMax.HasValue && GrowInstruction.DaysToSproutMin.HasValue)
+                        {
+                            <div class="grow-facts-item row">
+                                <dt class="col-sm-3 grow-facts-term">Sprout</dt>
+                                <dd class="col-sm-9 grow-facts-definition">@GrowInstruction.DaysToSproutMin to @GrowInstruction.DaysToSproutMax days</dd>
+                            </div>
+                        }
                     }
                     @if (GrowInstruction.TransplantWeeksAheadOfWeatherCondition.HasValue)
                     {
-                        <dt class="col-sm-3">Transplant</dt>
-                        <dd class="col-sm-9">@GetTransplantDetails(GrowInstruction)</dd>
+                        <div class="grow-facts-item row">
+                            <dt class="col-sm-3 grow-facts-term">Transplant</dt>
+                            <dd class="col-sm-9 grow-facts-definition">@GetTransplantDetails(GrowInstruction)</dd>
+                        </div>
                     }
-                    <dt class="col-sm-3">Seeding Notes</dt>
-                    <dd class="col-sm-9">@GrowInstruction.StartSeedInstructions</dd>
+                    <div class="grow-facts-item row">
+                        <dt class="col-sm-3 grow-facts-term">Planting</dt>
+                        <dd class="col-sm-9 grow-facts-definition">@GetPlantingDetail(GrowInstruction)</dd>
+                    </div>
 
-                    <dt class="col-sm-3">Growing Notes</dt>
-                    <dd class="col-sm-9">@GrowInstruction.GrowingInstructions</dd>
+                    @if (GrowInstruction.Fertilizer != FertilizerEnum.Unspecified)
+                    {
+                        <div class="grow-facts-item row">
+                            <dt class="col-sm-3 grow-facts-term">Fertilize</dt>
+                            <dd class="col-sm-9 grow-facts-definition">@GetFertilizeDetail(GrowInstruction)</dd>
+                        </div>
+                    }
 
-                    <dt class="col-sm-3">Harvesting Notes</dt>
-                    <dd class="col-sm-9">@GrowInstruction.HarvestInstructions</dd>
-
-                    <dt></dt>
-                    <dd>
-                        <button type="button" class="btn btn-primary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
-                            <span class="bi bi-journals" aria-hidden="true"></span>
-                        </button>
-                    </dd>
+                    <div class="grow-facts-item row">
+                        <dt class="col-sm-3 grow-facts-term">Notes</dt>
+                        <dd class="col-sm-9 grow-facts-definition">@GrowInstruction.GrowingInstructions</dd>
+                    </div>
+                    <div class="grow-facts-item row">
+                        <dt class="col-sm-3 grow-facts-term">Harvesting</dt>
+                        <dd class="col-sm-9 grow-facts-definition">@GrowInstruction.HarvestInstructions</dd>
+                    </div>
+                    <div class="mt-2">
+                        <dt></dt>
+                        <dd class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
+                                <span class="bi bi-journals" aria-hidden="true"></span>
+                            </button>
+                        </dd>
+                    </div>
                 </dl>
             </div>
         </div>
@@ -49,6 +90,37 @@
 @code {
     [Parameter] public PlantGrowInstructionViewModel GrowInstruction { get; set; }
     [Parameter] public bool IsOpen { get; set; }
+
+    private string GetHarvestDetail(PlantGrowInstructionViewModel grow)
+    {
+        System.Text.StringBuilder sb = new();
+        sb.Append($"{grow.Name} for ");
+        sb.Append(_verifyService.GetDescription<HarvestSeasonEnum>(grow.HarvestSeason));
+        sb.AppendLine("harvest.");
+        return sb.ToString();
+    }
+
+    private string GetFertilizeDetail(PlantGrowInstructionViewModel grow)
+    {
+        System.Text.StringBuilder sb = new();
+        sb.Append($"{_verifyService.GetDescription(grow.Fertilizer)} every ");
+        sb.Append(grow.FertilizeFrequencyInWeeks.Value.ToString());
+        sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizeFrequencyInWeeks.Value));
+
+        return sb.ToString();
+    }
+
+    private string GetSidlingsFertilizeDetail(PlantGrowInstructionViewModel grow)
+    {
+        System.Text.StringBuilder sb = new();
+        sb.Append($"{_verifyService.GetDescription(grow.FertilizerForSeedlings)}");
+        if (grow.FertilizeFrequencyForSeedlingsInWeeks.HasValue)
+        {
+            sb.Append($"  every {grow.FertilizeFrequencyForSeedlingsInWeeks.Value} ");
+            sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizeFrequencyForSeedlingsInWeeks.Value));
+        }
+        return sb.ToString();
+    }
 
     private string GetPlantingDetail(PlantGrowInstructionViewModel grow)
     {
@@ -84,6 +156,10 @@
                 sb.Append(grow.StartSeedWeeksRange.Value.ToString());
                 sb.AppendFormat(" {0}.", GetWeeks(grow.StartSeedWeeksRange.Value));
             }
+            if (grow.DaysToSproutMax.HasValue && grow.DaysToSproutMin.HasValue)
+            {
+
+            }
         }
         return sb.ToString();
     }
@@ -96,7 +172,7 @@
         {
             sb.Append(grow.TransplantWeeksAheadOfWeatherCondition.Value.ToString());
             sb.AppendFormat(" {0} ", GetWeeks(grow.TransplantWeeksAheadOfWeatherCondition.Value));
-            sb.AppendLine(_verifyService.GetDescription < WeatherConditionEnum>(grow.TransplantAheadOfWeatherCondition));
+            sb.AppendLine(_verifyService.GetDescription<WeatherConditionEnum>(grow.TransplantAheadOfWeatherCondition));
             if (grow.TransplantWeeksRange.HasValue)
             {
                 sb.Append(" for ");
@@ -123,6 +199,10 @@
         return IsOpen ? "show" : "";
     }
 
+    private string GetAccordionId(string guid)
+    {
+        return String.Format("a{0}", guid);
+    }
     private void EditPlantGrowInstruction(PlantGrowInstructionViewModel grow)
     {
         _navigationManager.NavigateToEditPlantGrowInstruction(grow.PlantId, grow.PlantGrowInstructionId);
@@ -133,3 +213,4 @@
         _navigationManager.NavigateToPlantGrowInstruction(grow.PlantId, grow.PlantGrowInstructionId);
     }
 }
+

@@ -61,7 +61,8 @@ try
                     policy =>
                     {
                         policy.WithOrigins("https://kravvya.github.io",
-                            "https://localhost:7014")
+                            "https://localhost:7014",
+                            "https://localhost:44318")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                     });

@@ -37,7 +37,7 @@ else
 
 builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));
 
-builder.Services.AddValidatorsFromAssemblyContaining<PlantModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<PlantViewModelValidator>();
 
 builder.Services.AddBlazoredToast();
 

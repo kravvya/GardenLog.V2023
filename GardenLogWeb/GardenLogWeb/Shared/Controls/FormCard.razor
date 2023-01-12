@@ -1,5 +1,5 @@
 ﻿<div class="card @Class">
-    <div class="card-header @HeaderClass">
+    <div class="card-header @HeaderClass" hidden="@HideHeader">
         @Header
     </div>
     <div class="card-body">
@@ -22,4 +22,7 @@
 
     [Parameter]
     public string HeaderClass { get; set; }
+
+    [Parameter]
+    public bool HideHeader { get; set; } = false;
 }
