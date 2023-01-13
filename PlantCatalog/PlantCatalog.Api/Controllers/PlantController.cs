@@ -244,6 +244,16 @@ public class PlantController : Controller
 
     #region Plant Variety
     [HttpGet()]
+    [ActionName("GetAllPlantVarieties")]
+    [Route(Routes.GetAllPlantVarieties)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<IList<PlantVarietyViewModel>>> GetAllPlantVarieties()
+    {
+        return Ok(await _queryHandler.GetPlantVarieties());
+    }
+
+    [HttpGet()]
     [ActionName("GetPlantVarietiesByPlantId")]
     [Route(Routes.GetPlantVarieties)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]

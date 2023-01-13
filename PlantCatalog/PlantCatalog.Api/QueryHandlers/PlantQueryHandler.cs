@@ -11,6 +11,7 @@ public interface IPlantQueryHandler
     Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId);
     Task<string> GetPlantIdByPlantName(string nane);
     Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties(string plantId);
+    Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties();
     Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string id);
 }
 
@@ -90,6 +91,23 @@ public class PlantQueryHandler : IPlantQueryHandler
     #endregion
 
     #region Plant Variety
+
+    public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties()
+    {
+        _logger.LogInformation($"Received request to get all plant varieties");
+
+        try
+        {
+            return await _varietyRepository.GetPlantVarieties();
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception readding all plant varieties", ex);
+            throw;
+        }
+
+    }
 
     public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties(string plantId)
     {

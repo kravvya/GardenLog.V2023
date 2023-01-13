@@ -1,4 +1,6 @@
-﻿namespace PlantCatalog.IntegrationTest;
+﻿using PlantCatalog.Domain.PlantAggregate;
+
+namespace PlantCatalog.IntegrationTest;
 
 public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
 {
@@ -300,7 +302,28 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     [Fact]
     public async Task Get_PlantVariety_All()
     {
-        var variety = await GetPlantVarietiesToWorkWith();
+        var response = await _plantCatalogClient.GetPlantVarieties();
+
+        _output.WriteLine($"Service to get all plant varieties responded with {response.StatusCode} code");
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+        };
+        var varieties = await response.Content.ReadFromJsonAsync<List<PlantVarietyViewModel>>(options);
+
+        Assert.NotNull(varieties);
+        Assert.NotEmpty(varieties);
+    }
+
+    [Fact]
+    public async Task Get_PlantVariety_ByPLantId()
+    {
+        var variety = await GetPlantVarietiesBasedOnTestPlantToWorkWith();
 
         Assert.NotNull(variety);
         _output.WriteLine($"Found '{variety.First().Name}' variety");
@@ -310,7 +333,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     [Fact]
     public async Task Get_PlantVariety_One()
     {
-        var varieties = await GetPlantVarietiesToWorkWith();
+        var varieties = await GetPlantVarietiesBasedOnTestPlantToWorkWith();
 
         var original = varieties.First(g => g.Name == TEST_VARIETY_NAME);
 
@@ -329,7 +352,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     [Fact]
     public async Task Put_PlantVariety_ShouldUpdate()
     {
-        var variety = (await GetPlantVarietiesToWorkWith()).First(g => g.Name == TEST_VARIETY_NAME);
+        var variety = (await GetPlantVarietiesBasedOnTestPlantToWorkWith()).First(g => g.Name == TEST_VARIETY_NAME);
 
         //Step 3 update variety
 
@@ -463,7 +486,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         return varieties;
     }
 
-    private async Task<List<PlantVarietyViewModel>> GetPlantVarietiesToWorkWith()
+    private async Task<List<PlantVarietyViewModel>> GetPlantVarietiesBasedOnTestPlantToWorkWith()
     {
         var plantId = await GetPlantIdToWorkWith(TEST_PLANT_NAME);
 

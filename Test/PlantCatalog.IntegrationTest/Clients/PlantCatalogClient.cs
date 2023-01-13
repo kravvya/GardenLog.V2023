@@ -188,6 +188,12 @@ namespace PlantCatalog.IntegrationTest.Clients
             return await this._httpClient.DeleteAsync(url.Replace("{plantId}", plantId).Replace("{id}", id));
         }
 
+        public async Task<HttpResponseMessage> GetPlantVarieties()
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetAllPlantVarieties}";
+            return await this._httpClient.GetAsync(url);
+        }
+
         public async Task<HttpResponseMessage> GetPlantVarieties(string plantId)
         {
             var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantVarieties}";

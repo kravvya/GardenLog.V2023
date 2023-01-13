@@ -8,4 +8,5 @@ public interface IPlantVarietyRepository : IRepository<PlantVariety>
     Task<PlantVariety> GetByNameAsync(string plantId, string plantName);
     Task<long> GetCountOfPlantVarieties(string plantId);
     Task<string> GetIdByNameAsync(string plantId, string plantName);
+    Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties();
 }

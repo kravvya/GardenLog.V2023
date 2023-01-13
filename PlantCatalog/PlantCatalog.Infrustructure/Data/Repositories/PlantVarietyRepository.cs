@@ -59,6 +59,16 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
             return data;
         }
 
+        public async Task<IReadOnlyCollection<PlantVarietyViewModel>> GetPlantVarieties()
+        {
+            var data = await Collection
+               .Find<PlantVariety>(Builders<PlantVariety>.Filter.Empty)
+               .As<PlantVarietyViewModel>()
+               .ToListAsync();
+
+            return data;
+        }
+
         public async Task<long> GetCountOfPlantVarieties(string plantId)
         {
             var data = await Collection
