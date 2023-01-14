@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImageCatalog", "ImageCatalo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.Contract", "ImageCatalog\ImageCatalog.Contract\ImageCatalog.Contract.csproj", "{E64E3927-E1FB-4096-B571-F574DC5325CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.Api", "ImageCatalog\ImageCatalog.Api\ImageCatalog.Api\ImageCatalog.Api.csproj", "{64EE9830-B945-461A-A84F-E8F2CCB5ECE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.Api", "ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj", "{64EE9830-B945-461A-A84F-E8F2CCB5ECE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.IntegrationTest", "Test\ImageCatalog.IntegrationTest\ImageCatalog.IntegrationTest.csproj", "{20A2FD94-C196-4816-9B77-E63157985D3E}"
 EndProject
