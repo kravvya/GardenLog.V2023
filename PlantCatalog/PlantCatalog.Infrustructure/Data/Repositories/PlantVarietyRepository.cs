@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using PlantCatalog.Contract.Base;
 using PlantCatalog.Contract.ViewModels;
 using PlantCatalog.Domain.PlantAggregate;
+using System.Reflection;
 
 namespace PlantCatalog.Infrustructure.Data.Repositories
 {
@@ -97,6 +98,10 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
                 p.MapMember(m => m.GrowTolerance).SetSerializer(new EnumToStringArraySerializer<GrowToleranceEnum>());
                 p.MapProperty(m => m.Tags).SetDefaultValue(new List<string>());
                 p.MapProperty(m => m.Colors).SetDefaultValue(new List<string>());
+
+                var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+                var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
+                p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());
             });
 
             BsonClassMap.RegisterClassMap<PlantVarietyViewModel>(p =>

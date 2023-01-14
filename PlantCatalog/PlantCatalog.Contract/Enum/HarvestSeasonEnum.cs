@@ -2,6 +2,7 @@
 
 namespace PlantCatalog.Contract.Enum
 {
+    [Flags]
     public enum HarvestSeasonEnum :int
     {
         [Description("Unspecified")]

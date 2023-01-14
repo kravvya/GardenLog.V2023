@@ -24,50 +24,100 @@
                             }
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3 class="text-uppercase">Description</h3>
+                            <p>
+                                @plantVariety.Description
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="">
+                    <div class="variety-facts-list">
                         <h3 class="text-uppercase">Quick Facts</h3>
                         <dl class="">
-                            <dt class="text-uppercase text-primary">Moisture Requirements</dt>
-                            <dd class="">@GetDescription(moistureRequirementCodes, @plantVariety.MoistureRequirement)</dd>
-                            @if (plantVariety.DaysToMaturity.HasValue)
+                            <div class="variety-facts-item row">
+                                <dt class="variety-facts-term">Moisture Requirements</dt>
+                                <dd class="variety-facts-definition">@(_verifyService.GetDescription(@plantVariety.MoistureRequirement))</dd>
+                            </div>
+                            @if (plantVariety.DaysToMaturityMin.HasValue)
                             {
-                                <dt class="text-uppercase text-primary">Days To Maturity</dt>
-                                <dd class="">@plantVariety.DaysToMaturity</dd>
+                                <div class="variety-facts-item row">
+                                    <dt class="variety-facts-term">Days To Maturity</dt>
+                                    <dd class="variety-facts-definition">@plantVariety.DaysToMaturityMin to @plantVariety.DaysToMaturityMax</dd>
+                                </div>
                             }
                             @if (plantVariety.HeightInInches.HasValue)
                             {
-                                <dt class="text-uppercase text-primary">Height</dt>
-                                <dd class="">@plantVariety.HeightInInches in</dd>
+                                <div class="variety-facts-item row">
+                                    <dt class="variety-facts-term">Height</dt>
+                                    <dd class="variety-facts-definition">@plantVariety.HeightInInches in</dd>
+                                </div>
                             }
-                            <dt class="text-uppercase text-primary">Seeds Viable </dt>
-                            <dd class="">@plant.SeedViableForYears Years</dd>
-                            <dt class="text-uppercase text-primary">Features</dt>
-                            <dd class="">
-                                <img src="./images/@(plantVariety.LightRequirement).png" alt="@GetDescription(lightRequirementCodes, @plantVariety.LightRequirement)" title="@GetDescription(lightRequirementCodes, @plantVariety.LightRequirement)" class="img-fluid" />
-                                @if (plantVariety.IsHeirloom)
-                                {
-                                    <img src="/images/Heirloom.png" alt="Heirloom" title="Heirloom" class="img-fluid">
-                                }
-                                @* @if (Plant.IsFallCrop)
-                                    {<img src="/images/F.png" class="tooltip-img-alt plant-facts_icon" alt="Fall Crop">} *@
-                                <img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" />
-                                <img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid">
-                            </dd>
+                            <div class="variety-facts-item row">
+                                <dt class="variety-facts-term">Seeds Viable </dt>
+                                <dd class="variety-facts-definition">@plant.SeedViableForYears Years</dd>
+                            </div>
+                            <div class="variety-facts-item">
+                                <dt class="variety-facts-term">Features</dt>
+                                <dd class="variety-facts-definition">
+                                    <img src="./images/@(plantVariety.LightRequirement).png" alt="@(_verifyService.GetDescription(@plantVariety.LightRequirement))" title="@(_verifyService.GetDescription(@plantVariety.LightRequirement))" class="img-fluid" />
+                                    @if (plantVariety.IsHeirloom)
+                                    {
+                                        <img src="/images/Heirloom.png" alt="Heirloom" title="Heirloom" class="img-fluid">
+                                    }
+                                    @if (plant.HarvestSeason.HasFlag(HarvestSeasonEnum.Fall) || plant.HarvestSeason.HasFlag(HarvestSeasonEnum.LateFall))
+                                    {
+                                        <img src="/images/F.png" class="tooltip-img-alt plant-facts_icon" alt="Fall Crop">
+                                    }
+                                    <img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" />
+                                    <img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid">
+                                </dd>
+                            </div>
+                            @if (!string.IsNullOrEmpty(tolerances))
+                            {
+                                <div class="variety-facts-item">
+                                    <dt class="variety-facts-term">Tolerances</dt>
+                                    <dd class="variety-facts-definition">
+                                        @tolerances
+                                    </dd>
+                                </div>
+                            }
+                            <div class="variety-facts-item">
+                                <dt class="variety-facts-term">Characteristics</dt>
+                                <dd>
+                                    <div class="tags" role="group" aria-label="Plant Variety Characteristics">
+                                        <ul Id="plant-characteristics-tags">
+                                            @foreach (var tag in plantVariety.Tags)
+                                            {
+                                                <li style="background-color:@plant.Color">@tag</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </dd>
+                            </div>
+                            <div class="variety-facts-item">
+                                <dt class="variety-facts-term">Colors</dt>
+                                <dd>
+                                    <div class="tags" role="group" aria-label="Plant Variety Colors">
+                                        <ul Id="plant-characteristics-tags">
+                                            @foreach (var color in plantVariety.Colors)
+                                            {
+                                                <div class="color mx-1">
+                                                    <label class="btn btn-outline-dark" for="@color" style="@GetStyleBasedOnColor(color)">@color</label>
+                                                </div>
+                                            }
+                                        </ul>
+                                    </div>
+                                </dd>
+                            </div>
                         </dl>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <h3 class="text-uppercase">Description</h3>
-                    <p>
-                        @plantVariety.Description
-                    </p>
-                </div>
-            </div>
+
         }
     </div>
 </article>
@@ -77,27 +127,20 @@
 
     private PlantModel plant { get; set; }
     private PlantVarietyModel plantVariety { get; set; }
+    protected IReadOnlyCollection<Color> varietyColors { get; set; }
 
     private bool isInitialized = false;
-
-    protected IReadOnlyCollection<KeyValuePair<string, string>> lightRequirementCodes { get; set; }
-    protected IReadOnlyCollection<KeyValuePair<string, string>> moistureRequirementCodes { get; set; }
+    private string tolerances = string.Empty;
 
     public void Initialize(PlantVarietyModel plantVariety, PlantModel plant)
     {
         this.plant = plant;
         this.plantVariety = plantVariety;
 
-        lightRequirementCodes = _verifyService.GetCodeList < LightRequirementEnum>();
-        moistureRequirementCodes = _verifyService.GetCodeList < MoistureRequirementEnum>();
-
+        varietyColors = _verifyService.GetPlantVarietyColors();
+        tolerances = GetTolerances();
         isInitialized = true;
         StateHasChanged();
-    }
-
-    private string GetDescription(IReadOnlyCollection<KeyValuePair<string, string>> options, string key)
-    {
-        return options.FirstOrDefault(l => l.Key.Equals(key))!.Value;
     }
 
     private void ReplaceImage(ImageModel newImage)
@@ -105,5 +148,31 @@
         plantVariety.ImageFileName = newImage.FileName;
         plantVariety.ImageLabel = newImage.Label;
         StateHasChanged();
+    }
+
+    private string GetTolerances()
+    {
+        System.Text.StringBuilder sb = new();
+
+        foreach (GrowToleranceEnum tolerance in Enum.GetValues(typeof(GrowToleranceEnum)))
+        {
+            if (plantVariety.GrowTolerance.HasFlag(tolerance) && tolerance != GrowToleranceEnum.Unspecified)
+            {
+                if (sb.Length > 0) { sb.Append(", "); }
+                sb.Append(_verifyService.GetDescription<GrowToleranceEnum>(tolerance.ToString()));
+            }
+        }
+        return sb.ToString();
+    }
+
+    private string GetStyleBasedOnColor(string selectedColor)
+    {
+        Color color = varietyColors.First(c => c.Name == selectedColor);
+
+        if (plant.VarietyColors.Contains(color.Name))
+        {
+            return $"color:{color.FontColor}; background-color:{color.BackgroundColor}";
+        }
+        return string.Empty;
     }
 }

@@ -10,7 +10,7 @@ public class PlantProfile : Profile
             .ForMember(dest => dest.PlantId, opt => opt.MapFrom(src =>src.Id));
 
         CreateMap<PlantVariety, PlantVarietyViewModel>()
-           .ForMember(dest => dest.PlantId, opt => opt.MapFrom(src => src.Id));
+           .ForMember(dest => dest.PlantVarietyId, opt => opt.MapFrom(src => src.Id));
 
         //CreateMap<PlantGrowInstruction, PlantGrowInstructionViewModel>()
         //    .ForMember(dest => dest.PlantGrowInstructionId, opt => opt.MapFrom(src => src.Id));

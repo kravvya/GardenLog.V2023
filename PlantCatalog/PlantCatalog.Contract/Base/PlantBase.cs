@@ -15,4 +15,5 @@ public abstract record PlantBase
     public int? SeedViableForYears { get; set; }
     public List<string> Tags { get; set; } = new();
     public List<string> VarietyColors { get; set; } = new();
+    public HarvestSeasonEnum HarvestSeason { get; set; }
 }

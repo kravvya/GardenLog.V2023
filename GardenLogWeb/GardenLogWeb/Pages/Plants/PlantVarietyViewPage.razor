@@ -7,9 +7,11 @@
 
 <Page Title="@title" Description="@description" BreadcrumbLinks="@breacrumbLinks">
     <PageContent>
-        <PlantVarietyView OnClose=@ClosePage @ref="plantVarietyView" />
+        <div class="container">
+            <PlantVarietyView OnClose=@ClosePage @ref="plantVarietyView" />
 
-        <PlantVarietyViewFooter Plant=@plant PlantVariety=@plantVariety OnClose=@ClosePage />
+            <PlantVarietyViewFooter Plant=@plant PlantVariety=@plantVariety OnClose=@ClosePage />
+        </div>
     </PageContent>
 </Page>
 

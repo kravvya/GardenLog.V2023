@@ -1,4 +1,5 @@
 ﻿using PlantCatalog.Contract.Commands;
+using System.Runtime.CompilerServices;
 
 namespace PlantCatalog.Domain.PlantAggregate;
 
@@ -20,7 +21,7 @@ public class Plant : BaseEntity, IAggregateRoot
             return _growInstructions.Count();
         }
     }
-    public int VarietyCount { get; private set; }
+   public int VarietyCount { get; private set; }
 
     private readonly List<string> _tags = new();
     public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
@@ -30,12 +31,14 @@ public class Plant : BaseEntity, IAggregateRoot
 
     private readonly List<PlantGrowInstruction> _growInstructions = new();
     public IReadOnlyCollection<PlantGrowInstruction> GrowInstructions => _growInstructions.AsReadOnly();
+    public HarvestSeasonEnum HarvestSeason { get; private set; }
 
     private Plant() { }
 
     private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement
         ,LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears
-        ,int GrowInstructionCount, int VarietyCount, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions)
+        ,int GrowInstructionCount, int VarietyCount, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions
+        ,HarvestSeasonEnum HarvestSeason)
     {
         this.Name = Name;
         this.Description = Description;
@@ -51,6 +54,7 @@ public class Plant : BaseEntity, IAggregateRoot
         _tags = Tags;
         _varietyColors = VarietyColors;
         _growInstructions = GrowInstructions;
+        this.HarvestSeason = HarvestSeason;
     }
 
     public static Plant Create(
@@ -161,6 +165,8 @@ public class Plant : BaseEntity, IAggregateRoot
     {
         var instruction = PlantGrowInstruction.Create(command);
 
+        this.HarvestSeason = this.HarvestSeason |= instruction.HarvestSeason;
+
         this._growInstructions.Add(instruction);
 
         this.DomainEvents.Add(
@@ -172,11 +178,22 @@ public class Plant : BaseEntity, IAggregateRoot
     public void UpdatePlantGrowInstructions(UpdatePlantGrowInstructionCommand command)
     {
         this.GrowInstructions.First(i => i.Id == command.PlantGrowInstructionId).Update(command, AddChildDomainEvent);
+        this.HarvestSeason = HarvestSeasonEnum.Unspecified;
+        foreach (var grow in this._growInstructions)
+        {
+            this.HarvestSeason |= grow.HarvestSeason;
+        }
     }
 
     public void DeletePlantGrowInstruction(string plantGrowInstructionId)
     {
         this._growInstructions.RemoveAll(i => i.Id == plantGrowInstructionId);
+
+        this.HarvestSeason = HarvestSeasonEnum.Unspecified;
+        foreach(var grow in this._growInstructions)
+        {
+            this.HarvestSeason |= grow.HarvestSeason;
+        }
 
         AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionDeleted, new TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
 

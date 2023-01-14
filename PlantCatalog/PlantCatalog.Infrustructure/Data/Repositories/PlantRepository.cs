@@ -101,36 +101,40 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
         return data.GrowInstructions.First(g => g.PlantGrowInstructionId==id);
     }
 
-    public void AddPlantGrowInstruction(string plantId, PlantGrowInstruction growInstruction, int growInstructionsCount)
+    public void AddPlantGrowInstruction(string plantGrowInstructionId, Plant plant)
     {
-        var plantFilter = Builders<Plant>.Filter.Eq("_id", plantId);
-        var update = Builders<Plant>.Update.Push<PlantGrowInstruction>("GrowInstructions", growInstruction)
-            .Set(p => p.GrowInstructionsCount, growInstructionsCount);
+        var plantFilter = Builders<Plant>.Filter.Eq("_id", plant.Id);
+        var update = Builders<Plant>.Update.Push<PlantGrowInstruction>("GrowInstructions", plant.GrowInstructions.First(g => g.Id == plantGrowInstructionId))
+            .Set(p => p.GrowInstructionsCount, plant.GrowInstructionsCount)
+            .Set(p => p.HarvestSeason, plant.HarvestSeason);
 
         AddCommand(() => Collection.UpdateOneAsync(plantFilter, update));
     }
 
-    public void UpdatePlantGrowInstruction(string plantId, PlantGrowInstruction growInstruction)
+    public void UpdatePlantGrowInstruction(string plantGrowInstructionId, Plant plant)
     {
-        var filter = Builders<Plant>.Filter.Eq(p => p.Id, plantId);
-        var update = Builders<Plant>.Update.Set("GrowInstructions.$[f]", growInstruction);
+        var filter = Builders<Plant>.Filter.Eq(p => p.Id, plant.Id);
+        var update = Builders<Plant>.Update
+            .Set("GrowInstructions.$[f]", plant.GrowInstructions.First(g => g.Id == plantGrowInstructionId))
+            .Set(p => p.HarvestSeason, plant.HarvestSeason);
         var options = new UpdateOptions()
         {
             ArrayFilters = new List<ArrayFilterDefinition<BsonValue>>()
             {
                 new BsonDocument("f._id",
-                new BsonDocument("$eq", growInstruction.Id))
+                new BsonDocument("$eq", plantGrowInstructionId))
             }
         };
 
         AddCommand(() => Collection.UpdateOneAsync(filter, update, options));
     }
 
-    public void DeletePlantGrowInstruction(string plantId, string plantGrowInstructionid, int growInstructionsCount)
+    public void DeletePlantGrowInstruction(string plantGrowInstructionid, Plant plant)
     {
-        var filter = Builders<Plant>.Filter.Eq(p => p.Id, plantId);
-        var update = Builders<Plant>.Update.Set(p => p.GrowInstructionsCount, growInstructionsCount)
-            .PullFilter(p => p.GrowInstructions, Builders<PlantGrowInstruction>.Filter.Eq(p => p.Id, plantGrowInstructionid));
+        var filter = Builders<Plant>.Filter.Eq(p => p.Id, plant.Id);
+        var update = Builders<Plant>.Update.Set(p => p.GrowInstructionsCount, plant.GrowInstructionsCount)
+            .PullFilter(p => p.GrowInstructions, Builders<PlantGrowInstruction>.Filter.Eq(p => p.Id, plantGrowInstructionid))
+            .Set(p => p.HarvestSeason, plant.HarvestSeason);
 
         AddCommand(() => Collection.UpdateOneAsync(filter, update));
     }
@@ -162,7 +166,8 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapProperty(m => m.GrowInstructions).SetDefaultValue(new List<PlantGrowInstruction>());
             p.MapProperty(m => m.GrowInstructionsCount);
             p.MapProperty(m => m.VarietyCount).SetDefaultValue(0);
-           
+            p.MapMember(m => m.HarvestSeason).SetSerializer(new EnumToStringArraySerializer<HarvestSeasonEnum>()).SetDefaultValue(HarvestSeasonEnum.Unspecified);
+
 
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
@@ -188,7 +193,7 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapMember(m => m.MoistureRequirement).SetSerializer(new EnumSerializer<MoistureRequirementEnum>(BsonType.String));
             p.MapMember(m => m.LightRequirement).SetSerializer(new EnumSerializer<LightRequirementEnum>(BsonType.String));
             p.MapMember(m => m.GrowTolerance).SetSerializer(new EnumToStringArraySerializer<GrowToleranceEnum>());
-
+            p.MapMember(m => m.HarvestSeason).SetSerializer(new EnumToStringArraySerializer<HarvestSeasonEnum>()).SetDefaultValue(HarvestSeasonEnum.Unspecified);
         });
 
         BsonClassMap.RegisterClassMap<PlantViewModel>(p =>
@@ -197,7 +202,6 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
             p.MapMember(m => m.PlantId).SetElementName("_id");
-
         });
 
         BsonClassMap.RegisterClassMap<PlantGrowInstruction>(g =>

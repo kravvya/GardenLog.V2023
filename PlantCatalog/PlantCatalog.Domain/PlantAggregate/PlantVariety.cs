@@ -26,12 +26,33 @@ public class PlantVariety : BaseEntity, IEntity
 
     private PlantVariety() { }
 
+    private PlantVariety(string plantId, string plantName, string name, string description
+        , int? daysToMaturityMin, int? daysToMaturityMax, int? heightInInches, string title, bool isHeirloom
+        , MoistureRequirementEnum moistureRequirement, LightRequirementEnum lightRequirement, GrowToleranceEnum growTolerance
+        , List<string> tags, List<string> colors)
+    {
+        PlantId = plantId;
+        PlantName = plantName;
+        Name = name;
+        Description = description;
+        DaysToMaturityMin = daysToMaturityMin;
+        DaysToMaturityMax = daysToMaturityMax;
+        HeightInInches = heightInInches;
+        Title = title;
+        IsHeirloom = isHeirloom;
+        MoistureRequirement = moistureRequirement;
+        LightRequirement = lightRequirement;
+        GrowTolerance = growTolerance;
+        _tags = tags;
+        _colors = colors;
+    }
+
     public static PlantVariety Create(
         CreatePlantVarietyCommand command,
         string plantName
       )
     {
-        var variety =  new PlantVariety()
+        var variety = new PlantVariety()
         {
             Id = Guid.NewGuid().ToString(),
             PlantName = plantName,
@@ -39,7 +60,7 @@ public class PlantVariety : BaseEntity, IEntity
             Name = command.Name ?? throw new ArgumentNullException(nameof(command.Name)),
             Description = command.Description ?? throw new ArgumentNullException(nameof(command.Description)),
             DaysToMaturityMin = command.DaysToMaturityMin,
-            DaysToMaturityMax= command.DaysToMaturityMax,
+            DaysToMaturityMax = command.DaysToMaturityMax,
             HeightInInches = command.HeightInInches,
             IsHeirloom = command.IsHeirloom,
             MoistureRequirement = command.MoistureRequirement,
@@ -85,7 +106,7 @@ public class PlantVariety : BaseEntity, IEntity
             new PlantChildEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new TriggerEntity(EntityTypeEnum.GrowingInstruction, this.Id)));
     }
 
-   
+
 }
 
 

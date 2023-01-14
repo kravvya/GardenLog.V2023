@@ -4,8 +4,10 @@ namespace PlantCatalog.Domain.PlantAggregate;
 
 public interface IPlantRepository : IRepository<Plant>
 {
-    void AddPlantGrowInstruction(string plantId, PlantGrowInstruction growInstruction, int growInstructionsCount);
-    void DeletePlantGrowInstruction(string plantId, string id, int growInstructionsCount);
+    void AddPlantGrowInstruction(string growInstructionId, Plant plant);
+    void DeletePlantGrowInstruction(string growInstructionId, Plant plant);
+    void UpdatePlantGrowInstruction(string growInstructionId, Plant plant);
+
     Task<bool> ExistsAsync(string plantId);
     Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants();
     Task<Plant> GetByNameAsync(string plantName);
@@ -13,5 +15,5 @@ public interface IPlantRepository : IRepository<Plant>
 
     Task<PlantGrowInstructionViewModel> GetPlantGrowInstraction(string plantId, string id);
     Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstractions(string plantId);
-    void UpdatePlantGrowInstruction(string plantId, PlantGrowInstruction growInstruction);
+    
 }

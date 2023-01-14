@@ -8,15 +8,16 @@
             <ImageForm OnClose=@CloseImageFormModal @ref=ImageForm />
         </Body>
     </ModalView>
-
-    <div>
-        <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())">
-            <span class="oi oi-image" aria-hidden="true"></span> Add Image
-        </button>
-        <button type="button" class="btn btn-danger" @onclick="@(() => OnEdit())">
-            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
-        </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => OnClose())">Close</button>
+    <div class="row">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())">
+                <span class="oi oi-image" aria-hidden="true"></span> Add Image
+            </button>
+            <button type="button" class="btn btn-danger" @onclick="@(() => OnEdit())">
+                <span class="oi oi-pencil" aria-hidden="true"></span> Edit
+            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => OnClose())">Close</button>
+        </div>
     </div>
 }
 

@@ -13,6 +13,7 @@ public interface IPlantService
     Task<ApiResponse> DeletePlant(string id);
 
 
+    Task<List<PlantVarietyModel>> GetAllPlantVarieties(bool useCache);
     Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId, bool useCache);
     Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVarietyId);
     Task<ApiObjectResponse<string>> CreatePlantVariety(PlantVarietyModel variety);
@@ -36,11 +37,8 @@ public class PlantService : IPlantService
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
 
-
-    private const string PLANT_VARIETY_ROUTE = "/plant/{0}/PlantVarieties";
     private Random _random = new Random();
     private const string PLANTS_KEY = "Plants";
-   
     private const string PLANT_VARIETY_KEY = "Plant_{0}_Variety";
     private const string PLANT_GROW_INSTRUCTION_KEY = "Plant_{0}_GrowInstruction";
 
@@ -220,61 +218,96 @@ public class PlantService : IPlantService
     #endregion
 
     #region Public Plant Variety Functions
+    public async Task<List<PlantVarietyModel>> GetAllPlantVarieties(bool useCache)
+    {
+        List<PlantVarietyModel> plantVarietyList = null;
+
+        if (useCache)
+        {
+            plantVarietyList = GetPlantVarietiesFromCache(string.Empty);
+        }
+
+        if (plantVarietyList == null)
+        {
+            plantVarietyList = await GetPlantVarieties();
+
+            if (plantVarietyList.Count > 0)
+            {
+                //List<ImageRelatedEntityModel> relatedEntities = new();
+                //foreach (var variety in plantVarietyList)
+                //{
+                //    relatedEntities.Add(new ImageRelatedEntityModel(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, variety.PlantVarietyId, false));
+                //}
+                //var images = await _imageService.GetImagesInBulk(relatedEntities);
+
+                foreach (var variety in plantVarietyList)
+                {
+                    //variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
+
+                    //var image = variety.Images.FirstOrDefault();
+                    //if (image != null)
+                    //{
+                    //    variety.ImageFileName = image.FileName;
+                    //    variety.ImageLabel = image.Label;
+                    //}
+                    //else
+                    //{
+                    variety.ImageFileName = ImageService.NO_IMAGE;
+                    variety.ImageLabel = "Add image";
+                    //}
+                }
+            }
+
+            AddPlantVarietiesToCache(string.Empty, plantVarietyList);
+        }
+
+        return plantVarietyList;
+    }
+
     public async Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId, bool useCache)
     {
-        return new List<PlantVarietyModel>();
-        //List<PlantVarietyModel> plantVarietyList = null;
+        List<PlantVarietyModel> plantVarietyList = null;
 
-        //if (useCache)
-        //{
-        //    plantVarietyList = GetPlantVarietiesFromCache(plantId);
-        //}
+        if (useCache)
+        {
+            plantVarietyList = GetPlantVarietiesFromCache(plantId);
+        }
 
-        //if (plantVarietyList == null)
-        //{
-        //    var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+        if (plantVarietyList == null)
+        {
+            plantVarietyList = await GetPlantVarieties(plantId);
 
-        //    var response = await httpClient.ApiGetAsync<GetPLantVarietiesResponse>(string.Format(PLANT_VARIETY_ROUTE, plantId));
+            if (plantVarietyList.Count > 0)
+            {
+                //List<ImageRelatedEntityModel> relatedEntities = new();
+                //foreach (var variety in plantVarietyList)
+                //{
+                //    relatedEntities.Add(new ImageRelatedEntityModel(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, variety.PlantVarietyId, false));
+                //}
+                //var images = await _imageService.GetImagesInBulk(relatedEntities);
 
-        //    if (!response.IsSuccess)
-        //    {
-        //        _toastService.ShowToast("Unable to get Plant varieties", GardenLogToastLevel.Error);
-        //        return null;
-        //    }
+                foreach (var variety in plantVarietyList)
+                {
+                    //variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
 
-        //    plantVarietyList = response.Response.Varieties;
+                    //var image = variety.Images.FirstOrDefault();
+                    //if (image != null)
+                    //{
+                    //    variety.ImageFileName = image.FileName;
+                    //    variety.ImageLabel = image.Label;
+                    //}
+                    //else
+                    //{
+                    variety.ImageFileName = ImageService.NO_IMAGE;
+                    variety.ImageLabel = "Add image";
+                    //}
+                }
+            }
 
-        //    if (plantVarietyList.Count > 0)
-        //    {
-        //        List<ImageRelatedEntityModel> relatedEntities = new();
-        //        foreach (var variety in plantVarietyList)
-        //        {
-        //            relatedEntities.Add(new ImageRelatedEntityModel(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, variety.PlantVarietyId, false));
-        //        }
-        //        var images = await _imageService.GetImagesInBulk(relatedEntities);
+            AddPlantVarietiesToCache(plantId, plantVarietyList);
+        }
 
-        //        foreach (var variety in plantVarietyList)
-        //        {
-        //            variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
-
-        //            var image = variety.Images.FirstOrDefault();
-        //            if (image != null)
-        //            {
-        //                variety.ImageFileName = image.FileName;
-        //                variety.ImageLabel = image.Label;
-        //            }
-        //            else
-        //            {
-        //                variety.ImageFileName = ImageService.NO_IMAGE;
-        //                variety.ImageLabel = "Add image";
-        //            }
-        //        }
-        //    }
-
-        //    AddPlantVarietiesToCache(plantId, plantVarietyList);
-        //}
-
-        //return plantVarietyList;
+        return plantVarietyList;
     }
 
     public async Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVerietyId)
@@ -282,51 +315,37 @@ public class PlantService : IPlantService
         PlantVarietyModel plantVariety = null;
 
         var plantVarietyTask = GetPlantVarietyFromServer(plantId, plantVerietyId);
-        var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, plantVerietyId, false);
+        //var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, plantVerietyId, false);
 
-        await Task.WhenAll(plantVarietyTask, imagesTask);
+        await Task.WhenAll(plantVarietyTask);//, imagesTask);
 
         plantVariety = plantVarietyTask.Result;
-        var images = imagesTask.Result;
-
-        plantVariety.Images = images;
-        var image = plantVariety.Images.FirstOrDefault();
-        if (image != null)
-        {
-            plantVariety.ImageFileName = image.FileName;
-            plantVariety.ImageLabel = image.Label;
-        }
-        else
-        {
+      //  var images = imagesTask.Result;
+      
+        //plantVariety.Images = images;
+        //var image = plantVariety.Images.FirstOrDefault();
+        //if (image != null)
+        //{
+        //    plantVariety.ImageFileName = image.FileName;
+        //    plantVariety.ImageLabel = image.Label;
+        //}
+        //else
+        //{
             plantVariety.ImageFileName = ImageService.NO_IMAGE;
             plantVariety.ImageLabel = "Add image";
-        }
+        plantVariety.Images = new();
+        //}
 
         AddOrUpdateToPlantVarietyList(plantVariety);
 
         return plantVariety;
     }
-
-    private async Task<PlantVarietyModel> GetPlantVarietyFromServer(string plantId, string plantVerietyId)
-    {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
-        string route = string.Format(PLANT_VARIETY_ROUTE, plantId) + $"/{plantVerietyId}";
-        var response = await httpClient.ApiGetAsync<GetPLantVarietyResponse>(route);
-
-        if (!response.IsSuccess)
-        {
-            _toastService.ShowToast("Unable to get Plant variety", GardenLogToastLevel.Error);
-            return null;
-        }
-
-        return response.Response.Variety;
-    }
-
+       
     public async Task<ApiObjectResponse<string>> CreatePlantVariety(PlantVarietyModel variety)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiPostAsync(string.Format(PLANT_VARIETY_ROUTE, variety.PlantId), variety);
+        var response = await httpClient.ApiPostAsync(Routes.CreatePlantVariety.Replace("{plantId}", variety.PlantId), variety);
 
         if (response.ValidationProblems != null)
         {
@@ -351,7 +370,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        string route = string.Format(PLANT_VARIETY_ROUTE, variety.PlantId) + $"/{variety.PlantVarietyId}";
+        string route = Routes.UpdatePlantVariety.Replace("{plantId}", variety.PlantId).Replace("{id}", variety.PlantVarietyId);
 
         var response = await httpClient.ApiPutAsync(route, variety);
 
@@ -377,7 +396,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        string route = string.Format(PLANT_VARIETY_ROUTE, plantId) + $"/{id}";
+        string route = Routes.DeletePlantVariety.Replace("{plantId}", plantId).Replace("{id}", id);
 
         var response = await httpClient.ApiDeleteAsync(route);
 
@@ -461,7 +480,7 @@ public class PlantService : IPlantService
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
         var route = Routes.CreatePlantGrowInstruction.Replace("{plantId}", plantGrowInstruction.PlantId);
-        var response = await httpClient.ApiPostAsync(route, plantGrowInstruction); 
+        var response = await httpClient.ApiPostAsync(route, plantGrowInstruction);
 
 
         if (response.ValidationProblems != null)
@@ -603,6 +622,52 @@ public class PlantService : IPlantService
     #endregion
 
     #region Private Plant Variety Fucntions
+    private async Task<List<PlantVarietyModel>> GetPlantVarieties()
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+
+        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetAllPlantVarieties);
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Plant Varieties", GardenLogToastLevel.Error);
+            return null;
+        }
+
+        return response.Response;
+    }
+
+    private async Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+
+        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetAllPlantVarieties.Replace("{plantId}", plantId));
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Plant Varieties", GardenLogToastLevel.Error);
+            return null;
+        }
+
+        return response.Response;
+    }
+
+    private async Task<PlantVarietyModel> GetPlantVarietyFromServer(string plantId, string plantVerietyId)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
+
+        var response = await httpClient.ApiGetAsync<PlantVarietyModel>(Routes.GetPlantVariety.Replace("{plantId}", plantId).Replace("{id}", plantVerietyId));
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Plant variety", GardenLogToastLevel.Error);
+            return null;
+        }
+
+        return response.Response;
+    }
+
+
     private void AddOrUpdateToPlantVarietyList(PlantVarietyModel variety)
     {
         var varieties = GetPlantVarietiesFromCache(variety.PlantId);
@@ -701,14 +766,3 @@ public class PlantService : IPlantService
     #endregion
 
 }
-
-public class GetPLantVarietiesResponse
-{
-    public List<PlantVarietyModel> Varieties { get; set; }
-}
-
-public class GetPLantVarietyResponse
-{
-    public PlantVarietyModel Variety { get; set; }
-}
-

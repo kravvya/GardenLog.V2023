@@ -120,7 +120,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
             var growId = plant.AddPlantGrowInstruction(command);
 
-            _plantRepository.AddPlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id== growId), plant.GrowInstructionsCount);
+            _plantRepository.AddPlantGrowInstruction(growId, plant);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -146,7 +146,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         plant.UpdatePlantGrowInstructions(command);
 
-        _plantRepository.UpdatePlantGrowInstruction(command.PlantId, plant.GrowInstructions.First(g => g.Id == command.PlantGrowInstructionId));
+        _plantRepository.UpdatePlantGrowInstruction(command.PlantGrowInstructionId, plant);
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -160,7 +160,7 @@ public class PlantCommandHandler : IPlantCommandHandler
 
         plant.DeletePlantGrowInstruction(id);
 
-        _plantRepository.DeletePlantGrowInstruction(plantId, id, plant.GrowInstructionsCount);
+        _plantRepository.DeletePlantGrowInstruction(id, plant);
 
         await _unitOfWork.SaveChangesAsync();
 
