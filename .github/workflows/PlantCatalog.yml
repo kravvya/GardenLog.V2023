@@ -55,7 +55,7 @@ jobs:
       run: dotnet build -c Release --no-restore
     
     - name: Test
-      run: dotnet test -c Release --no-build
+      run: dotnet test ~/Test/PlantCatalog.IntegrationTest/PlantCatalog.IntegrationTest.csproj -c Release --no-build
       
   build:
     runs-on: ubuntu-latest
@@ -64,6 +64,8 @@ jobs:
     # checkout the repo
     - name: Checkout to the branch
       uses: actions/checkout@main
+      with:
+        path: PlantCatalog
 
     - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
     - run: echo "🖥️ The workflow is now ready to test your code on the runner."

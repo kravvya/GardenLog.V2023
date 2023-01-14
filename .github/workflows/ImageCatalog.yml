@@ -53,10 +53,10 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build -c Release --no-restore
+      run: dotnet build  -c Release --no-restore
     
     - name: Test
-      run: dotnet test -c Release --no-build
+      run: dotnet test ~/Test/ImageCatalog.IntegrationTest/ImageCatalog.IntegrationTest.csproj -c Release --no-build
       
   build:
     runs-on: ubuntu-latest
@@ -65,6 +65,8 @@ jobs:
     # checkout the repo
     - name: Checkout to the branch
       uses: actions/checkout@main
+      with:
+        path: ImageCatalog
 
     - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
     - run: echo "🖥️ The workflow is now ready to test your code on the runner."
