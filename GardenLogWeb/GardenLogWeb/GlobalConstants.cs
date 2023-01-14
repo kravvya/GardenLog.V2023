@@ -16,6 +16,7 @@ namespace GardenLogWeb;
 public static class GlobalConstants
 {
     public const string PLANTCATALOG_API = "PlantCatalog.Api";
+    public const string IMAGEPLANTCATALOG_API = "ImageCatalog.Api";
 
 }
 
