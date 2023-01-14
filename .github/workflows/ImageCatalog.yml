@@ -56,7 +56,7 @@ jobs:
       run: dotnet build  -c Release --no-restore
     
     - name: Test
-      run: dotnet test ~/GardenLog.V2023/GardenLog.V2023/Test/ImageCatalog.IntegrationTest/ImageCatalog.IntegrationTest.csproj -c Release --no-build
+      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/ImageCatalog.IntegrationTest/ImageCatalog.IntegrationTest.csproj -c Release --no-build
       
   build:
     runs-on: ubuntu-latest
