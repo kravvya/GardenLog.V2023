@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["ImageCatalog/ImageCatalog.Api/ImageCatalog.Api/ImageCatalog.Api.csproj", "ImageCatalog/ImageCatalog.Api/ImageCatalog.Api/"]
-RUN dotnet restore "ImageCatalog/ImageCatalog.Api/ImageCatalog.Api/ImageCatalog.Api.csproj"
+COPY ["ImageCatalog/ImageCatalog.Api/ImageCatalog.Api.csproj", "ImageCatalog/ImageCatalog.Api/ImageCatalog.Api/"]
+RUN dotnet restore "ImageCatalog/ImageCatalog.Api/ImageCatalog.Api.csproj"
 COPY . .
-WORKDIR "/src/ImageCatalog/ImageCatalog.Api/ImageCatalog.Api"
+WORKDIR "/src/ImageCatalog/ImageCatalog.Api/"
 RUN dotnet build "ImageCatalog.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
