@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api\appsettings.Development.json" Link="appsettings.Development.json" />
-    <Content Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api\appsettings.json" Link="appsettings.json" />
+    <Content Include="..\..\ImageCatalog\ImageCatalog.Api\appsettings.Development.json" Link="appsettings.Development.json" />
+    <Content Include="..\..\ImageCatalog\ImageCatalog.Api\appsettings.json" Link="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api\ImageCatalog.Api.csproj" />
+    <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj" />
     <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Contract\ImageCatalog.Contract.csproj" />
   </ItemGroup>
 
