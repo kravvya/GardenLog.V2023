@@ -7,6 +7,8 @@ namespace GardenLog.SharedInfrastructure
 {
     public interface IConfigurationService
     {
+        string GetImageBlobConnectionString();
+        MongoSettings GetImageCatalogMongoSettings();
         MongoSettings GetPlantCatalogMongoSettings();
     }
 
@@ -40,6 +42,41 @@ namespace GardenLog.SharedInfrastructure
                 _logger.LogInformation("DB PASSWORD WAS LOCATED! YEHAA");
             }
             return mongoSettings;  
+        }
+
+        public MongoSettings GetImageCatalogMongoSettings()
+        {
+            var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
+
+            if (string.IsNullOrWhiteSpace(mongoSettings.Password))
+            {
+                _logger.LogWarning("DB PASSWORD is not found. Will try environment");
+                mongoSettings.Password = _configuration.GetValue<string>(MongoSettings.PASSWORD_SECRET);
+            }
+
+            if (string.IsNullOrWhiteSpace(mongoSettings.Password))
+            {
+                _logger.LogCritical("DB PASSWORD is not found. Do not expect any good things to happen");
+            }
+            else
+            {
+                _logger.LogInformation("DB PASSWORD WAS LOCATED! YEHAA");
+            }
+            return mongoSettings;
+        }
+
+        public string GetImageBlobConnectionString()
+        {
+            var blobConnectionString = _configuration.GetValue<string>("glimages-url");
+            if (string.IsNullOrWhiteSpace(blobConnectionString))
+            {
+                _logger.LogCritical("Image Blob Url is not found. Do not expect any good things to happen");
+            }
+            else
+            {
+                _logger.LogInformation("IMAGE BLBL URL WAS FOUND! YEHAA");
+            }
+            return blobConnectionString;
         }
 
 

@@ -1,0 +1,125 @@
+﻿using ImageCatalog.Api.CommandHandlers;
+using ImageCatalog.Api.QueryHandlers;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+
+namespace ImageCatalog.Api.Controllers;
+
+[Route(Routes.ImageCatalogBase)]
+[ApiController]
+public class ImageController : ControllerBase
+{
+    private readonly ILogger<ImageController> _logger;
+    private readonly IImageCommandHandler _handler;
+    private readonly IImageQueryHandler _queryHandler;
+
+    public ImageController(ILogger<ImageController> logger,  IImageCommandHandler handler, IImageQueryHandler queryHandler)
+    {
+        _logger = logger;
+        _handler = handler;
+        _queryHandler = queryHandler;
+    }
+
+    [HttpPost()]
+    [ActionName("Search")]
+    [Route(Routes.Search)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> SearchAsync([FromBody] GetImagesByRelatedEntity request)
+    {
+        try
+        {
+            var results = await _queryHandler.GetImagesByRelatedEntityAsync(request, User.GetUserProfileId());
+
+            if (results == null) return NotFound();
+
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception getting images", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpPost()]
+    [ActionName("SearchBatch")]
+    [Route(Routes.SearchBatch)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> SearchBatchAsync([FromBody] GetImagesByRelatedEntities request)
+    {
+        try
+        {
+            var results = await _queryHandler.GetImagesByRelatedEntitiesAsync(request, User.GetUserProfileId());
+
+            if (results == null) return NotFound();
+
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception getting images", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpPost]
+    [ActionName("CrerateImage")]
+    [Route(Routes.CrerateImage)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> PostImageAsync(CreateImageCommand createCommand)
+    {
+        try
+        {
+            var results = await _handler.CreateImageAsync(User.GetUserProfileId(), createCommand);
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception creating Image", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    [ActionName("UpdateImage")]
+    [Route(Routes.UpdateImage)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> PutImageAsync(UpdateImageCommand updateCommand)
+    {
+        try
+        {
+            var result = await _handler.UpdateImageAsync(updateCommand);
+
+            return result ? Ok() : NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception updating Image", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+    [HttpDelete]
+    [ActionName("DeleteImage")]
+    [Route(Routes.DeleteImage)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> DeleteImageAsync(string imageId)
+    {
+        try
+        {
+            var result = await _handler.DeleteImageAsync(imageId);
+
+            return result ? Ok() : NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception deleting Image", ex);
+            return Problem(ex.Message);
+        }
+    }
+}

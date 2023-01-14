@@ -1,0 +1,60 @@
+﻿
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+
+namespace ImageCatalog.Api.Controllers;
+
+[Route(Routes.FileCatalogBase)]
+[ApiController]
+public class FileController : Controller
+{
+    private readonly ILogger<FileController> _logger;
+    private readonly IFileCommandHandler _fileService;
+
+    public FileController(ILogger<FileController> logger, IFileCommandHandler fileService)
+    {
+        _logger = logger;
+        _fileService = fileService;
+    }
+
+    [HttpGet()]
+    [ActionName("GenerateSasToken")]
+    [Route(Routes.GenerateSasToken)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+    public ActionResult GenerateSasUri(string fileName)
+    {
+        try
+        {
+            _logger.LogInformation("Generating SAS Uri for {user}", User.GetUserProfileId());
+            var results = _fileService.GenerateSasToken(fileName);
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception getting images", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+
+    [HttpGet()]
+    [ActionName("ResizeImageToThumbnail")]
+    [Route(Routes.ResizeImageToThumbnail)]
+    [ProducesResponseType((int)HttpStatusCode.Accepted)]
+    public ActionResult ResizeImageToThumbnail(string fileName)
+    {
+        try
+        {
+            _logger.LogInformation("Generating thumbnail image for {file}", fileName);
+            _fileService.ResizeImageToThumbnail(fileName);
+            return Accepted();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception getting images", ex);
+            return Problem(ex.Message);
+        }
+    }
+
+}
