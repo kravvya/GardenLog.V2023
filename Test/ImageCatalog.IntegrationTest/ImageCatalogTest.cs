@@ -87,6 +87,13 @@ namespace ImageCatalog.IntegrationTest
 
             List<ImageViewModel>? images = await RunImageSearch(search);
 
+            if(images == null || images.Count == 0)
+            {
+                await _imageClient.CreateImage(TEST_FILE_NAME);
+            }
+
+            images = await RunImageSearch(search);
+
             Assert.NotNull(images);
             Assert.NotEmpty(images);
 
@@ -103,6 +110,13 @@ namespace ImageCatalog.IntegrationTest
             GetImagesByRelatedEntity search = new(Contract.Enum.ImageEntityEnum.Plant, string.Empty, false);
 
             List<ImageViewModel>? images = await RunImageSearch(search);
+
+            if (images == null || images.Count == 0)
+            {
+                await _imageClient.CreateImage(TEST_FILE_NAME);
+            }
+
+            images = await RunImageSearch(search);
 
             Assert.NotNull(images);
             Assert.NotEmpty(images);
