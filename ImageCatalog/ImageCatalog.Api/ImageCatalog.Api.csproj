@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GardenLog.SharedInfrastructure\GardenLog.SharedInfrastructure.csproj" />
-    <ProjectReference Include="..\..\ImageCatalog.Contract\ImageCatalog.Contract.csproj" />
+    <ProjectReference Include="..\..\GardenLog.SharedInfrastructure\GardenLog.SharedInfrastructure.csproj" />
+    <ProjectReference Include="..\ImageCatalog.Contract\ImageCatalog.Contract.csproj" />
   </ItemGroup>
 
 </Project>
