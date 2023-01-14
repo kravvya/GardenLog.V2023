@@ -6,16 +6,35 @@
 <article id="plantGrowInstructionList">
     <div class="container">
         <div class="row">
-            @if (GrowInstructions == null)
+            @if (GrowInstructions == null && string.IsNullOrEmpty(Plant.GardenTip))
             {
                 <p><em>Empty</em></p>
             }
             else
             {
                 <div class="accordion" id="growInstructions">
-                    @foreach (var grow in GrowInstructions.OrderBy(c => c.Name).Select((value, index) => new {value, index}))
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="GardenTipheader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"  data-bs-target="#gardenTip" aria-expanded="true" aria-controls="gardenTip">
+                                <span class="lead fw-bold">Garden Tip</span>
+                            </button>
+                        </h2>
+                        <div id="gardenTip" class="accordion-collapse collapse" aria-labelledby="gardenTip" data-bs-parent="#growInstructions">
+                            <div class="accordion-body">
+                                <p>
+                                    @Plant.GardenTip
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if (GrowInstructions!= null)
                     {
-                        <PlantGrowInstructionAccordianItemView GrowInstruction=@grow.value  IsOpen=@IsOpen(grow.index) />
+                        @foreach (var grow in GrowInstructions.OrderBy(c => c.Name).Select((value, index) => new {value, index}))
+                        {
+                            <PlantGrowInstructionAccordianItemView GrowInstruction=@grow.value  IsOpen=false />
+                        }
                     }
                 </div>
             }

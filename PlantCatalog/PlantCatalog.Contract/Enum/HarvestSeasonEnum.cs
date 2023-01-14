@@ -12,10 +12,10 @@ namespace PlantCatalog.Contract.Enum
         [Description("EarlySummer")]
         EarlySummer = 2,
         [Description("Summer")]
-        Summer = 3,
+        Summer = 4,
         [Description("Fall")]
-        Fall = 4,
+        Fall = 8,
         [Description("Late Fall")]
-        LateFall = 5
+        LateFall = 16
     }
 }

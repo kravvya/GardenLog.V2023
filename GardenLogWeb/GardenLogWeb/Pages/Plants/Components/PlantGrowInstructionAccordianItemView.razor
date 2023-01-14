@@ -75,8 +75,8 @@
                     <div class="mt-2">
                         <dt></dt>
                         <dd class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-outline-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
-                                <span class="bi bi-journals" aria-hidden="true"></span>
+                            <button type="button" class="btn btn-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
+                                <span class="bi bi-card-checklist" aria-hidden="true"></span>
                             </button>
                         </dd>
                     </div>
@@ -191,7 +191,7 @@
 
     private string IsCollapsed()
     {
-        return IsOpen ? "collapsed" : "";
+        return !IsOpen ? "collapsed" : "";
     }
 
     private string IsShow()

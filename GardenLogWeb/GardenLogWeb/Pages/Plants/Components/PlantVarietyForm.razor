@@ -186,8 +186,8 @@
                     <div class="modal-footer justify-content-between">
                         @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
                         <span>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-default" @onclick="@(() => OnClose())">Cancel</button>
+                            <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
