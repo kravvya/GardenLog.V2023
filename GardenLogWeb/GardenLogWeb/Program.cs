@@ -30,7 +30,7 @@ string imageServiceUrl = "";
 if (builder.HostEnvironment.IsProduction())
 {
     serviceUrl = "https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
-    imageServiceUrl= "https://imagecatalogapi-containerapp.internal.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
+    imageServiceUrl= "https://imagecatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
 }
 else
 {
