@@ -118,7 +118,7 @@
                                             <td class="col-2 text-start">
                                                 <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
                                                 <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
-                                                <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowCount)
+                                                <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowInstructionsCount)
                                             </td>
                                             <td class="col-3">
                                                 <button type="button" class="btn btn btn-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
@@ -154,7 +154,7 @@
                                             <div class="col">
                                                 <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
                                                 <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
-                                                <span class="fw-bold" >Instructions:</span>@DoNotDisplayZero(plant.GrowCount)
+                                                <span class="fw-bold" >Instructions:</span>@DoNotDisplayZero(plant.GrowInstructionsCount)
                                             </div>
 
                                             <div class="col">

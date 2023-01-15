@@ -24,9 +24,9 @@
                     @foreach (var variety in PlantVarieties.OrderBy(c => c.Name))
                     {
                         <div class="col">
-                            <div class="card h-100 border border-1" style="border-color: @Plant.Color !important;">
+                            <div class="card h-100 border border-1" style="border-color: @Plant.Color !important;" >
 
-                                <img class="img-fluid " src="@_imageService.GetRawImageUrl(variety.ImageFileName)" alt="@variety.ImageLabel" title="@variety.ImageLabel">
+                                <img class="img-fluid " src="@_imageService.GetRawImageUrl(variety.ImageFileName)" alt="@variety.ImageLabel" title="@variety.ImageLabel" role="button" @onclick="@(() => OpenPlantVarietyView(variety))">
                                 <div class="card-body">
                                     <p class="card-text">
                                         <div>@variety.Name</div>
@@ -34,12 +34,12 @@
                                     </p>
                                 </div>
                                 <div class="card-footer" style="background-color: @Plant.Color;">
-                                    <button type="button" class="btn btn-link p-0" title="Variety Detail" @onclick="@(() => OpenPlantVarietyView(variety))">
-                                        <span class="oi oi-pencil">View</span>
-                                    </button>
-                                    <button type="button" class="btn btn-link p-0" title="Edit Variety" @onclick="@(() => EditPlantVariety(variety))">
-                                        <span class="oi oi-pencil">Edit</span>
-                                    </button>
+
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantVariety(variety))">
+                                            <span class="bi bi-flower1">&nbsp;</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

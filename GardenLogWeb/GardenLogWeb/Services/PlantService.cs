@@ -616,7 +616,7 @@ public class PlantService : IPlantService
         if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
         {
             var plant = plants.Where(p => p.PlantId == plantId).FirstOrDefault();
-            if (plant != null) plant.GrowCount++;
+            if (plant != null) plant.GrowInstructionsCount++;
         }
     }
     #endregion

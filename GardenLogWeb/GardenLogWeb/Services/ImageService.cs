@@ -62,7 +62,7 @@ public class ImageService : IImageService
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
         var query = new GetImagesByRelatedEntities() { Requests = entities };
 
-        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.SearchBatch, query);
 
         return response.Response;
 
