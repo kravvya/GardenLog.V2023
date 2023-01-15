@@ -1,7 +1,11 @@
 ﻿using Azure.Storage.Blobs;
+using GardenLogWeb.Models.Images;
 using GardenLogWeb.Shared.Extensions;
 using GardenLogWeb.Shared.Services;
+using ImageCatalog.Contract.Enum;
+using ImageCatalog.Contract.Queries;
 using Microsoft.AspNetCore.Components.Forms;
+using img = ImageCatalog.Contract;
 
 namespace GardenLogWeb.Services;
 
@@ -34,32 +38,37 @@ public class ImageService : IImageService
         _httpClientFactory = clientFactory;
         _toastService = toastService;
     }
-    public async Task<List<ImageModel>> GetImages(string entityType, bool FilterUserOnly)
+    public async Task<List<ImageModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly)
     {
-        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<ImageModel>>($"{IMAGE_ROUTE}?RelatedEntityType={entityType}&FilterUserOnly={FilterUserOnly}");
+        GetImagesByRelatedEntity query = new(entityType, null, FilterUserOnly);
+
+        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
 
         return response.Response;
     }
 
-    public async Task<List<ImageModel>> GetImages(string entityType, string entityId, bool FilterUserOnly)
+    public async Task<List<ImageModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly)
     {
-        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<ImageModel>>($"{IMAGE_ROUTE}?RelatedEntityType={entityType}&RelatedEntityId={entityId}&FilterUserOnly={FilterUserOnly}");
+        GetImagesByRelatedEntity query = new(entityType, entityId, FilterUserOnly);
+
+        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
 
         return response.Response;
     }
 
-    public async Task<List<ImageModel>> GetImagesInBulk(List<ImageRelatedEntityModel> entities)
+    public async Task<List<ImageModel>> GetImagesInBulk(List<GetImagesByRelatedEntity> entities)
     {
-        var request = new ImageRelatedEntities() { Requests = entities };
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
+        var request = new GetImagesByRelatedEntities() { Requests = entities };
 
-        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
-        var response = await httpClient.ApiPostAsync<List<ImageModel>>($"{IMAGE_ROUTE}/search/batch", request);
+        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
 
         return response.Response;
+
     }
 
     public async Task<ApiObjectResponse<string>> CreateImage(ImageModel image)

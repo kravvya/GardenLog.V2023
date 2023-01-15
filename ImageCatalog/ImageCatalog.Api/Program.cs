@@ -20,21 +20,21 @@ try
     // Add services to the container.
     builder.Services.AddHttpClient();
 
-    builder.Services.AddControllers();
+    //builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    //builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+    //builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
-    builder.Services.AddSingleton<IFileRepository, BlobRepository>();
-    builder.Services.AddSingleton<IImageRepository, ImageRepository>();
+    //builder.Services.AddSingleton<IFileRepository, BlobRepository>();
+    //builder.Services.AddSingleton<IImageRepository, ImageRepository>();
 
-    builder.Services.AddScoped<IImageQueryHandler, ImageQueryHandler>();
-    builder.Services.AddScoped<IImageCommandHandler, ImageCommandHandler>();
+    //builder.Services.AddScoped<IImageQueryHandler, ImageQueryHandler>();
+    //builder.Services.AddScoped<IImageCommandHandler, ImageCommandHandler>();
 
-    builder.Services.AddScoped<IFileCommandHandler, FileCommandHandler>();
+    //builder.Services.AddScoped<IFileCommandHandler, FileCommandHandler>();
 
 
     builder.Services.AddCors(options =>

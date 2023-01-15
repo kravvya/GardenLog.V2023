@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Contract\ImageCatalog.Contract.csproj" />
     <ProjectReference Include="..\..\PlantCatalog\PlantCatalog.Contract\PlantCatalog.Contract.csproj" />
   </ItemGroup>
 
