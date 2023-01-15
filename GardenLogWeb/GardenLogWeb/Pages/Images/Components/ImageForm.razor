@@ -27,8 +27,8 @@
                 <div class="col-12">
                     <div class="modal-footer">
                         <span>
-                            <button type="submit" class="btn btn-primary" disabled="@(!IsDisabled)">Save</button>
-                            <button type="button" class="btn btn-default" @onclick="@(() => OnClose())">Cancel</button>
+                            <button type="submit" class="btn btn-primary" disabled="@(!IsDisabled)" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>

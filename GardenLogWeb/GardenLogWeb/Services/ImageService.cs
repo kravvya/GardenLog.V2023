@@ -20,8 +20,8 @@ public interface IImageService
 
 public class ImageService : IImageService
 {
-    private const string ThumbnailImageUrl = "https://glimagedev.blob.core.windows.net/thumbnails/";
-    private const string RawImageUrl = "https://glimagedev.blob.core.windows.net/images/";
+    private const string ThumbnailImageUrl = "https://glimages.blob.core.windows.net/thumbnails/";
+    private const string RawImageUrl = "https://glimages.blob.core.windows.net/images/";
 
     public const string NO_IMAGE = "/images/noimage.png";
 
@@ -114,6 +114,9 @@ public class ImageService : IImageService
                 })
             });
 
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
+
+        var response = await httpClient.GetAsync(img.Routes.ResizeImageToThumbnail.Replace("{fileName}", fileName));
     }
 
     public string GetThumbnailImageUrl(string fileName)
@@ -136,8 +139,8 @@ public class ImageService : IImageService
 
     private async Task<string> GetSasToken(string fileName)
     {
-        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
-        var httpResponseMessage = await httpClient.GetAsync($"/files/tokens/{fileName}");
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
+        var httpResponseMessage = await httpClient.GetAsync(img.Routes.GenerateSasToken.Replace("{fileName}", fileName));
 
         httpResponseMessage.EnsureSuccessStatusCode();
 
