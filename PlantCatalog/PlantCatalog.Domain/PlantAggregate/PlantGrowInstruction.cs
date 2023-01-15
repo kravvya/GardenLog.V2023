@@ -42,6 +42,8 @@ public class PlantGrowInstruction : BaseEntity
     public int? DaysToSproutMin { get; private set; }
     public int? DaysToSproutMax { get; private set; }
 
+    public string TransplantInstructions { get; private set; }
+
     private PlantGrowInstruction() { }
 
     public static PlantGrowInstruction Create(CreatePlantGrowInstructionCommand command)
@@ -69,7 +71,8 @@ public class PlantGrowInstruction : BaseEntity
             FertilizerFrequencyForSeedlingsInWeeks= command.FertilizeFrequencyForSeedlingsInWeeks,
             FertilizeFrequencyInWeeks= command.FertilizeFrequencyInWeeks,
             DaysToSproutMin= command.DaysToSproutMin,
-            DaysToSproutMax= command.DaysToSproutMax
+            DaysToSproutMax= command.DaysToSproutMax,
+            TransplantInstructions= command.TransplantInstructions
         };
 
     }
@@ -100,6 +103,7 @@ public class PlantGrowInstruction : BaseEntity
         Set<int?>(() => this.FertilizeFrequencyInWeeks, command.FertilizeFrequencyInWeeks);
         Set<int?>(() => this.DaysToSproutMin, command.DaysToSproutMin);
         Set<int?>(() => this.DaysToSproutMax, command.DaysToSproutMax);
+        Set<string>(() => this.TransplantInstructions, command.TransplantInstructions);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

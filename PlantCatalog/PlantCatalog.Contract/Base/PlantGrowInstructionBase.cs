@@ -21,6 +21,7 @@ public abstract record PlantGrowInstructionBase
     public int? TransplantWeeksAheadOfWeatherCondition { get; set; }
     public WeatherConditionEnum TransplantAheadOfWeatherCondition { get; set; }
     public int? TransplantWeeksRange { get; set; }
+    public string TransplantInstructions { get; set; }
 
     public FertilizerEnum FertilizerAtPlanting { get; set; }
     public FertilizerEnum FertilizerForSeedlings {get; set;}

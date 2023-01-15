@@ -193,6 +193,7 @@
                                                     </div>
                                                     <div class="px-2"> <span>week(s)</span> </div>
                                                 </div>
+
                                             </Body>
                                         </FormCard>
                                     </div>
@@ -270,6 +271,13 @@
 
                                     <div class="p-2">
                                         <span> week(s)</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="TransplantInstructions">Transplant Instructions</label>
+                                        <InputTextArea Class="form-control" Id="TransplantInstructions" @bind-Value="@growInstruction.TransplantInstructions" rows="3" />
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.TransplantInstructions)" /></div>
                                     </div>
                                 </div>
                             </Body>
