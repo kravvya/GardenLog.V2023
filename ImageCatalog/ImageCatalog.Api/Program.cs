@@ -53,7 +53,8 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
+    //app.UseHttpsRedirection();
 
     app.UseAuthorization();
 
