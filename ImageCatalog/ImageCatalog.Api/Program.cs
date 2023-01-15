@@ -37,10 +37,23 @@ try
     builder.Services.AddScoped<IFileCommandHandler, FileCommandHandler>();
 
 
+    //builder.Services.AddCors(options =>
+    //{
+    //    options.AddGlWebPolicy();
+    //});
     builder.Services.AddCors(options =>
     {
-        options.AddGlWebPolicy();
+        options.AddPolicy(name: "glWebPolicy",
+                    policy =>
+                    {
+                        policy.WithOrigins("https://kravvya.github.io",
+                            "https://localhost:7014",
+                            "https://localhost:44318")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
     });
+
 
     //TODO Add Healthchecks!!!!
 
