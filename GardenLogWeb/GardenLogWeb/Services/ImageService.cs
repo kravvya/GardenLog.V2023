@@ -2,9 +2,12 @@
 using GardenLogWeb.Models.Images;
 using GardenLogWeb.Shared.Extensions;
 using GardenLogWeb.Shared.Services;
+using ImageCatalog.Contract.Commands;
 using ImageCatalog.Contract.Enum;
 using ImageCatalog.Contract.Queries;
+using ImageCatalog.Contract.ViewModels;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Reflection.Emit;
 using img = ImageCatalog.Contract;
 
 namespace GardenLogWeb.Services;
@@ -71,10 +74,11 @@ public class ImageService : IImageService
 
     }
 
-    public async Task<ApiObjectResponse<string>> CreateImage(ImageModel image)
+    public async Task<ApiObjectResponse<string>> CreateImage(ImageViewModel image)
     {
         var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
 
+      
         var response = await httpClient.ApiPostAsync(IMAGE_ROUTE, image);
 
 

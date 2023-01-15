@@ -49,14 +49,14 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    //builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    //builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
-    //builder.Services.AddSingleton<IPlantRepository, PlantRepository>();
-    //builder.Services.AddSingleton<IPlantVarietyRepository, PlantVarietyRepository>();
+    builder.Services.AddSingleton<IPlantRepository, PlantRepository>();
+    builder.Services.AddSingleton<IPlantVarietyRepository, PlantVarietyRepository>();
 
-    //builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();
-    //builder.Services.AddScoped<IPlantQueryHandler, PlantQueryHandler>();
+    builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();
+    builder.Services.AddScoped<IPlantQueryHandler, PlantQueryHandler>();
 
     builder.Services.AddCors(options =>
     {
@@ -89,7 +89,7 @@ try
 
     app.UseCors("glWebPolicy");
 
-   // app.MapControllers();
+    app.MapControllers();
 
     app.Run();
 }

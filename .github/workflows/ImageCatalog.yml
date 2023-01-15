@@ -18,7 +18,7 @@ on:
 
 env:
   CONTAINER_APP_CONTAINER_NAME: imagecatalogapi-container
-  CONTAINER_APP_NAME: plantcatalogapi-containerapp
+  CONTAINER_APP_NAME: imagecatalogapi-containerapp
   DOCKER_FILE_PATH: ImageCatalog/ImageCatalog.Api/Dockerfile
   PROJECT_NAME_FOR_DOCKER: imagecatalogapi
 
@@ -60,7 +60,7 @@ jobs:
       
   build:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: test
     steps:
     # checkout the repo
     - name: Checkout to the branch
