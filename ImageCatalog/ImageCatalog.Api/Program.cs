@@ -37,27 +37,16 @@ try
     builder.Services.AddScoped<IFileCommandHandler, FileCommandHandler>();
 
 
-    //builder.Services.AddCors(options =>
-    //{
-    //    options.AddGlWebPolicy();
-    //});
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy(name: "glWebPolicy",
-                    policy =>
-                    {
-                        policy.WithOrigins("https://kravvya.github.io",
-                            "https://localhost:7014",
-                            "https://localhost:44318")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                    });
+        options.AddGlWebPolicy();
     });
-
 
     //TODO Add Healthchecks!!!!
 
     var app = builder.Build();
+
+    Log.Information("Completed builder.Build");
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -69,7 +58,7 @@ try
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+  //  app.UseAuthorization();
 
     app.UseCors("glWebPolicy");
 
