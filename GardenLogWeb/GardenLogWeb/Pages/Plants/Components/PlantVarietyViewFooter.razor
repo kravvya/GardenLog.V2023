@@ -32,7 +32,7 @@
 
     private async Task OnAddPlantVarietyImage()
     {
-        ImageForm.Initialize(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, PlantVariety.PlantVarietyId);
+        ImageForm.Initialize(ImageEntityEnum.PlantVariety, PlantVariety.PlantVarietyId);
         await ImageFormModal?.OpenModal(PlantVariety.Name, Plant.Color);
         StateHasChanged();
     }
@@ -45,7 +45,7 @@
     private async Task CloseImageFormModal()
     {
         await ImageFormModal?.CloseModal();
-        var images = await _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, PlantVariety.PlantVarietyId, false);
+        var images = await _imageService.GetImages(ImageEntityEnum.PlantVariety, PlantVariety.PlantVarietyId, false);
 
         if (images.Count > 0)
         {

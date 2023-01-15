@@ -1,4 +1,5 @@
-﻿@inject ILogger<ImageForm> _logger
+﻿
+@inject ILogger<ImageForm> _logger
 @inject IImageService _imageService
 
 <article id="imageForm">
@@ -41,16 +42,16 @@
     private string Progress;
     private long FileSize;
     private string ProgressDisplay = "none;";
-    private ImageModel Image { get; set; }
+    private ImageViewModel Image { get; set; }
     private bool IsInitialized = false;
     private bool IsDisabled = false;
 
     private CustomValidation customValidation;
     private EditContext editContext;
 
-    public void Initialize(string relatedEntityType, string relatedEntityId)
+    public void Initialize(ImageEntityEnum relatedEntityType, string relatedEntityId)
     {
-        Image = new ImageModel();
+        Image = new ImageViewModel();
         Image.RelatedEntityType = relatedEntityType;
         Image.RelatedEntityId = relatedEntityId;
 

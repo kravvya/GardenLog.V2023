@@ -1,4 +1,5 @@
 ﻿using GardenLogWeb.Models;
+using ImageCatalog.Contract.Enum;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
@@ -68,34 +69,32 @@ public class PlantService : IPlantService
             _logger.LogInformation("Plants not in cache or forceRefresh");
 
             var plantsTask = GetAllPlants();
-            //TODO add Image Service
-            //var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT, false);
 
-            //await Task.WhenAll(plantsTask, imagesTask);
-            await Task.WhenAll(plantsTask);
+            var imagesTask = _imageService.GetImages(ImageEntityEnum.Plant, false);
+
+            await Task.WhenAll(plantsTask, imagesTask);
 
             plants = plantsTask.Result;
-            //var images = imagesTask.Result;
+            var images = imagesTask.Result;
 
             if (plants.Count > 0)
             {
 
                 foreach (var plant in plants)
                 {
-                    plant.Images = new List<ImageModel>();
-                    //    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
+                    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
 
-                    //    var image = plant.Images.FirstOrDefault();
-                    //    if (image != null)
-                    //    {
-                    //        plant.ImageFileName = image.FileName;
-                    //        plant.ImageLabel = image.Label;
-                    //    }
-                    //    else
-                    //    {
-                    plant.ImageFileName = ImageService.NO_IMAGE;
-                    plant.ImageLabel = "Add image";
-                    //    }
+                    var image = plant.Images.FirstOrDefault();
+                    if (image != null)
+                    {
+                        plant.ImageFileName = image.FileName;
+                        plant.ImageLabel = image.Label;
+                    }
+                    else
+                    {
+                        plant.ImageFileName = ImageService.NO_IMAGE;
+                        plant.ImageLabel = "Add image";
+                    }
                 }
 
                 // Save data in cache.
@@ -320,8 +319,8 @@ public class PlantService : IPlantService
         await Task.WhenAll(plantVarietyTask);//, imagesTask);
 
         plantVariety = plantVarietyTask.Result;
-      //  var images = imagesTask.Result;
-      
+        //  var images = imagesTask.Result;
+
         //plantVariety.Images = images;
         //var image = plantVariety.Images.FirstOrDefault();
         //if (image != null)
@@ -331,8 +330,8 @@ public class PlantService : IPlantService
         //}
         //else
         //{
-            plantVariety.ImageFileName = ImageService.NO_IMAGE;
-            plantVariety.ImageLabel = "Add image";
+        plantVariety.ImageFileName = ImageService.NO_IMAGE;
+        plantVariety.ImageLabel = "Add image";
         plantVariety.Images = new();
         //}
 
@@ -340,7 +339,7 @@ public class PlantService : IPlantService
 
         return plantVariety;
     }
-       
+
     public async Task<ApiObjectResponse<string>> CreatePlantVariety(PlantVarietyModel variety)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);

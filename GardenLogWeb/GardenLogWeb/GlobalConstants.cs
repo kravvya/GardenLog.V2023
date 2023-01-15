@@ -1,5 +1,4 @@
 ﻿global using GardenLogWeb.Models;
-global using GardenLogWeb.Models.Images;
 global using GardenLogWeb.Models.Plants;
 global using GardenLogWeb.Models.PlantVariety;
 global using GardenLogWeb.Services;
@@ -10,6 +9,7 @@ global using PlantCatalog.Contract;
 global using PlantCatalog.Contract.Enum;
 global using PlantCatalog.Contract.ViewModels;
 global using System.Text.Json;
+global using  ImageCatalog.Contract.ViewModels; 
 
 namespace GardenLogWeb;
 

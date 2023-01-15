@@ -1,23 +1,18 @@
 ﻿using Azure.Storage.Blobs;
-using GardenLogWeb.Models.Images;
-using GardenLogWeb.Shared.Extensions;
-using GardenLogWeb.Shared.Services;
-using ImageCatalog.Contract.Commands;
 using ImageCatalog.Contract.Enum;
 using ImageCatalog.Contract.Queries;
 using ImageCatalog.Contract.ViewModels;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Reflection.Emit;
 using img = ImageCatalog.Contract;
 
 namespace GardenLogWeb.Services;
 
 public interface IImageService
 {
-    Task<ApiObjectResponse<string>> CreateImage(ImageModel image);
-    Task<List<ImageModel>> GetImages(string entityType, string entityId, bool FilterUserOnly);
-    Task<List<ImageModel>> GetImages(string entityType, bool FilterUserOnly);
-    Task<List<ImageModel>> GetImagesInBulk(List<ImageRelatedEntityModel> entities);
+    Task<ApiObjectResponse<string>> CreateImage(ImageViewModel image);
+    Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly);
+    Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly);
+    Task<List<ImageViewModel>> GetImagesInBulk(List<GetImagesByRelatedEntity> entities);
     string GetRawImageUrl(string fileName);
     string GetThumbnailImageUrl(string fileName);
     Task UploadFile(IBrowserFile file, Action<long> progress, string fileName);
@@ -30,7 +25,6 @@ public class ImageService : IImageService
 
     public const string NO_IMAGE = "/images/noimage.png";
 
-    private const string IMAGE_ROUTE = "/image";
     private readonly ILogger<ImageService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IGardenLogToastService _toastService;
@@ -41,34 +35,34 @@ public class ImageService : IImageService
         _httpClientFactory = clientFactory;
         _toastService = toastService;
     }
-    public async Task<List<ImageModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly)
+    public async Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
         GetImagesByRelatedEntity query = new(entityType, null, FilterUserOnly);
 
-        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
 
         return response.Response;
     }
 
-    public async Task<List<ImageModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly)
+    public async Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
         GetImagesByRelatedEntity query = new(entityType, entityId, FilterUserOnly);
 
-        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
 
         return response.Response;
     }
 
-    public async Task<List<ImageModel>> GetImagesInBulk(List<GetImagesByRelatedEntity> entities)
+    public async Task<List<ImageViewModel>> GetImagesInBulk(List<GetImagesByRelatedEntity> entities)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
-        var request = new GetImagesByRelatedEntities() { Requests = entities };
+        var query = new GetImagesByRelatedEntities() { Requests = entities };
 
-        var response = await httpClient.ApiPostAsync<List<ImageModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
 
         return response.Response;
 
@@ -76,10 +70,9 @@ public class ImageService : IImageService
 
     public async Task<ApiObjectResponse<string>> CreateImage(ImageViewModel image)
     {
-        var httpClient = _httpClientFactory.CreateClient("Add url to Global Constants");
-
-      
-        var response = await httpClient.ApiPostAsync(IMAGE_ROUTE, image);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
+              
+        var response = await httpClient.ApiPostAsync(img.Routes.CrerateImage, image);
 
 
         if (response.ValidationProblems != null)
