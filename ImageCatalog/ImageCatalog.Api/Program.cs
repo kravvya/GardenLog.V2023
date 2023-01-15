@@ -54,6 +54,10 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+    elese{
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
