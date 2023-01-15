@@ -641,7 +641,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetAllPlantVarieties.Replace("{plantId}", plantId));
+        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetPlantVarieties.Replace("{plantId}", plantId));
 
         if (!response.IsSuccess)
         {

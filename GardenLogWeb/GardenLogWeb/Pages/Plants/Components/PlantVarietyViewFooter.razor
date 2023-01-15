@@ -45,18 +45,32 @@
     private async Task CloseImageFormModal()
     {
         await ImageFormModal?.CloseModal();
-        var images = await _imageService.GetImages(ImageEntityEnum.PlantVariety, PlantVariety.PlantVarietyId, false);
+        StateHasChanged();
+    }
 
-        if (images.Count > 0)
+    private async Task CloseImageFormModal(ImageViewModel image)
+    {
+        await ImageFormModal?.CloseModal();
+
+        if(PlantVariety.ImageFileName == ImageService.NO_IMAGE)
         {
-            PlantVariety.Images = images;
-            var image = PlantVariety.Images.FirstOrDefault();
-            if (image != null && string.IsNullOrWhiteSpace(PlantVariety.ImageFileName))
-            {
-                PlantVariety.ImageFileName = image.FileName;
-                PlantVariety.ImageLabel = image.Label;
-            }
+            PlantVariety.ImageFileName = image.FileName;
+            PlantVariety.ImageLabel = image.Label;
         }
+
+        PlantVariety.Images.Add(image);
+        //var images = await _imageService.GetImages(ImageEntityEnum.PlantVariety, PlantVariety.PlantVarietyId, false);
+
+        //if (images.Count > 0)
+        //{
+        //    PlantVariety.Images = images;
+        //    var image = PlantVariety.Images.FirstOrDefault();
+        //    if (image != null && string.IsNullOrWhiteSpace(PlantVariety.ImageFileName))
+        //    {
+        //        PlantVariety.ImageFileName = image.FileName;
+        //        PlantVariety.ImageLabel = image.Label;
+        //    }
+        //}
         StateHasChanged();
     }
 }

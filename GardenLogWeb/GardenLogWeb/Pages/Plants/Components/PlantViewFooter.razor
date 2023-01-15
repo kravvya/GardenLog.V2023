@@ -9,7 +9,7 @@
     </ModalView>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <button type="button" class="btn btn-primary" title="Edit Plant"  @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
+        <button type="button" class="btn btn-primary" title="Edit Plant" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
         <button type="button" class="btn btn-secondary" title="Add Variety" @onclick="@(() => OnAddVariety())"><span class="bi bi-flower1">&nbsp;</span></button>
         <button type="button" class="btn btn-secondary" title="Add Growing Instruction" @onclick="@(() => OnAddGrowInstruction())"><span class="bi bi-card-checklist">&nbsp;</span></button>
         <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
@@ -27,9 +27,9 @@
     private ModalView ImageFormModal { get; set; }
     private ImageForm ImageForm { get; set; }
 
-     private async Task OnAddPlantImage()
+    private async Task OnAddPlantImage()
     {
-         ImageForm.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
+        ImageForm.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
         await ImageFormModal?.OpenModal(Plant.Name, Plant.Color);
         StateHasChanged();
     }
@@ -51,9 +51,25 @@
         _navigationManager.NavigateToEditPlant(Plant.PlantId);
     }
 
-     private async Task CloseImageFormModal()
+    private async Task CloseImageFormModal()
     {
         await ImageFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseImageFormModal(ImageViewModel image)
+    {
+        await ImageFormModal?.CloseModal();
+
+        if (Plant.ImageFileName == ImageService.NO_IMAGE)
+        {
+            Plant.ImageFileName = image.FileName;
+            Plant.ImageLabel = image.Label;
+            Plant.Images.Add(image);
+        }
+        Plant.Images.Add(image);
+
+
         StateHasChanged();
     }
 

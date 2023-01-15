@@ -28,7 +28,7 @@
                     <div class="modal-footer">
                         <span>
                             <button type="submit" class="btn btn-primary" disabled="@(!IsDisabled)" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
     </div>
 </article>
 @code {
-    [Parameter] public Func<Task> OnClose { get; set; }
+    [Parameter] public Func<ImageViewModel, Task> OnClose { get; set; }
 
     private string Progress;
     private long FileSize;
@@ -79,7 +79,7 @@
 
         if (response.IsSuccess)
         {
-            await OnClose();
+            await OnClose(Image);
         }
     }
 
