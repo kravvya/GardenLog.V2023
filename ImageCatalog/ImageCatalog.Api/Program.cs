@@ -54,7 +54,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-    elese{
+    else{
         app.UseSwagger();
         app.UseSwaggerUI();
     }
