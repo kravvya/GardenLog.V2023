@@ -36,10 +36,13 @@
                                               <img src="./images/@(Plant.Lifecycle).png" alt="@Plant.Lifecycle" title="@Plant.Lifecycle" class="img-fluid">
                                         </dd>
                                     </div>
-                                    <div class="plant-facts-item mt-1">
-                                        <dt class="plant-facts_term">Harvest</dt>
-                                        <dd class="plant-facts_definition col">@GetHarvestSeasons()</dd>
-                                    </div>
+                                    @if (Plant.HarvestSeason != HarvestSeasonEnum.Unspecified)
+                                    {
+                                        <div class="plant-facts-item mt-1">
+                                            <dt class="plant-facts_term">Harvest</dt>
+                                            <dd class="plant-facts_definition col">@GetHarvestSeasons()</dd>
+                                        </div>
+                                    }
                                     <div class="plant-facts-item mt-1">
                                         <dt class="plant-facts_term">Seed Viability (yrs)</dt>
                                         <dd class="plant-facts_definition col">@Plant.SeedViableForYears</dd>

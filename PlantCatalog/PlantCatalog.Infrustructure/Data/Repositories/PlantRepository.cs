@@ -164,7 +164,7 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapProperty(m => m.Tags).SetDefaultValue(new List<string>());
             p.MapProperty(m => m.VarietyColors).SetDefaultValue(new List<string>());
             p.MapProperty(m => m.GrowInstructions).SetDefaultValue(new List<PlantGrowInstruction>());
-            p.MapProperty(m => m.GrowInstructionsCount);
+            p.MapProperty(m => m.GrowInstructionsCount).SetDefaultValue(0);
             p.MapProperty(m => m.VarietyCount).SetDefaultValue(0);
             p.MapMember(m => m.HarvestSeason).SetSerializer(new EnumToStringArraySerializer<HarvestSeasonEnum>()).SetDefaultValue(HarvestSeasonEnum.Unspecified);
 
