@@ -102,6 +102,8 @@
                             </Body>
                         </FormCard>
                     </div>
+                @if (plant.Tags?.Count > 0)
+                {
                     <div class="col">
                         <FormCard Class="border-info" HeaderClass="text-bg-info">
                             <Header>
@@ -122,7 +124,8 @@
                             </Body>
                         </FormCard>
                     </div>
-                </div>
+                }
+            </div>
                 <div class="row">
                     <div class="col-sm-5 col-md-3">
                         <FormCard Class="border-info" HeaderClass="text-bg-info">

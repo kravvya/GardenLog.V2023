@@ -96,7 +96,7 @@
         System.Text.StringBuilder sb = new();
         sb.Append($"{grow.Name} for ");
         sb.Append(_verifyService.GetDescription<HarvestSeasonEnum>(grow.HarvestSeason));
-        sb.AppendLine("harvest.");
+        sb.AppendLine(" harvest.");
         return sb.ToString();
     }
 
@@ -178,6 +178,11 @@
                 sb.Append(" for ");
                 sb.Append(grow.TransplantWeeksRange.Value.ToString());
                 sb.AppendFormat(" {0}.", GetWeeks(grow.TransplantWeeksRange.Value));
+            }
+            if (!string.IsNullOrEmpty(grow.TransplantInstructions))
+            {
+                sb.Append("<br/>");
+                sb.AppendLine(grow.TransplantInstructions);
             }
         }
 
