@@ -6,10 +6,17 @@ namespace PlantCatalog.Contract.Enum
     {
         [Description("Unspecified")]
         Unspecified = 0,
+
         [Description("All Purpose")]
         AllPurpose = 1,
+
         [Description("Nitrogen")]
         Nitrogen = 2,
-       
+
+        [Description("Half Strength Balanced")]
+        HalfBalanced = 3,
+
+        [Description("Balanced")]
+        Balanced = 4
     }
 }
