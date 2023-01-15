@@ -1,5 +1,6 @@
 ﻿using GardenLogWeb.Models;
 using ImageCatalog.Contract.Enum;
+using ImageCatalog.Contract.Queries;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
@@ -232,28 +233,28 @@ public class PlantService : IPlantService
 
             if (plantVarietyList.Count > 0)
             {
-                //List<ImageRelatedEntityModel> relatedEntities = new();
-                //foreach (var variety in plantVarietyList)
-                //{
-                //    relatedEntities.Add(new ImageRelatedEntityModel(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, variety.PlantVarietyId, false));
-                //}
-                //var images = await _imageService.GetImagesInBulk(relatedEntities);
+                List<GetImagesByRelatedEntity> relatedEntities = new();
+                foreach (var variety in plantVarietyList)
+                {
+                    relatedEntities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantVariety, variety.PlantVarietyId, false));
+                }
+                var images = await _imageService.GetImagesInBulk(relatedEntities);
 
                 foreach (var variety in plantVarietyList)
                 {
-                    //variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
+                    variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
 
-                    //var image = variety.Images.FirstOrDefault();
-                    //if (image != null)
-                    //{
-                    //    variety.ImageFileName = image.FileName;
-                    //    variety.ImageLabel = image.Label;
-                    //}
-                    //else
-                    //{
-                    variety.ImageFileName = ImageService.NO_IMAGE;
-                    variety.ImageLabel = "Add image";
-                    //}
+                    var image = variety.Images.FirstOrDefault();
+                    if (image != null)
+                    {
+                        variety.ImageFileName = image.FileName;
+                        variety.ImageLabel = image.Label;
+                    }
+                    else
+                    {
+                        variety.ImageFileName = ImageService.NO_IMAGE;
+                        variety.ImageLabel = "Add image";
+                    }
                 }
             }
 
@@ -278,28 +279,28 @@ public class PlantService : IPlantService
 
             if (plantVarietyList.Count > 0)
             {
-                //List<ImageRelatedEntityModel> relatedEntities = new();
-                //foreach (var variety in plantVarietyList)
-                //{
-                //    relatedEntities.Add(new ImageRelatedEntityModel(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, variety.PlantVarietyId, false));
-                //}
-                //var images = await _imageService.GetImagesInBulk(relatedEntities);
+                List<GetImagesByRelatedEntity> relatedEntities = new();
+                foreach (var variety in plantVarietyList)
+                {
+                    relatedEntities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantVariety, variety.PlantVarietyId, false));
+                }
+                var images = await _imageService.GetImagesInBulk(relatedEntities);
 
                 foreach (var variety in plantVarietyList)
                 {
-                    //variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
+                    variety.Images = images.Where(i => i.RelatedEntityId == variety.PlantVarietyId).ToList();
 
-                    //var image = variety.Images.FirstOrDefault();
-                    //if (image != null)
-                    //{
-                    //    variety.ImageFileName = image.FileName;
-                    //    variety.ImageLabel = image.Label;
-                    //}
-                    //else
-                    //{
-                    variety.ImageFileName = ImageService.NO_IMAGE;
-                    variety.ImageLabel = "Add image";
-                    //}
+                    var image = variety.Images.FirstOrDefault();
+                    if (image != null)
+                    {
+                        variety.ImageFileName = image.FileName;
+                        variety.ImageLabel = image.Label;
+                    }
+                    else
+                    {
+                        variety.ImageFileName = ImageService.NO_IMAGE;
+                        variety.ImageLabel = "Add image";
+                    }
                 }
             }
 
@@ -314,26 +315,26 @@ public class PlantService : IPlantService
         PlantVarietyModel plantVariety = null;
 
         var plantVarietyTask = GetPlantVarietyFromServer(plantId, plantVerietyId);
-        //var imagesTask = _imageService.GetImages(RelatedEntityTypes.RELATED_ENTITY_PLANT_VARIETY, plantVerietyId, false);
+        var imagesTask = _imageService.GetImages(ImageEntityEnum.PlantVariety, plantVerietyId, false);
 
-        await Task.WhenAll(plantVarietyTask);//, imagesTask);
+        await Task.WhenAll(plantVarietyTask, imagesTask);
 
         plantVariety = plantVarietyTask.Result;
-        //  var images = imagesTask.Result;
+        var images = imagesTask.Result;
 
-        //plantVariety.Images = images;
-        //var image = plantVariety.Images.FirstOrDefault();
-        //if (image != null)
-        //{
-        //    plantVariety.ImageFileName = image.FileName;
-        //    plantVariety.ImageLabel = image.Label;
-        //}
-        //else
-        //{
-        plantVariety.ImageFileName = ImageService.NO_IMAGE;
-        plantVariety.ImageLabel = "Add image";
-        plantVariety.Images = new();
-        //}
+        plantVariety.Images = images;
+        var image = plantVariety.Images.FirstOrDefault();
+        if (image != null)
+        {
+            plantVariety.ImageFileName = image.FileName;
+            plantVariety.ImageLabel = image.Label;
+        }
+        else
+        {
+            plantVariety.ImageFileName = ImageService.NO_IMAGE;
+            plantVariety.ImageLabel = "Add image";
+            plantVariety.Images = new();
+        }
 
         AddOrUpdateToPlantVarietyList(plantVariety);
 
