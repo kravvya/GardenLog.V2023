@@ -152,6 +152,35 @@ svg .bbox-handle[b-8fnu6zxx74] {
     margin-right: 0.2em;
     padding-left: 0;
 }
+
+.sources[b-q700gqtagr] {
+    box-sizing: border-box;
+    padding: 0em 0.5em;
+    display: -webkit-box;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: inherit;
+}
+
+    .sources > ul[b-q700gqtagr] {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .sources ul li[b-q700gqtagr] {
+        margin: 0.5em 0.2em;
+        padding: 0.5em;
+        color: black;
+        border: 1px solid #709a41;
+        border-radius: 5px;
+    }
+
+        .sources ul li a[b-q700gqtagr] {
+            padding: 0.5em;
+        }
 /* /Pages/Plants/Components/PlantVarietyView.razor.rz.scp.css */
 .variety-facts-list .variety-facts-term[b-5kga8drz7q] {
     color: #709a41;
@@ -191,7 +220,33 @@ svg .bbox-handle[b-8fnu6zxx74] {
             padding: 0.5em;
         }
 
-    
+.sources[b-5kga8drz7q] {
+    box-sizing: border-box;
+    padding: 0em 0.5em;
+    display: -webkit-box;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: inherit;
+}
+
+    .sources > ul[b-5kga8drz7q] {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .sources ul li[b-5kga8drz7q] {
+        margin: 0.5em 0.2em;
+        padding: 0.5em;
+        color: black;
+        border-radius: 5px;
+    }
+
+        .sources ul li a[b-5kga8drz7q] {
+            padding: 0.5em;
+        }
 /* /Pages/Plants/PlantFormPage.razor.rz.scp.css */
 .tags[b-xqtb7n7hnk] {
     border: 1px solid #709a41;
