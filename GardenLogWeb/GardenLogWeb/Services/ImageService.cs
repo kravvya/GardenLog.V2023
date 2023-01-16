@@ -130,6 +130,11 @@ public class ImageService : IImageService
 
     public string GetRawImageUrl(string fileName)
     {
+        if (string.IsNullOrEmpty(fileName))
+        {
+            return  $"./{ImageService.NO_IMAGE}";
+        }
+
         if (fileName.Equals(ImageService.NO_IMAGE))
         {
             return $"./{fileName}";

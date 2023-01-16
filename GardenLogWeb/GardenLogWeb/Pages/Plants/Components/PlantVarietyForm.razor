@@ -2,106 +2,107 @@
 @inject IVerifyService _verifyService;
 @inject IPlantService _plantService;
 @inject NavigationManager _navigationManager;
+@inject IJSRuntime JSRuntime;
 
 <article id="plantVarietyForm">
-    
-        @if (isInitialized)
-        {
-            <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
-                <FluentValidationValidator />
-                <CustomValidation @ref="customValidation" />
-                @*<ValidationSummary />*@
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="heirloom">Is Heirloom?</label>
-                        <div class="form-check form-switch">
-                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" id="heirloom" @bind-Value="@plantVariety.IsHeirloom" />
-                        </div>
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.IsHeirloom)" /></div>
-                    </div>
-                    <div class="col-md-5">
-                        <label for="varietytname" class="form-label">Name</label>
-                        <InputText Class="form-control" @bind-Value="@plantVariety.Name" Id="varietytname" />
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Name)" /></div>
-                    </div>
 
-                    <div class="col-md-5">
-                        <label for="title" class="form-label">Title</label>
-                        <InputText Class="form-control" @bind-Value="@plantVariety.Title" Id="title" />
-                        <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Title)" /></div>
+    @if (isInitialized)
+    {
+        <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+            <FluentValidationValidator />
+            <CustomValidation @ref="customValidation" />
+            @*<ValidationSummary />*@
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="heirloom">Is Heirloom?</label>
+                    <div class="form-check form-switch">
+                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" id="heirloom" @bind-Value="@plantVariety.IsHeirloom" />
                     </div>
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.IsHeirloom)" /></div>
+                </div>
+                <div class="col-md-5">
+                    <label for="varietytname" class="form-label">Name</label>
+                    <InputText Class="form-control" @bind-Value="@plantVariety.Name" Id="varietytname" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Name)" /></div>
                 </div>
 
-                <div class="row mt-3" id="description">
-                    <div class="col-11">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="Description" class="card-subtitle mb-2 text-light">Description</label>
-                            </Header>
-                            <Body>
-                                <InputTextArea Class="form-control" Id="description" @bind-Value="@plantVariety.Description" rows="3" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Description)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
+                <div class="col-md-5">
+                    <label for="title" class="form-label">Title</label>
+                    <InputText Class="form-control" @bind-Value="@plantVariety.Title" Id="title" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Title)" /></div>
                 </div>
+            </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="DaysToSproutMin" class="card-subtitle mb-2 text-light">Maturity after(days)</label>
-                            </Header>
-                            <Body>
-                                <div class="d-flex justify-content-start flex-nowrap">
-                                    <div class="px-2"> <span>From</span> </div>
-                                    <div class="px-2">
-                                        <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMin" id="DaysToSproutMin" />
-                                    </div>
-                                    <div class="px-2"> <span>to</span> </div>
-                                    <div class="px-2">
-                                        <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMax" id="DaysToSproutMax" />
-                                    </div>
+            <div class="row mt-3" id="description">
+                <div class="col-11">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="Description" class="card-subtitle mb-2 text-light">Description</label>
+                        </Header>
+                        <Body>
+                            <InputTextArea Class="form-control" Id="description" @bind-Value="@plantVariety.Description" rows="3" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Description)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="DaysToSproutMin" class="card-subtitle mb-2 text-light">Maturity after(days)</label>
+                        </Header>
+                        <Body>
+                            <div class="d-flex justify-content-start flex-nowrap">
+                                <div class="px-2"> <span>From</span> </div>
+                                <div class="px-2">
+                                    <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMin" id="DaysToSproutMin" />
                                 </div>
-                            </Body>
-                        </FormCard>
-                    </div>
-
-
-                    <div class="col-md-3">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="height" class="card-subtitle mb-2 text-light">Height(in.)</label>
-                            </Header>
-                            <Body>
-                                <InputNumber Class="form-control" @bind-Value="@plantVariety.HeightInInches" id="height" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.HeightInInches)" /></div>
-                            </Body>
-                        </FormCard>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="type" class="card-subtitle mb-2 text-light">Colors</label>
-                            </Header>
-                            <Body>
-                                <div class="tags" role="group" aria-label=">Variety Colors">
-                                    <ul Id="plant-characteristics-tags">
-                                        @foreach (var color in varietyColors)
-                                        {
-                                            <li style="background-color:@color.BackgroundColor">
-                                                <label class="px-1" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
-                                                <input type="checkbox" class="form-check-input" checked="@plantVariety.Colors.Contains(color.Name)" onclick=@(() => ToggleVarietyColor(color)) id="@color.Name">
-
-                                            </li>
-                                        }
-                                    </ul>
+                                <div class="px-2"> <span>to</span> </div>
+                                <div class="px-2">
+                                    <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMax" id="DaysToSproutMax" />
                                 </div>
-                            </Body>
-                        </FormCard>
-                    </div>
+                            </div>
+                        </Body>
+                    </FormCard>
+                </div>
+
+
+                <div class="col-md-3">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="height" class="card-subtitle mb-2 text-light">Height(in.)</label>
+                        </Header>
+                        <Body>
+                            <InputNumber Class="form-control" @bind-Value="@plantVariety.HeightInInches" id="height" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.HeightInInches)" /></div>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="type" class="card-subtitle mb-2 text-light">Colors</label>
+                        </Header>
+                        <Body>
+                            <div class="tags" role="group" aria-label=">Variety Colors">
+                                <ul Id="plant-characteristics-tags">
+                                    @foreach (var color in varietyColors)
+                                    {
+                                        <li style="background-color:@color.BackgroundColor">
+                                            <label class="px-1" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
+                                            <input type="checkbox" class="form-check-input" checked="@plantVariety.Colors.Contains(color.Name)" onclick=@(() => ToggleVarietyColor(color)) id="@color.Name">
+
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </Body>
+                    </FormCard>
+                </div>
                 @if (plant.Tags?.Count > 0)
                 {
                     <div class="col">
@@ -126,76 +127,96 @@
                     </div>
                 }
             </div>
-                <div class="row">
-                    <div class="col-sm-5 col-md-3">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="Tolerances" class="card-subtitle mb-2 text-light">Tolerances</label>
-                            </Header>
-                            <Body>
-                                @foreach (var tolerance in growToleranceEnums)
+            <div class="row">
+                <div class="col-sm-5 col-md-3">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="Tolerances" class="card-subtitle mb-2 text-light">Tolerances</label>
+                        </Header>
+                        <Body>
+                            @foreach (var tolerance in growToleranceEnums)
+                            {
+                                <div class="form-check">
+                                    <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key" />
+                                    <label class="form-check-label" for="@tolerance.EnumItem.Key">
+                                        @tolerance.EnumItem.Value
+                                    </label>
+                                </div>
+                            }
+                        </Body>
+                    </FormCard>
+                </div>
+                <div class="col-sm-9 col-md-6">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="MoistureRequirement" class="card-subtitle mb-2 text-light">Watering Requirements</label>
+                        </Header>
+                        <Body>
+                            <InputRadioGroup @bind-Value="@plantVariety.MoistureRequirement" Name="MoistureRequirement">
+                                @foreach (var item in Enum.GetValues<MoistureRequirementEnum>().Where(p => p != MoistureRequirementEnum.Unspecified))
                                 {
-                                    <div class="form-check">
-                                        <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key" />
-                                        <label class="form-check-label" for="@tolerance.EnumItem.Key">
-                                            @tolerance.EnumItem.Value
-                                        </label>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item" Value="@item" />
+                                        <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                     </div>
                                 }
-                            </Body>
-                        </FormCard>
-                    </div>
-                    <div class="col-sm-9 col-md-6">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="MoistureRequirement" class="card-subtitle mb-2 text-light">Watering Requirements</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@plantVariety.MoistureRequirement" Name="MoistureRequirement">
-                                    @foreach (var item in Enum.GetValues<MoistureRequirementEnum>().Where(p => p != MoistureRequirementEnum.Unspecified))
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="MoistureRequirement" id="@item" Value="@item" />
-                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
-                                        </div>
-                                    }
-                                    <ValidationMessage For="@(() => plantVariety.MoistureRequirement)" />
-                                </InputRadioGroup>
-                            </Body>
-                        </FormCard>
-                    </div>
-                    <div class="col-sm-5 col-md-3">
-                        <FormCard Class="border-info" HeaderClass="text-bg-info">
-                            <Header>
-                                <label for="LightRequirement" class="card-subtitle mb-2 text-light">Light Requirements</label>
-                            </Header>
-                            <Body>
-                                <InputRadioGroup @bind-Value="@plantVariety.LightRequirement" Name="LightRequirement">
-                                    @foreach (var item in Enum.GetValues<LightRequirementEnum>().Where(p => p != LightRequirementEnum.Unspecified))
-                                    {
-                                        <div class="form-check form-check-inline">
-                                            <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item" Value="@item" />
-                                            <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
-                                        </div>
-                                    }
-                                    <ValidationMessage For="@(() => plantVariety.LightRequirement)" />
-                                </InputRadioGroup>
-                            </Body>
-                        </FormCard>
-                    </div>
+                                <ValidationMessage For="@(() => plantVariety.MoistureRequirement)" />
+                            </InputRadioGroup>
+                        </Body>
+                    </FormCard>
                 </div>
+                <div class="col-sm-5 col-md-3">
+                    <FormCard Class="border-info" HeaderClass="text-bg-info">
+                        <Header>
+                            <label for="LightRequirement" class="card-subtitle mb-2 text-light">Light Requirements</label>
+                        </Header>
+                        <Body>
+                            <InputRadioGroup @bind-Value="@plantVariety.LightRequirement" Name="LightRequirement">
+                                @foreach (var item in Enum.GetValues<LightRequirementEnum>().Where(p => p != LightRequirementEnum.Unspecified))
+                                {
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio class="form-check-input" type="radio" name="LightRequirement" id="@item" Value="@item" />
+                                        <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
+                                    </div>
+                                }
+                                <ValidationMessage For="@(() => plantVariety.LightRequirement)" />
+                            </InputRadioGroup>
+                        </Body>
+                    </FormCard>
+                </div>
+            </div>
 
-                <div class="col-12">
-                    <div class="modal-footer justify-content-between">
-                        @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
-                        <span>
-                            <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
-                        </span>
-                    </div>
+            <div class="col-md-10">
+                <FormCard Class="border-info" HeaderClass="text-bg-info">
+                    <Header>
+                        <label for="sources" class="card-subtitle mb-2 text-light">Source(s)</label>
+                    </Header>
+                    <Body>
+                        <div class="sources" role="group" aria-label="source">
+                            <input class="form-control" @bind:get="newSource" @bind:set="OnSourceInput" @ref="inputSource" />
+                            <ul Id="sources">
+                                @foreach (var source in plantVariety.Sources)
+                                {
+                                    <li>@RenderSource(source)<a href="@source" target="_blank" hidden="@RenderSourceAsHyperlink(source)">@source</a><a role='button' onclick=@(() => RemoveSource(source))>×</a></li>
+                                }
+                            </ul>
+                            
+                        </div>
+                    </Body>
+                </FormCard>
+            </div>
+
+            <div class="col-12">
+                <div class="modal-footer justify-content-between">
+                    @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
+                    <span>
+                        <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
+                        <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                    </span>
                 </div>
-            </EditForm>
-        }
+            </div>
+        </EditForm>
+    }
 
 </article>
 
@@ -204,6 +225,8 @@
 
     private PlantModel plant { get; set; }
     private PlantVarietyModel plantVariety { get; set; }
+    private ElementReference inputSource;
+    private string newSource = string.Empty;
 
     private bool isInitialized = false;
     private bool isEdit = false;
@@ -299,6 +322,35 @@
             plantVariety.Tags.Add(tag);
         }
         StateHasChanged();
+    }
+
+    private void OnSourceInput(string value)
+    {
+        plantVariety.Sources.Add(value.Trim());
+        newSource = string.Empty;
+        inputSource.FocusAsync();
+    }
+    private void RemoveSource(string source)
+    {
+        plantVariety.Sources.RemoveAll(t => t == source);
+        StateHasChanged();
+    }
+
+    private string RenderSource(string source)
+    {
+        if (string.IsNullOrEmpty(source) || !source.StartsWith("http"))
+        {
+            return source;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    private bool RenderSourceAsHyperlink(string source)
+    {
+        return !(!string.IsNullOrEmpty(source) && source.StartsWith("http"));
     }
 
 }

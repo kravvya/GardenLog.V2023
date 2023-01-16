@@ -14,5 +14,6 @@ public abstract record PlantVarietyBase
     public LightRequirementEnum LightRequirement { get; set; }
     public GrowToleranceEnum GrowTolerance { get; set; }
     public List<string> Tags { get; set; } = new();
-    public List<string> Colors { get; set; } 
+    public List<string> Colors { get; set; } = new();
+    public List<string> Sources { get; set; } = new();
 }

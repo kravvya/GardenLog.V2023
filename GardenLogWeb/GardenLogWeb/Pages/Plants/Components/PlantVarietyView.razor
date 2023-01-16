@@ -113,10 +113,24 @@
                                     </div>
                                 </dd>
                             </div>
-                        </dl>
-                    </div>
+                            @if (plantVariety.Sources != null && plantVariety.Sources.Count > 0)
+                            {
+                                <div class="variety-facts-item">
+                                    <dt class="variety-facts-term">Source(s)</dt>
+                                    <dd class="col-md-8 sources">
+                                        <ul Id="sources">
+                                            @foreach (var source in plantVariety.Sources)
+                                            {
+                                                <li>@RenderSource(source)<a href="@source" target="_blank" hidden="@RenderSourceAsHyperlink(source)">@source</a></li>
+                                            }
+                                        </ul>
+                                    </dd>
+                                </div>
+                            }
+                    </dl>
                 </div>
             </div>
+        </div>
 
         }
     </div>
@@ -174,5 +188,22 @@
             return $"color:{color.FontColor}; background-color:{color.BackgroundColor}";
         }
         return string.Empty;
+    }
+
+    private string RenderSource(string source)
+    {
+        if (string.IsNullOrEmpty(source) || !source.StartsWith("http"))
+        {
+            return source;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    private bool RenderSourceAsHyperlink(string source)
+    {
+        return !(!string.IsNullOrEmpty(source) && source.StartsWith("http"));
     }
 }

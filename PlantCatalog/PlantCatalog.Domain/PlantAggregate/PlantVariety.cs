@@ -23,13 +23,16 @@ public class PlantVariety : BaseEntity, IEntity
     private readonly List<string> _colors = new();
     public IReadOnlyCollection<string> Colors => _colors.AsReadOnly();
 
+    private readonly List<string> _sources = new();
+    public IReadOnlyCollection<string> Sources => _sources.AsReadOnly();
+
 
     private PlantVariety() { }
 
     private PlantVariety(string plantId, string plantName, string name, string description
         , int? daysToMaturityMin, int? daysToMaturityMax, int? heightInInches, string title, bool isHeirloom
         , MoistureRequirementEnum moistureRequirement, LightRequirementEnum lightRequirement, GrowToleranceEnum growTolerance
-        , List<string> tags, List<string> colors)
+        , List<string> tags, List<string> colors, List<string> sources)
     {
         PlantId = plantId;
         PlantName = plantName;
@@ -45,6 +48,7 @@ public class PlantVariety : BaseEntity, IEntity
         GrowTolerance = growTolerance;
         _tags = tags;
         _colors = colors;
+        _sources = sources;
     }
 
     public static PlantVariety Create(
@@ -70,6 +74,7 @@ public class PlantVariety : BaseEntity, IEntity
         };
         variety._tags.AddRange(command.Tags);
         variety._colors.AddRange(command.Colors);
+        variety._sources.AddRange(command.Sources);
 
         return variety;
     }
@@ -92,6 +97,7 @@ public class PlantVariety : BaseEntity, IEntity
 
         SetCollection<string>(() => this._tags, command.Tags, "Tags");
         SetCollection<string>(() => this._colors, command.Colors, "Colors");
+        SetCollection<string>(() => this._sources, command.Sources, "Sources");
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
