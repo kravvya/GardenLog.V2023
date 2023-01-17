@@ -17,6 +17,9 @@ namespace PlantCatalog.Contract.Enum
         HalfBalanced = 3,
 
         [Description("Balanced")]
-        Balanced = 4
+        Balanced = 4,
+
+        [Description("Compost")]
+        Compost = 5
     }
 }

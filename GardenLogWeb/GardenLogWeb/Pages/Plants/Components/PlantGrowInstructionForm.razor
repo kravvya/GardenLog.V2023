@@ -378,6 +378,19 @@
 
         customValidation?.ClearErrors();
 
+        if(this.growInstruction.PlantingMethod == PlantingMethodEnum.Transplanting)
+        {
+            this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
+            this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
+            this.growInstruction.StartSeedInstructions = string.Empty;
+        }
+
+        if(this.growInstruction.PlantingMethod == PlantingMethodEnum.DirectSeed)
+        {
+            this.growInstruction.TransplantInstructions=string.Empty;
+            this.growInstruction.TransplantAheadOfWeatherCondition = WeatherConditionEnum.Unspecified;
+        }
+
         ApiResponse response = (isEdit) ? await _plantService.UpdatePlantGrowInstruction(this.growInstruction) : await _plantService.CreatePlantGrowInstruction(this.growInstruction);
 
         if (response.ValidationProblems != null)

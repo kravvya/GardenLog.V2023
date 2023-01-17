@@ -160,6 +160,9 @@ public class PlantService : IPlantService
         else
         {
             plant.PlantId = response.Response;
+            plant.Images = new();
+            plant.ImageFileName = ImageService.NO_IMAGE;
+            plant.ImageLabel = string.Empty;
             await AddOrUpdateToPlantList(plant);
 
             _toastService.ShowToast($"Plant created. Plant id is {plant.PlantId}", GardenLogToastLevel.Success);

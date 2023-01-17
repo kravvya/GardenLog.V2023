@@ -55,6 +55,7 @@ public class VerifyService : IVerifyService
             colors.Add(new Color("White", "#f8f9fa", "#212529"));
             colors.Add(new Color("Purple", "#800080", "#f8f9fa"));
             colors.Add(new Color("Red", "#FF0000", "#f8f9fa"));
+            colors.Add(new Color("Orange", "#fca130", "#f8f9fa;"));
             colors.Add(new Color("Speckled", "#e8d7c1", "#f8f9fa"));
             colors.Add(new Color("Yellow", "#FFFF00", "#212529"));
             colors.Add(new Color("Multi", "#808000", "#f8f9fa"));
