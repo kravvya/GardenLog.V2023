@@ -31,7 +31,7 @@ public class PlantGrowInstructionValidator<T> : AbstractValidator<T>
         //RuleFor(command => command.TransplantAheadOfWeatherCondition).NotEmpty().IsEnumName(typeof(WeatherConditionEnum));
         //RuleFor(command => command.StartSeedInstructions).NotNull().MaximumLength(1000);
         RuleFor(command => command.GrowingInstructions).NotNull().MaximumLength(1000);
-        //RuleFor(command => command.HarvestInstructions).NotNull().MaximumLength(1000);
+        RuleFor(command => command.HarvestInstructions).NotNull().MaximumLength(1000);
 
     }
 }

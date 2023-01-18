@@ -9,7 +9,7 @@ namespace PlantCatalog.Contract.Enum
         Unspecified = 0,
         [Description("Spring")]
         Spring = 1,
-        [Description("EarlySummer")]
+        [Description("Early Summer")]
         EarlySummer = 2,
         [Description("Summer")]
         Summer = 4,

@@ -150,7 +150,7 @@
             sb.Append(grow.StartSeedWeeksAheadOfWeatherCondition.Value.ToString());
             sb.AppendFormat(" {0} ", GetWeeks(grow.StartSeedWeeksAheadOfWeatherCondition.Value));
             sb.Append(_verifyService.GetDescription<WeatherConditionEnum>(grow.StartSeedAheadOfWeatherCondition));
-            if (grow.StartSeedWeeksRange.HasValue)
+            if (grow.StartSeedWeeksRange.HasValue && grow.StartSeedWeeksRange.Value!=0)
             {
                 sb.Append(" for ");
                 sb.Append(grow.StartSeedWeeksRange.Value.ToString());
@@ -158,8 +158,9 @@
             }
             if (grow.DaysToSproutMax.HasValue && grow.DaysToSproutMin.HasValue)
             {
-
+                sb.Append($"Will germinate in {grow.DaysToSproutMin} to {grow.DaysToSproutMax} days");
             }
+            sb.AppendLine(". ");
         }
         return sb.ToString();
     }
@@ -170,10 +171,12 @@
         System.Text.StringBuilder sb = new();
         if (grow.TransplantWeeksAheadOfWeatherCondition.HasValue)
         {
-            sb.Append(grow.TransplantWeeksAheadOfWeatherCondition.Value.ToString());
-            sb.AppendFormat(" {0} ", GetWeeks(grow.TransplantWeeksAheadOfWeatherCondition.Value));
+            if (grow.TransplantWeeksAheadOfWeatherCondition.HasValue && grow.TransplantWeeksAheadOfWeatherCondition.Value != 0) {
+                sb.Append(grow.TransplantWeeksAheadOfWeatherCondition.Value.ToString());
+                sb.AppendFormat(" {0} ", GetWeeks(grow.TransplantWeeksAheadOfWeatherCondition.Value));
+            }
             sb.AppendLine(_verifyService.GetDescription<WeatherConditionEnum>(grow.TransplantAheadOfWeatherCondition));
-            if (grow.TransplantWeeksRange.HasValue)
+            if (grow.TransplantWeeksRange.HasValue && grow.TransplantWeeksRange.Value != 0)
             {
                 sb.Append(" for ");
                 sb.Append(grow.TransplantWeeksRange.Value.ToString());
@@ -181,7 +184,7 @@
             }
             if (!string.IsNullOrEmpty(grow.TransplantInstructions))
             {
-                sb.Append("<br/>");
+                sb.AppendLine("");
                 sb.AppendLine(grow.TransplantInstructions);
             }
         }

@@ -17,6 +17,8 @@ namespace PlantCatalog.Contract.Enum
         [Description("1/2 in")]
         Depth2 = 5,
         [Description("1 in")]
-        Depth1 = 6
+        Depth1 = 6,
+        [Description("3 in")]
+        Depth3 = 7
     }
 }

@@ -20,6 +20,12 @@ namespace PlantCatalog.Contract.Enum
         Balanced = 4,
 
         [Description("Compost")]
-        Compost = 5
+        Compost = 5,
+
+        [Description("Starter")]
+        Starter = 6,
+
+        [Description("Low Nitrogen")]
+        LowNitrogen = 7
     }
 }
