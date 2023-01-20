@@ -27,11 +27,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantCatalog.IntegrationTes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImageCatalog", "ImageCatalog", "{8C457AD7-F188-4395-9361-E01B104167E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.Contract", "ImageCatalog\ImageCatalog.Contract\ImageCatalog.Contract.csproj", "{E64E3927-E1FB-4096-B571-F574DC5325CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageCatalog.Contract", "ImageCatalog\ImageCatalog.Contract\ImageCatalog.Contract.csproj", "{E64E3927-E1FB-4096-B571-F574DC5325CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.Api", "ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj", "{64EE9830-B945-461A-A84F-E8F2CCB5ECE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageCatalog.Api", "ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj", "{64EE9830-B945-461A-A84F-E8F2CCB5ECE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCatalog.IntegrationTest", "Test\ImageCatalog.IntegrationTest\ImageCatalog.IntegrationTest.csproj", "{20A2FD94-C196-4816-9B77-E63157985D3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageCatalog.IntegrationTest", "Test\ImageCatalog.IntegrationTest\ImageCatalog.IntegrationTest.csproj", "{20A2FD94-C196-4816-9B77-E63157985D3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlantHarvest", "PlantHarvest", "{D3A6BD60-3EBE-4033-AD7A-20E8B4CCE3FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.Api", "PlantHarvest\PlantHarvest.Api\PlantHarvest.Api.csproj", "{8F22C6C6-9D91-40C3-BDEB-3D05229649F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.Contract", "PlantHarvest\PlantHarvest.Contract\PlantHarvest.Contract.csproj", "{6293C05A-D03D-49D7-94F1-7FF84642361E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.Domain", "PlantHarvest\PlantHarvest.Domain\PlantHarvest.Domain.csproj", "{38183C8A-27AB-4988-80BB-CFDDAB059EF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.Infrastructure", "PlantHarvest\PlantHarvest.Infrastructure\PlantHarvest.Infrastructure.csproj", "{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{24874A2B-CA31-4C50-838E-2B6EE0DEBB27}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Contract", "UserManagement\UserManagement.Contract\UserManagement.Contract.csproj", "{54958D98-D8A8-40D2-99B4-74A56F1189E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantHarvest.IntegrationTest", "Test\PlantHarvest.IntegrationTest\PlantHarvest.IntegrationTest.csproj", "{7A743102-0E5E-4F63-A188-F5B877D1B317}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +99,30 @@ Global
 		{20A2FD94-C196-4816-9B77-E63157985D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20A2FD94-C196-4816-9B77-E63157985D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20A2FD94-C196-4816-9B77-E63157985D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F22C6C6-9D91-40C3-BDEB-3D05229649F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F22C6C6-9D91-40C3-BDEB-3D05229649F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F22C6C6-9D91-40C3-BDEB-3D05229649F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F22C6C6-9D91-40C3-BDEB-3D05229649F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6293C05A-D03D-49D7-94F1-7FF84642361E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6293C05A-D03D-49D7-94F1-7FF84642361E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6293C05A-D03D-49D7-94F1-7FF84642361E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6293C05A-D03D-49D7-94F1-7FF84642361E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38183C8A-27AB-4988-80BB-CFDDAB059EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38183C8A-27AB-4988-80BB-CFDDAB059EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38183C8A-27AB-4988-80BB-CFDDAB059EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38183C8A-27AB-4988-80BB-CFDDAB059EF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54958D98-D8A8-40D2-99B4-74A56F1189E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54958D98-D8A8-40D2-99B4-74A56F1189E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54958D98-D8A8-40D2-99B4-74A56F1189E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54958D98-D8A8-40D2-99B4-74A56F1189E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A743102-0E5E-4F63-A188-F5B877D1B317}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A743102-0E5E-4F63-A188-F5B877D1B317}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A743102-0E5E-4F63-A188-F5B877D1B317}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A743102-0E5E-4F63-A188-F5B877D1B317}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +137,12 @@ Global
 		{E64E3927-E1FB-4096-B571-F574DC5325CF} = {8C457AD7-F188-4395-9361-E01B104167E4}
 		{64EE9830-B945-461A-A84F-E8F2CCB5ECE4} = {8C457AD7-F188-4395-9361-E01B104167E4}
 		{20A2FD94-C196-4816-9B77-E63157985D3E} = {ED1FCD09-2B7B-46E8-82B0-0CECA7827DDF}
+		{8F22C6C6-9D91-40C3-BDEB-3D05229649F7} = {D3A6BD60-3EBE-4033-AD7A-20E8B4CCE3FC}
+		{6293C05A-D03D-49D7-94F1-7FF84642361E} = {D3A6BD60-3EBE-4033-AD7A-20E8B4CCE3FC}
+		{38183C8A-27AB-4988-80BB-CFDDAB059EF9} = {D3A6BD60-3EBE-4033-AD7A-20E8B4CCE3FC}
+		{2045383F-F4E1-4B1A-9AA2-2373FFC25CA3} = {D3A6BD60-3EBE-4033-AD7A-20E8B4CCE3FC}
+		{54958D98-D8A8-40D2-99B4-74A56F1189E6} = {24874A2B-CA31-4C50-838E-2B6EE0DEBB27}
+		{7A743102-0E5E-4F63-A188-F5B877D1B317} = {ED1FCD09-2B7B-46E8-82B0-0CECA7827DDF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8BCCE8DF-C7F2-4369-843F-B3695CBEDA8B}
