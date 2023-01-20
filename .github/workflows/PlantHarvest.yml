@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 env:
-  CONTAINER_APP_CONTAINER_NAME: plantcharvestapi-container
+  CONTAINER_APP_CONTAINER_NAME: plantharvestapi-container
   CONTAINER_APP_NAME: plantharvestapi-containerapp
   DOCKER_FILE_PATH: PlantHarvest/PlantHarvest.Api/Dockerfile
   PROJECT_NAME_FOR_DOCKER: plantharvestapi
