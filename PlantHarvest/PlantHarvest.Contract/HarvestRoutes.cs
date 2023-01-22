@@ -1,6 +1,6 @@
 ﻿namespace PlantCatalog.Contract;
 
-public static class Routes
+public static class HarvestRoutes
 {
     public const string PlantHarvestBase = "/v1/api/Harvest";
     public const string CreateHarvestCycle = PlantHarvestBase;

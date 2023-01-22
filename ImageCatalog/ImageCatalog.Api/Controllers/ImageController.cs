@@ -5,7 +5,7 @@ using System.Net;
 
 namespace ImageCatalog.Api.Controllers;
 
-[Route(Routes.ImageCatalogBase)]
+[Route(ImageRoutes.ImageCatalogBase)]
 [ApiController]
 public class ImageController : ControllerBase
 {
@@ -22,7 +22,7 @@ public class ImageController : ControllerBase
 
     [HttpPost()]
     [ActionName("Search")]
-    [Route(Routes.Search)]
+    [Route(ImageRoutes.Search)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> SearchAsync([FromBody] GetImagesByRelatedEntity request)
@@ -44,7 +44,7 @@ public class ImageController : ControllerBase
 
     [HttpPost()]
     [ActionName("SearchBatch")]
-    [Route(Routes.SearchBatch)]
+    [Route(ImageRoutes.SearchBatch)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> SearchBatchAsync([FromBody] GetImagesByRelatedEntities request)
@@ -66,7 +66,7 @@ public class ImageController : ControllerBase
 
     [HttpPost]
     [ActionName("CrerateImage")]
-    [Route(Routes.CrerateImage)]
+    [Route(ImageRoutes.CrerateImage)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> PostImageAsync(CreateImageCommand createCommand)
@@ -85,7 +85,7 @@ public class ImageController : ControllerBase
 
     [HttpPut]
     [ActionName("UpdateImage")]
-    [Route(Routes.UpdateImage)]
+    [Route(ImageRoutes.UpdateImage)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> PutImageAsync(UpdateImageCommand updateCommand)
@@ -105,7 +105,7 @@ public class ImageController : ControllerBase
 
     [HttpDelete]
     [ActionName("DeleteImage")]
-    [Route(Routes.DeleteImage)]
+    [Route(ImageRoutes.DeleteImage)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> DeleteImageAsync(string imageId)

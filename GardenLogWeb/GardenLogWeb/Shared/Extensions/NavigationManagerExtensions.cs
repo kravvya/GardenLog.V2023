@@ -54,6 +54,16 @@ public static class NavigationManagerExtensions
         return $"editplantgrow/{plantId}/grow/{growInstructionId}";
     }
 
+    public static string GetHarvestCycleImagesUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"images/HarvestCycle/{harvestId}";
+    }
+
+    public static string GetHarvestCycleWorkLogsUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"worklogs/HarvestCycle/{harvestId}";
+    }
+
     public static void NavigateToPlants(this NavigationManager navigationManager)
     {
         navigationManager.NavigateTo(navigationManager.GetPlantsUrl());
@@ -102,5 +112,15 @@ public static class NavigationManagerExtensions
     public static void NavigateToEditPlantGrowInstruction(this NavigationManager navigationManager, string plantId, string growInstructionId)
     {
         navigationManager.NavigateTo(navigationManager.GetEditPlantGrowInstructionUrl(plantId, growInstructionId));
+    }
+
+    public static void NavigateToHarvestCycleImages(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetHarvestCycleImagesUrl(harvestId));
+    }
+
+    public static void NavigateToHarvestCycleWorkLogs(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetHarvestCycleWorkLogsUrl(harvestId));
     }
 }

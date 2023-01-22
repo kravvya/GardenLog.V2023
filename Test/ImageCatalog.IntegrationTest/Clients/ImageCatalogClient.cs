@@ -19,7 +19,7 @@ namespace ImageCatalog.IntegrationTest.Clients
         #region Image
         public async Task<HttpResponseMessage> CreateImage(string name)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.CrerateImage}/";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.CrerateImage}/";
 
             var createImageCommand = PopulateCreateImageCommand(name);
 
@@ -31,7 +31,7 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> UpdateImage(ImageViewModel image)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.UpdateImage}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.UpdateImage}";
 
             using var requestContent = image.ToJsonStringContent();
 
@@ -41,14 +41,14 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> DeleteIamge(string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.DeleteImage}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.DeleteImage}";
 
             return await this._httpClient.DeleteAsync(url.Replace("{imageId}", id));
         }
 
         public async Task<HttpResponseMessage> SearchImages(GetImagesByRelatedEntity searchQuery)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.Search}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.Search}";
                        
             using var requestContent = searchQuery.ToJsonStringContent();
 
@@ -57,7 +57,7 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> SearchImages(GetImagesByRelatedEntities searchQuery)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.SearchBatch}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.SearchBatch}";
 
             using var requestContent = searchQuery.ToJsonStringContent();
 

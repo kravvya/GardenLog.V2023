@@ -4,7 +4,7 @@ using System.Net;
 
 namespace ImageCatalog.Api.Controllers;
 
-[Route(Routes.FileCatalogBase)]
+[Route(ImageRoutes.FileCatalogBase)]
 [ApiController]
 public class FileController : Controller
 {
@@ -19,7 +19,7 @@ public class FileController : Controller
 
     [HttpGet()]
     [ActionName("GenerateSasToken")]
-    [Route(Routes.GenerateSasToken)]
+    [Route(ImageRoutes.GenerateSasToken)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public ActionResult GenerateSasUri(string fileName)
@@ -40,7 +40,7 @@ public class FileController : Controller
 
     [HttpGet()]
     [ActionName("ResizeImageToThumbnail")]
-    [Route(Routes.ResizeImageToThumbnail)]
+    [Route(ImageRoutes.ResizeImageToThumbnail)]
     [ProducesResponseType((int)HttpStatusCode.Accepted)]
     public ActionResult ResizeImageToThumbnail(string fileName)
     {

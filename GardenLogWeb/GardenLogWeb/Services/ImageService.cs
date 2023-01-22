@@ -41,7 +41,7 @@ public class ImageService : IImageService
 
         GetImagesByRelatedEntity query = new(entityType, null, FilterUserOnly);
 
-        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.ImageRoutes.Search, query);
 
         return response.Response;
     }
@@ -52,7 +52,7 @@ public class ImageService : IImageService
 
         GetImagesByRelatedEntity query = new(entityType, entityId, FilterUserOnly);
 
-        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.Search, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.ImageRoutes.Search, query);
 
         return response.Response;
     }
@@ -62,7 +62,7 @@ public class ImageService : IImageService
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
         var query = new GetImagesByRelatedEntities() { Requests = entities };
 
-        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.Routes.SearchBatch, query);
+        var response = await httpClient.ApiPostAsync<List<ImageViewModel>>(img.ImageRoutes.SearchBatch, query);
 
         return response.Response;
 
@@ -72,7 +72,7 @@ public class ImageService : IImageService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
               
-        var response = await httpClient.ApiPostAsync(img.Routes.CrerateImage, image);
+        var response = await httpClient.ApiPostAsync(img.ImageRoutes.CrerateImage, image);
 
 
         if (response.ValidationProblems != null)
@@ -116,7 +116,7 @@ public class ImageService : IImageService
 
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
-        var response = await httpClient.GetAsync(img.Routes.ResizeImageToThumbnail.Replace("{fileName}", fileName));
+        var response = await httpClient.GetAsync(img.ImageRoutes.ResizeImageToThumbnail.Replace("{fileName}", fileName));
     }
 
     public string GetThumbnailImageUrl(string fileName)
@@ -145,7 +145,7 @@ public class ImageService : IImageService
     private async Task<string> GetSasToken(string fileName)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
-        var httpResponseMessage = await httpClient.GetAsync(img.Routes.GenerateSasToken.Replace("{fileName}", fileName));
+        var httpResponseMessage = await httpClient.GetAsync(img.ImageRoutes.GenerateSasToken.Replace("{fileName}", fileName));
 
         httpResponseMessage.EnsureSuccessStatusCode();
 

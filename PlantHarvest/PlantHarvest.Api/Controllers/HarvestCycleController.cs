@@ -4,7 +4,7 @@ using System.Net;
 
 namespace PlantHarvest.Api.Controllers;
 
-[Route(Routes.PlantHarvestBase)]
+[Route(HarvestRoutes.PlantHarvestBase)]
 [ApiController]
 
 public class HarvestCycleController : Controller
@@ -23,7 +23,7 @@ public class HarvestCycleController : Controller
     #region Harvest Cycle
     [HttpGet()]
     [ActionName("GetHarvestCycleById")]
-    [Route(Routes.GetHarvestCycleById)]
+    [Route(HarvestRoutes.GetHarvestCycleById)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(HarvestCycleViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<HarvestCycleViewModel>> GetHarvestCycleById(string id)
@@ -50,7 +50,7 @@ public class HarvestCycleController : Controller
 
     [HttpGet()]
     [ActionName("GetIdByHarvestCycleName")]
-    [Route(Routes.GetIdByHarvestCycleName)]
+    [Route(HarvestRoutes.GetIdByHarvestCycleName)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<string>> GetIdByHarvestCycleName(string name)
@@ -69,7 +69,7 @@ public class HarvestCycleController : Controller
 
     [HttpGet()]
     [ActionName("GetAllHarvestCycles")]
-    [Route(Routes.GetAllHarvestCycles)]
+    [Route(HarvestRoutes.GetAllHarvestCycles)]
     [ProducesResponseType(typeof(IReadOnlyCollection<HarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<HarvestCycleViewModel>>> GetAllHarvestCycles()
     {
@@ -79,7 +79,7 @@ public class HarvestCycleController : Controller
 
 
     [HttpPost]
-    [Route(Routes.CreateHarvestCycle)]
+    [Route(HarvestRoutes.CreateHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantAsync([FromBody] CreateHarvestCycleCommand command)
@@ -103,7 +103,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpPut()]
-    [Route(Routes.UpdateHarvestCycle)]
+    [Route(HarvestRoutes.UpdateHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantAsync([FromBody] UpdateHarvestCycleCommand command)
@@ -127,7 +127,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpDelete()]
-    [Route(Routes.DeleteHarvestCycle)]
+    [Route(HarvestRoutes.DeleteHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeleteHarvestCycleAsync(string id)
@@ -148,7 +148,7 @@ public class HarvestCycleController : Controller
     #region Plan Harvest Cycle
     [HttpGet()]
     [ActionName("GetPlanHarvestCyclesByHarvestCycleId")]
-    [Route(Routes.GetPlanHarvestCycles)]
+    [Route(HarvestRoutes.GetPlanHarvestCycles)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlanHarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlanHarvestCycleViewModel>>> GetPlanHarvestCyclesByHarvestCycleIdAsync(string harvestId)
@@ -157,7 +157,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpGet()]
-    [Route(Routes.GetPlanHarvestCycle)]
+    [Route(HarvestRoutes.GetPlanHarvestCycle)]
     [ActionName("GetPlanHarvestCycleById")]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(PlanHarvestCycleViewModel), (int)HttpStatusCode.OK)]
@@ -176,7 +176,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpPost()]
-    [Route(Routes.CreatePlanHarvestCycle)]
+    [Route(HarvestRoutes.CreatePlanHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlanHarvestCycleAsync([FromBody] CreatePlanHarvestCycleCommand command)
@@ -201,7 +201,7 @@ public class HarvestCycleController : Controller
 
 
     [HttpPut()]
-    [Route(Routes.UpdatePlanHarvestCycle)]
+    [Route(HarvestRoutes.UpdatePlanHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlanHarvestCycleAsync([FromBody] UpdatePlanHarvestCycleCommand command)
@@ -224,7 +224,7 @@ public class HarvestCycleController : Controller
         return BadRequest();
     }
     [HttpDelete()]
-    [Route(Routes.DeletePlanHarvestCycle)]
+    [Route(HarvestRoutes.DeletePlanHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletePlanHarvestCycleAsync(string harvestId, string id)
@@ -244,7 +244,7 @@ public class HarvestCycleController : Controller
     #region Plant Harvest Cycle
     [HttpGet()]
     [ActionName("GetPlantHarvestCycleByHarvestCycleId")]
-    [Route(Routes.GetPlantHarvestCycles)]
+    [Route(HarvestRoutes.GetPlantHarvestCycles)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantHarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantHarvestCycleViewModel>>> GetPlantHarvestCycleByHarvestCycleIdAsync(string harvestId)
@@ -253,7 +253,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpGet()]
-    [Route(Routes.GetPlantHarvestCycle)]
+    [Route(HarvestRoutes.GetPlantHarvestCycle)]
     [ActionName("GetPlantHarvestCycleById")]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(PlantHarvestCycleViewModel), (int)HttpStatusCode.OK)]
@@ -272,7 +272,7 @@ public class HarvestCycleController : Controller
     }
 
     [HttpPost()]
-    [Route(Routes.CreatePlantHarvestCycle)]
+    [Route(HarvestRoutes.CreatePlantHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantHarvestCycleAsync([FromBody] CreatePlantHarvestCycleCommand command)
@@ -297,7 +297,7 @@ public class HarvestCycleController : Controller
 
 
     [HttpPut()]
-    [Route(Routes.UpdatePlantHarvestCycle)]
+    [Route(HarvestRoutes.UpdatePlantHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantHarvestCycleAsync([FromBody] UpdatePlantHarvestCycleCommand command)
@@ -320,7 +320,7 @@ public class HarvestCycleController : Controller
         return BadRequest();
     }
     [HttpDelete()]
-    [Route(Routes.DeletePlantHarvestCycle)]
+    [Route(HarvestRoutes.DeletePlantHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletePlantHarvestCycleAsync(string harvestId, string id)

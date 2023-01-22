@@ -1,7 +1,7 @@
 ﻿namespace ImageCatalog.Contract;
 
 
-public static class Routes
+public static class ImageRoutes
 {
     public const string ImageCatalogBase = "/v1/api/Images";
     public const string FileCatalogBase = "/v1/api/Files";

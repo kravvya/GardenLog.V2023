@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Contract", "UserManagement\UserManagement.Contract\UserManagement.Contract.csproj", "{54958D98-D8A8-40D2-99B4-74A56F1189E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantHarvest.IntegrationTest", "Test\PlantHarvest.IntegrationTest\PlantHarvest.IntegrationTest.csproj", "{7A743102-0E5E-4F63-A188-F5B877D1B317}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.IntegrationTest", "Test\PlantHarvest.IntegrationTest\PlantHarvest.IntegrationTest.csproj", "{7A743102-0E5E-4F63-A188-F5B877D1B317}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

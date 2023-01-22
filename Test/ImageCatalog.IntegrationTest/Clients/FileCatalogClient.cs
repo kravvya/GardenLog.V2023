@@ -19,14 +19,14 @@ namespace ImageCatalog.IntegrationTest.Clients
         #region Image
         public async Task<HttpResponseMessage> GenerateSasUri(string fileName)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GenerateSasToken}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.GenerateSasToken}";
 
             return await this._httpClient.GetAsync(url.Replace("{fileName}", fileName));
         }
 
         public async Task<HttpResponseMessage> ResizeImageToThumbnail(string fileName)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.ResizeImageToThumbnail}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.ResizeImageToThumbnail}";
 
             return await this._httpClient.GetAsync(url.Replace("{fileName}", fileName));
 
@@ -34,14 +34,14 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> DeletePLant(string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.DeleteImage}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.DeleteImage}";
 
             return await this._httpClient.DeleteAsync(url.Replace("{imageId}", id));
         }
 
         public async Task<HttpResponseMessage> SearchImages(GetImagesByRelatedEntity searchQuery)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.Search}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.Search}";
 
             using var requestContent = searchQuery.ToJsonStringContent();
 
@@ -50,7 +50,7 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> SearchImages(GetImagesByRelatedEntities searchQuery)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.SearchBatch}";
+            var url = $"{this._baseUrl.OriginalString}{ImageRoutes.SearchBatch}";
 
             using var requestContent = searchQuery.ToJsonStringContent();
 

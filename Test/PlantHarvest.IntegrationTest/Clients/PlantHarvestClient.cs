@@ -19,13 +19,13 @@ namespace PlantHarvest.IntegrationTest.Clients
         #region Harvest Cycle
         public async Task<HttpResponseMessage> GetHarvestCycleIdByHarvestCycleName(string name)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetIdByHarvestCycleName}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetIdByHarvestCycleName}";
             return await this._httpClient.GetAsync(url.Replace("{name}", name));
         }
 
         public async Task<HttpResponseMessage> CreateHarvestCycle(string name)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.CreateHarvestCycle}/";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreateHarvestCycle}/";
 
             var createHarvestCycleCommand = PopulateCreateHarvestCycleCommand(name);
 
@@ -37,7 +37,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> UpdateHarvestCycle(HarvestCycleViewModel harvest)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.UpdateHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.UpdateHarvestCycle}";
 
             using var requestContent = harvest.ToJsonStringContent();
 
@@ -46,20 +46,20 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> DeleteHarvestCycle(string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.DeleteHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.DeleteHarvestCycle}";
 
             return await this._httpClient.DeleteAsync (url.Replace("{id}",id));
         }
 
         public async Task<HttpResponseMessage> GetAllHarvestCycles()
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetAllHarvestCycles}/";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetAllHarvestCycles}/";
            return await this._httpClient.GetAsync(url);           
         }
 
         public async Task<HttpResponseMessage> GetHarvestCycle(string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetHarvestCycleById}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetHarvestCycleById}";
             return await this._httpClient.GetAsync(url.Replace("{id}", id));
         }
 
@@ -79,7 +79,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> CreatePlanHarvestCycle(string harvestId, string plantId)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlanHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreatePlanHarvestCycle}";
 
             var createPlanHarvestCycleCommand = PopulateCreatePlanHarvestCycleCommand(harvestId, plantId);
 
@@ -91,7 +91,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> UpdatePlanHarvestCycle(PlanHarvestCycleViewModel plan)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.UpdatePlanHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.UpdatePlanHarvestCycle}";
 
             using var requestContent = plan.ToJsonStringContent();
 
@@ -100,20 +100,20 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> DeletePlanHarvestCycle(string harvestId,string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.DeletePlanHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.DeletePlanHarvestCycle}";
 
             return await this._httpClient.DeleteAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
         }
 
         public async Task<HttpResponseMessage> GetPlanHarvestCycles(string harvestId)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlanHarvestCycles}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlanHarvestCycles}";
             return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId));
         }
 
         public async Task<HttpResponseMessage> GetPlanHarvestCycle(string harvestId, string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlanHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlanHarvestCycle}";
             return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
         }
 
@@ -136,7 +136,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> CreatePlantHarvestCycle(string harvestId, string plantId, string plantVarietyId)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.CreatePlantHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreatePlantHarvestCycle}";
 
             var createPlantHarvestCycleCommand = PopulateCreatePlantHarvestCycleCommand(harvestId, plantId, plantVarietyId);
 
@@ -148,7 +148,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> UpdatePlantHarvestCycle(PlantHarvestCycleViewModel HarvestCycle)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.UpdatePlantHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.UpdatePlantHarvestCycle}";
 
             using var requestContent = HarvestCycle.ToJsonStringContent();
 
@@ -157,21 +157,21 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         public async Task<HttpResponseMessage> DeletePlantHarvestCycle(string harvestId, string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.DeletePlantHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.DeletePlantHarvestCycle}";
 
             return await this._httpClient.DeleteAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
         }
 
         public async Task<HttpResponseMessage> GetPlantHarvestCycles(string harvestId)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantHarvestCycles}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlantHarvestCycles}";
             return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId));
         }
 
 
         public async Task<HttpResponseMessage> GetPlantHarvestCycle(string harvestId, string id)
         {
-            var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantHarvestCycle}";
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlantHarvestCycle}";
             return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
         }
 
