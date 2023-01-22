@@ -85,13 +85,15 @@
 
     public void Initialize(HarvestCycleModel? harvest)
     {
+        _gardens = _gardenService.GetGardens(false);
+
         if (harvest == null)
         {
             harvest = new HarvestCycleModel();
             harvest.StartDate = DateTime.Now.Date;
             if (_gardens.Count == 1) harvest.GardenId = _gardens.First().GardenId;
         }
-        _gardens = _gardenService.GetGardens(false);
+       
         _harvest = harvest;
 
         _isEdit = !string.IsNullOrEmpty(_harvest.HarvestCycleId);

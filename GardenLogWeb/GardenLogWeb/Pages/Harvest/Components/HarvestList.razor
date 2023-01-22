@@ -1,6 +1,6 @@
 ﻿@inject IHarvestCycleService _harvestService;
 @inject NavigationManager _navigationManager
-
+@inject IGardenService _gardenService;
 
 <ModalView OnCloseModal="CloseImageFormModal" @ref="ImageFormModal">
     <Body>
@@ -27,7 +27,7 @@
             @foreach (var harvest in _harvests)
             {
                 <div class="card bg-light mb-2">
-                    <div class="card-header"><h5><a href="harvests/@harvest.HarvestCycleId" class="action-link">@harvest.HarvestCycleName</a></h5></div>
+                    <div class="card-header"><h5><a href="harvests/@harvest.HarvestCycleId" class="action-link">@harvest.HarvestCycleName @GetGardenName(harvest.GardenId)</a></h5></div>
                     <div class="card-body">
                         <div>
                             @harvest.StartDate.ToShortDateString() @if (harvest.EndDate.HasValue)
@@ -40,7 +40,7 @@
 
                     <div class="card-footer">
                         <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
-                              <button type="button" class="btn btn-primary" title="Edit Garden Plan" @onclick="@(() => onEditHarvest(harvest))">
+                              <button type="button" class="btn btn-secondary" title="Edit Garden Plan" @onclick="@(() => onEditHarvest(harvest))">
                                 <span class="bi bi-pencil">&nbsp;</span>
                             </button>
                             <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => onAddHarvestImage(harvest))">
@@ -58,7 +58,7 @@
                 </div>
             }
         }
-        <div @onclick=@onCreateHarvest class="btn d-inline-block  btn-primary" title="Create Garden Plan">
+        <div @onclick=@onCreateHarvest class="btn d-inline-block  btn-secondary" title="Create Garden Plan">
             <span class="bi bi-plus-lg">Add</span>
         </div>
     </div>
@@ -75,8 +75,17 @@
     protected override async Task OnInitializedAsync()
     {
         _harvests = await _harvestService.GetHarvestList(false);
-
         StateHasChanged();
+    }
+
+    private string GetGardenName(string gardenId)
+    {
+        var garden = _gardenService.GetGardens(false)?.FirstOrDefault(g => g.GardenId == gardenId);
+        if(garden != null)
+        {
+            return $" at {garden.GardenName}";
+        }
+        return string.Empty;
     }
 
     private async Task onAddHarvestImage(HarvestCycleViewModel harvest)
@@ -111,6 +120,7 @@
     private async Task CloseHarvestFormModal(HarvestCycleModel harvest)
     {
         await harvestFormModal.CloseModal();
+        _harvests = await _harvestService.GetHarvestList(false);
         StateHasChanged();
     }
 

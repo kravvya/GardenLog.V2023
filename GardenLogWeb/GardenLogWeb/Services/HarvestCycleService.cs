@@ -50,7 +50,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-           _logger.LogInformation($"Harvests are in cache. Found {harvests.Count()}");
+            _logger.LogInformation($"Harvests are in cache. Found {harvests.Count()}");
         }
 
         return harvests;
@@ -155,7 +155,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-             RemoveFromHarvestCycleList(id);
+            RemoveFromHarvestCycleList(id);
 
             _toastService.ShowToast($"Garden Plan deleted.", GardenLogToastLevel.Success);
         }
@@ -190,16 +190,16 @@ public class HarvestCycleService : IHarvestCycleService
             if (index > -1)
             {
                 harvests[index] = harvest;
+                return;
             }
-            return;
         }
         else
         {
             harvests = new List<HarvestCycleModel>();
+            _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
         }
         harvests.Add(harvest);
-
-        _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
+               
     }
 
     private void RemoveFromHarvestCycleList(string harvestId)
