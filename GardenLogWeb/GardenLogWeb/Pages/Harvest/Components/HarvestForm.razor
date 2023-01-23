@@ -83,9 +83,9 @@
     private List<GardenViewModel> _gardens = null;
 
 
-    public void Initialize(HarvestCycleModel? harvest)
+    public async void Initialize(HarvestCycleModel? harvest)
     {
-        _gardens = _gardenService.GetGardens(false);
+        _gardens = await _gardenService.GetGardens(false);
 
         if (harvest == null)
         {

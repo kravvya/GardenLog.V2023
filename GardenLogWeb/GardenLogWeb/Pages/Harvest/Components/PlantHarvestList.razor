@@ -1,0 +1,270 @@
+﻿@using System.Text;
+@inject IPlantService _plantService;
+@inject IHarvestCycleService _harvestService;
+@inject NavigationManager _navigationManager;
+
+<div>
+    @if (_harvest != null)
+    {
+        @if (_plants == null)
+        {
+            <p><em>Empty</em></p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="d-md-none">
+                        <a href="javascript: void(0)" @onclick="@ToggleFilter">@filterTtile</a>
+                    </div>
+                    <div class="@filterCssClass">
+                        <div class="plant-sidebar">
+
+                            <div class="widget plant-list">
+                                <h4 class="widget-header">Plants</h4>
+                                <ul class="plant-list">
+                                    @foreach (var cat in _filter_plants.OrderBy(c => c.Name))
+                                    {
+                                        <li><a href="javascript: void(0)" @onclick=@(()=> Filter.SetValue("PlantId", cat.PlantId))>@cat.Name <span>69</span></a></li>
+                                    }
+                                    <li><a href="javascript: void(0)" @onclick=@(()=> Filter.SetValue("PlantId", null))>Reset </a></li>
+                                </ul>
+                            </div>
+
+
+                            <div class="widget product-shorting">
+                                <h4 class="widget-header">Growing Options</h4>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" value="@Filter.IsStartIndoors" @onchange="@(e => Filter.SetValue("IsStartIndoors", e.Value))" />
+                                        Start Indoors
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" value="@Filter.IsDirectSow" @onchange="@(e => Filter.SetValue("", e.Value))" />
+                                        Direct Sow
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="plant-search-filter">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong>@FilteredPlants?.Count Results on @DateTime.Now.ToShortDateString() @FilterDescription</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-5">Plant</th>
+                                <th class="col-xs-1">Seeding Date</th>
+                                <th class="col-xs-1">Translpant</th>
+                                <th class="col-xs-1"># of plants</th>
+                                <th class="col-xs-3">Location</th>
+                                <th class="col-xs-1"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var plant in FilteredPlants)
+                            {
+                                <tr style="border-bottom: 5px solid purple;">
+                                    <td class="col-xs-5" style="border-left: 5px solid purple;">
+                                        <a href="javascript: void(0)" @onclick="@(() => onViewPlant(plant))">@plant.PlantId - @plant.PlantVarietyId</a>
+                                    </td>
+                                    <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
+                                    <td class="col-xs-1">@GetDateValue(plant.TransplantDateTime)</td>
+                                    <td class="col-xs-1">@plant.NumberOfTransplants</td>
+                                    <td class="col-xs-4">@plant.GardenBedId</td>
+                                    <td class="col-xs-1">
+
+                                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => onAddPlantHarvestImage(plant))">
+                                            <span class="bi bi-card-image">&nbsp;</span>
+                                        </button>
+                                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => onViewPlantHarvestImage(plant))">
+                                            <span class="bi bi-images" aria-hidden="true">&nbsp;</span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" title="edit category" @onclick="@(() => EditPlantHarvest(plant))">
+                                            <span class="bi bi-pencil">&nbsp;</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+
+        <div class="float-right">
+            <button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => Close())">Close</button>
+        </div>
+    }
+</div>
+
+@code {
+    private HarvestCycleModel _harvest;
+    private IList<PlantHarvestCycleModel> _plants;
+
+
+    protected PlantModel PlantInView { get; set; }
+    protected string PlantHarvestImageInViewColor { get; set; } = "";
+    protected PlantHarvestFilter Filter { get; set; }
+    protected string FilterDescription { get; set; }
+    protected IList<PlantModel> _filter_plants { get; set; } = new List<PlantModel>();
+    protected IList<PlantHarvestCycleModel> FilteredPlants { get; set; } = new List<PlantHarvestCycleModel>();
+    private bool collapseNavMenu = true;
+
+    string filterCssClass = "d-none d-md-block";
+    string filterTtile = "Show Filters";
+
+    void ToggleFilter()
+    {
+        collapseNavMenu = !collapseNavMenu;
+        filterCssClass = collapseNavMenu ? "d-none d-md-block" : ".d-block";
+        filterTtile = collapseNavMenu ? "Show Filters" : "Hide Filters";
+        StateHasChanged();
+    }
+
+    protected void onAddPlantHarvestImage(PlantHarvestCycleModel plant)
+    {
+        //PlantHarvestImageInEdit = new EntityImage()
+        //    {
+        //        RelatedEntity = "PlantHarvestCycle",
+        //        RelatedEntityId = plant.Id,
+        //        RelatedEntityName = plant.PlantName
+        //    };
+        //PlantHarvestImageInViewColor = plant.CategoryColor;
+        StateHasChanged();
+    }
+
+    protected void onViewPlantHarvestImage(PlantHarvestCycleModel plant)
+    {
+        //PlantHarvestImageInView = new EntityImage()
+        //    {
+        //        RelatedEntity = "PlantHarvestCycle",
+        //        RelatedEntityId = plant.Id,
+        //        RelatedEntityName = plant.PlantName
+        //    };
+        //PlantHarvestImageInViewColor = plant.CategoryColor;
+        StateHasChanged();
+    }
+
+    protected async Task onViewPlant(PlantHarvestCycleModel plant)
+    {
+        PlantInView = await _plantService.GetPlant(plant.PlantId, true);
+        PlantHarvestImageInViewColor = PlantInView.Color;
+        StateHasChanged();
+    }
+
+    public bool onCloseImageViewModal()
+    {
+
+        //PlantHarvestImageInView = null;
+        StateHasChanged();
+        return true;
+    }
+
+    public async Task<bool> onCloseImageAddModal()
+    {
+        // PlantHarvestImageInEdit = null;
+        StateHasChanged();
+        return true;
+    }
+
+    public bool onClosePlantModal()
+    {
+        PlantInView = null;
+        StateHasChanged();
+        return true;
+    }
+
+
+    public async void Initialize(HarvestCycleModel harvest)
+    {
+
+        _plants = (await _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false));
+        _filter_plants = await _plantService.GetPlants(false);
+
+        FilteredPlants = _plants;
+        Filter = new PlantHarvestFilter();
+
+        Filter.ModelChanged += FilterChanged;
+
+        _harvest = harvest;
+        StateHasChanged();
+    }
+
+
+    public void Close()
+    {
+        //_uriHelper.NavigateTo($"/harvests");
+    }
+
+    public void EditPlantHarvest(PlantHarvestCycleModel plant)
+    {
+        _navigationManager.NavigateToGardenPlanEditPlant(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+    }
+
+    public void AddPlantToHarvest()
+    {
+        _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
+    }
+
+
+    protected string GetDateValue(DateTime? dateValue)
+    {
+        return dateValue.HasValue ? dateValue.Value.ToShortDateString() : "";
+    }
+
+    protected void FilterChanged(object sender, EventArgs e)
+    {
+        Console.WriteLine("Inside FilterChanged");
+        StringBuilder description = new StringBuilder();
+
+        IList<PlantHarvestCycleModel> plants = _plants;
+
+        if (!string.IsNullOrEmpty(Filter.PlantId))
+        {
+            description.Append(" (");
+            description.Append(_filter_plants.FirstOrDefault(cat => cat.PlantId == Filter.PlantId)?.Name);
+            plants = plants.Where(p => p.PlantId == Filter.PlantId).ToList();
+        }
+
+        if (Filter.IsStartIndoors)
+        {
+            description.Append(description.Length == 0 ? " (Start indoors" : " and start indoors");
+            plants = plants.Where(p => !p.IsDirectSeed).ToList();
+        }
+
+        if (Filter.IsDirectSow)
+        {
+            description.Append(description.Length == 0 ? " (Direct sow" : " and direct sow");
+            plants = plants.Where(p => p.IsDirectSeed).ToList();
+        }
+
+        if (description.Length > 0)
+        {
+            description.Append(")");
+        }
+
+        FilterDescription = description.ToString();
+        FilteredPlants = plants;
+        base.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Filter.ModelChanged -= FilterChanged;
+    }
+}
+
+   
+

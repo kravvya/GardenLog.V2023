@@ -27,7 +27,7 @@
             @foreach (var harvest in _harvests)
             {
                 <div class="card bg-light mb-2">
-                    <div class="card-header"><h5><a href="harvests/@harvest.HarvestCycleId" class="action-link">@harvest.HarvestCycleName @GetGardenName(harvest.GardenId)</a></h5></div>
+                    <div class="card-header"><h5><a href="@_navigationManager.GetGardenPlanUrl(harvest.HarvestCycleId)" class="action-link">@GetTile(harvest)</a></h5></div>
                     <div class="card-body">
                         <div>
                             @harvest.StartDate.ToShortDateString() @if (harvest.EndDate.HasValue)
@@ -78,14 +78,14 @@
         StateHasChanged();
     }
 
-    private string GetGardenName(string gardenId)
+    private string GetTile(HarvestCycleModel harvest)
     {
-        var garden = _gardenService.GetGardens(false)?.FirstOrDefault(g => g.GardenId == gardenId);
-        if(garden != null)
+        
+        if(!string.IsNullOrEmpty(harvest.GardenName))
         {
-            return $" at {garden.GardenName}";
+            return $"{harvest.HarvestCycleName} at {harvest.GardenName}";
         }
-        return string.Empty;
+        return harvest.HarvestCycleName;
     }
 
     private async Task onAddHarvestImage(HarvestCycleViewModel harvest)
@@ -138,12 +138,12 @@
 
     protected void onViewHarvestImage(HarvestCycleViewModel harvest)
     {
-        _navigationManager.NavigateToHarvestCycleImages(harvest.HarvestCycleId);
+        _navigationManager.NavigateToGardenPlanImages(harvest.HarvestCycleId);
     }
 
     protected void onViewHarvestLogs(HarvestCycleViewModel harvest)
     {
-        _navigationManager.NavigateToHarvestCycleWorkLogs(harvest.HarvestCycleId);
+        _navigationManager.NavigateToGardenPlanWorkLogs(harvest.HarvestCycleId);
     }
 
 }

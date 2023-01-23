@@ -8,7 +8,8 @@ namespace GardenLogWeb.Services
     public interface IGardenService
     {
         Garden GetGarden();
-        List<GardenViewModel> GetGardens(bool forceRefresh);
+        Task<GardenViewModel> GetGarden(string gardenId, bool useCache);
+        Task<List<GardenViewModel>> GetGardens(bool forceRefresh);
     }
 
     public class GardenService : IGardenService
@@ -32,7 +33,7 @@ namespace GardenLogWeb.Services
         }
 
         #region Garden Functions
-        public List<GardenViewModel> GetGardens(bool forceRefresh)
+        public Task<List<GardenViewModel>> GetGardens(bool forceRefresh)
         {
             List<GardenViewModel> gardens = null;
 
@@ -49,7 +50,15 @@ namespace GardenLogWeb.Services
                 _logger.LogInformation($"Plants are in cache. Found {gardens.Count()}");
             }
 
-            return gardens;
+            return Task.FromResult(gardens);
+        }
+
+        public Task<GardenViewModel> GetGarden(string gardenId, bool useCache)
+        {
+            var garden = GetAllGardens().First();
+            garden.GardenId = gardenId;
+            
+            return Task.FromResult(garden);
         }
 
         public Garden GetGarden()
@@ -59,7 +68,8 @@ namespace GardenLogWeb.Services
             garden.BorderColor = "#585858";
             garden.Length = 180;
             garden.Width = 240;
-            return garden;
+
+            return  garden;
         }
         #endregion
 
@@ -77,6 +87,8 @@ namespace GardenLogWeb.Services
                 
             } };
         }
+
+       
         #endregion
     }
 }

@@ -54,14 +54,34 @@ public static class NavigationManagerExtensions
         return $"editplantgrow/{plantId}/grow/{growInstructionId}";
     }
 
-    public static string GetHarvestCycleImagesUrl(this NavigationManager navigationManager, string harvestId)
+    public static string GetGardenPlansUrl(this NavigationManager navigationManager)
     {
-        return $"images/HarvestCycle/{harvestId}";
+        return $"garden_plan";
     }
 
-    public static string GetHarvestCycleWorkLogsUrl(this NavigationManager navigationManager, string harvestId)
+    public static string GetGardenPlanUrl(this NavigationManager navigationManager, string harvestId)
     {
-        return $"worklogs/HarvestCycle/{harvestId}";
+        return $"garden_plan/{harvestId}";
+    }
+
+    public static string GetGardenPlanImagesUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"images/garden_plan/{harvestId}";
+    }
+
+    public static string GetGardenPlanWorkLogsUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"worklogs/garden_plan/{harvestId}";
+    }
+
+    public static string GetGardenPlanAddPlantUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"/addplant/garden_plan/{harvestId}";
+    }
+
+    public static string GetGardenPlanEditPlantUrl(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
+    {
+        return $"/editplant/garden_plan/{harvestId}/plant/{plantHarvestId}";
     }
 
     public static void NavigateToPlants(this NavigationManager navigationManager)
@@ -114,13 +134,34 @@ public static class NavigationManagerExtensions
         navigationManager.NavigateTo(navigationManager.GetEditPlantGrowInstructionUrl(plantId, growInstructionId));
     }
 
-    public static void NavigateToHarvestCycleImages(this NavigationManager navigationManager, string harvestId)
+    public static void NavigateToGardenPlans(this NavigationManager navigationManager)
     {
-        navigationManager.NavigateTo(navigationManager.GetHarvestCycleImagesUrl(harvestId));
+        navigationManager.NavigateTo(navigationManager.GetGardenPlansUrl());
     }
 
-    public static void NavigateToHarvestCycleWorkLogs(this NavigationManager navigationManager, string harvestId)
+    public static void NavigateToGardenPlan(this NavigationManager navigationManager, string harvestId)
     {
-        navigationManager.NavigateTo(navigationManager.GetHarvestCycleWorkLogsUrl(harvestId));
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanUrl(harvestId));
+    }
+
+
+    public static void NavigateToGardenPlanImages(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanImagesUrl(harvestId));
+    }
+
+    public static void NavigateToGardenPlanWorkLogs(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanWorkLogsUrl(harvestId));
+    }
+
+    public static void NavigateToGardenPlanAddPlant(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanAddPlantUrl(harvestId));
+    }
+
+    public static void NavigateToGardenPlanEditPlant(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanEditPlantUrl(harvestId, plantHarvestId));
     }
 }
