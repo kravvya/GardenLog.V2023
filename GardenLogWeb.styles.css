@@ -1,5 +1,72 @@
 @import '_content/Blazored.Toast/Blazored.Toast.bundle.scp.css';
 
+/* /Pages/Harvest/Components/PlantHarvestList.razor.rz.scp.css */
+.plant-list li[b-3g2l5ue8cg] {
+    color: #666;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.plant-list ul[b-3g2l5ue8cg] {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+h1[b-3g2l5ue8cg], h2[b-3g2l5ue8cg], h3[b-3g2l5ue8cg], h4[b-3g2l5ue8cg], h5[b-3g2l5ue8cg], h6[b-3g2l5ue8cg] {
+    font-weight: 600;
+    color: #333;
+}
+
+.search-result[b-3g2l5ue8cg] {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.plant-search-filter[b-3g2l5ue8cg] {
+    background: #f7f7f7;
+    padding: 20px;
+}
+
+.widget[b-3g2l5ue8cg] {
+    background: #fff;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
+    padding: 25px 10px 10px;
+    margin-bottom: 10px;
+    border-radius: 2px;
+}
+
+.widget-header[b-3g2l5ue8cg] {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dedede;
+}
+
+.widget.plant-list ul li:not(:last-child)[b-3g2l5ue8cg] {
+    border-bottom: 1px solid #F4F7F9;
+}
+
+.widget.plant-list ul li a[b-3g2l5ue8cg] {
+    padding: 8px 0;
+    display: block;
+    transition: all linear 0.3s;
+}
+
+    .widget.plant-list ul li a span[b-3g2l5ue8cg] {
+        float: right;
+        font-size: 10px;
+        background: #F4F7F9;
+        border-radius: 10px;
+        padding: 3px 8px;
+        color: #84919B;
+    }
+
+.widget.product-shorting .form-check[b-3g2l5ue8cg] {
+    margin-bottom: 4px;
+}
 /* /Pages/Index.razor.rz.scp.css */
 
 
