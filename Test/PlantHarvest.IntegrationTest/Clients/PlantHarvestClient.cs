@@ -85,7 +85,14 @@ namespace PlantHarvest.IntegrationTest.Clients
 
             using var requestContent = createPlanHarvestCycleCommand.ToJsonStringContent();
 
-            return await this._httpClient.PostAsync(url, requestContent);
+            var response =  await this._httpClient.PostAsync(url, requestContent);
+
+            if(response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new ApplicationException(response.Content.ToString());
+            }
+
+            return response;
 
         }
 

@@ -47,7 +47,7 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
         {
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
             Assert.NotEmpty(returnString);
-            Assert.Contains("\"Harvest with this name already exists", returnString);
+            Assert.Contains("Garden Plan with this name already exists", returnString);
         }
     }
 
@@ -228,7 +228,7 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
 
     #endregion
 
-    #region PLant Harevst Cycle
+    #region Plant Harevst Cycle
     [Fact]
     public async Task Post_PlantHarvestCycle_MayCreateNew()
     {
@@ -319,23 +319,24 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
     private async Task<string> GetHarvestCycleIdToWorkWith(string harvestName)
     {
         var response = await _plantHarvestClient.GetHarvestCycleIdByHarvestCycleName(harvestName);
-        var plantId = await response.Content.ReadAsStringAsync();
+        var harvestId = await response.Content.ReadAsStringAsync();
 
-        if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(plantId))
+        if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(harvestId))
         {
-            _output.WriteLine($"Harvest Cyle is not found. Will create new one");
+            _output.WriteLine($"GetHarvestCycleIdToWorkWith - Harvest Cycle is not found. Will create new one");
             response = await _plantHarvestClient.CreateHarvestCycle(harvestName);
 
-            plantId = await response.Content.ReadAsStringAsync();
+            harvestId = await response.Content.ReadAsStringAsync();
 
-            _output.WriteLine($"Service to create harvest cycle responded with {response.StatusCode} code and {plantId} message");
+            _output.WriteLine($"GetHarvestCycleIdToWorkWith - Service to create harvest cycle responded with {response.StatusCode} code and {harvestId} message");
         }
         else
         {
-            _output.WriteLine($"Harvest Cycle was found with service responded with {response.StatusCode} code and {plantId} message");
+            _output.WriteLine($"GetHarvestCycleIdToWorkWith - Harvest Cycle was found with service responded with {response.StatusCode} code and {harvestId} message");
         }
 
-        return plantId;
+        _output.WriteLine($"GetHarvestCycleIdToWorkWith - Found  {harvestId} harvest to work with.");
+        return harvestId;
     }
 
     private async Task<HarvestCycleViewModel> GetHarvestCycleToWorkWith(string harvestName)
@@ -366,7 +367,7 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
 
         var response = await _plantHarvestClient.GetPlanHarvestCycles(harvestId);
 
-        _output.WriteLine($"Service to get all plan harvest cycles responded with {response.StatusCode} code");
+        _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Service to get all plan harvest cycles responded with {response.StatusCode} code");
 
         var options = new JsonSerializerOptions
         {
@@ -380,13 +381,17 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
 
         if (plans == null || plans.Count == 0)
         {
+            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Harvest {harvestId} has no plans");
             await _plantHarvestClient.CreatePlanHarvestCycle(harvestId, plantId);
+            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Create new plan for {harvestId} harvest with {plantId} plan");
 
             response = await _plantHarvestClient.GetPlanHarvestCycles(harvestId);
 
-            _output.WriteLine($"Service to get all plan harvest cycles responded with {response.StatusCode} code");
+            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Service to get all plan harvest cycles responded with {response.StatusCode} code");
 
             plans = await response.Content.ReadFromJsonAsync<List<PlanHarvestCycleViewModel>>(options);
+
+            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Harvest has {plans.Count} plans to work with");
         }
 
         return plans;
@@ -514,7 +519,7 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
             returnString = await response.Content.ReadAsStringAsync();
             Assert.NotEmpty(returnString);
-            Assert.Contains("Plant Harvest Cycle for this plant already exists", returnString);
+            Assert.Contains("This plant is already a part of this plan", returnString);
         }
         return returnString;
     }

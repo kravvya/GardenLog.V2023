@@ -179,7 +179,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
             var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
 
-            if (harvest.Plants.Any(g => g.PlantId == command.PlantId ))
+            if (harvest.Plans.Any(g => g.PlantId == command.PlantId ))
             {
                 throw new ArgumentException("Plan Harvest Cycle for this plant already exists", nameof(command.PlantId));
             }
