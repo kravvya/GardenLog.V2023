@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Images\" />
     <Folder Include="Shared\Extensions\" />
     <Folder Include="wwwroot\css\bootstrap\" />
   </ItemGroup>

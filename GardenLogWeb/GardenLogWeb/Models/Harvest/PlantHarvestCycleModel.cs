@@ -1,6 +1,6 @@
-﻿namespace GardenLogWeb.Models.Harvest
+﻿namespace GardenLogWeb.Models.Harvest;
+
+public record PlantHarvestCycleModel : PlantHarvestCycleViewModel
 {
-    public record PlantHarvestCycleModel : PlantHarvestCycleViewModel
-    {
-    }
+    public List<ImageViewModel> Images { get; set; }
 }

@@ -15,7 +15,7 @@ public interface IHarvestQueryHandler
 
     Task<PlanHarvestCycleViewModel> GetPlanHarvestCycle(string harvestCycleId, string id);
     Task<IReadOnlyCollection<PlanHarvestCycleViewModel>> GetPlanHarvestCycles(string harvestCycleId);
-
+    Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId);
 }
 
 
@@ -126,6 +126,22 @@ public class HarvestQueryHandler : IHarvestQueryHandler
         catch (Exception ex)
         {
             _logger.LogCritical($"Exception readding plant harvest cycles for {harvestCycleId}", ex);
+            throw;
+        }
+    }
+
+    public async Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId)
+    {
+        _logger.LogInformation($"Received request to get plant harvest cycles for plant {plantId}");
+
+        try
+        {
+            return await _harvestCycleRepository.GetPlantHarvestCyclesByPlantId(plantId);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception readding plant harvest cycles for plant {plantId}", ex);
             throw;
         }
     }

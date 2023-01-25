@@ -4,7 +4,7 @@
 
 <Page Title="@_title" Description="@_description" BreadcrumbLinks="@breadcrumbLinks">
     <PageContent>
-        <PlantHarvestList @ref=PlantHarvestList />
+        <PlantHarvestList @ref=_plantHarvestList />
     </PageContent>
 </Page>
 
@@ -12,7 +12,7 @@
     [Parameter]
     public string HarvestCycleId { get; set; }
 
-    PlantHarvestList PlantHarvestList { get; set; }
+    private PlantHarvestList _plantHarvestList;
 
     private List<BreadcrumbLink> breadcrumbLinks = new();
     private HarvestCycleModel _harvest = null;
@@ -24,7 +24,7 @@
     {
         breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
 
-        _harvest = await _harvestService.GetHarvest(HarvestCycleId, false);
+        _harvest = await _harvestService.GetHarvest(HarvestCycleId, true);
 
         if (_harvest == null)
         {
@@ -35,10 +35,14 @@
             breadcrumbLinks.Add(new BreadcrumbLink(_harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(HarvestCycleId), true));
             _title = $"{_harvest.HarvestCycleName} at {_harvest.GardenName}";
             _description = $"{_harvest.Notes}";
-            PlantHarvestList.Initialize(_harvest);
+           
         }
 
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+       if (firstRender) _plantHarvestList.Initialize(_harvest);
+    }
 
 }

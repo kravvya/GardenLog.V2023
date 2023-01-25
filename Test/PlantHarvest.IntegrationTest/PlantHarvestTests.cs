@@ -278,6 +278,23 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
     }
 
     [Fact]
+    public async Task Get_PlantHarvestCycles_ByPlantId()
+    {
+        var harvestId = await GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
+        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+
+        var searchResponse = await _plantHarvestClient.GetPlantHarvestCyclesByPlantId(TEST_PLANT_ID);
+
+        Assert.NotNull(searchResponse);
+        Assert.True(searchResponse.StatusCode == System.Net.HttpStatusCode.OK);
+
+        var returnString = await searchResponse.Content.ReadAsStringAsync();
+              
+        _output.WriteLine($"Get_PlantHarvestCycles_ByPlantId - Found '{returnString}' by searching by plant Id");
+        Assert.Contains(plant.PlantHarvestCycleId, returnString);
+    }
+
+    [Fact]
     public async Task Put_PlantHarvestCycle_ShouldUpdate()
     {
         var harvestId = await GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);

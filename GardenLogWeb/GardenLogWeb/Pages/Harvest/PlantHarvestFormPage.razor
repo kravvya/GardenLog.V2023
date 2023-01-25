@@ -26,6 +26,12 @@
                                     <Body>
                                         <div class="row mb-3">
                                             <div class="col-md-2">
+                                                <label for="DesiredNumberOfPlants" class="form-label">Qty</label>
+                                                <InputNumber Class="form-control" @bind-Value="@_plantHarvest.DesiredNumberOfPlants" id="DesiredNumberOfPlants" />
+                                                <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.DesiredNumberOfPlants)" /></div>
+                                            </div>
+
+                                            <div class="col-md-2">
                                                 <label for="Plant" class="form-label">Plant</label>
                                                 <InputSelect class="form-select" @bind-Value="_plantHarvest.PlantId" id="Plant" @oninput="@ReloadPlantOptions" disabled="@_isEdit">
                                                     @foreach (var item in _plants)
@@ -49,12 +55,6 @@
                                                     }
                                                 </InputSelect>
                                                 <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.PlantVarietyId)" /></div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label for="DesiredNumberOfPlants">Qty</label>
-                                                <InputNumber Class="form-control" @bind-Value="@_plantHarvest.DesiredNumberOfPlants" id="DesiredNumberOfPlants" />
-                                                <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.DesiredNumberOfPlants)" /></div>
                                             </div>
 
                                             <div class="col-md-5">
@@ -85,6 +85,7 @@
                                                     <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.GardenBedId)" /></div>
                                                 </div>
                                             }
+
                                         </div>
                                     </Body>
                                 </FormCard>
@@ -364,7 +365,7 @@
 
         if (!_isEdit)
         {
-            _plantHarvest.PlantName = _plants.First(p => p.PlantId == _plantHarvest.PlantId).Name;           
+            _plantHarvest.PlantName = _plants.First(p => p.PlantId == _plantHarvest.PlantId).Name;
             _plantHarvest.PlantGrowthInstructionName = _growInstructions.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).Name;
         }
 

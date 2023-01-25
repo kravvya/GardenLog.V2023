@@ -253,6 +253,16 @@ public class HarvestCycleController : Controller
     }
 
     [HttpGet()]
+    [ActionName("GetPlantHarvestCyclesByPlant")]
+    [Route(HarvestRoutes.GetPlantHarvestCyclesByPlant)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantHarvestCycleViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<IReadOnlyCollection<PlantHarvestCycleViewModel>>> GetPlantHarvestCyclesByPlant(string plantId)
+    {
+        return Ok(await _queryHandler.GetPlantHarvestCyclesByPlantId(plantId));
+    }
+
+    [HttpGet()]
     [Route(HarvestRoutes.GetPlantHarvestCycle)]
     [ActionName("GetPlantHarvestCycleById")]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]

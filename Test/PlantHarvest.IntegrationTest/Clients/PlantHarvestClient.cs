@@ -170,6 +170,11 @@ namespace PlantHarvest.IntegrationTest.Clients
             return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId));
         }
 
+        public async Task<HttpResponseMessage> GetPlantHarvestCyclesByPlantId(string plantId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlantHarvestCyclesByPlant}";
+            return await this._httpClient.GetAsync(url.Replace("{plantId}", plantId));
+        }
 
         public async Task<HttpResponseMessage> GetPlantHarvestCycle(string harvestId, string id)
         {

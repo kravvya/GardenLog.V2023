@@ -4,7 +4,6 @@ using GardenLog.SharedKernel.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-
 using System.Reflection;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
@@ -157,6 +156,34 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
         return data.Plants.First(g => g.PlantHarvestCycleId == id);
     }
 
+    public async Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId)
+    {
+        List<PlantHarvestCycleIdentityOnlyViewModel> response = new();
+
+        var filter = Builders<HarvestCycle>.Filter.Eq("Plants.PlantId", plantId);
+        var projection = Builders<HarvestCycle>.Projection.Include("Plants._id");
+
+        var data = await Collection
+        .Find<HarvestCycle>(filter)
+         .Project<HarvestCycle>(projection)
+         .As<PlantHarvestCycleViewModelProjection>()
+         .ToListAsync();
+
+        foreach(var item in data)
+        {
+            foreach (var p in item.Plants.Where(p => p.PlantId == plantId))
+            {
+                response.Add(new PlantHarvestCycleIdentityOnlyViewModel()
+                {
+                    HarvestCycleId = item._id,
+                    PlantHarvestCycleId = p.PlantHarvestCycleId,
+                });
+            }
+        }
+
+        return response;
+    }
+
     public async Task<IReadOnlyCollection<PlantHarvestCycleViewModel>> GetPlantHarvestCycles(string harvestCycleId)
     {
         var data = await Collection
@@ -293,7 +320,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
         #endregion 
     }
 
-   
+
 }
 
 public record PlantHarvestCycleViewModelProjection(string _id, List<PlantHarvestCycleViewModel> Plants);

@@ -6,24 +6,36 @@
 <div>
     @if (_harvest != null)
     {
-        @if (_plants == null)
+        @if (_harvestPlants == null)
         {
             <p><em>Empty</em></p>
         }
         else
         {
+            <ModalView OnCloseModal="CloseImageFormModal" @ref="_imageFormModal">
+                <Body>
+                    <ImageForm OnClose=@CloseImageFormModal @ref=_imageForm />
+                </Body>
+            </ModalView>
+
+            <ModalView OnCloseModal="@CloseImageListModal" @ref="_imageListModal">
+                <Body>
+                    <ImageList OnClose=@CloseImageListModal @ref=_imageList />
+                </Body>
+            </ModalView>
+
             <div class="row">
                 <div class="col-md-2">
                     <div class="d-md-none">
-                        <a href="javascript: void(0)" @onclick="@ToggleFilter">@filterTtile</a>
+                        <a href="javascript: void(0)" @onclick="@ToggleFilter">@_filterTtile</a>
                     </div>
-                    <div class="@filterCssClass">
+                    <div class="@_filterCssClass">
                         <div class="plant-sidebar">
 
                             <div class="widget plant-list">
                                 <h4 class="widget-header">Plants</h4>
                                 <ul class="plant-list">
-                                    @foreach (var cat in _filter_plants.OrderBy(c => c.Name))
+                                    @foreach (var cat in _plants.OrderBy(c => c.Name))
                                     {
                                         <li><a href="javascript: void(0)" @onclick=@(()=> Filter.SetValue("PlantId", cat.PlantId))>@cat.Name <span>69</span></a></li>
                                     }
@@ -64,136 +76,120 @@
                             <tr>
                                 <th class="col-xs-5">Plant</th>
                                 <th class="col-xs-1">Seeding Date</th>
-                                <th class="col-xs-1">Translpant</th>
-                                <th class="col-xs-1"># of plants</th>
+                                <th class="col-xs-1">Transplant Date</th>
+                                <th class="col-xs-1">Qty</th>
                                 <th class="col-xs-3">Location</th>
-                                <th class="col-xs-1"> </th>
+                                <th class="col-xs-1"><button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var plant in FilteredPlants)
                             {
-                                <tr style="border-bottom: 5px solid purple;">
-                                    <td class="col-xs-5" style="border-left: 5px solid purple;">
-                                        <a href="javascript: void(0)" @onclick="@(() => onViewPlant(plant))">@plant.PlantId - @plant.PlantVarietyId</a>
+                                <tr style="border-bottom: 5px solid @GetColor(plant);">
+                                    <td class="col-xs-5" style="border-left: 5px solid @GetColor(plant);">
+                                        <a @onclick="@(() => onViewPlant(plant))">@GetPlantName(plant)</a>
                                     </td>
                                     <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
                                     <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>
-                                    <td class="col-xs-1">@plant.NumberOfTransplants</td>
+                                    <td class="col-xs-1">@plant.DesiredNumberOfPlants</td>
                                     <td class="col-xs-4">@plant.GardenBedId</td>
                                     <td class="col-xs-1">
 
-                                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => onAddPlantHarvestImage(plant))">
+                                        <button type="button" class="btn btn-secondary" title="Edit" @onclick="@(() => EditPlantHarvest(plant))">
+                                            <span class="bi bi-pencil">&nbsp;</span>
+                                        </button>
+                                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddPlantHarvestImage(plant))">
                                             <span class="bi bi-card-image">&nbsp;</span>
                                         </button>
-                                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => onViewPlantHarvestImage(plant))">
+                                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewPlantHarvestImage(plant))">
                                             <span class="bi bi-images" aria-hidden="true">&nbsp;</span>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary" title="edit category" @onclick="@(() => EditPlantHarvest(plant))">
-                                            <span class="bi bi-pencil">&nbsp;</span>
                                         </button>
                                     </td>
                                 </tr>
                             }
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" />
+                                <td><button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
         }
-
-
-        <div class="float-right">
-            <button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@(() => Close())">Close</button>
-        </div>
     }
 </div>
 
 @code {
-    private HarvestCycleModel _harvest;
-    private IList<PlantHarvestCycleModel> _plants;
+    private HarvestCycleModel? _harvest;
+    private IList<PlantHarvestCycleModel>? _harvestPlants;
 
+    private ModalView? _imageFormModal;
+    private ImageForm? _imageForm;
+
+    private ModalView? _imageListModal;
+    private ImageList? _imageList;
+
+    private List<PlantModel> _plants = new List<PlantModel>();
+
+    private bool _collapseNavMenu = true;
+    private string _filterCssClass = "d-none d-md-block";
+    private string _filterTtile = "Show Filters";
 
     protected PlantModel PlantInView { get; set; }
     protected string PlantHarvestImageInViewColor { get; set; } = "";
     protected PlantHarvestFilter Filter { get; set; }
     protected string FilterDescription { get; set; }
-    protected IList<PlantModel> _filter_plants { get; set; } = new List<PlantModel>();
     protected IList<PlantHarvestCycleModel> FilteredPlants { get; set; } = new List<PlantHarvestCycleModel>();
-    private bool collapseNavMenu = true;
 
-    string filterCssClass = "d-none d-md-block";
-    string filterTtile = "Show Filters";
 
-    void ToggleFilter()
+    private void ToggleFilter()
     {
-        collapseNavMenu = !collapseNavMenu;
-        filterCssClass = collapseNavMenu ? "d-none d-md-block" : ".d-block";
-        filterTtile = collapseNavMenu ? "Show Filters" : "Hide Filters";
+        _collapseNavMenu = !_collapseNavMenu;
+        _filterCssClass = _collapseNavMenu ? "d-none d-md-block" : ".d-block";
+        _filterTtile = _collapseNavMenu ? "Show Filters" : "Hide Filters";
         StateHasChanged();
     }
 
-    protected void onAddPlantHarvestImage(PlantHarvestCycleModel plant)
+    private async Task AddPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
-        //PlantHarvestImageInEdit = new EntityImage()
-        //    {
-        //        RelatedEntity = "PlantHarvestCycle",
-        //        RelatedEntityId = plant.Id,
-        //        RelatedEntityName = plant.PlantName
-        //    };
-        //PlantHarvestImageInViewColor = plant.CategoryColor;
+        _imageForm.Initialize(ImageEntityEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
+        await _imageFormModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
+        StateHasChanged();
+    }
+    
+    private async Task ViewPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
+    {
+        _imageList.Initialize(ImageEntityEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
+        await _imageListModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
+
         StateHasChanged();
     }
 
-    protected void onViewPlantHarvestImage(PlantHarvestCycleModel plant)
+    protected string GetDateValue(DateTime? dateValue)
     {
-        //PlantHarvestImageInView = new EntityImage()
-        //    {
-        //        RelatedEntity = "PlantHarvestCycle",
-        //        RelatedEntityId = plant.Id,
-        //        RelatedEntityName = plant.PlantName
-        //    };
-        //PlantHarvestImageInViewColor = plant.CategoryColor;
-        StateHasChanged();
+        return dateValue.HasValue ? dateValue.Value.ToShortDateString() : "";
     }
 
-    protected async Task onViewPlant(PlantHarvestCycleModel plant)
+    private string GetPlantName(PlantHarvestCycleModel plant)
     {
-        PlantInView = await _plantService.GetPlant(plant.PlantId, true);
-        PlantHarvestImageInViewColor = PlantInView.Color;
-        StateHasChanged();
+        return string.IsNullOrWhiteSpace(plant.PlantVarietyName) ? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}";
     }
 
-    public bool onCloseImageViewModal()
+    private string GetColor(PlantHarvestCycleModel harvestPlant)
     {
-
-        //PlantHarvestImageInView = null;
-        StateHasChanged();
-        return true;
+        var plant = _plants.FirstOrDefault(p => p.PlantId == harvestPlant.PlantId);
+        return plant == null ? "black" : plant.Color;
     }
-
-    public async Task<bool> onCloseImageAddModal()
-    {
-        // PlantHarvestImageInEdit = null;
-        StateHasChanged();
-        return true;
-    }
-
-    public bool onClosePlantModal()
-    {
-        PlantInView = null;
-        StateHasChanged();
-        return true;
-    }
-
 
     public async void Initialize(HarvestCycleModel harvest)
     {
 
-        _plants = (await _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false));
-        _filter_plants = await _plantService.GetPlants(false);
+        _harvestPlants = (await _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false));
+        _plants = await _plantService.GetPlants(false);
 
-        FilteredPlants = _plants;
+        FilteredPlants = _harvestPlants;
         Filter = new PlantHarvestFilter();
 
         Filter.ModelChanged += FilterChanged;
@@ -202,39 +198,91 @@
         StateHasChanged();
     }
 
+    private async Task CloseImageFormModal()
+    {
+        await _imageFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseImageFormModal(ImageViewModel image)
+    {
+        await _imageFormModal?.CloseModal();
+
+        if (image != null)
+        {
+            var harvestPlant = _harvestPlants.FirstOrDefault(p => p.PlantHarvestCycleId == image.RelatedEntityId);
+
+            //only add image if there is already a list of them
+            if (harvestPlant != null && harvestPlant.Images?.Count > 0)
+            {
+                harvestPlant.Images.Add(image);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task CloseImageListModal()
+    {
+        await _imageListModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private void EditPlantHarvest(PlantHarvestCycleModel plant)
+    {
+        _navigationManager.NavigateToGardenPlanEditPlant(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+    }
+
+    private void AddPlantToHarvest()
+    {
+        _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
+    }
+
+    #region Incomplete work
+
+
+
+   
+
+    protected async Task onViewPlant(PlantHarvestCycleModel plant)
+    {
+        PlantInView = await _plantService.GetPlant(plant.PlantId, true);
+        PlantHarvestImageInViewColor = PlantInView.Color;
+        StateHasChanged();
+    }
+
+
+
+
+
+    public bool onClosePlantModal()
+    {
+        //PlantInView = null;
+        //StateHasChanged();
+        return true;
+    }
+
+
 
     public void Close()
     {
         //_uriHelper.NavigateTo($"/harvests");
     }
 
-    public void EditPlantHarvest(PlantHarvestCycleModel plant)
-    {
-        _navigationManager.NavigateToGardenPlanEditPlant(plant.HarvestCycleId, plant.PlantHarvestCycleId);
-    }
-
-    public void AddPlantToHarvest()
-    {
-        _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
-    }
 
 
-    protected string GetDateValue(DateTime? dateValue)
-    {
-        return dateValue.HasValue ? dateValue.Value.ToShortDateString() : "";
-    }
+
 
     protected void FilterChanged(object sender, EventArgs e)
     {
         Console.WriteLine("Inside FilterChanged");
         StringBuilder description = new StringBuilder();
 
-        IList<PlantHarvestCycleModel> plants = _plants;
+        IList<PlantHarvestCycleModel> plants = _harvestPlants;
 
         if (!string.IsNullOrEmpty(Filter.PlantId))
         {
             description.Append(" (");
-            description.Append(_filter_plants.FirstOrDefault(cat => cat.PlantId == Filter.PlantId)?.Name);
+            description.Append(_plants.FirstOrDefault(cat => cat.PlantId == Filter.PlantId)?.Name);
             plants = plants.Where(p => p.PlantId == Filter.PlantId).ToList();
         }
 
@@ -264,7 +312,8 @@
     {
         Filter.ModelChanged -= FilterChanged;
     }
+    #endregion
 }
 
-   
+
 

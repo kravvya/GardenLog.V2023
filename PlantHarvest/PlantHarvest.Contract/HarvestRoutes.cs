@@ -18,6 +18,7 @@ public static class HarvestRoutes
 
     public const string GetAllPlanHarvestCycles = PlantHarvestBase + "/PlanHarvestCycles";
     public const string GetPlanHarvestCycles = PlantHarvestBase + "/{harvestId}/PlanHarvestCycles";
+    public const string GetPlantHarvestCyclesByPlant = PlantHarvestBase + "/PlanHarvestCycles/Plants/{plantId}/";
     public const string GetPlanHarvestCycle = PlantHarvestBase + "/{harvestId}/PlanHarvestCycles/{id}";
     public const string CreatePlanHarvestCycle = PlantHarvestBase + "/{harvestId}/PlanHarvestCycles";
     public const string UpdatePlanHarvestCycle = PlantHarvestBase + "/{harvestId}/PlanHarvestCycles/{id}";

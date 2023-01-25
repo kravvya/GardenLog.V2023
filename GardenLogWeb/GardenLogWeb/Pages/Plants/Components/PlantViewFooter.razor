@@ -7,12 +7,19 @@
             <ImageForm OnClose=@CloseImageFormModal @ref=ImageForm />
         </Body>
     </ModalView>
+    <ModalView OnCloseModal="@CloseImageListModal" @ref="_imageListModal">
+        <Body>
+            <ImageList OnClose=@CloseImageListModal @ref=_imageList />
+        </Body>
+    </ModalView>
+
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
         <button type="button" class="btn btn-primary" title="Edit Plant" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
         <button type="button" class="btn btn-secondary" title="Add Variety" @onclick="@(() => OnAddVariety())"><span class="bi bi-flower1">&nbsp;</span></button>
         <button type="button" class="btn btn-secondary" title="Add Growing Instruction" @onclick="@(() => OnAddGrowInstruction())"><span class="bi bi-card-checklist">&nbsp;</span></button>
         <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => onViewGallery())">&nbsp;<span class="bi bi-images" aria-hidden="true"></span></button>
         <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => Close())"><span class="bi bi-x-circle">&nbsp;</span></button>
     </div>
 
@@ -27,6 +34,9 @@
     private ModalView ImageFormModal { get; set; }
     private ImageForm ImageForm { get; set; }
 
+    private ModalView? _imageListModal;
+    private ImageList? _imageList;
+
     private async Task OnAddPlantImage()
     {
         ImageForm.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
@@ -34,6 +44,13 @@
         StateHasChanged();
     }
 
+    private async Task onViewGallery()
+    {
+        _imageList.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
+        await _imageListModal?.OpenModal(Plant.Name, Plant.Color);
+
+        StateHasChanged();
+    }
 
     private void OnAddVariety()
     {
@@ -73,5 +90,10 @@
         StateHasChanged();
     }
 
+    private async Task CloseImageListModal()
+    {
+        await _imageListModal?.CloseModal();
+        StateHasChanged();
+    }
 
 }

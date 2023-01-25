@@ -11,6 +11,7 @@ public interface IHarvestCycleService
     Task<ApiResponse> UpdateHarvest(HarvestCycleModel harvest);
     Task<ApiResponse> DeleteHarvest(string id);
     Task<List<PlantHarvestCycleModel>> GetPlantHarvests(string harvestCycleId, bool forceRefresh);
+    Task<List<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestsByPLantId(string plantId);
     Task<ApiObjectResponse<string>> CreatePlantHarvest(PlantHarvestCycleModel plant);
     Task<ApiResponse> UpdatePlantHarvest(PlantHarvestCycleModel plant);
     Task<ApiResponse> DeletePlantHarvest(string harvestId, string id);
@@ -195,7 +196,7 @@ public class HarvestCycleService : IHarvestCycleService
 
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-            var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleModel>>(HarvestRoutes.GetPlanHarvestCycles.Replace("{harvestId}", harvestCycleId));
+            var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleModel>>(HarvestRoutes.GetPlantHarvestCycles.Replace("{harvestId}", harvestCycleId));
 
             if (!response.IsSuccess)
             {
@@ -219,6 +220,25 @@ public class HarvestCycleService : IHarvestCycleService
         return plants;
     }
 
+    public async Task<List<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestsByPLantId(string plantId)
+    {
+        List<PlantHarvestCycleIdentityOnlyViewModel> plants;
+       
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+
+            var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleIdentityOnlyViewModel>>(HarvestRoutes.GetPlantHarvestCyclesByPlant.Replace("{plantId}", plantId));
+
+            if (!response.IsSuccess)
+            {
+                _toastService.ShowToast("Unable to get Garden Plan examples for this plant ", GardenLogToastLevel.Error);
+                return new List<PlantHarvestCycleIdentityOnlyViewModel>();
+            }
+
+            plants = response.Response;          
+
+        return plants;
+    }
+
     public async Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh)
     {
         PlantHarvestCycleModel plantHarvest;
@@ -232,7 +252,7 @@ public class HarvestCycleService : IHarvestCycleService
 
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-            var response = await httpClient.ApiGetAsync<PlantHarvestCycleModel>(HarvestRoutes.GetPlanHarvestCycle.Replace("{harvestId}", harvestCycleId).Replace("{id}", plantHarvestCycleId));
+            var response = await httpClient.ApiGetAsync<PlantHarvestCycleModel>(HarvestRoutes.GetPlantHarvestCycle.Replace("{harvestId}", harvestCycleId).Replace("{id}", plantHarvestCycleId));
 
             if (!response.IsSuccess)
             {
@@ -286,7 +306,7 @@ public class HarvestCycleService : IHarvestCycleService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiPutAsync(HarvestRoutes.UpdatePlanHarvestCycle.Replace("{harvestId}", plant.HarvestCycleId).Replace("{id}", plant.PlantHarvestCycleId), plant);
+        var response = await httpClient.ApiPutAsync(HarvestRoutes.UpdatePlantHarvestCycle.Replace("{harvestId}", plant.HarvestCycleId).Replace("{id}", plant.PlantHarvestCycleId), plant);
 
         if (response.ValidationProblems != null)
         {
@@ -329,9 +349,6 @@ public class HarvestCycleService : IHarvestCycleService
         return response;
     }
     #endregion
-
-
-
 
     #region Private Harvest Cycle Functions
     private async Task<List<HarvestCycleModel>> GetAllHarvests()
