@@ -67,6 +67,19 @@ h1[b-3g2l5ue8cg], h2[b-3g2l5ue8cg], h3[b-3g2l5ue8cg], h4[b-3g2l5ue8cg], h5[b-3g2
 .widget.product-shorting .form-check[b-3g2l5ue8cg] {
     margin-bottom: 4px;
 }
+/* /Pages/Images/Components/ImageList.razor.rz.scp.css */
+.plant-image[b-ya78yebwb8] {
+    max-width: 400px;
+}
+
+    .plant-image img[b-ya78yebwb8] {
+        width: 250px;
+    }
+
+.plant-image-thumbnail img[b-ya78yebwb8] {
+    width: 60px;
+    margin: 5px;
+}
 /* /Pages/Index.razor.rz.scp.css */
 
 
