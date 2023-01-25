@@ -19,7 +19,7 @@ public class PlantHarvestCycleValidator<T>:AbstractValidator<T>
     {
         RuleFor(command => command.HarvestCycleId).NotEmpty().Length(2, 50);
         RuleFor(command => command.PlantId).NotEmpty().Length(2, 50);
-        RuleFor(command => command.PlantVarietyId).NotEmpty().Length(2, 50);
+        //RuleFor(command => command.PlantVarietyId).NotEmpty().Length(2, 50);
         //RuleFor(command => command.GardenBedId).NotEmpty().Length(2, 50);
         RuleFor(command => command.Notes).NotNull().MaximumLength(1000);
     }

@@ -41,7 +41,7 @@ else
 {
     serviceUrl = "https://localhost:44304/";
     imageServiceUrl = "https://localhost:44391/";
-    harvestServiceUrl = "https://localhost:7275/";
+    harvestServiceUrl = "https://localhost:44336/";
 };
 
 builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));

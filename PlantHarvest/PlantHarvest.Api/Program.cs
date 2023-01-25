@@ -4,7 +4,7 @@ using GardenLog.SharedInfrastructure;
 using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel.Interfaces;
-
+using Microsoft.AspNetCore.Mvc;
 using PlantHarvest.Infrastructure.Data.Repositories;
 using Serilog;
 using Serilog.Enrichers.Span;
@@ -33,7 +33,13 @@ try
 
     builder.Services.AddAutoMapper(typeof(Program));
 
-    builder.Services.AddControllers().AddJsonOptions(options =>
+    builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options => 
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            return new BadRequestObjectResult(context.ModelState);
+        }
+    ).AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });

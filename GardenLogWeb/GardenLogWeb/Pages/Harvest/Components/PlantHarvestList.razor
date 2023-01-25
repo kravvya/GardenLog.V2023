@@ -78,7 +78,7 @@
                                         <a href="javascript: void(0)" @onclick="@(() => onViewPlant(plant))">@plant.PlantId - @plant.PlantVarietyId</a>
                                     </td>
                                     <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
-                                    <td class="col-xs-1">@GetDateValue(plant.TransplantDateTime)</td>
+                                    <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>
                                     <td class="col-xs-1">@plant.NumberOfTransplants</td>
                                     <td class="col-xs-4">@plant.GardenBedId</td>
                                     <td class="col-xs-1">
@@ -241,13 +241,13 @@
         if (Filter.IsStartIndoors)
         {
             description.Append(description.Length == 0 ? " (Start indoors" : " and start indoors");
-            plants = plants.Where(p => !p.IsDirectSeed).ToList();
+            //plants = plants.Where(p => !p.IsDirectSeed).ToList();
         }
 
         if (Filter.IsDirectSow)
         {
             description.Append(description.Length == 0 ? " (Direct sow" : " and direct sow");
-            plants = plants.Where(p => p.IsDirectSeed).ToList();
+            //plants = plants.Where(p => p.IsDirectSeed).ToList();
         }
 
         if (description.Length > 0)

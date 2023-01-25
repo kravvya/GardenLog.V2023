@@ -6,22 +6,28 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 {
     public string UserProfileId { get; private set; }
     public string PlantId { get; private set; }
-    public string? PlantVarietyId { get; private set; }
-    public string? PlantGrowthInstructionId { get; private set; }
-    public string? GardenBedId { get; private set; }
+    public string PlantName { get; private set; }
 
-    public bool IsDirectSeed { get; private set; }
+    public string? PlantVarietyId { get; private set; }
+    public string? PlantVarietyName { get; private set; }
+
+    public string? PlantGrowthInstructionId { get; private set; }
+    public string? PlantGrowthInstructionName { get; private set; }
+
+    public string? GardenBedId { get; private set; }
+    public string? GardenBedName { get; private set; }
+
     public int? NumberOfSeeds { get; private set; }
     public string? SeedCompanyId { get; private set; }
     public string? SeedCompanyName { get; private set; }
 
-    public DateTime? SeedingDateTime { get; private set; }
-    
-    public DateTime? GerminationDateTime { get; private set; }
+    public DateTime? SeedingDate { get; private set; }
+
+    public DateTime? GerminationDate { get; private set; }
     public decimal? GerminationRate { get; private set; }
 
     public int? NumberOfTransplants { get; private set; }
-    public DateTime? TransplantDateTime { get; private set; }
+    public DateTime? TransplantDate { get; private set; }
 
     public DateTime? FirstHarvestDate { get; private set; }
     public DateTime? LastHarvestDate { get; private set; }
@@ -30,6 +36,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     public int? TotalItems { get; private set; }
 
     public string Notes { get; private set; }
+    public int? DesiredNumberOfPlants { get; private set; }
 
 
     private PlantHarvestCycle()
@@ -44,23 +51,27 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             Id = Guid.NewGuid().ToString(),
             UserProfileId = userProfileId,
             PlantId = plant.PlantId,
+            PlantName= plant.PlantName,
             PlantVarietyId = plant.PlantVarietyId,
-            PlantGrowthInstructionId= plant.PlantGrowthInstructionId,
+            PlantVarietyName= plant.PlantVarietyName,
+            PlantGrowthInstructionId = plant.PlantGrowthInstructionId,
+            PlantGrowthInstructionName= plant.PlantGrowthInstructionName,
             GardenBedId = plant.GardenBedId,
-            IsDirectSeed = plant.IsDirectSeed,
+            GardenBedName = plant.GardenBedName,
             NumberOfSeeds = plant.NumberOfSeeds,
-            SeedCompanyId= plant.SeedCompanyId,
-            SeedCompanyName= plant.SeedCompanyName,
-            SeedingDateTime = plant.SeedingDateTime,
-            GerminationDateTime = plant.GerminationDateTime,
+            SeedCompanyId = plant.SeedVendorId,
+            SeedCompanyName = plant.SeedVendorName,
+            SeedingDate = plant.SeedingDateTime,
+            GerminationDate = plant.GerminationDate,
             GerminationRate = plant.GerminationRate,
             NumberOfTransplants = plant.NumberOfTransplants,
-            TransplantDateTime = plant.TransplantDateTime,
+            TransplantDate = plant.TransplantDate,
             FirstHarvestDate = plant.FirstHarvestDate,
             LastHarvestDate = plant.LastHarvestDate,
             TotalWeightInPounds = plant.TotalWeightInPounds,
             TotalItems = plant.TotalItems,
-            Notes = plant.Notes
+            Notes = plant.Notes,
+            DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
         };
 
     }
@@ -68,21 +79,24 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 
     public void Update(UpdatePlantHarvestCycleCommand command, Action<HarvestEventTriggerEnum, TriggerEntity> addHarvestEvent)
     {
+        this.Set<string?>(() => this.PlantVarietyId, command.PlantVarietyId);
+        this.Set<string?>(() => this.PlantVarietyName, command.PlantVarietyName);
         this.Set<string?>(() => this.GardenBedId, command.GardenBedId);
-        this.Set<bool>(() => this.IsDirectSeed, command.IsDirectSeed);
+        this.Set<string?>(() => this.GardenBedName, command.GardenBedName);
         this.Set<int?>(() => this.NumberOfSeeds, command.NumberOfSeeds);
-        this.Set<string?>(() => this.SeedCompanyId, command.SeedCompanyId);
-        this.Set<string?>(() => this.SeedCompanyName, command.SeedCompanyName);
-        this.Set<DateTime?>(() => this.SeedingDateTime, command.SeedingDateTime);
-        this.Set<DateTime?>(() => this.GerminationDateTime, command.GerminationDateTime);
+        this.Set<string?>(() => this.SeedCompanyId, command.SeedVendorId);
+        this.Set<string?>(() => this.SeedCompanyName, command.SeedVendorName);
+        this.Set<DateTime?>(() => this.SeedingDate, command.SeedingDateTime);
+        this.Set<DateTime?>(() => this.GerminationDate, command.GerminationDate);
         this.Set<decimal?>(() => this.GerminationRate, command.GerminationRate);
         this.Set<int?>(() => this.NumberOfTransplants, command.NumberOfTransplants);
-        this.Set<DateTime?>(() => this.TransplantDateTime, command.TransplantDateTime);
+        this.Set<DateTime?>(() => this.TransplantDate, command.TransplantDate);
         this.Set<DateTime?>(() => this.FirstHarvestDate, command.FirstHarvestDate);
         this.Set<DateTime?>(() => this.LastHarvestDate, command.LastHarvestDate);
         this.Set<decimal?>(() => this.TotalWeightInPounds, command.TotalWeightInPounds);
         this.Set<int?>(() => this.TotalItems, command.TotalItems);
         this.Set<string>(() => this.Notes, command.Notes);
+        this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

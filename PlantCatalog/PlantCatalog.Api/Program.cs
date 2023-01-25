@@ -5,6 +5,7 @@ using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using PlantCatalog.Contract.Validators;
 using PlantCatalog.Domain.PlantAggregate;
 using PlantCatalog.Infrustructure.Data;
@@ -39,10 +40,16 @@ try
 
     builder.Services.AddAutoMapper(typeof(Program));
 
-    builder.Services.AddControllers().AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+    builder.Services.AddControllers()
+     .ConfigureApiBehaviorOptions(options =>
+         options.InvalidModelStateResponseFactory = context =>
+         {
+             return new BadRequestObjectResult(context.ModelState);
+         }
+     ).AddJsonOptions(options =>
+     {
+         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+     });
 
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

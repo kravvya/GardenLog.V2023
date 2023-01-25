@@ -1,7 +1,6 @@
 ﻿global using GardenLogWeb.Models;
 global using GardenLogWeb.Models.Harvest;
 global using GardenLogWeb.Models.Plants;
-global using GardenLogWeb.Models.PlantVariety;
 global using GardenLogWeb.Services;
 global using GardenLogWeb.Shared;
 global using GardenLogWeb.Shared.Extensions;

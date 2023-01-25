@@ -1,6 +1,6 @@
 ﻿namespace UserManagement.Contract.Base;
 
-public record GardenBedBase
+public abstract record GardenBedBase
 {
     public string Name { get; set; } = string.Empty;
     public string Notes { get; set; }= string.Empty;

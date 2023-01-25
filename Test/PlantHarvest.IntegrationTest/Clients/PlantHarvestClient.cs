@@ -181,13 +181,15 @@ namespace PlantHarvest.IntegrationTest.Clients
             {
                 HarvestCycleId= harvestId,
                 PlantId= plantId,
+                PlantName = "Test Plant",
                 PlantVarietyId= plantVarietyId,
-                SeedCompanyName= null,
-                SeedCompanyId= null,
+                PlantVarietyName="Test Variety",
+                SeedVendorName= null,
+                SeedVendorId= null,
                 PlantGrowthInstructionId = "Fake Growth Instruction",
-                Notes="Created by Integration test",
-                SeedingDateTime=DateTime.Now,
-                IsDirectSeed=false
+                PlantGrowthInstructionName = "Test Growth Instruction",
+                Notes ="Created by Integration test",
+                SeedingDateTime=DateTime.Now
             };
         }
         #endregion

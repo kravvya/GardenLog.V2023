@@ -47,7 +47,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         if (!string.IsNullOrEmpty(existingHarvestId))
         {
-            throw new ArgumentException("Harvest with this name already exists", nameof(request.HarvestCycleName));
+            throw new ArgumentException("Garden Plan with this name already exists", nameof(request.HarvestCycleName));
         }
 
         var harvest = HarvestCycle.Create(
@@ -74,7 +74,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         var existingHarvestId = await _harvestCycleRepository.GetIdByNameAsync(request.HarvestCycleName, userProfileId);
         if (!string.IsNullOrEmpty(existingHarvestId) && existingHarvestId != request.HarvestCycleId)
         {
-            throw new ArgumentException("Another harvest with this name already exists", nameof(request.HarvestCycleName));
+            throw new ArgumentException("Another garden plan with this name already exists", nameof(request.HarvestCycleName));
         }
 
         var harvest = await _harvestCycleRepository.GetByIdAsync(request.HarvestCycleId);
@@ -113,7 +113,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
             if (harvest.Plants.Any(g => g.PlantId == command.PlantId && (g.PlantVarietyId == command.PlantVarietyId)))
             {
-                throw new ArgumentException("Plant Harvest Cycle for this plant already exists", nameof(command.PlantVarietyId));
+                throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
             }
 
             var plantId = harvest.AddPlantHarvestCycle(command, userProfileId);
@@ -139,7 +139,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         if (harvest.Plants.Any(g => g.PlantId == command.PlantId && g.PlantVarietyId == command.PlantVarietyId && g.Id != command.PlantHarvestCycleId))
         {
-            throw new ArgumentException("Plant Harvest Cyle for this plant already exists", nameof(command.PlantVarietyId));
+            throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
         }
 
         harvest.UpdatePlantHarvestCycle(command);

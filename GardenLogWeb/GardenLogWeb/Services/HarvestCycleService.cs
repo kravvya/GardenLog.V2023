@@ -14,6 +14,7 @@ public interface IHarvestCycleService
     Task<ApiObjectResponse<string>> CreatePlantHarvest(PlantHarvestCycleModel plant);
     Task<ApiResponse> UpdatePlantHarvest(PlantHarvestCycleModel plant);
     Task<ApiResponse> DeletePlantHarvest(string harvestId, string id);
+    Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh);
 }
 
 public class HarvestCycleService : IHarvestCycleService
@@ -216,6 +217,43 @@ public class HarvestCycleService : IHarvestCycleService
         }
 
         return plants;
+    }
+
+    public async Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh)
+    {
+        PlantHarvestCycleModel plantHarvest;
+        List<PlantHarvestCycleModel> plantHarvests= null;
+
+        string key = string.Format(PLANT_HARVESTS_KEY, harvestCycleId);
+
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out plantHarvests))
+        {
+            System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} not in cache or forceRefresh");
+
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+
+            var response = await httpClient.ApiGetAsync<PlantHarvestCycleModel>(HarvestRoutes.GetPlanHarvestCycle.Replace("{harvestId}", harvestCycleId).Replace("{id}", plantHarvestCycleId));
+
+            if (!response.IsSuccess)
+            {
+                _toastService.ShowToast("Unable to get Garden Plan deatils ", GardenLogToastLevel.Error);
+                return null;
+            }
+
+            plantHarvest = response.Response;
+
+            if (plantHarvest != null)
+            {
+                AddOrUpdateToPlantHarvestCycleList(plantHarvest);
+            }
+        }
+        else
+        {
+            System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} are in cache. Found {plantHarvests.Count()}");
+            plantHarvest = plantHarvests.First(p => p.PlantHarvestCycleId == plantHarvestCycleId);
+        }
+
+        return plantHarvest;
     }
 
     public async Task<ApiObjectResponse<string>> CreatePlantHarvest(PlantHarvestCycleModel plant)
