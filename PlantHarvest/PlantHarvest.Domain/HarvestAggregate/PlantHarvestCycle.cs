@@ -1,4 +1,5 @@
 ﻿using PlantHarvest.Contract.Commands;
+using PlantHarvest.Contract.Enum;
 
 namespace PlantHarvest.Domain.HarvestAggregate;
 
@@ -13,6 +14,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 
     public string? PlantGrowthInstructionId { get; private set; }
     public string? PlantGrowthInstructionName { get; private set; }
+    public PlantingMethodEnum PlantingMethod { get; private set; }
 
     public string? GardenBedId { get; private set; }
     public string? GardenBedName { get; private set; }
@@ -72,6 +74,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             TotalItems = plant.TotalItems,
             Notes = plant.Notes,
             DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
+            PlantingMethod= plant.PlantingMethod,
         };
 
     }
@@ -97,6 +100,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.TotalItems, command.TotalItems);
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
+        this.Set<PlantingMethodEnum>(()=>this.PlantingMethod, command.PlantingMethod);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

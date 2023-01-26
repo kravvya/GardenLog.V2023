@@ -3,7 +3,9 @@ using GardenLog.SharedKernel;
 using GardenLog.SharedKernel.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using PlantHarvest.Contract.Enum;
 using System.Reflection;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
@@ -254,7 +256,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
         {
             g.AutoMap();
             g.SetIgnoreExtraElements(true);
-
+            g.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
         });
 
 
@@ -272,7 +274,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-
+            p.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
         });
 
         BsonClassMap.RegisterClassMap<PlantHarvestCycleViewModelProjection>(p =>

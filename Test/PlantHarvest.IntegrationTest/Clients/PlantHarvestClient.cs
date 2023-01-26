@@ -195,6 +195,7 @@ namespace PlantHarvest.IntegrationTest.Clients
                 SeedVendorId= null,
                 PlantGrowthInstructionId = "Fake Growth Instruction",
                 PlantGrowthInstructionName = "Test Growth Instruction",
+                PlantingMethod=Contract.Enum.PlantingMethodEnum.SeedIndoors,
                 Notes ="Created by Integration test",
                 SeedingDateTime=DateTime.Now
             };

@@ -67,6 +67,12 @@
                                         Direct Sow
                                     </label>
                                 </div>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" value="@Filter.IsTransplant" @onchange="@(e => Filter.SetValue("", e.Value))" />
+                                        Transplant
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,25 +284,31 @@
         Console.WriteLine("Inside FilterChanged");
         StringBuilder description = new StringBuilder();
 
-        IList<PlantHarvestCycleModel> plants = _harvestPlants;
+        IList<PlantHarvestCycleModel> harvestPlants = _harvestPlants;
 
         if (!string.IsNullOrEmpty(Filter.PlantId))
         {
             description.Append(" (");
             description.Append(_plants.FirstOrDefault(cat => cat.PlantId == Filter.PlantId)?.Name);
-            plants = plants.Where(p => p.PlantId == Filter.PlantId).ToList();
+            harvestPlants = harvestPlants.Where(p => p.PlantId == Filter.PlantId).ToList();
         }
 
         if (Filter.IsStartIndoors)
         {
             description.Append(description.Length == 0 ? " (Start indoors" : " and start indoors");
-            //plants = plants.Where(p => !p.IsDirectSeed).ToList();
+            harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.SeedIndoors).ToList();
         }
 
         if (Filter.IsDirectSow)
         {
             description.Append(description.Length == 0 ? " (Direct sow" : " and direct sow");
-            //plants = plants.Where(p => p.IsDirectSeed).ToList();
+            harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.DirectSeed).ToList();
+        }
+
+        if (Filter.IsTransplant)
+        {
+            description.Append(description.Length == 0 ? " (Transplant" : " and transplant");
+            harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.Transplanting).ToList();
         }
 
         if (description.Length > 0)
@@ -305,7 +317,7 @@
         }
 
         FilterDescription = description.ToString();
-        _filteredHarvestPLants = plants;
+        _filteredHarvestPLants = harvestPlants;
         base.StateHasChanged();
     }
 
