@@ -8,19 +8,19 @@ using Xunit.Abstractions;
 
 namespace PlantHarvest.IntegrationTest;
 
-public class WorkLogTests : IClassFixture<PlantHarvestServiceFixture>
+public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFixture>
 {
-    private readonly ITestOutputHelper _output;
-    private readonly WorkLogClient _workLogClient;
-    private readonly PlantHarvestClient _plantHarvestClient;
+    //private readonly ITestOutputHelper _output;
+    //private readonly WorkLogClient _workLogClient;
+    //private readonly PlantHarvestClient _plantHarvestClient;
 
-    public WorkLogTests(PlantHarvestServiceFixture fixture, ITestOutputHelper output)
-    {
-        _workLogClient = fixture.WorkLogClient;
-        _plantHarvestClient=fixture.PlantHarvestClient;
-        _output = output;
-        _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
-    }
+    //public WorkLogTests(PlantHarvestServiceFixture fixture, ITestOutputHelper output)
+    //{
+    //    _workLogClient = fixture.WorkLogClient;
+    //    _plantHarvestClient=fixture.PlantHarvestClient;
+    //    _output = output;
+    //    _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
+    //}
 
     #region Work Log
     [Fact]
@@ -57,7 +57,7 @@ public class WorkLogTests : IClassFixture<PlantHarvestServiceFixture>
     }
 
     [Fact]
-    public async Task Put_HarvestCycle_ShouldUpdateHarvestCycle()
+    public async Task Put_WorkLog_ShouldUpdateWorkLog()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
 
@@ -83,7 +83,7 @@ public class WorkLogTests : IClassFixture<PlantHarvestServiceFixture>
     }
 
     [Fact]
-    public async Task Delete_HarvestCycle_ShouldDelete()
+    public async Task Delete_HarvestCycleWorkLog_ShouldDelete()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
 

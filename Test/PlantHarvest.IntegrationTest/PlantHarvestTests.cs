@@ -8,10 +8,11 @@ using Xunit.Abstractions;
 
 namespace PlantHarvest.IntegrationTest;
 
-public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
+ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
 {
     private readonly ITestOutputHelper _output;
     private readonly PlantHarvestClient _plantHarvestClient;
+    private readonly WorkLogClient _workLogClient;
 
     public const string TEST_HARVEST_CYCLE_NAME = "Test Harvest Cycle";
     private const string TEST_PLANT_ID = "Fake-Plant-Id";
@@ -24,6 +25,7 @@ public class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixture>
     public PlantHarvestTests(PlantHarvestServiceFixture fixture, ITestOutputHelper output)
     {
         _plantHarvestClient = fixture.PlantHarvestClient;
+        _workLogClient=fixture.WorkLogClient;
         _output = output;
         _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
     }
