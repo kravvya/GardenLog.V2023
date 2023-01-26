@@ -4,3 +4,5 @@ global using PlantHarvest.Contract.Base;
 global using PlantHarvest.Contract.ViewModels;
 global using PlantHarvest.Domain.HarvestAggregate.Events;
 global using PlantHarvest.Domain.HarvestAggregate.Events.Meta;
+global using PlantHarvest.Contract.Enum;
+global using PlantHarvest.Domain.HarvestAggregate;

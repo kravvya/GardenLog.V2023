@@ -5,6 +5,7 @@ using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using PlantHarvest.Domain.WorkLogAggregate;
 using PlantHarvest.Infrastructure.Data.Repositories;
 using Serilog;
 using Serilog.Enrichers.Span;
@@ -52,10 +53,13 @@ try
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
     builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
+    builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();
 
     builder.Services.AddScoped<IHarvestCommandHandler, HarvestCommandHandler>();
     builder.Services.AddScoped<IHarvestQueryHandler, HarvestQueryHandler>();
 
+    builder.Services.AddScoped<IWorkLogCommandHandler, WorkLogCommandHandler>();
+    builder.Services.AddScoped<IWorkLogQueryHandler, WorkLogQueryHandler>();
 
     builder.Services.AddCors(options =>
     {

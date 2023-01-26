@@ -18,9 +18,11 @@ public class PlantHarvestServiceFixture : PlantHarvestApplicationFactory<Program
         var client = _factory.CreateClient();
 
         PlantHarvestClient = new PlantHarvestClient(client.BaseAddress, client);
+        WorkLogClient = new WorkLogClient(client.BaseAddress, client);
     }
 
     public PlantHarvestClient PlantHarvestClient { get; init; }
+    public WorkLogClient WorkLogClient { get; init; }
     public string FixtureId { get; init; }
 
     protected virtual void Dispose(bool disposing)

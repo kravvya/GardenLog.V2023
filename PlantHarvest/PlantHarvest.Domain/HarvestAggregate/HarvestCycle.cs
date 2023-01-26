@@ -38,7 +38,7 @@ namespace PlantHarvest.Domain.HarvestAggregate
             this.StartDate = startDate;
             this.EndDate = endDate;
             this.Notes = notes;
-            this.GardenId= gardenId;
+            this.GardenId = gardenId;
             this._plants = plants;
             this._plans = plans;
         }
@@ -59,7 +59,7 @@ namespace PlantHarvest.Domain.HarvestAggregate
                 StartDate = startDate,
                 EndDate = endDate,
                 Notes = notes,
-                GardenId=gardenId
+                GardenId = gardenId
             };
 
             harvest.DomainEvents.Add(
@@ -83,6 +83,9 @@ namespace PlantHarvest.Domain.HarvestAggregate
             this.Set<DateTime?>(() => this.EndDate, endDate);
             this.Set<string>(() => this.Notes, notes);
             this.Set<string>(() => this.GardenId, gardenId);
+
+            this.DomainEvents.Add(
+          new HarvestEvent(this, HarvestEventTriggerEnum.HarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.HarvestCyce, this.Id)));
         }
 
         #region Events

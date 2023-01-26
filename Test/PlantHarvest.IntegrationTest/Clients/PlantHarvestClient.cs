@@ -2,6 +2,7 @@
 using PlantCatalog.Contract;
 using PlantHarvest.Contract.Commands;
 using PlantHarvest.Contract.ViewModels;
+using Xunit.Abstractions;
 
 namespace PlantHarvest.IntegrationTest.Clients
 {
@@ -199,6 +200,31 @@ namespace PlantHarvest.IntegrationTest.Clients
                 Notes ="Created by Integration test",
                 SeedingDateTime=DateTime.Now
             };
+        }
+        #endregion
+
+        #region Shared Functions
+        public async Task<string> GetHarvestCycleIdToWorkWith(string harvestName)
+        {
+            var response = await this.GetHarvestCycleIdByHarvestCycleName(harvestName);
+            var harvestId = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK || string.IsNullOrEmpty(harvestId))
+            {
+                //_output.WriteLine($"GetHarvestCycleIdToWorkWith - Harvest Cycle is not found. Will create new one");
+                response = await this.CreateHarvestCycle(harvestName);
+
+                harvestId = await response.Content.ReadAsStringAsync();
+
+                //_output.WriteLine($"GetHarvestCycleIdToWorkWith - Service to create harvest cycle responded with {response.StatusCode} code and {harvestId} message");
+            }
+            else
+            {
+                //_output.WriteLine($"GetHarvestCycleIdToWorkWith - Harvest Cycle was found with service responded with {response.StatusCode} code and {harvestId} message");
+            }
+
+            //_output.WriteLine($"GetHarvestCycleIdToWorkWith - Found  {harvestId} harvest to work with.");
+            return harvestId;
         }
         #endregion
     }
