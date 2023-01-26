@@ -12,9 +12,6 @@ public interface IHarvestQueryHandler
 
     Task<PlantHarvestCycleViewModel> GetPlantHarvestCycle(string harvestCycleId, string id);
     Task<IReadOnlyCollection<PlantHarvestCycleViewModel>> GetPlantHarvestCycles(string harvestCycleId);
-
-    Task<PlanHarvestCycleViewModel> GetPlanHarvestCycle(string harvestCycleId, string id);
-    Task<IReadOnlyCollection<PlanHarvestCycleViewModel>> GetPlanHarvestCycles(string harvestCycleId);
     Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId);
 }
 
@@ -59,42 +56,6 @@ public class HarvestQueryHandler : IHarvestQueryHandler
         return harvestId;
     }
     #endregion
-
-    #region Plan Harvest Cycle
-
-    public async Task<PlanHarvestCycleViewModel> GetPlanHarvestCycle(string harvestCycleId, string id)
-    {
-        _logger.LogInformation($"Received request to get plan harvest cycle for {id}");
-
-        try
-        {
-            return await _harvestCycleRepository.GetPlanHarvestCycle(harvestCycleId, id);
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical($"Exception readding plan harvest cycle for {id}", ex);
-            throw;
-        }
-    }
-
-    public async Task<IReadOnlyCollection<PlanHarvestCycleViewModel>> GetPlanHarvestCycles(string harvestCycleId)
-    {
-        _logger.LogInformation($"Received request to get plan harvest cycles for {harvestCycleId}");
-
-        try
-        {
-            return await _harvestCycleRepository.GetPlanHarvestCycles(harvestCycleId);
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical($"Exception readding plan harvest cycles for {harvestCycleId}", ex);
-            throw;
-        }
-    }
-    #endregion
-
 
     #region Plan Harvest Cycle
 

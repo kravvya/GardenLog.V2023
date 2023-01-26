@@ -75,66 +75,7 @@ namespace PlantHarvest.IntegrationTest.Clients
             };
         }
         #endregion
-
-        #region Plan Harvest Cycle 
-
-        public async Task<HttpResponseMessage> CreatePlanHarvestCycle(string harvestId, string plantId)
-        {
-            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreatePlanHarvestCycle}";
-
-            var createPlanHarvestCycleCommand = PopulateCreatePlanHarvestCycleCommand(harvestId, plantId);
-
-            using var requestContent = createPlanHarvestCycleCommand.ToJsonStringContent();
-
-            var response =  await this._httpClient.PostAsync(url, requestContent);
-                        
-            return response;
-
-        }
-
-        public async Task<HttpResponseMessage> UpdatePlanHarvestCycle(PlanHarvestCycleViewModel plan)
-        {
-            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.UpdatePlanHarvestCycle}";
-
-            using var requestContent = plan.ToJsonStringContent();
-
-            return await this._httpClient.PutAsync(url.Replace("{harvestId}", plan.HarvestCycleId).Replace("{id}", plan.PlanHarvestCycleId), requestContent);
-        }
-
-        public async Task<HttpResponseMessage> DeletePlanHarvestCycle(string harvestId,string id)
-        {
-            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.DeletePlanHarvestCycle}";
-
-            return await this._httpClient.DeleteAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
-        }
-
-        public async Task<HttpResponseMessage> GetPlanHarvestCycles(string harvestId)
-        {
-            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlanHarvestCycles}";
-            return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId));
-        }
-
-        public async Task<HttpResponseMessage> GetPlanHarvestCycle(string harvestId, string id)
-        {
-            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetPlanHarvestCycle}";
-            return await this._httpClient.GetAsync(url.Replace("{harvestId}", harvestId).Replace("{id}", id));
-        }
-
-        private static CreatePlanHarvestCycleCommand PopulateCreatePlanHarvestCycleCommand (string harvestId, string plantId)
-        {
-            return new CreatePlanHarvestCycleCommand()
-            {
-                HarvestCycleId= harvestId,
-                PlantId=plantId,
-                NumberOfPlants=1,
-                PlantGrowthInstructionId="Fake Growth Instruction",
-                GardenBedId = null,
-                Notes = "Created using Integration test"
-            };
-        }
-
-        #endregion
-
+               
         #region Plant Harvest Cycle 
 
         public async Task<HttpResponseMessage> CreatePlantHarvestCycle(string harvestId, string plantId, string plantVarietyId)

@@ -13,10 +13,6 @@ public interface IHarvestCommandHandler
     Task<string> AddPlantHarvestCycle(CreatePlantHarvestCycleCommand request);
     Task<string> DeletePlantHarvestCycle(string harvestCyleId, string id);
     Task<string> UpdatePlantHarvestCycle(UpdatePlantHarvestCycleCommand request);
-
-    Task<string> AddPlanHarvestCycle(CreatePlanHarvestCycleCommand command);
-    Task<string> DeletePlanHarvestCycle(string harvestCyleId, string id);
-    Task<string> UpdatePlanHarvestCycle(UpdatePlanHarvestCycleCommand command);
     
 }
 
@@ -167,74 +163,5 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     }
 
     #endregion
-
-    #region Harvest Cycle Plan
-
-    public async Task<String> AddPlanHarvestCycle(CreatePlanHarvestCycleCommand command)
-    {
-        _logger.LogInformation("Received request to create plan harvest cycle {@planHarvestCycle}", command);
-        try
-        {
-            string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
-
-            var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
-
-            if (harvest.Plans.Any(g => g.PlantId == command.PlantId ))
-            {
-                throw new ArgumentException("Plan Harvest Cycle for this plant already exists", nameof(command.PlantId));
-            }
-
-            var planId = harvest.AddPlanHarvestCycle(command, userProfileId);
-
-            _harvestCycleRepository.AddPlanHarvestCycle(planId, harvest);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return planId;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical("Exception adding plant grow instruction", ex);
-            throw;
-        }
-
-    }
-
-    public async Task<String> UpdatePlanHarvestCycle(UpdatePlanHarvestCycleCommand command)
-    {
-        _logger.LogInformation("Received request to create plan harvest cycle {@planHarvestCycle}", command);
-        var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
-
-        if (harvest.Plans.Any(g => g.PlantId == command.PlantId && g.Id != command.PlanHarvestCycleId))
-        {
-            throw new ArgumentException("Plan Harvest Cyle for this plant already exists", nameof(command.PlantId));
-        }
-
-        harvest.UpdatePlanHarvestCycle(command);
-
-        _harvestCycleRepository.UpdatePlanHarvestCycle(command.PlanHarvestCycleId, harvest);
-
-        await _unitOfWork.SaveChangesAsync();
-
-        return command.PlanHarvestCycleId;
-    }
-
-    public async Task<String> DeletePlanHarvestCycle(string harvestCycleId, string id)
-    {
-        _logger.LogInformation($"Received request to delete plan harvest cycle  {harvestCycleId} and {id}");
-
-        var harvest = await _harvestCycleRepository.GetByIdAsync(harvestCycleId);
-
-        harvest.DeletePlanHarvestCycle(id);
-
-        _harvestCycleRepository.DeletePlanHarvestCycle(id, harvest);
-
-        await _unitOfWork.SaveChangesAsync();
-
-        return id;
-    }
-
-    #endregion
-   
 }
 

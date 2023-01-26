@@ -14,9 +14,6 @@ namespace PlantHarvest.Domain.HarvestAggregate
         private readonly List<PlantHarvestCycle> _plants = new();
         public IReadOnlyCollection<PlantHarvestCycle> Plants => _plants.AsReadOnly();
 
-        private readonly List<PlanHarvestCycle> _plans = new();
-        public IReadOnlyCollection<PlanHarvestCycle> Plans => _plans.AsReadOnly();
-
         private HarvestCycle()
         {
 
@@ -29,8 +26,7 @@ namespace PlantHarvest.Domain.HarvestAggregate
             string notes,
             string userProfileId,
             string gardenId,
-            List<PlantHarvestCycle> plants,
-            List<PlanHarvestCycle> plans
+            List<PlantHarvestCycle> plants
            )
         {
             this.UserProfileId = userProfileId;
@@ -40,7 +36,6 @@ namespace PlantHarvest.Domain.HarvestAggregate
             this.Notes = notes;
             this.GardenId = gardenId;
             this._plants = plants;
-            this._plans = plans;
         }
 
         public static HarvestCycle Create(
@@ -126,32 +121,6 @@ namespace PlantHarvest.Domain.HarvestAggregate
         public void DeletePlantHarvestCycle(string id)
         {
             AddChildDomainEvent(HarvestEventTriggerEnum.PlantHarvestCycleDeleted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, id));
-
-        }
-        #endregion
-
-        #region Plans
-        public string AddPlanHarvestCycle(CreatePlanHarvestCycleCommand command, string userProfileId)
-        {
-            command.HarvestCycleId = this.Id;
-            var plan = PlanHarvestCycle.Create(command, userProfileId);
-
-            this._plans.Add(plan);
-
-            this.DomainEvents.Add(
-             new HarvestEvent(this, HarvestEventTriggerEnum.PlanAddedToHarvestCycle, new TriggerEntity(EntityTypeEnum.PlanHarvestCycle, plan.Id)));
-
-            return plan.Id;
-        }
-
-        public void UpdatePlanHarvestCycle(UpdatePlanHarvestCycleCommand command)
-        {
-            this.Plans.First(i => i.Id == command.PlanHarvestCycleId).Update(command, AddChildDomainEvent);
-        }
-
-        public void DeletePlanHarvestCycle(string id)
-        {
-            AddChildDomainEvent(HarvestEventTriggerEnum.PlanHarvestCycleDeleted, new TriggerEntity(EntityTypeEnum.PlanHarvestCycle, id));
 
         }
         #endregion

@@ -52,66 +52,6 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
         return data;
     }
 
-    #region Plan Harvest Cycle
-    public void AddPlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce)
-    {
-        var harvestFilter = Builders<HarvestCycle>.Filter.Eq("_id", harvestCyclce.Id);
-        var update = Builders<HarvestCycle>.Update.Push<PlanHarvestCycle>("Plans", harvestCyclce.Plans.First(g => g.Id == planHarvestCyclceId));
-
-        AddCommand(() => Collection.UpdateOneAsync(harvestFilter, update));
-    }
-
-    public void DeletePlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce)
-    {
-        var harvestFilter = Builders<HarvestCycle>.Filter.Eq("_id", harvestCyclce.Id);
-        var update = Builders<HarvestCycle>.Update.PullFilter(p => p.Plans, Builders<PlanHarvestCycle>.Filter.Eq(p => p.Id, planHarvestCyclceId));
-
-        AddCommand(() => Collection.UpdateOneAsync(harvestFilter, update));
-    }
-
-    public void UpdatePlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce)
-    {
-        var harvestFilter = Builders<HarvestCycle>.Filter.Eq("_id", harvestCyclce.Id);
-        var update = Builders<HarvestCycle>.Update.Set("Plans.$[f]", harvestCyclce.Plans.First(g => g.Id == planHarvestCyclceId));
-        var options = new UpdateOptions()
-        {
-            ArrayFilters = new List<ArrayFilterDefinition<BsonValue>>()
-            {
-                new BsonDocument("f._id",
-                new BsonDocument("$eq", planHarvestCyclceId))
-            }
-        };
-
-        AddCommand(() => Collection.UpdateOneAsync(harvestFilter, update, options));
-    }
-
-    public async Task<PlanHarvestCycleViewModel> GetPlanHarvestCycle(string harvestCycleId, string id)
-    {
-        var data = await Collection
-         .Find<HarvestCycle>(Builders<HarvestCycle>.Filter.Eq("_id", harvestCycleId))
-         .Project(Builders<HarvestCycle>.Projection.Include(p => p.Plans))
-         .As<PlanHarvestCycleViewModelProjection>()
-         .FirstAsync();
-
-        data.Plans.ForEach(g => g.HarvestCycleId = data._id);
-
-        return data.Plans.First(g => g.PlanHarvestCycleId == id);
-    }
-    
-    public async Task<IReadOnlyCollection<PlanHarvestCycleViewModel>> GetPlanHarvestCycles(string harvestCycleId)
-    {
-        var data = await Collection
-         .Find<HarvestCycle>(Builders<HarvestCycle>.Filter.Eq("_id", harvestCycleId))
-         .Project(Builders<HarvestCycle>.Projection.Include(p => p.Plans))
-         .As<PlanHarvestCycleViewModelProjection>()
-         .FirstAsync();
-
-        data.Plans.ForEach(g => g.HarvestCycleId = data._id);
-
-        return data.Plans;
-    }
-    #endregion 
-
     #region Plant Harvest Cycle
     public void AddPlantHarvestCycle(string plantHarvestCyclceId, HarvestCycle harvestCyclce)
     {
@@ -215,8 +155,6 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.SetIgnoreExtraElements(true);
             p.SetDiscriminator("harvest-cycle");
 
-
-            p.MapProperty(m => m.Plans).SetDefaultValue(new List<PlanHarvestCycle>());
             p.MapProperty(m => m.Plants).SetDefaultValue(new List<PlantHarvestCycle>());
 
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
@@ -285,45 +223,9 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
 
         });
         #endregion
-
-        #region Plan Harvest Cycle
-        BsonClassMap.RegisterClassMap<PlanHarvestCycle>(g =>
-        {
-            g.AutoMap();
-            g.SetIgnoreExtraElements(true);
-
-        });
-
-
-        BsonClassMap.RegisterClassMap<PlanHarvestCycleViewModel>(p =>
-        {
-            p.AutoMap();
-            //ignore elements not in the document 
-            p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.PlanHarvestCycleId).SetElementName("_id");
-
-        });
-
-        BsonClassMap.RegisterClassMap<PlanHarvestCycleBase>(p =>
-        {
-            p.AutoMap();
-            //ignore elements not in the document 
-            p.SetIgnoreExtraElements(true);
-
-        });
-
-        BsonClassMap.RegisterClassMap<PlanHarvestCycleViewModelProjection>(p =>
-        {
-            p.AutoMap();
-            //ignore elements not in the document 
-            p.SetIgnoreExtraElements(true);
-
-        });
-        #endregion 
     }
 
 
 }
 
 public record PlantHarvestCycleViewModelProjection(string _id, List<PlantHarvestCycleViewModel> Plants);
-public record PlanHarvestCycleViewModelProjection(string _id, List<PlanHarvestCycleViewModel> Plans);

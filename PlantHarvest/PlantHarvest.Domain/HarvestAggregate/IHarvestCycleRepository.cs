@@ -8,15 +8,7 @@ public interface IHarvestCycleRepository : IRepository<HarvestCycle>
     void UpdatePlantHarvestCycle(string plantHarvestCyclceId, HarvestCycle harvestCyclce);
     Task<PlantHarvestCycleViewModel> GetPlantHarvestCycle(string harvestCycleId, string id);
     Task<IReadOnlyCollection<PlantHarvestCycleViewModel>> GetPlantHarvestCycles(string harvestCycleId);
-    Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId);
-
-    void AddPlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce);
-    void DeletePlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce);
-    void UpdatePlanHarvestCycle(string planHarvestCyclceId, HarvestCycle harvestCyclce);
-    Task<PlanHarvestCycleViewModel> GetPlanHarvestCycle(string harvestCycleId, string id);
-    Task<IReadOnlyCollection<PlanHarvestCycleViewModel>> GetPlanHarvestCycles(string harvestCycleId);
-
-
+    Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId);    
     Task<String> GetIdByNameAsync(string harvestCycleName, string userProfileId);
     Task<IReadOnlyCollection<HarvestCycleViewModel>> GetAllHarvestCycles(string userProfileId);
 }

@@ -26,31 +26,6 @@ public class UpdateHarvestCycleCommandValidator : HarvestCycleValidator<UpdateHa
 }
 #endregion
 
-#region Plan Harvest Cycle
-public record CreatePlanHarvestCycleCommand : PlanHarvestCycleBase
-{ }
-
-public record UpdatePlanHarvestCycleCommand : PlanHarvestCycleBase
-{
-    public string PlanHarvestCycleId { get; init; }
-}
-
-public class CreatePlanHarvestCycleCommandValidator : PlanHarvestCycleValidator<CreatePlanHarvestCycleCommand>
-{
-    public CreatePlanHarvestCycleCommandValidator()
-    {
-    }
-}
-
-public class UpdatePlanHarvestCycleCommandValidator : PlanHarvestCycleValidator<UpdatePlanHarvestCycleCommand>
-{
-    public UpdatePlanHarvestCycleCommandValidator()
-    {
-        RuleFor(command => command.PlanHarvestCycleId).NotEmpty().Length(3, 50);
-    }
-}
-#endregion
-
 #region Plant Harvest Cycle
 
 public record CreatePlantHarvestCycleCommand : PlantHarvestCycleBase

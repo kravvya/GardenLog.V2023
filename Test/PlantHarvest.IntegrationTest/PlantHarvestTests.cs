@@ -137,99 +137,6 @@ namespace PlantHarvest.IntegrationTest;
 
     #endregion
 
-    #region Plan Harvest Cycle
-
-    [Fact]
-    public async Task Post_PlanHarvestCycle_MayCreateNew()
-    {
-        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
-
-        var response = await _plantHarvestClient.CreatePlanHarvestCycle(harvestId, TEST_PLANT_ID);
-        var returnString = await response.Content.ReadAsStringAsync();
-
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var planHarvestCycleId));
-        }
-        else
-        {
-            Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
-            returnString = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(returnString);
-            Assert.Contains("Plan Harvest Cycle for this plant already exists", returnString);
-        }
-    }
-
-    [Fact]
-    public async Task Get_PlanHarvestCycle_All()
-    {
-        var plans = await GetPlanHarvestCyclesToWorkWith(TEST_HARVEST_CYCLE_NAME, TEST_PLANT_ID);
-
-        Assert.NotNull(plans);
-        _output.WriteLine($"Found '{plans.First().PlantId}' plant in plan haver cycles");
-        Assert.NotEmpty(plans.First().PlanHarvestCycleId);
-    }
-
-    [Fact]
-    public async Task Get_PlanHarvestCycle_One()
-    {
-        var plans = await GetPlanHarvestCyclesToWorkWith(TEST_HARVEST_CYCLE_NAME, TEST_PLANT_ID);
-
-        var original = plans.First(g => g.PlantId == TEST_PLANT_ID);
-
-        if (plans.Count == 1)
-        {
-            //create new plan harvest cycle to make sure we only get one back
-            var response = await _plantHarvestClient.CreatePlanHarvestCycle(original.HarvestCycleId, TEST_DELETE_PLANT_ID);
-        }
-
-        var plan = await GetPlanHarvestCycleToWorkWith(original.HarvestCycleId,original.PlanHarvestCycleId);
-
-        _output.WriteLine($"Found '{plan.PlantId}' plant in plan harvest cycle");
-        Assert.Equal(original.PlantId, plan.PlantId);
-    }
-
-    [Fact]
-    public async Task Put_PlanHarvestCycle_ShouldUpdate()
-    {
-        var plan = (await GetPlanHarvestCyclesToWorkWith(TEST_HARVEST_CYCLE_NAME, TEST_PLANT_ID)).First(g => g.PlantId == TEST_PLANT_ID);
-
-        plan.Notes = $"{plan.Notes} last update:{DateTime.Now.ToString()}";
-
-        var response = await _plantHarvestClient.UpdatePlanHarvestCycle(plan);
-
-        var returnString = await response.Content.ReadAsStringAsync();
-
-        _output.WriteLine($"Service to up date plan harvest cycle responded with {response.StatusCode} code and {returnString} message");
-
-        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
-        Assert.NotEmpty(returnString);
-    }
-
-    [Fact]
-    public async Task Put_PlanHarvestCycle_ShouldDelete()
-    {
-        var plan = (await GetPlanHarvestCyclesToWorkWith(TEST_DELETE_HARVEST_CYCLE_NAME, TEST_DELETE_PLANT_ID)).FirstOrDefault(g => g.PlantId == TEST_DELETE_PLANT_ID);
-
-        if (plan == null)
-        {
-            //oh well. something deleted this plan already. will skip this round
-            return;
-        }
-
-        var response = await _plantHarvestClient.DeletePlanHarvestCycle(plan.HarvestCycleId, plan.PlanHarvestCycleId);
-
-        var returnString = await response.Content.ReadAsStringAsync();
-
-        _output.WriteLine($"Service to delete plan harvest cycle responded with {response.StatusCode} code and {returnString} message");
-
-        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
-        Assert.NotEmpty(returnString);
-    }
-
-    #endregion
-
     #region Plant Harevst Cycle
     [Fact]
     public async Task Post_PlantHarvestCycle_MayCreateNew()
@@ -358,64 +265,7 @@ namespace PlantHarvest.IntegrationTest;
 
         return harvest;
     }
-
-    private async Task<List<PlanHarvestCycleViewModel>> GetPlanHarvestCyclesToWorkWith(string harvestName, string plantId)
-    {
-        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(harvestName);
-
-        var response = await _plantHarvestClient.GetPlanHarvestCycles(harvestId);
-
-        _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Service to get all plan harvest cycles responded with {response.StatusCode} code");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters =
-                {
-                    new JsonStringEnumConverter(),
-                },
-        };
-        var plans = await response.Content.ReadFromJsonAsync<List<PlanHarvestCycleViewModel>>(options);
-
-        if (plans == null || plans.Count == 0)
-        {
-            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Harvest {harvestId} has no plans");
-            await _plantHarvestClient.CreatePlanHarvestCycle(harvestId, plantId);
-            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Create new plan for {harvestId} harvest with {plantId} plan");
-
-            response = await _plantHarvestClient.GetPlanHarvestCycles(harvestId);
-
-            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Service to get all plan harvest cycles responded with {response.StatusCode} code");
-
-            plans = await response.Content.ReadFromJsonAsync<List<PlanHarvestCycleViewModel>>(options);
-
-            _output.WriteLine($"GetPlanHarvestCyclesToWorkWith - Harvest has {plans.Count} plans to work with");
-        }
-
-        return plans;
-    }
-
-    private async Task<PlanHarvestCycleViewModel> GetPlanHarvestCycleToWorkWith(string harvestId, string id)
-    {
-        var response = await _plantHarvestClient.GetPlanHarvestCycle(harvestId, id);
-
-        _output.WriteLine($"Service to get single plant harvest cycle responded with {response.StatusCode} code");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters =
-                {
-                    new JsonStringEnumConverter(),
-                },
-        };
-        var growInstruction = await response.Content.ReadFromJsonAsync<PlanHarvestCycleViewModel>(options);
-
-        Assert.NotNull(growInstruction);
-
-        return growInstruction;
-    }
-
+       
     private async Task<PlantHarvestCycleViewModel> GetPlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)
     {
         var response = await _plantHarvestClient.GetPlantHarvestCycles(harvestId);
@@ -470,7 +320,7 @@ namespace PlantHarvest.IntegrationTest;
         {
             await CreatePlantHarvestCycleToWorkWith(harvestId, plantId, plantVarietyId);
 
-            response = await _plantHarvestClient.GetPlanHarvestCycles(harvestId);
+            response = await _plantHarvestClient.GetPlantHarvestCycles(harvestId);
 
             _output.WriteLine($"Service to get all plan harvest cycles responded with {response.StatusCode} code");
 

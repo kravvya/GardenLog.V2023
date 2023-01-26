@@ -3,8 +3,7 @@
 public enum EntityTypeEnum
 {
     HarvestCyce = 1,
-    PlanHarvestCycle = 2,
-    PlantHarvestCycle = 3
+    PlantHarvestCycle = 2
 
 }
 
