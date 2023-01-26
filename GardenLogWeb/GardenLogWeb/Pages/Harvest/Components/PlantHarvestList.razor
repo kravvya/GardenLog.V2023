@@ -46,9 +46,9 @@
                                 <ul class="plant-list">
                                     @foreach (var plant in _plants.Where(c => c.NumberOfPlants > 0).OrderBy(c => c.Name))
                                     {
-                                        <li><a role="button" @onclick=@(()=> Filter.SetValue("PlantId", plant.PlantId))>@plant.Name <span>@plant.NumberOfPlants</span></a></li>
+                                        <li><a class="text-dark" role="button" @onclick=@(()=> _filter.SetValue("PlantId", plant.PlantId))>@plant.Name <span>@plant.NumberOfPlants</span></a></li>
                                     }
-                                    <li><a role="button" @onclick=@(()=> Filter.SetValue("PlantId", null))>Reset </a></li>
+                                    <li><a role="button" @onclick=@(()=> _filter.SetValue("PlantId", null))>Reset </a></li>
                                 </ul>
                             </div>
 
@@ -57,19 +57,19 @@
                                 <h4 class="widget-header">Growing Options</h4>
                                 <div class="form-check">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" value="@Filter.IsStartIndoors" @onchange="@(e => Filter.SetValue("IsStartIndoors", e.Value))" />
+                                        <input class="form-check-input" type="checkbox" value="@_filter.IsStartIndoors" @onchange="@(e => _filter.SetValue("IsStartIndoors", e.Value))" />
                                         Start Indoors
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" value="@Filter.IsDirectSow" @onchange="@(e => Filter.SetValue("", e.Value))" />
+                                        <input class="form-check-input" type="checkbox" value="@_filter.IsDirectSow" @onchange="@(e => _filter.SetValue("IsDirectSow", e.Value))" />
                                         Direct Sow
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" value="@Filter.IsTransplant" @onchange="@(e => Filter.SetValue("", e.Value))" />
+                                        <input class="form-check-input" type="checkbox" value="@_filter.IsTransplant" @onchange="@(e => _filter.SetValue("IsTransplant", e.Value))" />
                                         Transplant
                                     </label>
                                 </div>
@@ -81,7 +81,7 @@
                     <div class="plant-search-filter">
                         <div class="row">
                             <div class="col-md-12">
-                                <strong>@_filteredHarvestPLants?.Count Results on @DateTime.Now.ToShortDateString() @FilterDescription</strong>
+                                <strong>@_filteredHarvestPLants?.Count Results on @DateTime.Now.ToShortDateString() @_filterDescription</strong>
                             </div>
                         </div>
                     </div>
@@ -102,7 +102,8 @@
                             {
                                 <tr style="border-bottom: 5px solid @GetColor(plant);">
                                     <td class="col-xs-5" style="border-left: 5px solid @GetColor(plant);">
-                                        <a @onclick="@(() => ViewPlant(plant))">@GetPlantName(plant)</a>
+                                        <a class="text-dark" role="button" @onclick="@(() => ViewPlant(plant))">
+                                            <span class="lead fw-bold">@GetPlantName(plant)</span></a>
                                     </td>
                                     <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
                                     <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>
@@ -158,8 +159,8 @@
     private string _filterTtile = "Show Filters";
 
 
-    protected PlantHarvestFilter Filter { get; set; }
-    protected string FilterDescription { get; set; }
+    protected PlantHarvestFilter _filter { get; set; }
+    protected string _filterDescription { get; set; }
 
 
 
@@ -211,9 +212,9 @@
         _plants.ForEach(p => p.NumberOfPlants = _harvestPlants.Where(h => h.PlantId == p.PlantId).Count());
         _filteredHarvestPLants = _harvestPlants;
 
-        Filter = new PlantHarvestFilter();
+        _filter = new PlantHarvestFilter();
 
-        Filter.ModelChanged += FilterChanged;
+        _filter.ModelChanged += FilterChanged;
 
         _harvest = harvest;
         StateHasChanged();
@@ -277,35 +278,33 @@
         _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
     }
 
-    #region Incomplete work
-
-    protected void FilterChanged(object sender, EventArgs e)
+    private void FilterChanged(object sender, EventArgs e)
     {
         Console.WriteLine("Inside FilterChanged");
         StringBuilder description = new StringBuilder();
 
         IList<PlantHarvestCycleModel> harvestPlants = _harvestPlants;
 
-        if (!string.IsNullOrEmpty(Filter.PlantId))
+        if (!string.IsNullOrEmpty(_filter.PlantId))
         {
             description.Append(" (");
-            description.Append(_plants.FirstOrDefault(cat => cat.PlantId == Filter.PlantId)?.Name);
-            harvestPlants = harvestPlants.Where(p => p.PlantId == Filter.PlantId).ToList();
+            description.Append(_plants.FirstOrDefault(cat => cat.PlantId == _filter.PlantId)?.Name);
+            harvestPlants = harvestPlants.Where(p => p.PlantId == _filter.PlantId).ToList();
         }
 
-        if (Filter.IsStartIndoors)
+        if (_filter.IsStartIndoors)
         {
             description.Append(description.Length == 0 ? " (Start indoors" : " and start indoors");
             harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.SeedIndoors).ToList();
         }
 
-        if (Filter.IsDirectSow)
+        if (_filter.IsDirectSow)
         {
             description.Append(description.Length == 0 ? " (Direct sow" : " and direct sow");
             harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.DirectSeed).ToList();
         }
 
-        if (Filter.IsTransplant)
+        if (_filter.IsTransplant)
         {
             description.Append(description.Length == 0 ? " (Transplant" : " and transplant");
             harvestPlants = harvestPlants.Where(p => p.PlantingMethod == PlantHarvest.Contract.Enum.PlantingMethodEnum.Transplanting).ToList();
@@ -316,16 +315,16 @@
             description.Append(")");
         }
 
-        FilterDescription = description.ToString();
+        _filterDescription = description.ToString();
         _filteredHarvestPLants = harvestPlants;
         base.StateHasChanged();
     }
 
     public void Dispose()
     {
-        Filter.ModelChanged -= FilterChanged;
+        _filter.ModelChanged -= FilterChanged;
     }
-    #endregion
+   
 }
 
 

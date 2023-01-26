@@ -69,8 +69,8 @@ namespace PlantHarvest.IntegrationTest.Clients
             {
                HarvestCycleName= name,
                StartDate = DateTime.Now,
-               GardenId = Guid.NewGuid().ToString(),
-               Notes="Integration test Harvest Cycle"               
+               GardenId = "garden1",
+               Notes ="Integration test Harvest Cycle"               
             };
         }
         #endregion

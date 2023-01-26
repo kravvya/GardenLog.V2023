@@ -124,7 +124,7 @@ public class PlantService : IPlantService
             plantNames = await GetAllPlantNames();
 
             // Save data in cache.
-            _cacheService.Set(PLANTS_KEY, plantNames, DateTime.Now.AddMinutes(10));
+            _cacheService.Set(PLANT_NAMES_KEY, plantNames, DateTime.Now.AddMinutes(10));
         }
         else
         {
