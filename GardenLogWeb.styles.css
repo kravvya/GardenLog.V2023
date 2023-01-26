@@ -327,6 +327,15 @@ svg .bbox-handle[b-8fnu6zxx74] {
         .sources ul li a[b-5kga8drz7q] {
             padding: 0.5em;
         }
+/* /Pages/Plants/Components/PlantView.razor.rz.scp.css */
+.plant-facts_list .plant-facts_term[b-afgsf7jkca] {
+    color: #709a41;
+    text-transform: uppercase;
+}
+
+.plant-facts_list .plant-facts-item[b-afgsf7jkca] {
+    border-bottom: 2px solid #c5c5c5;
+}
 /* /Pages/Plants/PlantFormPage.razor.rz.scp.css */
 .tags[b-xqtb7n7hnk] {
     border: 1px solid #709a41;
@@ -375,12 +384,3 @@ svg .bbox-handle[b-8fnu6zxx74] {
         margin-right: 0.2em;
         padding-left: 0;
     }
-/* /Pages/Plants/PlantViewPage.razor.rz.scp.css */
-.plant-facts_list .plant-facts_term[b-cuaxitcr2w] {
-    color: #709a41;
-    text-transform: uppercase;
-}
-
-.plant-facts_list .plant-facts-item[b-cuaxitcr2w] {
-    border-bottom: 2px solid #c5c5c5;
-}
