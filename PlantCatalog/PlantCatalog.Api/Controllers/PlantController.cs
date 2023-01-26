@@ -78,6 +78,16 @@ public class PlantController : Controller
 
     }
 
+    [HttpGet()]
+    [ActionName("GetAllPlantNames")]
+    [Route(Routes.GetAllPlantNames)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<IReadOnlyCollection<PlantNameOnlyViewModel>>> GetAllPlantNames()
+    {
+        return Ok(await _queryHandler.GetAllPlantNames());
+
+    }
+
 
     [HttpPost]
     [Route(Routes.CreatePlant)]

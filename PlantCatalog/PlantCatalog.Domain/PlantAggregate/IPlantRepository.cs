@@ -10,6 +10,7 @@ public interface IPlantRepository : IRepository<Plant>
 
     Task<bool> ExistsAsync(string plantId);
     Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants();
+    Task<IReadOnlyCollection<PlantNameOnlyViewModel>> GetAllPlantNames();
     Task<Plant> GetByNameAsync(string plantName);
     Task<string> GetIdByNameAsync(string plantName);
 

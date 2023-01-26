@@ -58,6 +58,12 @@ namespace PlantCatalog.IntegrationTest.Clients
            return await this._httpClient.GetAsync(url);           
         }
 
+        public async Task<HttpResponseMessage> GetAllPlantNames()
+        {
+            var url = $"{this._baseUrl.OriginalString}{Routes.GetAllPlantNames}";
+            return await this._httpClient.GetAsync(url);
+        }
+
         public async Task<HttpResponseMessage> GetPlant(string id)
         {
             var url = $"{this._baseUrl.OriginalString}{Routes.GetPlantById}";

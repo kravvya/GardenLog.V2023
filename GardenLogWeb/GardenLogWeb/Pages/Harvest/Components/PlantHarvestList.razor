@@ -24,6 +24,15 @@
                 </Body>
             </ModalView>
 
+            <ModalView OnCloseModal="@ClosePlantViewModal" @ref="_plantViewModal">
+                <Body>
+                    <PlantView Plant=@_plantInView IsInsideModal="true" />
+                </Body>
+                <Footer>
+                    <PlantViewFooter Plant=@_plantInView Close="@ClosePlantView" />
+                </Footer>
+            </ModalView>
+
             <div class="row">
                 <div class="col-md-2">
                     <div class="d-md-none">
@@ -35,11 +44,11 @@
                             <div class="widget plant-list">
                                 <h4 class="widget-header">Plants</h4>
                                 <ul class="plant-list">
-                                    @foreach (var cat in _plants.OrderBy(c => c.Name))
+                                    @foreach (var plant in _plants.Where(c => c.NumberOfPlants > 0).OrderBy(c => c.Name))
                                     {
-                                        <li><a href="javascript: void(0)" @onclick=@(()=> Filter.SetValue("PlantId", cat.PlantId))>@cat.Name <span>69</span></a></li>
+                                        <li><a role="button" @onclick=@(()=> Filter.SetValue("PlantId", plant.PlantId))>@plant.Name <span>@plant.NumberOfPlants</span></a></li>
                                     }
-                                    <li><a href="javascript: void(0)" @onclick=@(()=> Filter.SetValue("PlantId", null))>Reset </a></li>
+                                    <li><a role="button" @onclick=@(()=> Filter.SetValue("PlantId", null))>Reset </a></li>
                                 </ul>
                             </div>
 
@@ -66,7 +75,7 @@
                     <div class="plant-search-filter">
                         <div class="row">
                             <div class="col-md-12">
-                                <strong>@FilteredPlants?.Count Results on @DateTime.Now.ToShortDateString() @FilterDescription</strong>
+                                <strong>@_filteredHarvestPLants?.Count Results on @DateTime.Now.ToShortDateString() @FilterDescription</strong>
                             </div>
                         </div>
                     </div>
@@ -83,11 +92,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var plant in FilteredPlants)
+                            @foreach (var plant in _filteredHarvestPLants)
                             {
                                 <tr style="border-bottom: 5px solid @GetColor(plant);">
                                     <td class="col-xs-5" style="border-left: 5px solid @GetColor(plant);">
-                                        <a @onclick="@(() => onViewPlant(plant))">@GetPlantName(plant)</a>
+                                        <a @onclick="@(() => ViewPlant(plant))">@GetPlantName(plant)</a>
                                     </td>
                                     <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
                                     <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>
@@ -131,17 +140,21 @@
     private ModalView? _imageListModal;
     private ImageList? _imageList;
 
-    private List<PlantModel> _plants = new List<PlantModel>();
+    private PlantModel? _plantInView;
+    private ModalView? _plantViewModal;
+    private PlantView? _plantView;
+
+    private List<PlantNameModel> _plants = new();
+    private IList<PlantHarvestCycleModel> _filteredHarvestPLants  = new List<PlantHarvestCycleModel>();
 
     private bool _collapseNavMenu = true;
     private string _filterCssClass = "d-none d-md-block";
     private string _filterTtile = "Show Filters";
 
-    protected PlantModel PlantInView { get; set; }
-    protected string PlantHarvestImageInViewColor { get; set; } = "";
+
     protected PlantHarvestFilter Filter { get; set; }
     protected string FilterDescription { get; set; }
-    protected IList<PlantHarvestCycleModel> FilteredPlants { get; set; } = new List<PlantHarvestCycleModel>();
+
 
 
     private void ToggleFilter()
@@ -158,7 +171,7 @@
         await _imageFormModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
         StateHasChanged();
     }
-    
+
     private async Task ViewPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
         _imageList.Initialize(ImageEntityEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
@@ -187,9 +200,11 @@
     {
 
         _harvestPlants = (await _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false));
-        _plants = await _plantService.GetPlants(false);
+        _plants = await _plantService.GetPlantNames(false);
 
-        FilteredPlants = _harvestPlants;
+        _plants.ForEach(p => p.NumberOfPlants = _harvestPlants.Where(h => h.PlantId == p.PlantId).Count());
+        _filteredHarvestPLants = _harvestPlants;
+
         Filter = new PlantHarvestFilter();
 
         Filter.ModelChanged += FilterChanged;
@@ -227,6 +242,25 @@
         StateHasChanged();
     }
 
+    private async Task ViewPlant(PlantHarvestCycleModel plant)
+    {
+        _plantInView = await _plantService.GetPlant(plant.PlantId, true);
+        _plantViewModal?.OpenModal(_plantInView.Name, _plantInView.Color);
+        StateHasChanged();
+    }
+
+    private async Task ClosePlantViewModal()
+    {
+        await _plantViewModal?.CloseModal();
+        _plantInView = null;
+        StateHasChanged();
+    }
+
+    private void ClosePlantView()
+    {
+        ClosePlantViewModal().GetAwaiter();
+    }
+
     private void EditPlantHarvest(PlantHarvestCycleModel plant)
     {
         _navigationManager.NavigateToGardenPlanEditPlant(plant.HarvestCycleId, plant.PlantHarvestCycleId);
@@ -238,39 +272,6 @@
     }
 
     #region Incomplete work
-
-
-
-   
-
-    protected async Task onViewPlant(PlantHarvestCycleModel plant)
-    {
-        PlantInView = await _plantService.GetPlant(plant.PlantId, true);
-        PlantHarvestImageInViewColor = PlantInView.Color;
-        StateHasChanged();
-    }
-
-
-
-
-
-    public bool onClosePlantModal()
-    {
-        //PlantInView = null;
-        //StateHasChanged();
-        return true;
-    }
-
-
-
-    public void Close()
-    {
-        //_uriHelper.NavigateTo($"/harvests");
-    }
-
-
-
-
 
     protected void FilterChanged(object sender, EventArgs e)
     {
@@ -304,7 +305,7 @@
         }
 
         FilterDescription = description.ToString();
-        FilteredPlants = plants;
+        _filteredHarvestPLants = plants;
         base.StateHasChanged();
     }
 

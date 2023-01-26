@@ -159,6 +159,33 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     }
 
     [Fact]
+    public async Task Get_Should_Return_All_PlantNames()
+    {
+        var response = await _plantCatalogClient.GetAllPlantNames();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+        };
+
+        var returnString = await response.Content.ReadAsStringAsync();
+        _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
+
+        var plants = await response.Content.ReadFromJsonAsync<List<PlantNameOnlyViewModel>>(options);
+
+        Assert.NotNull(plants);
+        Assert.NotEmpty(plants);
+
+        var testPlant = plants.FirstOrDefault(plants => plants.Name == TEST_PLANT_NAME);
+
+        Assert.NotNull(testPlant);
+    }
+
+    [Fact]
     public async Task Get_Should_Return_Plant()
     {
         var plantId = await GetPlantIdToWorkWith(TEST_PLANT_NAME);

@@ -64,6 +64,19 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
         return data;
     }
 
+    public async Task<IReadOnlyCollection<PlantNameOnlyViewModel>> GetAllPlantNames()
+    {
+        var projection = Builders<Plant>.Projection.Include("Name").Include("Color");
+
+        var data = await Collection
+           .Find<Plant>(Builders<Plant>.Filter.Empty)
+           .Project(projection)
+           .As<PlantNameOnlyViewModel>()
+           .ToListAsync();
+
+        return data;
+    }
+
     public async Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstractions(string plantId)
     {
         var data = await Collection
@@ -204,6 +217,14 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapMember(m => m.PlantId).SetElementName("_id");
         });
 
+        BsonClassMap.RegisterClassMap<PlantNameOnlyViewModel>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.PlantId).SetElementName("_id");
+        });
+
         BsonClassMap.RegisterClassMap<PlantGrowInstruction>(g =>
         {
             g.AutoMap();
@@ -253,4 +274,5 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
         });
     }
 }
+
 public record PlantGrowInstructionViewModelProjection(string _id, List<PlantGrowInstructionViewModel> GrowInstructions);

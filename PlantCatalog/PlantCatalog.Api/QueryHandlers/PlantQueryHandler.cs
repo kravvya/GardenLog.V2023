@@ -6,6 +6,7 @@ namespace PlantCatalog.Api.QueryHandlers;
 public interface IPlantQueryHandler
 {
     Task<IReadOnlyCollection<PlantViewModel>> GetAllPlants();
+    Task<IReadOnlyCollection<PlantNameOnlyViewModel>> GetAllPlantNames();
     Task<PlantViewModel> GetPlantByPlantId(string plantId);
     Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string id);
     Task<IReadOnlyCollection<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId);
@@ -50,6 +51,13 @@ public class PlantQueryHandler : IPlantQueryHandler
         _logger.LogInformation("Received request to get all plants");
 
         return await _plantRepository.GetAllPlants();
+    }
+
+    public async Task<IReadOnlyCollection<PlantNameOnlyViewModel>> GetAllPlantNames()
+    {
+        _logger.LogInformation("Received request to get all plant names");
+
+        return await _plantRepository.GetAllPlantNames();
     }
     #endregion
 

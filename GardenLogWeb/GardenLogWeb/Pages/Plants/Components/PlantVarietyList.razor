@@ -24,10 +24,10 @@
             }
             else
             {
-                <div class="row row-cols-1 gy-2 row-cols-md-3">
+                <div class="d-flex text-center align-content-center flex-wrap">
                     @foreach (var variety in PlantVarieties.OrderBy(c => c.Name))
                     {
-                        <div class="col">
+                        <div class="px-2 py-2" style="max-width:275px;">
                             <div class="card h-100 border border-1" style="border-color: @Plant.Color !important;">
 
                                 <img class="img-fluid " src="@_imageService.GetRawImageUrl(variety.ImageFileName)" alt="@variety.ImageLabel" title="@variety.ImageLabel" role="button" @onclick="@(() => OpenPlantVarietyView(variety))">
