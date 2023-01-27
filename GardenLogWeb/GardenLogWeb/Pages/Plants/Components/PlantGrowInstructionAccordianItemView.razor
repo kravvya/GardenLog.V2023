@@ -6,7 +6,7 @@
     <div class="accordion-item">
         <h2 class="accordion-header" id="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)header">
             <button class="accordion-button @(IsCollapsed())" type="button" data-bs-toggle="collapse" data-bs-target="#@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" aria-expanded="@IsOpen.ToString()" aria-controls="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)">
-                <span class="lead fw-bold">@(_verifyService.GetDescription<PlantingMethodEnum>(GrowInstruction.PlantingMethod)) to harvest in the @(_verifyService.GetDescription<HarvestSeasonEnum>(GrowInstruction.HarvestSeason))</span>
+                <span class="lead fw-bold">@(_verifyService.GetDescription<PlantCatalog.Contract.Enum.PlantingMethodEnum>(GrowInstruction.PlantingMethod)) to harvest in the @(_verifyService.GetDescription<HarvestSeasonEnum>(GrowInstruction.HarvestSeason))</span>
             </button>
         </h2>
         <div id="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" class="accordion-collapse collapse @(IsShow())" aria-labelledby="@GetAccordionId(GrowInstruction.PlantGrowInstructionId)" data-bs-parent="#growInstructions">

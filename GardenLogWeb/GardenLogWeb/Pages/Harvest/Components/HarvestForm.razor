@@ -26,8 +26,7 @@
                             <option Value="@item.GardenId">@item.GardenName</option>
                         }
                     </InputSelect>
-                    <div class="invalid-feedback"><ValidationMessage For="@(() => _harvest.GardenId)" /></div>
-                    <ValidationMessage For="@(() => _harvest.HarvestCycleName)" />
+                    <ValidationMessage For="@(() => _harvest.GardenId)" />
                 </div>
 
                 <div class="col-md-4">
@@ -93,7 +92,7 @@
             harvest.StartDate = DateTime.Now.Date;
             if (_gardens.Count == 1) harvest.GardenId = _gardens.First().GardenId;
         }
-       
+
         _harvest = harvest;
 
         _isEdit = !string.IsNullOrEmpty(_harvest.HarvestCycleId);

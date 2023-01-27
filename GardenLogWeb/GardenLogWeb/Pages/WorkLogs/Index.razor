@@ -1,0 +1,78 @@
+﻿@page "/worklogs/{RelatedEntity}/{RelatedEntityId}"
+
+
+
+@inject IHarvestCycleService _harvestService;
+@inject NavigationManager _navigationManager;
+
+
+<Page Title="Work Notes" Description="Review, Edit and Create Work Notes" BreadcrumbLinks="@_breadcrumbLinks">
+    <PageContent>
+        <WorkLogList @ref=_workLogList />
+    </PageContent>
+</Page>
+
+@code {
+    [Parameter]
+    public string RelatedEntity { get; set; }
+
+    [Parameter]
+    public string RelatedEntityId { get; set; }
+
+    private List<BreadcrumbLink> _breadcrumbLinks = new();
+    private WorkLogList _workLogList;
+
+    private string _title;
+    private string _description;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(RelatedEntity))
+        {
+            string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
+            WorkLogEntityEnum type;
+
+            if (Enum.TryParse<WorkLogEntityEnum>(relatedEntityType, out type))
+            {
+                await SetupPage(type, RelatedEntityId);
+
+            }
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
+            WorkLogEntityEnum type;
+            if (Enum.TryParse<WorkLogEntityEnum>(relatedEntityType, out type))
+            {
+                _workLogList.Initialize(type, RelatedEntityId);
+            }
+        }
+    }
+
+    private async Task SetupPage(WorkLogEntityEnum relatedEntityType, string relatedEntitytId)
+    {
+        _description = string.Empty;
+
+        switch (relatedEntityType)
+        {
+            case WorkLogEntityEnum.HarvestCycle:
+                var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
+                if (!string.IsNullOrEmpty(harvest.GardenName))
+                {
+                    _title = $"{harvest.HarvestCycleName} at {harvest.GardenName}";
+                }
+                _title = harvest.HarvestCycleName;
+
+                _breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
+                _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));
+                _breadcrumbLinks.Add(new BreadcrumbLink("Work Notes", _navigationManager.GetGardenPlanWorkLogsUrl(relatedEntitytId), true));
+                break;
+        }
+
+    }
+}

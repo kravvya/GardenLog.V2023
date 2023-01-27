@@ -364,12 +364,12 @@
 
     protected bool HideSeedInstructions
     {
-        get { return this.growInstruction.PlantingMethod == PlantingMethodEnum.Transplanting; }
+        get { return this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting; }
     }
 
     protected bool HideTransplantInstructions
     {
-        get { return this.growInstruction.PlantingMethod == PlantingMethodEnum.DirectSeed; }
+        get { return this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed; }
     }
 
     protected async Task HandleValidSubmit()
@@ -378,14 +378,14 @@
 
         customValidation?.ClearErrors();
 
-        if(this.growInstruction.PlantingMethod == PlantingMethodEnum.Transplanting)
+        if (this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting)
         {
             this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
             this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
             this.growInstruction.StartSeedInstructions = string.Empty;
         }
 
-        if(this.growInstruction.PlantingMethod == PlantingMethodEnum.DirectSeed)
+        if (this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed)
         {
             this.growInstruction.TransplantInstructions=string.Empty;
             this.growInstruction.TransplantAheadOfWeatherCondition = WeatherConditionEnum.Unspecified;

@@ -1,10 +1,8 @@
 using Blazored.Toast;
-using GardenLogWeb;
 using FluentValidation;
-using GardenLogWeb.Shared.Services;
+using GardenLogWeb;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using PlantCatalog.Contract.Validators;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -23,6 +21,7 @@ builder.Services.AddScoped<IHarvestCycleService, HarvestCycleService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IVerifyService, VerifyService>();
 builder.Services.AddScoped<IGardenService, GardenService>();
+builder.Services.AddScoped<IWorkLogService, WorkLogService>();
 
 builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<IGardenLogToastService, GardenLogToastService>();

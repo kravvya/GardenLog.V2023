@@ -1,0 +1,147 @@
+﻿@page "/images/{RelatedEntity}/{RelatedEntityId}"
+@using ImageCatalog.Contract.Queries;
+@inject IImageService _imageService;
+@inject IHarvestCycleService _harvestService;
+@inject NavigationManager _navigationManager;
+@inject IJSRuntime JsRuntime;
+
+<Page Title="@_title" Description="@_description" BreadcrumbLinks="@_breadcrumbLinks">
+    <PageContent>
+        <div class="container">
+            <div style="margin: 20px">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div id="carouselImages" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                @foreach (var image in _images)
+                                {
+                                    <div class="carousel-item @GetActiveClass()">
+                                        <img src="@_imageService.GetRawImageUrl(image.FileName)" alt="@image.Label" style="max-width:1200px; max-height: 800px;">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <h5 style="color: white;">@image.Label</h5>
+                                        </div>
+                                    </div>
+
+                                }
+                            </div>
+                            <a id="carouselImages-prev" class="carousel-control-prev" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a id="carouselImages-next" class="carousel-control-next" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </PageContent>
+</Page>
+
+
+@code {
+
+    [Parameter]
+    public string RelatedEntity { get; set; }
+
+    [Parameter]
+    public string RelatedEntityId { get; set; }
+
+    private List<ImageViewModel> _images { get; set; } = new();
+    private List<BreadcrumbLink> _breadcrumbLinks = new();
+
+    //private bool _firstRender = true;
+    private bool _firstImage = false;
+    private string _title;
+    private string _description;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(RelatedEntity))
+        {
+            string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
+            ImageEntityEnum type;
+
+            if (Enum.TryParse<ImageEntityEnum>(relatedEntityType, out type))
+            {
+                _firstImage = true;
+
+                await SetupPageTitleAndBreadCrumb(type, RelatedEntityId);
+
+                _images = await _imageService.GetImages(type, RelatedEntityId, true);
+
+                if (type == ImageEntityEnum.Plant)
+                {
+                    await LoadPlantImagesWithHarvest(RelatedEntityId);
+                }
+
+                //if (_firstRender)
+                //{
+                //    Console.WriteLine("Start carousel");
+                //    await JsRuntime.InvokeAsync<object>("initializeCarouselImages");
+                //    _firstRender = false;
+                //}
+            }
+        }
+    }
+
+    protected string GetActiveClass()
+    {
+        if (_firstImage)
+        {
+            _firstImage = false;
+            return "active";
+        }
+
+        return "";
+    }
+
+    private async Task SetupPageTitleAndBreadCrumb(ImageEntityEnum relatedEntityType, string relatedEntitytId)
+    {
+        _description = string.Empty;
+
+        switch (relatedEntityType)
+        {
+            case ImageEntityEnum.HarvestCycle:
+                var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
+                if (!string.IsNullOrEmpty(harvest.GardenName))
+                {
+                    _title= $"{harvest.HarvestCycleName} at {harvest.GardenName}";
+                }
+                _title= harvest.HarvestCycleName;
+
+                _breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
+                _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));
+                _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenPlanImagesUrl (relatedEntitytId), true));
+                break;
+        }
+       
+    }
+
+    protected async Task LoadPlantImagesWithHarvest(string plantId)
+    {
+        var plantHarvests = await _harvestService.GetPlantHarvestsByPLantId(plantId);
+
+        if (plantHarvests != null && plantHarvests.Count > 0)
+        {
+            var entities = new List<GetImagesByRelatedEntity>();
+            plantHarvests.ForEach(ph =>
+            {
+                entities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantHarvestCycle, ph.PlantHarvestCycleId, true));
+            });
+
+            var images = await _imageService.GetImagesInBulk(entities);
+            if (images != null)
+            {
+                Console.WriteLine($"Number of images before the bulk {_images.Count}");
+                _images.AddRange(images);
+                Console.WriteLine($"NUmber of images after the bulk {_images.Count}");
+                StateHasChanged();
+            }
+        }
+    }
+
+   
+}

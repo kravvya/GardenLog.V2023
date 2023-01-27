@@ -164,7 +164,7 @@ public class HarvestCycleService : IHarvestCycleService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.UpdateHarvestCycle.Replace("{id}", id));
+        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.DeleteHarvestCycle.Replace("{id}", id));
 
         if (response.ValidationProblems != null)
         {

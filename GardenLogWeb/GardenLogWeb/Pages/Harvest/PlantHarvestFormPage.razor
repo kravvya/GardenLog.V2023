@@ -335,8 +335,8 @@
         {
             var grow = _growInstructions.First(g => g.PlantGrowInstructionId == growId);
 
-            _hideSeedDetails = grow.PlantingMethod == PlantingMethodEnum.Transplanting;
-            _hideTransplantDetails = grow.PlantingMethod == PlantingMethodEnum.DirectSeed;
+            _hideSeedDetails = grow.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting;
+            _hideTransplantDetails = grow.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed;
         }
     }
 

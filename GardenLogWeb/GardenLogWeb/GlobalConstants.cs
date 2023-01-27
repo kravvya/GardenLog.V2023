@@ -13,6 +13,7 @@ global using PlantCatalog.Contract.ViewModels;
 global using PlantHarvest.Contract.ViewModels;
 global using System.Text.Json;
 global using UserManagement.Contract.ViewModels;
+global using GardenLogWeb.Models.Work;
 namespace GardenLogWeb;
 
 public static class GlobalConstants
