@@ -1,6 +1,6 @@
 ﻿namespace UserManagement.Contract.Base;
 
-public abstract record UserProfileModelBase
+public abstract record UserProfileBase
 {
     public string UserName { get; set; }
     public string FirstName { get; set; }

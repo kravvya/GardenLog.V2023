@@ -23,7 +23,7 @@
                     <InputSelect class="form-select" @bind-Value="@_harvest.GardenId" Name="Garden">
                         @foreach (var item in _gardens)
                         {
-                            <option Value="@item.GardenId">@item.GardenName</option>
+                            <option Value="@item.GardenId">@item.Name</option>
                         }
                     </InputSelect>
                     <ValidationMessage For="@(() => _harvest.GardenId)" />

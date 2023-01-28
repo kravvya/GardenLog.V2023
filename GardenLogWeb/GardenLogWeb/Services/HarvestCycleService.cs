@@ -62,7 +62,7 @@ public class HarvestCycleService : IHarvestCycleService
             {
                 foreach (var harvest in harvests)
                 {
-                    harvest.GardenName = gardens.FirstOrDefault(g => g.GardenId == harvest.GardenId)?.GardenName;
+                    harvest.GardenName = gardens.FirstOrDefault(g => g.GardenId == harvest.GardenId)?.Name;
                 }
                 // Save data in cache.
                 _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
@@ -102,7 +102,7 @@ public class HarvestCycleService : IHarvestCycleService
             }
 
             harvest = response.Response;
-            harvest.GardenName = (await _gardenService.GetGarden(harvest.GardenId, true))?.GardenName;
+            harvest.GardenName = (await _gardenService.GetGarden(harvest.GardenId, true))?.Name;
 
             AddOrUpdateToHarvestCycleList(harvest);
         }

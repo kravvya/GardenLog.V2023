@@ -6,9 +6,6 @@ public enum HarvestEventTriggerEnum
     HarvestCycleUpdated = 2,
     PlantAddedToHarvestCycle = 3,
     PlantHarvestCycleUpdated = 4,
-    PlantHarvestCycleDeleted = 5,
-    PlanAddedToHarvestCycle = 6,
-    PlanHarvestCycleUpdated = 7,
-    PlanHarvestCycleDeleted = 8
+    PlantHarvestCycleDeleted = 5
 
 }

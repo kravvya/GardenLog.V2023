@@ -2,7 +2,7 @@
 
 namespace UserManagement.Contract.Enum
 {
-    public enum GardenBedTypeEnum: int
+    public enum GardenBedTypeEnum : int
     {
         [Description("Unspecified")]
         Unspecified = 0,
@@ -14,6 +14,15 @@ namespace UserManagement.Contract.Enum
         RaisedBed = 2,
 
         [Description("Container")]
-        Container = 2
+        Container = 3,
+
+        [Description("Low Tunnel")]
+        LowTunnel = 4,
+
+        [Description("High Tunnel")]
+        HighTunnel = 5,
+
+        [Description("Greenhouse")]
+        Greenhouse = 6
     }
 }

@@ -2,6 +2,7 @@
 
 public abstract record GardenBedBase
 {
+    public string GardenId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Notes { get; set; }= string.Empty;
     public int? RowNumber { get; set; }
@@ -12,3 +13,5 @@ public abstract record GardenBedBase
     public string? BorderColor { get; set; }
     public GardenBedTypeEnum Type { get; set; }
 }
+
+

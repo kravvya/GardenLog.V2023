@@ -78,7 +78,7 @@ namespace GardenLogWeb.Services
         {
             return new List<GardenViewModel>() { new GardenViewModel(){
                 GardenId = "garden1",
-                GardenName = "Kravchenko's Garden",
+                Name = "Kravchenko's Garden",
                 City="Minnetrista",
                 StateCode = "MN",
                 UserId="up1",
