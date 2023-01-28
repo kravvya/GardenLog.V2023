@@ -4,6 +4,7 @@ public class GardenRoutes
 {
     public const string GardenBase = "/v1/api/Gardens";
     public const string GetGarden = GardenBase + "/{gardenId}";
+    public const string GetGardens = GardenBase;
     public const string CreateGarden = GardenBase;
     public const string UpdateGarden = GardenBase + "/{gardenId}";
     public const string DeleteGarden = GardenBase + "/{gardenId}";
