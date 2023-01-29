@@ -128,7 +128,7 @@ public class ImageService : IImageService
 
         if (fileName.Equals(ImageService.NO_IMAGE))
         {
-            return fileName;
+            return $"./{fileName}";
         }
         return $"{ThumbnailImageUrl}{fileName}";
     }
