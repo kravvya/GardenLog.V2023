@@ -163,13 +163,17 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
 
         });
 
-        BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+        if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
         {
-            p.AutoMap();
-            //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
-            //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
-            p.UnmapMember(m => m.DomainEvents);
-        });
+            BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+            {
+                p.AutoMap();
+                //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
+                //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
+                p.SetIgnoreExtraElements(true);
+                p.UnmapMember(m => m.DomainEvents);
+            });
+        }
 
         BsonClassMap.RegisterClassMap<HarvestCycleBase>(p =>
         {

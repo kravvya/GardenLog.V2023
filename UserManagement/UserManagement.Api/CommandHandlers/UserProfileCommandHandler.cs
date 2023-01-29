@@ -48,9 +48,6 @@ namespace UserManagement.CommandHandlers
 
         public async Task<int> UpdateUserProfile(UpdateUserProfileCommand request)
         {
-            request.UserProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId();
-
-
             var oldUser = await _userProfileRepository.SearchForUserProfile(new SearchUserProfiles(request.UserName, request.EmailAddress));
 
             if (oldUser != null && oldUser.UserName.Equals(request.UserName) && !oldUser.UserProfileId.Equals(request.UserProfileId))

@@ -8,5 +8,5 @@ public abstract record GardenBase
     public decimal Latitude { get; set; }
     public decimal Longitude { get; set; }
     public string Notes { get; set; } = string.Empty;
-    public string UserId { get; set; } = string.Empty;
+    public string UserProfileId { get; set; } = string.Empty;
 }

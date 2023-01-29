@@ -17,16 +17,25 @@ public class GardenCommandHandler : IGardenCommandHandler
     private readonly IGardenRepository _gardenRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<GardenCommandHandler> _logger;
 
-    public GardenCommandHandler(IGardenRepository plantLocationRepository, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+    public GardenCommandHandler(IGardenRepository plantLocationRepository, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, ILogger<GardenCommandHandler> logger)
     {
         _gardenRepository = plantLocationRepository;
         _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<string> CreateGarden(CreateGardenCommand request)
     {
+        var userProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+
+        var existingGardenId = await _gardenRepository.GetIdByNameAsync(request.Name, userProfileId);
+        if (!string.IsNullOrEmpty(existingGardenId))
+        {
+            throw new ArgumentException("Garden with this name already exists", nameof(request.Name));
+        }
 
         var garden = Garden.Create(
             request.Name,
@@ -35,11 +44,19 @@ public class GardenCommandHandler : IGardenCommandHandler
             request.Latitude,
             request.Longitude,
             request.Notes,
-            _httpContextAccessor.HttpContext?.User.GetUserProfileId());
+            userProfileId);
 
         _gardenRepository.Add(garden);
 
-        await _unitOfWork.SaveChangesAsync();
+        try
+        {
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception creating garden", ex);
+            throw;
+        }
 
         return garden.Id;
     }
@@ -54,7 +71,15 @@ public class GardenCommandHandler : IGardenCommandHandler
 
         _gardenRepository.Update(garden);
 
-        return await _unitOfWork.SaveChangesAsync();
+        try
+        {
+            return await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception creating garden", ex);
+            throw;
+        }
 
     }
 
@@ -68,13 +93,18 @@ public class GardenCommandHandler : IGardenCommandHandler
     {
         var garden = await _gardenRepository.GetByIdAsync(request.GardenId);
 
-        var id = garden.AddGardenBed(request, _httpContextAccessor.HttpContext?.User.GetUserProfileId());
+        if(garden.GardenBeds.FirstOrDefault(g => g.Name== request.Name) != null)
+        {
+            throw new ArgumentException("Garden bed with this name already exists", nameof(request.Name));
+        }
+
+        var id = garden.AddGardenBed(request);
 
         _gardenRepository.AddGardenBed(id, garden);
 
         await _unitOfWork.SaveChangesAsync();
 
-        return garden.Id;
+        return id;
     }
 
     public async Task<int> UpdateGardenBed(UpdateGardenBedCommand request)
@@ -86,6 +116,7 @@ public class GardenCommandHandler : IGardenCommandHandler
         _gardenRepository.UpdateGardenBed(request.GardenBedId, garden);
 
         return await _unitOfWork.SaveChangesAsync();
+
     }
 
     public async Task<int> DeleteGardenBed(string gardenId, string gardenBedId)

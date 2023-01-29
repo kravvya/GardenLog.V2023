@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Reflection.Metadata;
 using UserManagement.CommandHandlers;
 using UserManagement.Contract;
 using UserManagement.QueryHandlers;
@@ -30,18 +31,13 @@ public class GardenController : Controller
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGardens()
     {
-        try
-        {
-            var results = await _queryHandler.GetGardens();
 
-            if (results == null) return NotFound();
+        var results = await _queryHandler.GetGardens();
 
-            return Ok(results);
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        if (results == null) return NotFound();
+
+        return Ok(results);
+
     }
 
     [HttpGet()]
@@ -66,16 +62,18 @@ public class GardenController : Controller
     }
 
 
-    [HttpPost()]
-    [ActionName("CreateGarden")]
-    [Route(GardenRoutes.CreateGarden)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [HttpGet()]
+    [ActionName("GetGardenByName")]
+    [Route(GardenRoutes.GetGardenByName)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<GardenViewModel>> CreateGarden([FromBody] CreateGardenCommand command)
+    public async Task<ActionResult<GardenViewModel>> GetGardenByName(string gardenName)
     {
         try
         {
-            var results = await _commadnHandler.CreateGarden(command);
+            var results = await _queryHandler.GetGardenByName(gardenName);
+
+            if (results == null) return NotFound();
 
             return Ok(results);
         }
@@ -83,6 +81,33 @@ public class GardenController : Controller
         {
             return Problem(ex.Message);
         }
+    }
+
+
+    [HttpPost()]
+    [ActionName("CreateGarden")]
+    [Route(GardenRoutes.CreateGarden)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<GardenViewModel>> CreateGarden([FromBody] CreateGardenCommand command)
+    {           
+        try
+        {
+            var result = await _commadnHandler.CreateGarden(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+
     }
 
     [HttpPut()]
@@ -111,11 +136,11 @@ public class GardenController : Controller
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<GardenViewModel>> DeleteGarden(string userProfileId)
+    public async Task<ActionResult<GardenViewModel>> DeleteGarden(string gardenId)
     {
         try
         {
-            var results = await _commadnHandler.DeleteGarden(userProfileId);
+            var results = await _commadnHandler.DeleteGarden(gardenId);
 
             return results == 0 ? NotFound() : Ok(results);
         }
@@ -215,11 +240,11 @@ public class GardenController : Controller
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<GardenBedViewModel>> DeleteGardenBed(string userProfileId, string id)
+    public async Task<ActionResult<GardenBedViewModel>> DeleteGardenBed(string gardenId, string id)
     {
         try
         {
-            var results = await _commadnHandler.DeleteGardenBed(userProfileId, id);
+            var results = await _commadnHandler.DeleteGardenBed(gardenId, id);
 
             return results == 0 ? NotFound() : Ok(results);
         }

@@ -55,13 +55,17 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
             p.MapMember(m => m.Reason).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
         });
 
-        //BsonClassMap.RegisterClassMap<BaseEntity>(p =>
-        //{
-        //    p.AutoMap();
-        //    //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
-        //    //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
-        //    p.UnmapMember(m => m.DomainEvents);
-        //});
+        if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
+        {
+            BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+            {
+                p.AutoMap();
+                //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
+                //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
+                p.SetIgnoreExtraElements(true);
+                p.UnmapMember(m => m.DomainEvents);
+            });
+        }
 
         BsonClassMap.RegisterClassMap<WorkLogBase>(p =>
         {

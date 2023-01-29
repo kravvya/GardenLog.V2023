@@ -1,26 +1,26 @@
 # 
 # GitHub Actions workflow.
 #
-# Automatically deploys the "PlantHarvest" microservice on push.
+# Automatically deploys the "UserManagement" microservice on push.
 #
-name: Deploy PlantHarvest
+name: Deploy UserManagement
 run-name: ${{ github.actor }} is deploying using GitHub Actions 🚀
 on:
   push:
     branches: 
       - main
     paths:
-      - "PlantHarvest/**"
+      - "UserManagement/**"
   pull_request:
     paths:
-      - 'PlantHarvest/**'
+      - 'UserManagement/**'
   workflow_dispatch:
 
 env:
-  CONTAINER_APP_CONTAINER_NAME: plantharvestapi-container
-  CONTAINER_APP_NAME: plantharvestapi-containerapp
-  DOCKER_FILE_PATH: PlantHarvest/PlantHarvest.Api/Dockerfile
-  PROJECT_NAME_FOR_DOCKER: plantharvestapi
+  CONTAINER_APP_CONTAINER_NAME: usermanagementapi-container
+  CONTAINER_APP_NAME: usermanagementapi-containerapp
+  DOCKER_FILE_PATH: UserManagement/UserManagement.Api/Dockerfile
+  PROJECT_NAME_FOR_DOCKER: usermanagementapi
 
 jobs:
   setup:
@@ -55,7 +55,7 @@ jobs:
       run: dotnet build -c Release --no-restore
     
     - name: Test
-      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.IntegrationTest/PlantHarvest.IntegrationTest.csproj -c Release --no-build
+      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/UserManagement.IntegrationTest/UserManagement.IntegrationTest.csproj -c Release --no-build
       
   build:
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
     - name: Checkout to the branch
       uses: actions/checkout@main
       with:
-        path: PlantHarvest
+        path: UserManagement
 
     - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
     - run: echo "🖥️ The workflow is now ready to test your code on the runner."
@@ -98,15 +98,6 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # - name: Deploy to containerapp
-    #   uses: azure/container-apps-deploy-action@v0
-    #   with:
-    #     acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-    #     containerAppName: ${{ env.CONTAINER_APP_NAME }}
-    #     resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-    #     acrUsername: ${{ secrets.REGISTRY_USERNAME }}
-    #     acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
-    #     imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
     - name: Deploy to containerapp
       uses: azure/CLI@v1
       with:

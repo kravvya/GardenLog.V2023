@@ -1,8 +1,4 @@
-﻿
-
-using UserManagement.Contract.Command;
-
-namespace UserManagement.Api.Model;
+﻿namespace UserManagement.Api.Model;
 
 public class GardenBed : BaseEntity, IEntity
 {
@@ -15,12 +11,10 @@ public class GardenBed : BaseEntity, IEntity
     public string? BorderColor { get; private set; }
     public string Notes { get; private set; }
     public GardenBedTypeEnum Type { get; private set; }
-    public string UserProfileId { get; private set; }
 
     public GardenBed() { }
 
-    public static GardenBed Create(CreateGardenBedCommand command, string userProfileId
-    )
+    public static GardenBed Create(CreateGardenBedCommand command)
     {
         var gardenBed = new GardenBed()
         {
@@ -33,8 +27,7 @@ public class GardenBed : BaseEntity, IEntity
             Y = command.Y,
             BorderColor = command.BorderColor,
             Notes = command.Notes,
-            Type = command.Type,
-            UserProfileId = userProfileId
+            Type = command.Type
         };
 
         gardenBed.DomainEvents.Add(

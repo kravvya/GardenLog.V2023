@@ -1,9 +1,11 @@
 ﻿using GardenLog.SharedInfrastructure.MongoDB;
+using Microsoft.VisualBasic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
 
@@ -29,6 +31,22 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
 
     }
 
+    public async Task<GardenViewModel> GetGardenByName(string gardenName, string userProfileId)
+    {
+        List<FilterDefinition<Garden>> filters = new();
+        filters.Add(Builders<Garden>.Filter.Eq("Name", gardenName));
+        filters.Add(Builders<Garden>.Filter.Eq("UserProfileId", userProfileId));
+
+        var data = await Collection
+            .Find<Garden>(Builders<Garden>.Filter.And(filters))
+            .As<GardenViewModel>()
+            .FirstOrDefaultAsync();
+
+
+        return data;
+    }
+
+
     public async Task<IReadOnlyCollection<GardenViewModel>> GetGardens(string userProfileId)
     {
         var data = await Collection
@@ -38,6 +56,27 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
 
         return data;
     }
+
+    public async Task<string> GetIdByNameAsync(string name, string userProfileId)
+    {
+        var idOnlyProjection = Builders<Garden>.Projection.Include(p => p.Id);
+        List<FilterDefinition<Garden>> filters = new();
+        filters.Add(Builders<Garden>.Filter.Eq("Name", name));
+        filters.Add(Builders<Garden>.Filter.Eq("UserProfileId", userProfileId));
+
+        var data = await Collection
+            .Find<Garden>(Builders<Garden>.Filter.And(filters))
+            .Project(idOnlyProjection)
+            .FirstOrDefaultAsync();
+
+        if (data != null)
+        {
+            if (data.TryGetValue("_id", out var id))
+                return id.ToString();
+        }
+        return string.Empty;
+    }
+
 
     #region Garden Bed
 
@@ -65,6 +104,11 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
            .As<GardenBedViewModelProjection>()
            .FirstOrDefaultAsync();
 
+        if (data != null)
+        {
+            data.GardenBeds.ForEach(g => g.GardenId= gardenId);
+        }
+
         return data.GardenBeds.FirstOrDefault(b => b.GardenBedId == id);
     }
 
@@ -75,6 +119,11 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
            .Project(Builders<Garden>.Projection.Include(g => g.GardenBeds))
            .As<GardenBedViewModelProjection>()
            .FirstOrDefaultAsync();
+        
+        if (data != null)
+        {
+            data.GardenBeds.ForEach(g => g.GardenId = gardenId);
+        }
 
         return data.GardenBeds;
     }
@@ -96,7 +145,7 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
     }
 
     #endregion
-  
+
     protected override IMongoCollection<Garden> GetCollection()
     {
         return _unitOfWork.GetCollection<IMongoCollection<Garden>, Garden>(GARDEN_COLLECTION_NAME);
@@ -112,11 +161,24 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
             p.SetIgnoreExtraElements(true);
             p.SetDiscriminator("garden");
 
+            p.MapProperty(m => m.GardenBeds).SetDefaultValue(new List<GardenBed>());
+
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
             p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());
         });
-             
+
+        if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
+        {
+            BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+            {
+                p.AutoMap();
+                //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
+                //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
+                p.SetIgnoreExtraElements(true);
+                p.UnmapMember(m => m.DomainEvents);
+            });
+        }
 
         BsonClassMap.RegisterClassMap<GardenBase>(p =>
         {
@@ -142,6 +204,13 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
             p.MapMember(m => m.Type).SetSerializer(new EnumSerializer<GardenBedTypeEnum>(BsonType.String));
         });
 
+        BsonClassMap.RegisterClassMap<GardenBedViewModel>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.GardenBedId).SetElementName("_id");
+        });
 
         BsonClassMap.RegisterClassMap<GardenBedBase>(p =>
         {
@@ -151,15 +220,14 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
             p.MapMember(m => m.Type).SetSerializer(new EnumSerializer<GardenBedTypeEnum>(BsonType.String));
         });
 
-        BsonClassMap.RegisterClassMap<GardenBedViewModel>(p =>
+        BsonClassMap.RegisterClassMap<GardenBedViewModelProjection>(p =>
         {
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.GardenBedId).SetElementName("_id");
         });
-
     }
+
 
 }
 

@@ -1,8 +1,6 @@
-﻿using UserManagement.Contract.Command;
+﻿namespace UserManagement.Api.Model;
 
-namespace UserManagement.Api.Model;
-
-public class Garden : BaseEntity, IEntity
+public class Garden : BaseEntity, IAggregateRoot
 {
     public string Name { get; private set; }
     public string City { get; private set; }
@@ -12,12 +10,13 @@ public class Garden : BaseEntity, IEntity
     public string Notes { get; private set; }
     public string UserProfileId { get; private set; }
 
+
     private readonly List<GardenBed> _gardenBeds = new();
     public IReadOnlyCollection<GardenBed> GardenBeds => _gardenBeds.AsReadOnly();
 
     public Garden() { }
 
-    private Garden (string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, List<GardenBed> gardenBeds)
+    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, List<GardenBed> gardenBeds)
     {
         Name = name;
         City = city;
@@ -76,15 +75,15 @@ public class Garden : BaseEntity, IEntity
 
     }
     #region GardenBed
-    public string AddGardenBed(CreateGardenBedCommand command, string userProfileId)
+    public string AddGardenBed(CreateGardenBedCommand command)
     {
         command.GardenId = this.Id;
-        var gardenBed = GardenBed.Create(command, userProfileId);
+        var gardenBed = GardenBed.Create(command);
 
         this._gardenBeds.Add(gardenBed);
 
         this.DomainEvents.Add(
-         new GardenEvent(this,UserProfileEventTriggerEnum.GardenBedCreated, new TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
+         new GardenEvent(this, UserProfileEventTriggerEnum.GardenBedCreated, new TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
 
         return gardenBed.Id;
     }

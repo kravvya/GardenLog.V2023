@@ -81,7 +81,7 @@ namespace GardenLogWeb.Services
                 Name = "Kravchenko's Garden",
                 City="Minnetrista",
                 StateCode = "MN",
-                UserId="up1",
+                UserProfileId="up1",
                 Latitude=44.97092m,
                 Longitude=93.66728m
                 
