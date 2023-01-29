@@ -2,6 +2,7 @@
 @using ImageCatalog.Contract.Queries;
 @inject IImageService _imageService;
 @inject IHarvestCycleService _harvestService;
+@inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
 @inject IJSRuntime JsRuntime;
 
@@ -115,6 +116,13 @@
                 _breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
                 _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));
                 _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenPlanImagesUrl (relatedEntitytId), true));
+                break;
+            case ImageEntityEnum.Garden:
+                var garden = await _gardenService.GetGarden(relatedEntitytId, true);
+                _title = garden.Name;
+
+                _breadcrumbLinks.Add(new BreadcrumbLink("Gardens", _navigationManager.GetGardensUrl(), false));
+                _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenImagesUrl(relatedEntitytId), true));
                 break;
         }
        

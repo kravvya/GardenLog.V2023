@@ -30,7 +30,7 @@ public class WorkLogQueryHandler : IWorkLogQueryHandler
     public async Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogs(WorkLogEntityEnum enityType, string entityId)
     {
         _logger.LogInformation("Received request to get work logs");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
         return await _workLogRepository.GetWorkLogsByEntity(enityType, entityId, userProfileId);
     }
 

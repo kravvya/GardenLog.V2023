@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.IntegrationTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Api", "UserManagement\UserManagement.Api\UserManagement.Api.csproj", "{342F19EC-CC8B-49D0-A5D9-98BF1C289AF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.IntegrationTest", "Test\UserManagement.IntegrationTest\UserManagement.IntegrationTest.csproj", "{E7C6CCCA-B78E-4F80-AA4F-E343BA71919E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.IntegrationTest", "Test\UserManagement.IntegrationTest\UserManagement.IntegrationTest.csproj", "{E7C6CCCA-B78E-4F80-AA4F-E343BA71919E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

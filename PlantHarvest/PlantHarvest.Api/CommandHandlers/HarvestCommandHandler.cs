@@ -1,5 +1,6 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace PlantHarvest.Api.CommandHandlers;
 
@@ -37,7 +38,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     {
         _logger.LogInformation("Received request to create a new harvest cycle {@plant}", request);
 
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
         var existingHarvestId = await _harvestCycleRepository.GetIdByNameAsync(request.HarvestCycleName, userProfileId);
 
@@ -65,7 +66,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     {
         _logger.LogInformation("Received request to update harvest cycle {@harvest}", request);
 
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
         var existingHarvestId = await _harvestCycleRepository.GetIdByNameAsync(request.HarvestCycleName, userProfileId);
         if (!string.IsNullOrEmpty(existingHarvestId) && existingHarvestId != request.HarvestCycleId)
@@ -103,7 +104,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         _logger.LogInformation("Received request to create plant harvest cycle {@plantHarvestCycle}", command);
         try
         {
-            string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+            string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
             var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
 

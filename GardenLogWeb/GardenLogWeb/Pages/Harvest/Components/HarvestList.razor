@@ -90,14 +90,14 @@
     private async Task onAddHarvestImage(HarvestCycleViewModel harvest)
     {
         _imageForm.Initialize(ImageEntityEnum.HarvestCycle, harvest.HarvestCycleId);
-        await _imageFormModal.OpenModal(harvest.HarvestCycleName, "#A0C136");
+        await _imageFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 
     private async Task onEditHarvest(HarvestCycleModel harvest)
     {
         _harvestForm.Initialize(harvest);
-        await _harvestFormModal.OpenModal(harvest.HarvestCycleName, "#A0C136");
+        await _harvestFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 
@@ -105,7 +105,7 @@
     {
        
         _harvestForm.Initialize(null);
-        await _harvestFormModal.OpenModal("Create Garden Plan", "#A0C136");
+        await _harvestFormModal.OpenModal("Create Garden Plan", GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 

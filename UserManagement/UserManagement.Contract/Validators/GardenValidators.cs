@@ -10,7 +10,7 @@ public class GardenValidator<T> :AbstractValidator<T>
     {
         RuleFor(command => command.Name).NotEmpty().Length(3, 50);
         RuleFor(command => command.City).NotEmpty().Length(3, 100);
-        RuleFor(command => command.StateCode).NotEmpty().MaximumLength(10);
+        RuleFor(command => command.StateCode).NotEmpty().MaximumLength(2);
         RuleFor(command => command.Latitude).NotEmpty().NotEqual(0);
         RuleFor(command => command.Longitude).NotEmpty().NotEqual(0);
         RuleFor(command => command.Notes).NotEmpty().Length(3, 1000);

@@ -29,7 +29,7 @@ public class ImageController : ControllerBase
     {
         try
         {
-            var results = await _queryHandler.GetImagesByRelatedEntityAsync(request, User.GetUserProfileId());
+            var results = await _queryHandler.GetImagesByRelatedEntityAsync(request, User.GetUserProfileId(Request.Headers));
 
             if (results == null) return NotFound();
 
@@ -51,7 +51,7 @@ public class ImageController : ControllerBase
     {
         try
         {
-            var results = await _queryHandler.GetImagesByRelatedEntitiesAsync(request, User.GetUserProfileId());
+            var results = await _queryHandler.GetImagesByRelatedEntitiesAsync(request, User.GetUserProfileId(Request.Headers));
 
             if (results == null) return NotFound();
 
@@ -73,7 +73,7 @@ public class ImageController : ControllerBase
     {
         try
         {
-            var results = await _handler.CreateImageAsync(User.GetUserProfileId(), createCommand);
+            var results = await _handler.CreateImageAsync(User.GetUserProfileId(Request.Headers), createCommand);
             return Ok(results);
         }
         catch (Exception ex)

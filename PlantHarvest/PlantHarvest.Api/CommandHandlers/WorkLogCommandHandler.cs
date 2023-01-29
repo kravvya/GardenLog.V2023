@@ -33,7 +33,7 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
     {
         _logger.LogInformation("Received request to create a new worklog {0}", request);
 
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
 
         var workLog = WorkLog.Create(
@@ -55,7 +55,7 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
     {
         _logger.LogInformation("Received request to update work log {0}", request);
 
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
        var workLog = await _workLogRepository.GetByIdAsync(request.WorkLogId);
 

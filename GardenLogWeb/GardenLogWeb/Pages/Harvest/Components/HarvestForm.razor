@@ -79,7 +79,7 @@
     private EditContext _editContext;
     private bool _isEdit = false;
     private CustomValidation customValidation;
-    private List<GardenViewModel> _gardens = null;
+    private List<GardenModel> _gardens = null;
 
 
     public async void Initialize(HarvestCycleModel? harvest)
@@ -105,7 +105,7 @@
 
     protected async Task HandleValidSubmitAsync()
     {
-        _logger.Log(LogLevel.Information, "Plant Form passed validations");
+        _logger.Log(LogLevel.Information, "Harvest Form passed validations");
         customValidation?.ClearErrors();
 
         ApiResponse response = (_isEdit) ? await _harvestService.UpdateHarvest(_harvest) : await _harvestService.CreateHarvest(_harvest);

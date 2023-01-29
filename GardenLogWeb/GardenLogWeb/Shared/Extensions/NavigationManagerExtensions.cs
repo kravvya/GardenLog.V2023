@@ -69,6 +69,11 @@ public static class NavigationManagerExtensions
         return $"images/garden_plan/{harvestId}";
     }
 
+    public static string GetGardenImagesUrl(this NavigationManager navigationManager, string gardenId)
+    {
+        return $"images/garden/{gardenId}";
+    }
+
     public static string GetGardenPlanWorkLogsUrl(this NavigationManager navigationManager, string harvestId)
     {
         return $"worklogs/garden_plan/{harvestId}";
@@ -82,6 +87,11 @@ public static class NavigationManagerExtensions
     public static string GetGardenPlanEditPlantUrl(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
     {
         return $"/editplant/garden_plan/{harvestId}/plant/{plantHarvestId}";
+    }
+
+    public static string GetGardensUrl(this NavigationManager navigationManager)
+    {
+        return $"/editplant/garden_plan/gardens";
     }
 
     public static void NavigateToPlants(this NavigationManager navigationManager)
@@ -150,6 +160,11 @@ public static class NavigationManagerExtensions
         navigationManager.NavigateTo(navigationManager.GetGardenPlanImagesUrl(harvestId));
     }
 
+    public static void NavigateToGardenImages(this NavigationManager navigationManager, string gardenId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenImagesUrl(gardenId));
+    }
+
     public static void NavigateToGardenPlanWorkLogs(this NavigationManager navigationManager, string harvestId)
     {
         navigationManager.NavigateTo(navigationManager.GetGardenPlanWorkLogsUrl(harvestId));
@@ -163,5 +178,10 @@ public static class NavigationManagerExtensions
     public static void NavigateToGardenPlanEditPlant(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
     {
         navigationManager.NavigateTo(navigationManager.GetGardenPlanEditPlantUrl(harvestId, plantHarvestId));
+    }
+
+    public static void NavigateToGardes(this NavigationManager navigationManager)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardensUrl());
     }
 }

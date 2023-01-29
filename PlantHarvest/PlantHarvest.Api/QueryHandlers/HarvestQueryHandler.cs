@@ -35,7 +35,7 @@ public class HarvestQueryHandler : IHarvestQueryHandler
     public async Task<IReadOnlyCollection<HarvestCycleViewModel>> GetAllHarvestCycles()
     {
         _logger.LogInformation("Received request to get all harvest cycles");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
         return await _harvestCycleRepository.GetAllHarvestCycles(userProfileId);
     }
 
@@ -51,7 +51,7 @@ public class HarvestQueryHandler : IHarvestQueryHandler
     public async Task<string> GetHarvestCycleIdByHarvestCycleName(string name)
     {
         _logger.LogInformation($"Received request to get id for {name} harvest cycle");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId();
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
         var harvestId = await _harvestCycleRepository.GetIdByNameAsync(name, userProfileId);
         return harvestId;
     }

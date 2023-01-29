@@ -1,12 +1,10 @@
-﻿using PlantHarvest.Contract.Enum;
-
-namespace GardenLogWeb.Services;
+﻿namespace GardenLogWeb.Services;
 
 public interface IWorkLogService
 {
     Task<List<WorkLogModel>> GetWorkLogs(WorkLogEntityEnum entityType, string entityId, bool forceRefresh);
-    Task<ApiObjectResponse<string>> CreateWorkLog(WorkLogModel harvest);
-    Task<ApiResponse> UpdateWorkLog(WorkLogModel harvest);
+    Task<ApiObjectResponse<string>> CreateWorkLog(WorkLogModel workModel);
+    Task<ApiResponse> UpdateWorkLog(WorkLogModel workModel);
     Task<ApiResponse> DeleteWorkLog(string id, WorkLogEntityEnum entityType, string entityId);
 }
 
@@ -54,11 +52,11 @@ public class WorkLogService : IWorkLogService
         return workLogs;
     }
 
-    public async Task<ApiObjectResponse<string>> CreateWorkLog(WorkLogModel harvest)
+    public async Task<ApiObjectResponse<string>> CreateWorkLog(WorkLogModel workLog)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiPostAsync(HarvestRoutes.CreateWorkLog, harvest);
+        var response = await httpClient.ApiPostAsync(HarvestRoutes.CreateWorkLog, workLog);
 
         if (response.ValidationProblems != null)
         {
@@ -70,9 +68,9 @@ public class WorkLogService : IWorkLogService
         }
         else
         {
-            harvest.WorkLogId = response.Response;
+            workLog.WorkLogId = response.Response;
 
-            AddOrUpdateToWorkLogList(harvest);
+            AddOrUpdateToWorkLogList(workLog);
 
             _toastService.ShowToast($"Working notes saved", GardenLogToastLevel.Success);
         }
@@ -80,11 +78,11 @@ public class WorkLogService : IWorkLogService
         return response;
     }
 
-    public async Task<ApiResponse> UpdateWorkLog(WorkLogModel harvest)
+    public async Task<ApiResponse> UpdateWorkLog(WorkLogModel workLog)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiPutAsync(HarvestRoutes.UpdateWorkLog.Replace("{id}", harvest.WorkLogId), harvest);
+        var response = await httpClient.ApiPutAsync(HarvestRoutes.UpdateWorkLog.Replace("{id}", workLog.WorkLogId), workLog);
 
         if (response.ValidationProblems != null)
         {
@@ -96,7 +94,7 @@ public class WorkLogService : IWorkLogService
         }
         else
         {
-            AddOrUpdateToWorkLogList(harvest);
+            AddOrUpdateToWorkLogList(workLog);
 
             _toastService.ShowToast($"Working notes successfully saved.", GardenLogToastLevel.Success);
         }

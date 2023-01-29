@@ -1,7 +1,6 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using PlantCatalog.Contract;
 using PlantCatalog.Contract.Commands;
-using PlantCatalog.Domain.PlantAggregate;
 
 namespace PlantCatalog.IntegrationTest.Clients
 {
@@ -14,6 +13,7 @@ namespace PlantCatalog.IntegrationTest.Clients
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
         }
 
         #region Plant

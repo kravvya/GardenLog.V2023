@@ -20,7 +20,7 @@ public class UserProfileQueryHandler : IUserProfileQueryHandler
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<UserProfileViewModel> GetUserProfile() => _userProfileRepository.GetUserProfile(_httpContextAccessor.HttpContext.User.GetUserProfileId());
+    public Task<UserProfileViewModel> GetUserProfile() => _userProfileRepository.GetUserProfile(_httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers));
 
     public Task<UserProfileViewModel> GetUserProfile(string userProfileId) => _userProfileRepository.GetUserProfile(userProfileId);
 

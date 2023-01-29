@@ -26,7 +26,7 @@ public class FileController : Controller
     {
         try
         {
-            _logger.LogInformation("Generating SAS Uri for {user}", User.GetUserProfileId());
+            _logger.LogInformation("Generating SAS Uri for {user}", User.GetUserProfileId(Request.Headers));
             var results = _fileService.GenerateSasToken(fileName);
             return Ok(results);
         }

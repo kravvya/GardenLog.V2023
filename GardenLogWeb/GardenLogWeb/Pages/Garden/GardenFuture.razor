@@ -1,0 +1,171 @@
+﻿@page "/plantingbed"
+
+@inject IJSRuntime JsRuntime;
+@inject IGardenService _gardenService;
+@inject IMouseService mouseService;
+@inject IKeyService keyService;
+<div class="row">
+    <div class="column">
+        <button @onclick="addSvg">
+            Add svg
+        </button>
+    </div>
+    <div class="column">
+        <EditForm Model="@selectedBed">
+            <p>
+                Width:
+                <InputNumber Class="form-control" @bind-Value="selectedBed.Width" Id="width" />
+                Length:
+                <InputNumber Class="form-control" @bind-Value="selectedBed.Length" Id="length" />
+            </p>
+        </EditForm>
+    </div>
+    <div class="column">
+        <div id="zoom-navigator">
+            <div id="mapnav" title="Click on the arrows to navigate">
+                <a id="nav-up" href="javascript: void(0);" @onclick="@(() => MoveBoxView(0,-48))"></a>
+                <a id="nav-right" href="javascript: void(0);" @onclick="@(() => MoveBoxView(48,0))"></a>
+                <a id="nav-down" hhref="javascript: void(0);" @onclick="@(() => MoveBoxView(0,48))"></a>
+                <a id="nav-left" href="javascript: void(0);" @onclick="@(() => MoveBoxView(-48,0))"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="garden-layout-container">
+        <div id="garden-plan">
+            <div class="vertical-ruler">
+                <svg preserveAspectRatio="none" version="1.1" width="40" height="768" viewBox="0 @viewY 45 768">
+                    <g id="tick-groups">
+                        <line x1="0" y1="0" x2="0" y2="@(_garden.Length/12*48)" stroke="#000000" stroke-width="1"></line>
+                        @for (int i = 0; i <= _garden.Length / 12; i++)
+                        {
+                            <line x1="0" y1="@(i*48)" x2="14" y2="@(i*48)" stroke="#000000" stroke-width="1"></line>
+                        }
+                        <text x="8" y="11" class="label-no-0" fill="#000000" stroke-width="1" font-family="monospace" font-size="9">ft</text>
+                        @for (int i = 1; i <= _garden.Length / 12; i++)
+                        {
+                            <text><text x="8" y="@(11+i*48) " class="label-no-@i" fill="#000000" stroke-width="1" font-family="monospace" font-size="9">@i</text></text>
+                        }
+                    </g>
+                    <g id="division-tick-groups" stroke="#000000">
+                        @for (int i = 0; i <= _garden.Length; i++)
+                        {
+                            <line x1="0" y1="@(i*4)" x2="5" y2="@(i*4)"></line>
+                        }
+                    </g>
+                </svg>
+            </div>
+            <div class="hasSVG" id="svg-beds-container">
+                <svg preserveAspectRatio="none" version="1.1" width="1220" height="20" viewBox="@viewX 0 1220 15">
+                    <g id="tick-groups">
+                        <line x1="0" y1="0" x2="@(_garden.Width/12*48)" y2="0" stroke="#000000" stroke-width="1"></line>
+                        @for (int i = 0; i <= _garden.Width / 12; i++)
+                        {
+                            <line x1="@(i*48)" y1="0" x2="@(i*48)" y2="14" stroke="#000000" stroke-width="1"></line>
+                        }
+                        <text x="4" y="15" class="label-no-0" fill="#000000" stroke-width="1" font-family="monospace" font-size="9">ft</text>
+                        @for (int i = 1; i <= _garden.Width / 12; i++)
+                        {
+                            <text><text x="@(4+48*i)" y="15" class="label-no-@i" fill="#000000" stroke-width="1" font-family="monospace" font-size="9">@i</text></text>
+                        }
+                    </g>
+                    <g id="division-tick-groups" stroke="#000000">
+                        @for (int i = 0; i <= _garden.Width; i++)
+                        {
+                            <line x1="@(i*4)" y1="0" x2="@(i*4)" y2="5"></line>
+                        }
+                    </g>
+                </svg>
+                <svg version="1.1" height="800" width="1220" viewBox="@viewX @viewY 1220 800"
+                     @onkeydown=@(e => keyService.KeyDown(this, e))
+                     @onmousemove=@(e => mouseService.MouseMove(this, e))
+                     @onmouseup=@(e => mouseService.MouseUp(this, e))
+                     @onmouseleave=@(e => mouseService.MouseLeave(this, e))>
+
+                    <defs>
+                        @*small background box*@
+                        <pattern id="smallrect" x="0" y="0" width="48" height="48" viewBox="0 0 48 48" patternUnits="userSpaceOnUse">
+                            <rect x="0" y="0" width="48" height="48" fill="#dbeef0" stroke="#9bcfd2" stroke-width="0.4"></rect>
+                        </pattern>
+                        @*group of small background boxes*@
+                        <pattern id="bigrect" x="0" y="0" width="240" height="240" viewBox="0 0 240 240" patternUnits="userSpaceOnUse">
+                            <rect x="0" y="0" width="240" height="240" fill="url(#smallrect)" stroke="#9bcfd2" stroke-width="1"></rect>
+                        </pattern>
+                        @*garden bed background box*@
+                        <pattern id="bed-pat" x="0" y="0" width="48" height="48" viewBox="0 0 48 48" patternUnits="userSpaceOnUse">
+                            <image x="0" y="0" width="48" height="48" href=" images/garden-bed-background.png"></image>
+                        </pattern>
+                    </defs>
+
+                    <rect x="0" y="0" width="@(_garden.Width*4)" height="@(_garden.Length*4)" fill="url(#bigrect)" id="bg"></rect>
+                    @*group of planting boxes*@
+                    <g>
+                        @foreach (var bed in _garden.Beds)
+                        {
+                            <DraggableRect @bind-X=bed.X @bind-Y=bed.Y height="@(bed.Length/12*48)" width="@(bed.Width/12*48)" Component=@bed ComponentSelected=@ComponentSelected fill="url(#bed-pat)" class="area selectable visible"></DraggableRect>
+                            <text><text x="@bed.X" y="@bed.Y" text-anchor="start" alignment-baseline="hanging" style="fill:#fff;fill-opacity: .25;">@bed.Name</text></text>
+                        }
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    int x = 48;
+    int y = 48;
+    double xx = 105;
+    double yy = 105;
+    Garden _garden = new Garden();
+    VisualComponent selectedBed = new GardenBed();
+
+    int viewX = 0;
+    int viewY = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //_garden = _gardenService.GetFakeGarden();
+
+        _garden.Beds.Add(
+            new GardenBed()
+                {
+                    Name = "My box",
+                    Length = 24,
+                    Width = 12,
+                    X = 44,
+                    Y = 44
+
+                });
+
+        StateHasChanged();
+    }
+
+    protected void addSvg()
+    {
+        _garden.Beds.Add(
+            new GardenBed()
+                {
+                    Name = "My box2",
+                    Length = 24,
+                    Width = 12,
+                    X = 44,
+                    Y = 44
+
+                });
+    }
+
+    //@*@onkeydown="@(async (args) => await Move(args))"*@
+    protected void ComponentSelected(VisualComponent selected)
+    {
+        selectedBed = selected;
+    }
+
+
+
+    protected void MoveBoxView(int x, int y)
+    {
+        viewX += x;
+        viewY += y;
+    }
+}

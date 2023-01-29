@@ -10,8 +10,8 @@ public enum ImageEntityEnum : int
     Plant = 1,
     [Description("PlantVariety")]
     PlantVariety = 2,
-    [Description("Plant Location")]
-    PlantLocation = 3,
+    [Description("Garden")]
+    Garden = 3,
     [Description("Seed")]
     Seed = 4,
     [Description("Seed Vendor")]
