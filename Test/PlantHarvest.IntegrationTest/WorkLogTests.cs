@@ -110,8 +110,13 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
 
         var workLogs = await GetWorkLogsToWorkWith(harvestId);
-
-        Assert.NotNull(workLogs);
+        if (workLogs.Count == 0)
+        {
+            var response = await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
+        }
+         workLogs = await GetWorkLogsToWorkWith(harvestId);
+     
+            Assert.NotNull(workLogs);
         Assert.NotEmpty(workLogs);
     }
 
