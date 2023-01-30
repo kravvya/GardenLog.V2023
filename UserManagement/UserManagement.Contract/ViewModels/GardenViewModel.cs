@@ -1,6 +1,4 @@
-﻿using UserManagement.Contract.Base;
-
-namespace UserManagement.Contract.ViewModels;
+﻿namespace UserManagement.Contract.ViewModels;
 
 public record  GardenViewModel : GardenBase
 {

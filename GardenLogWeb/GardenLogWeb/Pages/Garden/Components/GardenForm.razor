@@ -42,7 +42,18 @@
                         <ValidationMessage For="@(() => _garden.Longitude)" />
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="LastFrostDate">Last Spring Frost Date</label>
+                        <InputDate T="DateOnly" class="form-control" id="LastFrostDate" @bind-Value="@_garden.LastFrostDate" />
+                        <ValidationMessage For="@(() => _garden.LastFrostDate)" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="FirstFrostDate">First Fall Frost Date</label>
+                        <InputDate  T="DateOnly" class="form-control" id="FirstFrostDate" @bind-Value="@_garden.FirstFrostDate" />
+                        <ValidationMessage For="@(() => _garden.FirstFrostDate)" />
+                    </div>
+                </div>
 
                 <div class="col-md-10">
                     <label for="description">Description</label>

@@ -73,7 +73,9 @@ public class GardenClient
             StateCode = "MN",
             Latitude = 44.9366M,
             Longitude = 93.6661M,
-            Notes = "Integration test garden"
+            Notes = "Integration test garden",
+            LastFrostDate = DateOnly.Parse("05/15/1900"),
+            FirstFrostDate = DateOnly.Parse("09/15/1900")
         };
     }
     #endregion

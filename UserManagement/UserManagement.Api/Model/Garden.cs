@@ -9,6 +9,8 @@ public class Garden : BaseEntity, IAggregateRoot
     public decimal Longitude { get; private set; }
     public string Notes { get; private set; }
     public string UserProfileId { get; private set; }
+    public DateOnly LastFrostDate { get; private set; }
+    public DateOnly FirstFrostDate { get; private set; }
 
 
     private readonly List<GardenBed> _gardenBeds = new();
@@ -16,7 +18,7 @@ public class Garden : BaseEntity, IAggregateRoot
 
     public Garden() { }
 
-    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, List<GardenBed> gardenBeds)
+    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, List<GardenBed> gardenBeds, DateOnly lastFrostDate, DateOnly firstFrostDate)
     {
         Name = name;
         City = city;
@@ -26,6 +28,8 @@ public class Garden : BaseEntity, IAggregateRoot
         Notes = notes;
         UserProfileId = userProfileId;
         _gardenBeds = gardenBeds;
+        LastFrostDate = lastFrostDate;
+        FirstFrostDate = firstFrostDate;
     }
 
     public static Garden Create(
@@ -35,7 +39,9 @@ public class Garden : BaseEntity, IAggregateRoot
         decimal latitude,
         decimal longitude,
         string notes,
-        string userProfileId
+        string userProfileId,
+        DateOnly lastFrostDate,
+        DateOnly firstFrostDate
     )
     {
         var garden = new Garden()
@@ -47,7 +53,9 @@ public class Garden : BaseEntity, IAggregateRoot
             StateCode = stateCode,
             Latitude = latitude,
             Longitude = longitude,
-            Notes = notes
+            Notes = notes,
+            LastFrostDate= lastFrostDate,
+            FirstFrostDate= firstFrostDate
         };
 
         garden.DomainEvents.Add(
@@ -63,7 +71,9 @@ public class Garden : BaseEntity, IAggregateRoot
         string stateCode,
         decimal latitude,
         decimal longitude,
-        string notes
+        string notes,
+        DateOnly lastFrostDate,
+        DateOnly firstFrostDate
         )
     {
         this.Set<string>(() => this.Name, gardenName);
@@ -72,6 +82,8 @@ public class Garden : BaseEntity, IAggregateRoot
         this.Set<decimal>(() => this.Latitude, latitude);
         this.Set<decimal>(() => this.Longitude, longitude);
         this.Set<string>(() => this.Notes, notes);
+        this.Set<DateOnly>(() => this.LastFrostDate, lastFrostDate);
+        this.Set<DateOnly>(() => this.FirstFrostDate, firstFrostDate);
 
     }
     #region GardenBed

@@ -29,6 +29,12 @@
         await SetupPage();
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            _calendar.Initialize(_harvest);
+    }
+
     private async Task SetupPage()
     {
         _description = string.Empty;

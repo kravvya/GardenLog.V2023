@@ -160,7 +160,7 @@ namespace GardenLogWeb.Services
             {
                 await AddOrUpdateToGardenList(harvest);
 
-                _toastService.ShowToast($"Working notes successfully saved.", GardenLogToastLevel.Success);
+                _toastService.ShowToast($"Garden changes successfully saved.", GardenLogToastLevel.Success);
             }
 
             return response;
