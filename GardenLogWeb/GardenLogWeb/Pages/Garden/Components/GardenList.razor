@@ -123,15 +123,18 @@
 
     private async Task CloseImageFormModal(ImageViewModel image)
     {
-        var garden = _gardens.FirstOrDefault(g => g.GardenId == image.RelatedEntityId);
-        if (garden != null)
+        if (image != null)
         {
-            if (string.IsNullOrEmpty(garden.ImageFileName) || garden.ImageFileName == ImageService.NO_IMAGE)
+            var garden = _gardens.FirstOrDefault(g => g.GardenId == image.RelatedEntityId);
+            if (garden != null)
             {
-                garden.ImageFileName = image.FileName;
-                garden.ImageLabel = image.Label;
+                if (string.IsNullOrEmpty(garden.ImageFileName) || garden.ImageFileName == ImageService.NO_IMAGE)
+                {
+                    garden.ImageFileName = image.FileName;
+                    garden.ImageLabel = image.Label;
+                }
+                garden.Images.Add(image);
             }
-            garden.Images.Add(image);
         }
 
         await _imageFormModal.CloseModal();

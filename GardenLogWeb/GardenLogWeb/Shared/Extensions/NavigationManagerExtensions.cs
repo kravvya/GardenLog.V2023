@@ -79,6 +79,16 @@ public static class NavigationManagerExtensions
         return $"worklogs/garden_plan/{harvestId}";
     }
 
+    public static string GetGardenScheduleUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"schedule/{harvestId}";
+    }
+
+    public static string GetGardenScheduleUrl(this NavigationManager navigationManager)
+    {
+        return $"schedule";
+    }
+
     public static string GetGardenPlanAddPlantUrl(this NavigationManager navigationManager, string harvestId)
     {
         return $"/addplant/garden_plan/{harvestId}";
@@ -168,6 +178,16 @@ public static class NavigationManagerExtensions
     public static void NavigateToGardenPlanWorkLogs(this NavigationManager navigationManager, string harvestId)
     {
         navigationManager.NavigateTo(navigationManager.GetGardenPlanWorkLogsUrl(harvestId));
+    }
+
+    public static void NavigateToGardenScheduleLogs(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenScheduleUrl(harvestId));
+    }
+
+    public static void NavigateToGardenScheduleLogs(this NavigationManager navigationManager)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenScheduleUrl());
     }
 
     public static void NavigateToGardenPlanAddPlant(this NavigationManager navigationManager, string harvestId)
