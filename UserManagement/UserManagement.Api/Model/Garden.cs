@@ -9,8 +9,8 @@ public class Garden : BaseEntity, IAggregateRoot
     public decimal Longitude { get; private set; }
     public string Notes { get; private set; }
     public string UserProfileId { get; private set; }
-    public DateOnly LastFrostDate { get; private set; }
-    public DateOnly FirstFrostDate { get; private set; }
+    public DateTime LastFrostDate { get; private set; }
+    public DateTime FirstFrostDate { get; private set; }
 
 
     private readonly List<GardenBed> _gardenBeds = new();
@@ -18,7 +18,7 @@ public class Garden : BaseEntity, IAggregateRoot
 
     public Garden() { }
 
-    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, List<GardenBed> gardenBeds, DateOnly lastFrostDate, DateOnly firstFrostDate)
+    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, DateTime lastFrostDate, DateTime firstFrostDate, List<GardenBed> gardenBeds)
     {
         Name = name;
         City = city;
@@ -40,8 +40,8 @@ public class Garden : BaseEntity, IAggregateRoot
         decimal longitude,
         string notes,
         string userProfileId,
-        DateOnly lastFrostDate,
-        DateOnly firstFrostDate
+        DateTime lastFrostDate,
+        DateTime firstFrostDate
     )
     {
         var garden = new Garden()
@@ -72,8 +72,8 @@ public class Garden : BaseEntity, IAggregateRoot
         decimal latitude,
         decimal longitude,
         string notes,
-        DateOnly lastFrostDate,
-        DateOnly firstFrostDate
+        DateTime lastFrostDate,
+        DateTime firstFrostDate
         )
     {
         this.Set<string>(() => this.Name, gardenName);
@@ -82,8 +82,8 @@ public class Garden : BaseEntity, IAggregateRoot
         this.Set<decimal>(() => this.Latitude, latitude);
         this.Set<decimal>(() => this.Longitude, longitude);
         this.Set<string>(() => this.Notes, notes);
-        this.Set<DateOnly>(() => this.LastFrostDate, lastFrostDate);
-        this.Set<DateOnly>(() => this.FirstFrostDate, firstFrostDate);
+        this.Set<DateTime>(() => this.LastFrostDate, lastFrostDate);
+        this.Set<DateTime>(() => this.FirstFrostDate, firstFrostDate);
 
     }
     #region GardenBed

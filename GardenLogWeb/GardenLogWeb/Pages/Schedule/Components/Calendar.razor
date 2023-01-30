@@ -316,20 +316,20 @@
                 PlantCalendar = new List<PlantSchedule>(){
                         new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("02/10/2023"),
-                            EndDate = DateOnly.Parse("02/24/2023"),
+                            StartDate = DateTime.Parse("02/10/2023"),
+                            EndDate = DateTime.Parse("02/24/2023"),
                             Task = PlantTaskType.SowIndoors
                         },
                          new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("06/01/2023"),
-                            EndDate = DateOnly.Parse("06/01/2023"),
+                            StartDate = DateTime.Parse("06/01/2023"),
+                            EndDate = DateTime.Parse("06/01/2023"),
                             Task = PlantTaskType.TransplantOutside
                         },
                          new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("08/15/2023"),
-                            EndDate = DateOnly.Parse("09/18/2023"),
+                            StartDate = DateTime.Parse("08/15/2023"),
+                            EndDate = DateTime.Parse("09/18/2023"),
                             Task = PlantTaskType.Harvest
                         }
                 }
@@ -341,20 +341,20 @@
                 PlantCalendar = new List<PlantSchedule>(){
                         new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("04/01/2023"),
-                            EndDate = DateOnly.Parse("04/01/2023"),
+                            StartDate = DateTime.Parse("04/01/2023"),
+                            EndDate = DateTime.Parse("04/01/2023"),
                             Task = PlantTaskType.SowIndoors
                         },
                          new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("06/15/2023"),
-                            EndDate = DateOnly.Parse("06/15/2023"),
+                            StartDate = DateTime.Parse("06/15/2023"),
+                            EndDate = DateTime.Parse("06/15/2023"),
                             Task = PlantTaskType.TransplantOutside
                         },
                          new PlantSchedule()
                         {
-                            StartDate = DateOnly.Parse("08/15/2023"),
-                            EndDate = DateOnly.Parse("09/18/2023"),
+                            StartDate = DateTime.Parse("08/15/2023"),
+                            EndDate = DateTime.Parse("09/18/2023"),
                             Task = PlantTaskType.Harvest
                         }
                 }
@@ -398,14 +398,14 @@
         string taskClass = "nowork";
 
         int year = DateTime.Now.Year;
-        DateOnly firstDayOfMonth = new DateOnly(year, month, 1);
+        DateTime firstDayOfMonth = new DateTime(year, month, 1);
 
         int firstDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
 
         int dayOfWeek = 1;
 
-        DateOnly targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
-        DateOnly targetDateEnd = targetDate.AddDays(7);
+        DateTime targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
+        DateTime targetDateEnd = targetDate.AddDays(7);
 
         Console.WriteLine($"Considering date - {targetDate} to {targetDateEnd}");
         var schedule = plant.PlantCalendar.FirstOrDefault(p => (targetDate <= p.StartDate && p.StartDate <= targetDateEnd)

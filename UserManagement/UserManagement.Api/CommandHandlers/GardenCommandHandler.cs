@@ -44,7 +44,9 @@ public class GardenCommandHandler : IGardenCommandHandler
             request.Latitude,
             request.Longitude,
             request.Notes,
-            userProfileId);
+            userProfileId,
+            request.LastFrostDate,
+            request.FirstFrostDate);
 
         _gardenRepository.Add(garden);
 
@@ -67,7 +69,7 @@ public class GardenCommandHandler : IGardenCommandHandler
         var garden = await _gardenRepository.GetByIdAsync(request.GardenId);
         if (garden == null) return 0;
 
-        garden.Update(request.Name, request.City, request.StateCode, request.Latitude, request.Longitude, request.Notes);
+        garden.Update(request.Name, request.City, request.StateCode, request.Latitude, request.Longitude, request.Notes, request.LastFrostDate, request.FirstFrostDate);
 
         _gardenRepository.Update(garden);
 
@@ -121,12 +123,21 @@ public class GardenCommandHandler : IGardenCommandHandler
 
     public async Task<int> DeleteGardenBed(string gardenId, string gardenBedId)
     {
-        var garden = await _gardenRepository.GetByIdAsync(gardenId);
+        try
+        {
+            var garden = await _gardenRepository.GetByIdAsync(gardenId);
 
-        garden.DeleteGardenBed(gardenBedId);
+            garden.DeleteGardenBed(gardenBedId);
 
-        _gardenRepository.DeleteGardenBed(gardenBedId, garden);
+            _gardenRepository.DeleteGardenBed(gardenBedId, garden);
 
-        return await _unitOfWork.SaveChangesAsync();
+            return await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception creating garden", ex);
+            throw;
+        }
+       
     }
 }

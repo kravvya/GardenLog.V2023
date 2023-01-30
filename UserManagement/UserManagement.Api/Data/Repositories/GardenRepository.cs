@@ -161,8 +161,11 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
             p.SetIgnoreExtraElements(true);
             p.SetDiscriminator("garden");
 
-            p.MapProperty(m => m.GardenBeds).SetDefaultValue(new List<GardenBed>());
+            var dateSerializer = new DateTimeSerializer(dateOnly: true);
 
+            p.MapProperty(m => m.GardenBeds).SetDefaultValue(new List<GardenBed>());
+            p.MapProperty(m => m.LastFrostDate).SetSerializer(dateSerializer);
+            p.MapProperty(m => m.FirstFrostDate).SetSerializer(dateSerializer);
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
             p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());

@@ -9,6 +9,6 @@ public abstract record GardenBase
     public decimal Longitude { get; set; }
     public string Notes { get; set; } = string.Empty;
     public string UserProfileId { get; set; } = string.Empty;
-    public DateOnly LastFrostDate { get; set; }
-    public DateOnly FirstFrostDate { get; set; }
+    public DateTime LastFrostDate { get; set; }
+    public DateTime FirstFrostDate { get; set; }
 }

@@ -7,8 +7,8 @@ public record PlantScheduleModel :PlantHarvestCycleModel
 
 public record PlantSchedule()
 {
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
     public PlantTaskType Task { get; set; }
 } 
 
