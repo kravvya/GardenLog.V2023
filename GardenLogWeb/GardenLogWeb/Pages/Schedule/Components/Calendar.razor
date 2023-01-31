@@ -19,6 +19,7 @@
                         <div class="p-2"><small class="p-2 text-light transplant">Transplant</small></div>
                         <div class="p-2"><small class="p-2 text-light harvest">Harvest</small></div>
                         <div class="p-2"><small class="p-2 text-light bg-danger ">First/Last Frost Dates</small></div>
+                        <div class="p-2"><small class="p-2 text-light bg-info">Current Date</small></div>
                     </div>
                 </div>
             </div>
@@ -76,10 +77,12 @@
     private HarvestCycleModel? _harvest;
     private List<PlantScheduleModel>? _plants;
     private Dictionary<int, int> _mondaysPerMonth = new();
+    private Dictionary<string, DateRange> _weeksPerMonth = new();
     private GardenModel? _garden;
     public bool IsInitialized = false;
     private DateTime _lastFrostDate;
     private DateTime _firstFrostDate;
+    private DateTime _lastDate;
 
     public async void Initialize(HarvestCycleModel harvest)
     {
@@ -160,18 +163,9 @@
         {
             int year = DateTime.Now.Year;
 
-
             for (int day = 1; day <= DateTime.DaysInMonth(year, month); day++)
             {
                 if (new DateTime(year, month, day).DayOfWeek == DayOfWeek.Monday)
-                {
-                    numberOfMondays++;
-                }
-            }
-            if (month != 12)
-            {
-                DateTime nextMonth = new DateTime(year, month + 1, 1);
-                if (nextMonth.DayOfWeek == DayOfWeek.Sunday || nextMonth.DayOfWeek == DayOfWeek.Monday)
                 {
                     numberOfMondays++;
                 }
@@ -186,21 +180,37 @@
     private string GetTaskClass(int month, int week, PlantScheduleModel plant)
     {
         string taskClass = "nowork";
+        string key = $"{month}-{week}";
+        DateRange dateRange;
 
-        int year = DateTime.Now.Year;
-        DateTime firstDayOfMonth = new DateTime(year, month, 1);
+        DateTime now = DateTime.Now;
 
-        int firstDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
+        if (!_weeksPerMonth.TryGetValue(key, out dateRange))
+        {
+            int year = now.Year;
+            DateTime firstDayOfMonth = new DateTime(year, month, 1);
 
-        int dayOfWeek = 1;
+            int firstDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
 
-        DateTime targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
-        DateTime targetDateEnd = targetDate.AddDays(7);
+            int dayOfWeek = 1;
 
+            DateTime targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
+            //if we ended up in the previous month - lets roll to current month
+            if (_lastDate > targetDate)
+            {
+                targetDate = targetDate.AddDays(7);
+            }
+            DateTime targetDateEnd = targetDate.AddDays(6);
+            _lastDate = targetDateEnd;
+            dateRange = new DateRange() { StartDate = targetDate, EndDate = targetDateEnd };
 
-        var schedule = plant.PlantCalendar.FirstOrDefault(p => (targetDate <= p.StartDate && p.StartDate <= targetDateEnd)
-                                                                    || (p.StartDate <= targetDate && targetDateEnd <= p.EndDate)
-                                                                    || (targetDate <= p.EndDate && p.EndDate <= targetDateEnd)
+            _weeksPerMonth.Add(key, dateRange);
+        }
+        
+
+        var schedule = plant.PlantCalendar.FirstOrDefault(p => (dateRange.StartDate <= p.StartDate && p.StartDate <= dateRange.EndDate)
+                                                                    || (p.StartDate <= dateRange.StartDate && dateRange.EndDate <= p.EndDate)
+                                                                    || (dateRange.StartDate <= p.EndDate && p.EndDate <= dateRange.EndDate)
                                                             );
 
         if (schedule != null)
@@ -219,17 +229,23 @@
                     break;
             }
         }
-        Console.WriteLine($"Considering date - {targetDate} to {targetDateEnd}");
+        Console.WriteLine($"Considering date - {dateRange.StartDate} to {dateRange.EndDate}");
 
 
-        if ((targetDate < _lastFrostDate && _lastFrostDate <= targetDateEnd)
-           || (targetDate < _firstFrostDate && _firstFrostDate <= targetDateEnd))
+        if ((dateRange.StartDate <= _lastFrostDate && _lastFrostDate <= dateRange.EndDate)
+           || (dateRange.StartDate <= _firstFrostDate && _firstFrostDate <= dateRange.EndDate))
         {
             Console.WriteLine($"Found frost date");
             return taskClass + " border-end border-danger border-5";
         }
 
+        if (dateRange.StartDate <= now && now <= dateRange.EndDate)
+        {
+            Console.WriteLine($"Found now");
+            return taskClass + " border-start border-info border-5";
+        }
+
         return taskClass;
     }
-
 }
+
