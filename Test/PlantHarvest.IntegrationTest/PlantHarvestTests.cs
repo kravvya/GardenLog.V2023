@@ -147,7 +147,7 @@ namespace PlantHarvest.IntegrationTest;
                 
         if (original != null)
         {
-            var response = await _plantHarvestClient.DeletePlantHarvestCycle(original.PlantId, original.PlantHarvestCycleId);
+            var response = await _plantHarvestClient.DeletePlantHarvestCycle(original.HarvestCycleId, original.PlantHarvestCycleId);
         }
 
         var harvestCycleId = await CreatePlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
@@ -270,7 +270,7 @@ namespace PlantHarvest.IntegrationTest;
     {
         var response = await _plantHarvestClient.GetPlantHarvestCycles(harvestId);
 
-        _output.WriteLine($"Service to get all plant harvest cycle responded with {response.StatusCode} code");
+        _output.WriteLine($"GetPlantHarvestCycleToWorkWith - Service to get all plant harvest cycle responded with {response.StatusCode} code");
 
         var options = new JsonSerializerOptions
         {

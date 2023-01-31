@@ -1,4 +1,5 @@
-﻿@inject IHarvestCycleService _harvestService;
+﻿@using PlantHarvest.Contract.Base;
+@inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
 
 <div>
@@ -75,7 +76,7 @@
 
 @code {
     private HarvestCycleModel? _harvest;
-    private List<PlantScheduleModel>? _plants;
+    private List<PlantHarvestCycleModel>? _plants;
     private Dictionary<int, int> _mondaysPerMonth = new();
     private Dictionary<string, DateRange> _weeksPerMonth = new();
     private GardenModel? _garden;
@@ -96,24 +97,24 @@
 
         IsInitialized = true;
         _plants = new();
-        _plants.Add(new PlantScheduleModel()
+        _plants.Add(new PlantHarvestCycleModel()
             {
                 PlantName = "Tomato",
                 PlantVarietyName = "Big Red",
-                PlantCalendar = new List<PlantSchedule>(){
-                        new PlantSchedule()
+                PlantCalendar = new List<PlantScheduleBase>(){
+                        new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("02/10/2023"),
                             EndDate = DateTime.Parse("02/24/2023"),
                             Task = WorkLogReasonEnum.SowIndoors
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/01/2023"),
                             EndDate = DateTime.Parse("06/01/2023"),
                             Task = WorkLogReasonEnum.TransplantOutside
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
@@ -121,24 +122,24 @@
                         }
                 }
             });
-        _plants.Add(new PlantScheduleModel()
+        _plants.Add(new PlantHarvestCycleModel()
             {
                 PlantName = "Pepper",
                 PlantVarietyName = "Summer Bell",
-                PlantCalendar = new List<PlantSchedule>(){
-                        new PlantSchedule()
+                PlantCalendar = new List<PlantScheduleBase>(){
+                        new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("04/01/2023"),
                             EndDate = DateTime.Parse("04/01/2023"),
                             Task = WorkLogReasonEnum.SowIndoors
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/15/2023"),
                             EndDate = DateTime.Parse("06/15/2023"),
                             Task = WorkLogReasonEnum.TransplantOutside
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
@@ -177,7 +178,7 @@
         return numberOfMondays;
     }
 
-    private string GetTaskClass(int month, int week, PlantScheduleModel plant)
+    private string GetTaskClass(int month, int week, PlantHarvestCycleModel plant)
     {
         string taskClass = "nowork";
         string key = $"{month}-{week}";

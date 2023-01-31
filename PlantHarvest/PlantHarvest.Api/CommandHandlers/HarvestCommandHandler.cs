@@ -1,6 +1,7 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Http;
+using PlantHarvest.Infrastructure.ApiClients;
 
 namespace PlantHarvest.Api.CommandHandlers;
 
@@ -23,13 +24,15 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     private readonly IHarvestCycleRepository _harvestCycleRepository;
     private readonly ILogger<HarvestCommandHandler> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IPlantCatalogApiClient _plantCatalogApi;
 
-    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor)
+    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IPlantCatalogApiClient plantCatalogApi)
     {
         _unitOfWork = unitOfWork;
         _harvestCycleRepository = harvestCycleRepository;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
+        _plantCatalogApi = plantCatalogApi;
     }
 
     #region Harvest Cycle

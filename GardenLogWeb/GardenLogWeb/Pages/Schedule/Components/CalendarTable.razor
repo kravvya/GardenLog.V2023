@@ -1,4 +1,5 @@
-﻿@inject IHarvestCycleService _harvestService;
+﻿@using PlantHarvest.Contract.Base;
+@inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
 
@@ -16,17 +17,17 @@
                 <table class="table table-borderless align-middle text-center ">
                     <thead class="table-primary" style="border-width: 2px;">
                         <tr>
-                            <th scope="col">Plant</th>
-                            <th scope="col">Sow Indors</th>
-                            <th scope="col">Transplant</th>
-                            <th scope="col">Harvest</th>
+                            <th scope="col"><span class="fw-semibold">Plant</span></th>
+                            <th scope="col"><span class="fw-semibold">Sow Indors</span></th>
+                            <th scope="col"><span class="fw-semibold">Transplant</span></th>
+                            <th scope="col"><span class="fw-semibold">Harvest</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var plant in _plants)
                         {
                             <tr style="border-width: 2px;" @key="plant.PlantId">
-                                <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><span class="lead fw-bold">@plant.GetPlantName()</span></a></td>
+                                <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><span class="fw-semibold">@plant.GetPlantName()</span></a></td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.SowIndoors)</td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.TransplantOutside)</td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.Harvest)</td>
@@ -42,7 +43,7 @@
 
 @code {
     private HarvestCycleModel? _harvest;
-    private List<PlantScheduleModel>? _plants;
+    private List<PlantHarvestCycleModel>? _plants;
 
     private GardenModel? _garden;
     public bool IsInitialized = false;
@@ -61,25 +62,25 @@
 
         IsInitialized = true;
         _plants = new();
-        _plants.Add(new PlantScheduleModel()
+        _plants.Add(new PlantHarvestCycleModel()
             {
                 PlantId="1",
                 PlantName = "Tomato",
                 PlantVarietyName = "Big Red",
-                PlantCalendar = new List<PlantSchedule>(){
-                        new PlantSchedule()
+                PlantCalendar = new List<PlantScheduleBase>(){
+                        new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("02/10/2023"),
                             EndDate = DateTime.Parse("02/24/2023"),
                             Task = WorkLogReasonEnum.SowIndoors
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/01/2023"),
                             EndDate = DateTime.Parse("06/01/2023"),
                             Task = WorkLogReasonEnum.TransplantOutside
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
@@ -87,25 +88,25 @@
                         }
                 }
             });
-        _plants.Add(new PlantScheduleModel()
+        _plants.Add(new PlantHarvestCycleModel()
             {
                 PlantId = "2",
                 PlantName = "Pepper",
                 PlantVarietyName = "Summer Bell",
-                PlantCalendar = new List<PlantSchedule>(){
-                        new PlantSchedule()
+                PlantCalendar = new List<PlantScheduleBase>(){
+                        new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("04/01/2023"),
                             EndDate = DateTime.Parse("04/01/2023"),
                             Task = WorkLogReasonEnum.SowIndoors
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/15/2023"),
                             EndDate = DateTime.Parse("06/15/2023"),
                             Task = WorkLogReasonEnum.TransplantOutside
                         },
-                         new PlantSchedule()
+                         new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
@@ -122,7 +123,7 @@
         StateHasChanged();
     }
 
-    private string GetDateRange(PlantScheduleModel plant, WorkLogReasonEnum taskType)
+    private string GetDateRange(PlantHarvestCycleModel plant, WorkLogReasonEnum taskType)
     {
         var schedule = plant.PlantCalendar.FirstOrDefault(p => p.Task == taskType);
         if (schedule != null)
@@ -132,7 +133,7 @@
         return string.Empty;
     }
 
-    protected void ViewPlant(PlantScheduleModel plant)
+    protected void ViewPlant(PlantHarvestCycleModel plant)
     {
         _navigationManager.NavigateToViewPlant(plant.PlantId);
     }

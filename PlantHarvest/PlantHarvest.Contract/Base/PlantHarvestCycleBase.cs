@@ -42,5 +42,7 @@ public abstract record PlantHarvestCycleBase
 
     public string Notes { get; set; } = string.Empty;
     public int? DesiredNumberOfPlants { get; set; }
+
+    public List<PlantScheduleBase> PlantCalendar { get; set; } = new();
 }
 

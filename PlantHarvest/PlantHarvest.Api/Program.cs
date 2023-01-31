@@ -6,6 +6,7 @@ using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using PlantHarvest.Domain.WorkLogAggregate;
+using PlantHarvest.Infrastructure.ApiClients;
 using PlantHarvest.Infrastructure.Data.Repositories;
 using Serilog;
 using Serilog.Enrichers.Span;
@@ -33,7 +34,7 @@ try
     builder.Services.AddValidatorsFromAssemblyContaining<CreateHarvestCycleCommandValidator>();
 
     builder.Services.AddAutoMapper(typeof(Program));
-
+    builder.Services.AddMemoryCache();
     builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => 
         options.InvalidModelStateResponseFactory = context =>
@@ -51,6 +52,9 @@ try
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+
+
+    builder.Services.AddHttpClient<IPlantCatalogApiClient, PlantCatalogApiClient>();
 
     builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
     builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();

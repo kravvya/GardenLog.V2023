@@ -17,6 +17,7 @@ global using System.Text.Json;
 global using UserManagement.Contract.ViewModels;
 global using GardenLogWeb.Models.UserProfile;
 global using UserManagement.Contract;
+
 namespace GardenLogWeb;
 
 public static class GlobalConstants
