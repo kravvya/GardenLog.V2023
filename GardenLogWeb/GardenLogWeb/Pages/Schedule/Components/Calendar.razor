@@ -2,295 +2,72 @@
 @inject IGardenService _gardenService;
 
 <div>
-    @if (_plants == null || _plants.Count == 0)
+    @if (IsInitialized)
     {
-        <p><em>Empty</em></p>
-    }
-
-    else
-    {
-        <div class="row flex-nowrap" id="calendar-header">
-            <div class="col-2">&nbsp;</div>
-
-            <div class="col-10">
-                <div class="row flex-nowrap months-header g-0 text-center fw-semibold">
-                    <div class="col month pe-1"><small>Jan</small></div>
-                    <div class="col month pe-1"><small>Feb</small></div>
-                    <div class="col month pe-1"><small>Mar</small></div>
-                    <div class="col month pe-1"><small>Apr</small></div>
-                    <div class="col month pe-1"><small>May</small></div>
-                    <div class="col month pe-1"><small>Jun</small></div>
-                    <div class="col month pe-1"><small>Jul</small></div>
-                    <div class="col month pe-1"><small>Aug</small></div>
-                    <div class="col month pe-1"><small>Sep</small></div>
-                    <div class="col month pe-1"><small>Oct</small></div>
-                    <div class="col month pe-1"><small>Nov</small></div>
-                    <div class="col month pe-1"><small>Dec</small></div>
-                </div>
-            </div>
-        </div>
-
-        @foreach (var plant in _plants)
+        @if (_plants == null || _plants.Count == 0)
         {
-            <div class="row flex-nowrap plant-schedule border-bottom border-2 ">
-                <div class="col-2 plant-name"><small>@plant.GetPlantName()</small></div>
-                <div class="col-10 plant-calendar">
-                    <div class="row flex-nowrap year g-0 border-b" id="@plant.GetPlantName()-year">
-                        @for (int month = 1; month < 13; month++)
-                        {
-
-                            <div class="col month pe-1" id="@plant.GetPlantName()-month-@month">
-                                <div class="row flex-nowrap weeks g-0">
-                                    @for (int week = 1; week <= GetNumberOfMondays(month); week++)
-                                    {
-                                        <div class="col week @GetTaskClass(month, week, plant)" id="@plant.GetPlantName()-@week"><span>&nbsp;</span></div>
-                                    }
-                                </div>
-                            </div>
-
-                        }
-                    </div>
-                </div>
-            </div>
+            <p><em>Empty</em></p>
         }
-        <br />
-        <div class="row flex-nowrap">
 
-            <div class="col-1">Tomato</div>
-
-            <div class="col-11">
-                <div class="row flex-nowrap months g-0">
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary">
-                                <span>&nbsp</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork "></div>
-                            <div class="col week nowork  border-danger border-end border-5"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork "></div>
-                            <div class="col week nowork   border-danger border-end border-5"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week bg-warning"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-warning"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"><span>&nbsp</span></div>
-                        </div>
+        else
+        {
+            <div class="row flex-nowrap">
+                <div class="col-2">&nbsp;</div>
+                <div id="icon-legend" class="col-10">
+                    <div class="d-flex flex-row text-center justify-content-end">
+                        <div class="p-2"><small class="p-2 text-light sow-indoors">Sow Indoors</small></div>
+                        <div class="p-2"><small class="p-2 text-light transplant">Transplant</small></div>
+                        <div class="p-2"><small class="p-2 text-light harvest">Harvest</small></div>
+                        <div class="p-2"><small class="p-2 text-light bg-danger ">First/Last Frost Dates</small></div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row flex-nowrap">
+            <div class="row flex-nowrap" id="calendar-header">
+                <div class="col-2">&nbsp;</div>
 
-            <div class="col-1">Pepper</div>
-
-            <div class="col-11">
-                <div class="row flex-nowrap months g-0">
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary">
-                                <span>&nbsp</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week bg-secondary"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork "></div>
-                            <div class="col week nowork  border-danger border-end border-5"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week nowork "></div>
-                            <div class="col week nowork   border-danger border-end border-5"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week nowork"></div>
-                            <div class="col week bg-warning"><span>&nbsp</span></div>
-                        </div>
-                    </div>
-                    <div class="col month pe-1">
-                        <div class="row flex-nowrap months g-0">
-                            <div class="col week bg-warning"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"></div>
-                            <div class="col week bg-primary"><span>&nbsp</span></div>
-                        </div>
+                <div class="col-10">
+                    <div class="row flex-nowrap months-header g-0 text-center fw-semibold">
+                        <div class="col month pe-1"><small>Jan</small></div>
+                        <div class="col month pe-1"><small>Feb</small></div>
+                        <div class="col month pe-1"><small>Mar</small></div>
+                        <div class="col month pe-1"><small>Apr</small></div>
+                        <div class="col month pe-1"><small>May</small></div>
+                        <div class="col month pe-1"><small>Jun</small></div>
+                        <div class="col month pe-1"><small>Jul</small></div>
+                        <div class="col month pe-1"><small>Aug</small></div>
+                        <div class="col month pe-1"><small>Sep</small></div>
+                        <div class="col month pe-1"><small>Oct</small></div>
+                        <div class="col month pe-1"><small>Nov</small></div>
+                        <div class="col month pe-1"><small>Dec</small></div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            @foreach (var plant in _plants)
+            {
+                <div class="row flex-nowrap plant-schedule">
+                    <div class="col-2 plant-name mb-1  "><small>@plant.GetPlantName()</small></div>
+                    <div class="col-10 plant-calendar ">
+                        <div class="row flex-nowrap year g-0 mb-1  " id="@plant.GetPlantName()-year">
+                            @for (int month = 1; month < 13; month++)
+                            {
+
+                                <div class="col month pe-1" id="@plant.GetPlantName()-month-@month">
+                                    <div class="row flex-nowrap weeks g-0">
+                                        @for (int week = 1; week <= GetNumberOfMondays(month); week++)
+                                        {
+                                            <div class="col week @GetTaskClass(month, week, plant)" id="@plant.GetPlantName()-@week"><span>&nbsp;</span></div>
+                                        }
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
 
     }
 </div>
@@ -369,6 +146,12 @@
         StateHasChanged();
     }
 
+    public void Hide()
+    {
+        IsInitialized = false;
+        StateHasChanged();
+    }
+
     private int GetNumberOfMondays(int month)
     {
         int numberOfMondays = 0;
@@ -414,7 +197,7 @@
         DateTime targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
         DateTime targetDateEnd = targetDate.AddDays(7);
 
-       
+
         var schedule = plant.PlantCalendar.FirstOrDefault(p => (targetDate <= p.StartDate && p.StartDate <= targetDateEnd)
                                                                     || (p.StartDate <= targetDate && targetDateEnd <= p.EndDate)
                                                                     || (targetDate <= p.EndDate && p.EndDate <= targetDateEnd)
@@ -426,13 +209,13 @@
             switch (schedule.Task)
             {
                 case WorkLogReasonEnum.SowIndoors:
-                    taskClass= "sow-indoors";
+                    taskClass = "sow-indoors";
                     break;
                 case WorkLogReasonEnum.TransplantOutside:
-                    taskClass= "transplant";
+                    taskClass = "transplant";
                     break;
                 case WorkLogReasonEnum.Harvest:
-                    taskClass= "harvest";
+                    taskClass = "harvest";
                     break;
             }
         }
