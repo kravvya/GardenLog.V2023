@@ -31,7 +31,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        if (_harvest != null && !_calendar.IsInitialized)
             _calendar.Initialize(_harvest);
     }
 

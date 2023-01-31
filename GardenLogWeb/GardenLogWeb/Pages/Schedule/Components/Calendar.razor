@@ -296,10 +296,13 @@
 </div>
 
 @code {
-    HarvestCycleModel? _harvest;
-    List<PlantScheduleModel>? _plants;
-    Dictionary<int, int> _mondaysPerMonth = new();
-    GardenModel? _garden;
+    private HarvestCycleModel? _harvest;
+    private List<PlantScheduleModel>? _plants;
+    private Dictionary<int, int> _mondaysPerMonth = new();
+    private GardenModel? _garden;
+    public bool IsInitialized = false;
+    private DateTime _lastFrostDate;
+    private DateTime _firstFrostDate;
 
     public async void Initialize(HarvestCycleModel harvest)
     {
@@ -308,6 +311,10 @@
 
         _garden = await _gardenService.GetGarden(_harvest.GardenId, true);
 
+        _lastFrostDate = new DateTime(DateTime.Now.Year, _garden.LastFrostDate.Month, _garden.LastFrostDate.Day);
+        _firstFrostDate = new DateTime(DateTime.Now.Year, _garden.FirstFrostDate.Month, _garden.FirstFrostDate.Day);
+
+        IsInitialized = true;
         _plants = new();
         _plants.Add(new PlantScheduleModel()
             {
@@ -407,7 +414,7 @@
         DateTime targetDate = firstDayOfMonth.AddDays((week - 1) * 7 + dayOfWeek - firstDayOfWeek);
         DateTime targetDateEnd = targetDate.AddDays(7);
 
-        Console.WriteLine($"Considering date - {targetDate} to {targetDateEnd}");
+       
         var schedule = plant.PlantCalendar.FirstOrDefault(p => (targetDate <= p.StartDate && p.StartDate <= targetDateEnd)
                                                                     || (p.StartDate <= targetDate && targetDateEnd <= p.EndDate)
                                                                     || (targetDate <= p.EndDate && p.EndDate <= targetDateEnd)
@@ -429,11 +436,13 @@
                     break;
             }
         }
+        Console.WriteLine($"Considering date - {targetDate} to {targetDateEnd}");
 
-        if ((targetDate <= _garden.LastFrostDate && _garden.LastFrostDate <= targetDateEnd)
-           || targetDate <= _garden.FirstFrostDate && _garden.FirstFrostDate <= targetDateEnd
-       )
+
+        if ((targetDate < _lastFrostDate && _lastFrostDate <= targetDateEnd)
+           || (targetDate < _firstFrostDate && _firstFrostDate <= targetDateEnd))
         {
+            Console.WriteLine($"Found frost date");
             return taskClass + " border-end border-danger border-5";
         }
 
