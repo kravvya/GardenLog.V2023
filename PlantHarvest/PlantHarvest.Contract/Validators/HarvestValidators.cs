@@ -24,3 +24,18 @@ public class PlantHarvestCycleValidator<T>:AbstractValidator<T>
         RuleFor(command => command.Notes).NotNull().MaximumLength(1000);
     }
 }
+
+public class PlantScheduleValidator<T> : AbstractValidator<T>
+    where T : PlantScheduleBase
+{
+    public PlantScheduleValidator()
+    {
+        RuleFor(command => command.HarvestCycleId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.PlantHarvestCycleId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.StartDate).NotEmpty();
+        RuleFor(command => command.EndDate).NotEmpty();
+        //RuleFor(command => command.PlantVarietyId).NotEmpty().Length(2, 50);
+        //RuleFor(command => command.GardenBedId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.TaskType).NotEmpty();
+    }
+}

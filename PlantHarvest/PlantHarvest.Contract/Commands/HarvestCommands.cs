@@ -51,3 +51,30 @@ public class UpdatePlantHarvestCycleCommandValidator : PlantHarvestCycleValidato
     }
 }
 #endregion
+
+#region Plant Schedule
+public record CreatePlantScheduleCommand : PlantScheduleBase
+{
+
+}
+
+public class CreatePlantScheduleCommandValidator : PlantScheduleValidator<CreatePlantScheduleCommand>
+{
+    public CreatePlantScheduleCommandValidator()
+    {
+    }
+}
+
+public record UpdatePlantScheduleCommand : PlantScheduleBase
+{
+    public string PlantScheduleId { get; init; }
+}
+
+public class UpdatePlantScheduleCommandValidator : PlantScheduleValidator<UpdatePlantScheduleCommand>
+{
+    public UpdatePlantScheduleCommandValidator()
+    {
+        RuleFor(command => command.PlantScheduleId).NotEmpty().Length(3, 50);
+    }
+}
+#endregion

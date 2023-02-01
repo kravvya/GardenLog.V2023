@@ -1,6 +1,4 @@
-﻿using GardenLog.SharedInfrastructure.Extensions;
-using GardenLog.SharedKernel.Interfaces;
-using Microsoft.AspNetCore.Http;
+﻿using GardenLog.SharedKernel.Interfaces;
 using PlantHarvest.Infrastructure.ApiClients;
 
 namespace PlantHarvest.Api.CommandHandlers;
@@ -15,7 +13,10 @@ public interface IHarvestCommandHandler
     Task<string> AddPlantHarvestCycle(CreatePlantHarvestCycleCommand request);
     Task<string> DeletePlantHarvestCycle(string harvestCyleId, string id);
     Task<string> UpdatePlantHarvestCycle(UpdatePlantHarvestCycleCommand request);
-    
+
+    Task<string> AddPlantSchedule(CreatePlantScheduleCommand command);
+    Task<string> UpdatePlantSchedule(UpdatePlantScheduleCommand command);
+    Task<string> DeletePlantSchedule(string harvestCycleId, string plantHarvestCycleId, string plantScheduleId);
 }
 
 public class HarvestCommandHandler : IHarvestCommandHandler
@@ -116,7 +117,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
                 throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
             }
 
-            var plantId = harvest.AddPlantHarvestCycle(command, userProfileId);
+            var plantId = harvest.AddPlantHarvestCycle(command);
 
             _harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
 
@@ -164,6 +165,83 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         await _unitOfWork.SaveChangesAsync();
 
         return id;
+    }
+
+    #endregion
+
+    #region Plant Schedule
+    public async Task<String> AddPlantSchedule(CreatePlantScheduleCommand command)
+    {
+        _logger.LogInformation("Received request to create plant schedule {@plantHarvestCycle}", command);
+        try
+        {
+            var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
+
+            var plant = harvest.Plants.First(p => p.Id == command.PlantHarvestCycleId);
+            if (plant == null)
+            {
+                throw new ArgumentException("Schedule can only be added to a plant that is part of the Garden Plan", nameof(command.PlantHarvestCycleId));
+            }
+
+            //if (plant.PlantCalendar.Any(g => g.TaskType == command.TaskType))
+            //{
+            //    throw new ArgumentException($"This task is already scheduled", nameof(command.TaskType));
+            //}
+
+            var scheduleId = harvest.AddPlantSchedule(command);
+
+            _harvestCycleRepository.Update(harvest);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return scheduleId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception adding plant schedule", ex);
+            throw;
+        }
+
+    }
+
+    public async Task<String> UpdatePlantSchedule(UpdatePlantScheduleCommand command)
+    {
+        _logger.LogInformation("Received request to update plant schedule {@plantHarvestCycle}", command);
+        var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
+
+        var plant = harvest.Plants.First(p => p.Id == command.PlantHarvestCycleId);
+        if (plant == null)
+        {
+            throw new ArgumentException("Schedule can only be added to a plant that is part of the Garden Plan", nameof(command.PlantHarvestCycleId));
+        }
+
+        //if (plant.PlantCalendar.Any(g => g.TaskType == command.TaskType && g.Id != command.PlantScheduleId))
+        //{
+        //    throw new ArgumentException($"This type of task is already scheduled", nameof(command.TaskType));
+        //}
+                
+        harvest.UpdatePlantSchedule(command);
+
+        _harvestCycleRepository.Update(harvest);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return command.PlantScheduleId;
+    }
+
+    public async Task<String> DeletePlantSchedule(string harvestCycleId, string plantHarvestCycleId, string plantScheduleId)
+    {
+        _logger.LogInformation($"Received request to delete plant schedule  {harvestCycleId} and {plantHarvestCycleId} and {plantScheduleId}");
+
+        var harvest = await _harvestCycleRepository.GetByIdAsync(harvestCycleId);
+
+        harvest.DeletePlantSchedule(plantHarvestCycleId, plantScheduleId);
+
+        _harvestCycleRepository.Update(harvest);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return plantScheduleId;
     }
 
     #endregion

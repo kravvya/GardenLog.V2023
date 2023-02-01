@@ -92,10 +92,19 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
          .Project(Builders<HarvestCycle>.Projection.Include(p => p.Plants))
          .As<PlantHarvestCycleViewModelProjection>()
          .FirstAsync();
-
-        data.Plants.ForEach(g => g.HarvestCycleId = data._id);
-
-        return data.Plants.First(g => g.PlantHarvestCycleId == id);
+        
+        data.Plants.ForEach(g =>
+            {
+                g.HarvestCycleId = data._id;
+                g.PlantCalendar.ForEach(p =>
+                {
+                    p.HarvestCycleId = data._id;
+                    p.PlantHarvestCycleId = g.PlantHarvestCycleId;
+                });
+            }
+        );
+      
+        return data.Plants.First(p => p.PlantHarvestCycleId == id);
     }
 
     public async Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId)
@@ -111,7 +120,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
          .As<PlantHarvestCycleViewModelProjection>()
          .ToListAsync();
 
-        foreach(var item in data)
+        foreach (var item in data)
         {
             foreach (var p in item.Plants.Where(p => p.PlantId == plantId))
             {
@@ -134,7 +143,15 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
        .As<PlantHarvestCycleViewModelProjection>()
        .FirstAsync();
 
-        data.Plants.ForEach(g => g.HarvestCycleId = data._id);
+        data.Plants.ForEach(g =>
+            {
+                g.HarvestCycleId = data._id;
+                g.PlantCalendar.ForEach(p =>
+                {
+                    p.HarvestCycleId = data._id;
+                    p.PlantHarvestCycleId = g.PlantHarvestCycleId;
+                });
+            });
 
         return data.Plants;
     }
@@ -199,6 +216,13 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             g.AutoMap();
             g.SetIgnoreExtraElements(true);
             g.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
+
+            g.MapProperty(m => m.PlantCalendar).SetDefaultValue(new List<PlantSchedule>());
+
+            var nonPublicCtors = g.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+            var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
+            g.MapConstructor(longestCtor, g.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());
+
         });
 
 
@@ -226,6 +250,35 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.SetIgnoreExtraElements(true);
 
         });
+        #endregion
+
+        #region Plant Schedule
+        BsonClassMap.RegisterClassMap<PlantSchedule>(g =>
+        {
+            g.AutoMap();
+            g.SetIgnoreExtraElements(true);
+            g.MapMember(m => m.TaskType).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
+        });
+
+
+        BsonClassMap.RegisterClassMap<PlantScheduleViewModel>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.PlantScheduleId).SetElementName("_id");
+
+        });
+
+        BsonClassMap.RegisterClassMap<PlantScheduleBase>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.TaskType).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
+        });
+
+     
         #endregion
     }
 

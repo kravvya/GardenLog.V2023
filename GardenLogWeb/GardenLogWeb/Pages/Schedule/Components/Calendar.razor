@@ -106,19 +106,19 @@
                         {
                             StartDate = DateTime.Parse("02/10/2023"),
                             EndDate = DateTime.Parse("02/24/2023"),
-                            Task = WorkLogReasonEnum.SowIndoors
+                            TaskType = WorkLogReasonEnum.SowIndoors
                         },
                          new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/01/2023"),
                             EndDate = DateTime.Parse("06/01/2023"),
-                            Task = WorkLogReasonEnum.TransplantOutside
+                            TaskType = WorkLogReasonEnum.TransplantOutside
                         },
                          new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
-                            Task = WorkLogReasonEnum.Harvest
+                            TaskType = WorkLogReasonEnum.Harvest
                         }
                 }
             });
@@ -131,19 +131,19 @@
                         {
                             StartDate = DateTime.Parse("04/01/2023"),
                             EndDate = DateTime.Parse("04/01/2023"),
-                            Task = WorkLogReasonEnum.SowIndoors
+                            TaskType = WorkLogReasonEnum.SowIndoors
                         },
                          new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("06/15/2023"),
                             EndDate = DateTime.Parse("06/15/2023"),
-                            Task = WorkLogReasonEnum.TransplantOutside
+                            TaskType = WorkLogReasonEnum.TransplantOutside
                         },
                          new PlantScheduleBase()
                         {
                             StartDate = DateTime.Parse("08/15/2023"),
                             EndDate = DateTime.Parse("09/18/2023"),
-                            Task = WorkLogReasonEnum.Harvest
+                            TaskType = WorkLogReasonEnum.Harvest
                         }
                 }
             });
@@ -217,7 +217,7 @@
         if (schedule != null)
         {
             Console.WriteLine($"Found match - {schedule}");
-            switch (schedule.Task)
+            switch (schedule.TaskType)
             {
                 case WorkLogReasonEnum.SowIndoors:
                     taskClass = "sow-indoors";

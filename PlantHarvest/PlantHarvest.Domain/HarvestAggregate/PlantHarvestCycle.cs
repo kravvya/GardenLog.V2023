@@ -1,11 +1,9 @@
 ﻿using PlantHarvest.Contract.Commands;
-using PlantHarvest.Contract.Enum;
 
 namespace PlantHarvest.Domain.HarvestAggregate;
 
 public class PlantHarvestCycle : BaseEntity, IEntity
 {
-    public string UserProfileId { get; private set; }
     public string PlantId { get; private set; }
     public string PlantName { get; private set; }
 
@@ -40,24 +38,63 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     public string Notes { get; private set; }
     public int? DesiredNumberOfPlants { get; private set; }
 
+    private readonly List<PlantSchedule> _plantCalendar = new();
+    public IReadOnlyCollection<PlantSchedule> PlantCalendar => _plantCalendar.AsReadOnly();
+
 
     private PlantHarvestCycle()
     {
     }
 
+    private PlantHarvestCycle(string plantId, string plantName
+        , string? plantVarietyId, string? plantVarietyName
+        , string plantGrowthInstructionId, string? plantGrowthInstructionName
+        , PlantingMethodEnum plantingMethod
+        , string? gardenBedId, string? gardenBedName
+        , int? numberOfSeeds, string? seedCompanyId, string? seedCompanyName, DateTime? seedingDate
+        , DateTime? germinationDate, decimal? germinationRate
+        , int? numberOfTransplants, DateTime? transplantDate
+        , DateTime? firstHarvestDate, DateTime? lastHarvestDate, decimal? totalWeightInPounds, int? totalItems
+        , string Notes, int? desiredNumberOfPlants, List<PlantSchedule> plantCalendar)
+    {
+        this.PlantId = plantId;
+        this.PlantName = plantName;
+        this.PlantVarietyId = plantVarietyId;
+        this.PlantVarietyName = plantVarietyName;
+        this.PlantGrowthInstructionId = plantGrowthInstructionId;
+        this.PlantGrowthInstructionName = plantGrowthInstructionName;
+        this.PlantingMethod = plantingMethod;
+        this.GardenBedId = gardenBedId;
+        this.GardenBedName = gardenBedName;
+        this.NumberOfSeeds = numberOfSeeds;
+        this.SeedCompanyId = seedCompanyId;
+        this.SeedCompanyName = seedCompanyName;
+        this.SeedingDate = seedingDate;
+        this.GerminationDate = germinationDate;
+        this.GerminationRate = germinationRate;
+        this.NumberOfTransplants = numberOfTransplants;
+        this.TransplantDate = transplantDate;
+        this.FirstHarvestDate = firstHarvestDate;
+        this.LastHarvestDate = lastHarvestDate;
+        this.TotalWeightInPounds = totalWeightInPounds;
+        this.TotalItems = totalItems;
+        this.Notes = Notes;
+        this.DesiredNumberOfPlants = desiredNumberOfPlants;
+        this._plantCalendar = plantCalendar;
+    }
 
-    public static PlantHarvestCycle Create(PlantHarvestCycleBase plant, string userProfileId)
+
+    public static PlantHarvestCycle Create(PlantHarvestCycleBase plant)
     {
         return new PlantHarvestCycle()
         {
             Id = Guid.NewGuid().ToString(),
-            UserProfileId = userProfileId,
             PlantId = plant.PlantId,
-            PlantName= plant.PlantName,
+            PlantName = plant.PlantName,
             PlantVarietyId = plant.PlantVarietyId,
-            PlantVarietyName= plant.PlantVarietyName,
+            PlantVarietyName = plant.PlantVarietyName,
             PlantGrowthInstructionId = plant.PlantGrowthInstructionId,
-            PlantGrowthInstructionName= plant.PlantGrowthInstructionName,
+            PlantGrowthInstructionName = plant.PlantGrowthInstructionName,
             GardenBedId = plant.GardenBedId,
             GardenBedName = plant.GardenBedName,
             NumberOfSeeds = plant.NumberOfSeeds,
@@ -74,7 +111,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             TotalItems = plant.TotalItems,
             Notes = plant.Notes,
             DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
-            PlantingMethod= plant.PlantingMethod,
+            PlantingMethod = plant.PlantingMethod,
         };
 
     }
@@ -100,7 +137,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.TotalItems, command.TotalItems);
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
-        this.Set<PlantingMethodEnum>(()=>this.PlantingMethod, command.PlantingMethod);
+        this.Set<PlantingMethodEnum>(() => this.PlantingMethod, command.PlantingMethod);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
@@ -114,4 +151,25 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.DomainEvents.Add(
             new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
     }
+
+    #region Plant Schedule
+    public string AddPlantSchedule(CreatePlantScheduleCommand command)
+    {
+        var schedule = PlantSchedule.Create(command);
+
+        this._plantCalendar.Add(schedule);
+        
+        return schedule.Id;
+    }
+
+    public void UpdatePlantSchedule(UpdatePlantScheduleCommand command, Action<HarvestEventTriggerEnum, TriggerEntity> addHarvestEvent)
+    {
+        this.PlantCalendar.First(i => i.Id == command.PlantScheduleId).Update(command, addHarvestEvent);
+    }
+
+    public void DeletePlantSchedule(string plantScheduleId)
+    {
+        this._plantCalendar.RemoveAll(s => s.Id == plantScheduleId);
+    }
+    #endregion
 }

@@ -100,10 +100,10 @@ namespace PlantHarvest.Domain.HarvestAggregate
         #endregion
 
         #region Plants
-        public string AddPlantHarvestCycle(CreatePlantHarvestCycleCommand command, string userProfileId)
+        public string AddPlantHarvestCycle(CreatePlantHarvestCycleCommand command)
         {
             command.HarvestCycleId = this.Id;
-            var plant = PlantHarvestCycle.Create(command, userProfileId);
+            var plant = PlantHarvestCycle.Create(command);
 
             this._plants.Add(plant);
 
@@ -121,6 +121,36 @@ namespace PlantHarvest.Domain.HarvestAggregate
         public void DeletePlantHarvestCycle(string id)
         {
             AddChildDomainEvent(HarvestEventTriggerEnum.PlantHarvestCycleDeleted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, id));
+
+        }
+        #endregion
+
+        #region Plant Schedule
+        public string AddPlantSchedule(CreatePlantScheduleCommand command)
+        {
+
+            var plant = _plants.First(p => p.Id == command.PlantHarvestCycleId);
+
+           string scheduleId = plant.AddPlantSchedule(command);
+
+            this.DomainEvents.Add(
+             new HarvestEvent(this, HarvestEventTriggerEnum.PlantScheduleCreated, new TriggerEntity(EntityTypeEnum.PlantSchedule, scheduleId)));
+
+            return scheduleId;
+        }
+
+        public void UpdatePlantSchedule(UpdatePlantScheduleCommand command)
+        {
+            var plant = _plants.First(p => p.Id == command.PlantHarvestCycleId);
+            plant.UpdatePlantSchedule(command, AddChildDomainEvent);
+        }
+
+        public void DeletePlantSchedule(string plantHarvestCycleId, string plantScheduleId)
+        {
+            var plant = _plants.First(p => p.Id == plantHarvestCycleId);
+            plant.DeletePlantSchedule(plantScheduleId);
+
+            AddChildDomainEvent(HarvestEventTriggerEnum.PlantScheduleDeleted, new TriggerEntity(EntityTypeEnum.PlantSchedule, plantScheduleId));
 
         }
         #endregion

@@ -250,4 +250,71 @@ public class HarvestCycleController : Controller
         return BadRequest();
     }
     #endregion
+
+    #region Plant Schedule
+    [HttpPost()]
+    [Route(HarvestRoutes.CreatePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> CreatePlantSchedule([FromBody] CreatePlantScheduleCommand command)
+    {
+        try
+        {
+            string result = await _handler.AddPlantSchedule(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+    }
+
+
+    [HttpPut()]
+    [Route(HarvestRoutes.UpdatePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdatePlantSchedule([FromBody] UpdatePlantScheduleCommand command)
+    {
+        try
+        {
+            string result = await _handler.UpdatePlantSchedule(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+    }
+    [HttpDelete()]
+    [Route(HarvestRoutes.DeletePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DeletePlantSchedule(string harvestId, string plantHarvestId, string id)
+    {
+
+        string result = await _handler.DeletePlantSchedule(harvestId, plantHarvestId, id);
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            return Ok(true);
+        }
+
+        return BadRequest();
+    }
+    #endregion
 }
