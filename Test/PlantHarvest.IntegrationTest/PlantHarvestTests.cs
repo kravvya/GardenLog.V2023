@@ -13,10 +13,11 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     private readonly ITestOutputHelper _output;
     private readonly PlantHarvestClient _plantHarvestClient;
     private readonly WorkLogClient _workLogClient;
+    private readonly PlantTaskClient _plantTaskClient;
 
     public const string TEST_HARVEST_CYCLE_NAME = "Test Harvest Cycle";
-    private const string TEST_PLANT_ID = "a461feac-a128-4b56-ab35-89ef71264107";
-    private const string TEST_PLANT_VARIETY_ID = "7cfcc6cc-db99-4dc7-b2dc-88e6959896de";
+    public const string TEST_PLANT_ID = "a461feac-a128-4b56-ab35-89ef71264107";
+    public const string TEST_PLANT_VARIETY_ID = "7cfcc6cc-db99-4dc7-b2dc-88e6959896de";
 
     private const string TEST_DELETE_PLANT_ID = "Delete-Fake-Plant-Id";
     private const string TEST_DELETE_VARIETY_ID = "Delete-Fake-Variety-Id";
@@ -26,6 +27,8 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         _plantHarvestClient = fixture.PlantHarvestClient;
         _workLogClient = fixture.WorkLogClient;
+        _plantTaskClient = fixture.PlantTaskClient;
+
         _output = output;
         _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
     }
@@ -143,14 +146,14 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
 
-        var original = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var original = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
         if (original != null)
         {
             var response = await _plantHarvestClient.DeletePlantHarvestCycle(original.HarvestCycleId, original.PlantHarvestCycleId);
         }
 
-        var harvestCycleId = await CreatePlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var harvestCycleId = await _plantHarvestClient.CreatePlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
         Assert.NotNull(harvestCycleId);
     }
 
@@ -159,7 +162,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     public async Task Get_PlantHarvestCycle_ByHarvestId()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
         Assert.NotNull(plant);
         _output.WriteLine($"Found '{plant.PlantVarietyId}' Plant Harvest Cycle");
@@ -190,7 +193,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     public async Task Get_PlantHarvestCycles_ByPlantId()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
         var searchResponse = await _plantHarvestClient.GetPlantHarvestCyclesByPlantId(TEST_PLANT_ID);
 
@@ -207,7 +210,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     public async Task Put_PlantHarvestCycle_ShouldUpdate()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
 
         plant.NumberOfSeeds += 1;
@@ -227,7 +230,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_DELETE_HARVEST_CYCLE_NAME);
 
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_DELETE_PLANT_ID, TEST_DELETE_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_DELETE_PLANT_ID, TEST_DELETE_VARIETY_ID);
 
 
         var response = await _plantHarvestClient.DeletePlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId);
@@ -247,7 +250,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
 
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
         var plantScheduleId = await CreatePlantScheduleToWorkWith(plant);
 
@@ -258,13 +261,13 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     public async Task Put_PlantSchedule_ShouldUpdate()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
 
         var schedule = plant.PlantCalendar.FirstOrDefault();
         if (schedule == null)
         {
             await _plantHarvestClient.CreatePlantSchedule(plant.HarvestCycleId, plant.PlantHarvestCycleId);
-            plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+            plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
             schedule = plant.PlantCalendar.FirstOrDefault();
         }
 
@@ -285,7 +288,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_DELETE_HARVEST_CYCLE_NAME);
 
-        var plant = await GetPlantHarvestCycleToWorkWith(harvestId, TEST_DELETE_PLANT_ID, TEST_DELETE_VARIETY_ID);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_DELETE_PLANT_ID, TEST_DELETE_VARIETY_ID);
 
         var schedule = plant.PlantCalendar.FirstOrDefault();
         if (schedule == null)
@@ -332,40 +335,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
         return harvest;
     }
 
-    private async Task<PlantHarvestCycleViewModel> GetPlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)
-    {
-        var response = await _plantHarvestClient.GetPlantHarvestCycles(harvestId);
 
-        _output.WriteLine($"GetPlantHarvestCycleToWorkWith - Service to get all plant harvest cycle responded with {response.StatusCode} code");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters =
-                {
-                    new JsonStringEnumConverter(),
-                },
-        };
-        var plants = await response.Content.ReadFromJsonAsync<List<PlantHarvestCycleViewModel>>(options);
-        PlantHarvestCycleViewModel plant = null;
-
-        if (plants == null || plants.Count == 0 || plants.FirstOrDefault(p => p.PlantId == plantId) == null)
-        {
-            var plantHarvestCycleId = await CreatePlantHarvestCycleToWorkWith(harvestId, plantId, plantVarietyId);
-
-            response = await _plantHarvestClient.GetPlantHarvestCycle(harvestId, plantHarvestCycleId);
-
-            _output.WriteLine($"Service to getplant harvest cycle responded with {response.StatusCode} code");
-
-            plant = await response.Content.ReadFromJsonAsync<PlantHarvestCycleViewModel>(options);
-        }
-        else
-        {
-            plant = plants.First(p => p.PlantVarietyId == plantVarietyId);
-        }
-
-        return plant;
-    }
 
     private async Task<List<PlantHarvestCycleViewModel>> GetPlantHarvestCyclesToWorkWith(string harvestId, string plantId, string plantVarietyId)
     {
@@ -384,7 +354,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
 
         if (plants == null || plants.Count == 0)
         {
-            await CreatePlantHarvestCycleToWorkWith(harvestId, plantId, plantVarietyId);
+            await _plantHarvestClient.CreatePlantHarvestCycleToWorkWith(harvestId, plantId, plantVarietyId);
 
             response = await _plantHarvestClient.GetPlantHarvestCycles(harvestId);
 
@@ -416,26 +386,6 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
         Assert.NotNull(plant);
 
         return plant;
-    }
-
-    private async Task<string> CreatePlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)
-    {
-        var response = await _plantHarvestClient.CreatePlantHarvestCycle(harvestId, plantId, plantVarietyId);
-        var returnString = await response.Content.ReadAsStringAsync();
-
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var plantHarvestCycleId));
-        }
-        else
-        {
-            Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
-            returnString = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(returnString);
-            Assert.Contains("This plant is already a part of this plan", returnString);
-        }
-        return returnString;
     }
 
     private async Task<string> CreatePlantScheduleToWorkWith(PlantHarvestCycleViewModel plant)

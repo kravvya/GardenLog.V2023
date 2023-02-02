@@ -8,7 +8,7 @@ public enum WorkLogReasonEnum : int
     Unspecified = 0,
     [Description("Fertilize")]
     Fertilize = 1,
-    [Description("Harden")]
+    [Description("Harden Off")]
     Harden = 2,
     [Description("Harvest")]
     Harvest = 3,

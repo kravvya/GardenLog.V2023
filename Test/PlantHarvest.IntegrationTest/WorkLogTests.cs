@@ -34,11 +34,10 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         _output.WriteLine($"Service to create work log responded with {response.StatusCode} code and {returnString} message");
 
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var harvestCycleId));
-        }
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+        Assert.True(Guid.TryParse(returnString, out var harvestCycleId));
+
     }
 
     [Fact]
@@ -63,15 +62,15 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         var workLogs = await GetWorkLogsToWorkWith(harvestId);
 
-        if (workLogs!=null && workLogs.Count > 0)
+        if (workLogs != null && workLogs.Count > 0)
         {
             var work = workLogs.First();
 
             work.Log = $"{work.Log} last pdated: {DateTime.Now.ToString()}";
 
-             var response = await _workLogClient.UpdateWorkLog(work);
+            var response = await _workLogClient.UpdateWorkLog(work);
 
-             var returnString = await response.Content.ReadAsStringAsync();
+            var returnString = await response.Content.ReadAsStringAsync();
 
             _output.WriteLine($"Service to update worklog responded with {response.StatusCode} code and {returnString} message");
 
@@ -79,7 +78,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
             Assert.NotEmpty(returnString);
         }
 
-      
+
     }
 
     [Fact]
@@ -112,11 +111,11 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
         var workLogs = await GetWorkLogsToWorkWith(harvestId);
         if (workLogs.Count == 0)
         {
-            var response = await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
+            await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
         }
-         workLogs = await GetWorkLogsToWorkWith(harvestId);
-     
-            Assert.NotNull(workLogs);
+        workLogs = await GetWorkLogsToWorkWith(harvestId);
+
+        Assert.NotNull(workLogs);
         Assert.NotEmpty(workLogs);
     }
 

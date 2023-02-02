@@ -61,12 +61,16 @@ try
 
     builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
     builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();
+    builder.Services.AddSingleton<IPlantTaskRepository, PlantTaskRepository>();
 
     builder.Services.AddScoped<IHarvestCommandHandler, HarvestCommandHandler>();
     builder.Services.AddScoped<IHarvestQueryHandler, HarvestQueryHandler>();
 
     builder.Services.AddScoped<IWorkLogCommandHandler, WorkLogCommandHandler>();
     builder.Services.AddScoped<IWorkLogQueryHandler, WorkLogQueryHandler>();
+
+    builder.Services.AddScoped<IPlantTaskCommandHandler, PlantTaskCommandHandler>();
+    builder.Services.AddScoped<IPlantTaskQueryHandler, PlantTaskQueryHandler>();
 
     builder.Services.AddCors(options =>
     {

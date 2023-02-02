@@ -1,9 +1,14 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using PlantCatalog.Contract;
 using PlantHarvest.Contract.Commands;
 using PlantHarvest.Contract.ViewModels;
 using PlantHarvest.Domain.HarvestAggregate;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit.Abstractions;
+using System.Net.Http.Json;
+using PlantHarvest.Contract;
 
 namespace PlantHarvest.IntegrationTest.Clients
 {
@@ -213,6 +218,60 @@ namespace PlantHarvest.IntegrationTest.Clients
 
             //_output.WriteLine($"GetHarvestCycleIdToWorkWith - Found  {harvestId} harvest to work with.");
             return harvestId;
+        }
+
+        public async Task<PlantHarvestCycleViewModel> GetPlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)
+        {
+            var response = await this.GetPlantHarvestCycles(harvestId);
+
+            //_output.WriteLine($"GetPlantHarvestCycleToWorkWith - Service to get all plant harvest cycle responded with {response.StatusCode} code");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+            };
+            var plants = await response.Content.ReadFromJsonAsync<List<PlantHarvestCycleViewModel>>(options);
+            PlantHarvestCycleViewModel plant = null;
+
+            if (plants == null || plants.Count == 0 || plants.FirstOrDefault(p => p.PlantId == plantId) == null)
+            {
+                var plantHarvestCycleId = await CreatePlantHarvestCycleToWorkWith(harvestId, plantId, plantVarietyId);
+                response = await this.GetPlantHarvestCycle(harvestId, plantHarvestCycleId);
+
+                //_output.WriteLine($"Service to getplant harvest cycle responded with {response.StatusCode} code");
+
+                plant = await response.Content.ReadFromJsonAsync<PlantHarvestCycleViewModel>(options);
+            }
+            else
+            {
+                plant = plants.First(p => p.PlantVarietyId == plantVarietyId);
+            }
+
+            return plant;
+        }
+
+        public async Task<string> CreatePlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)
+        {
+            var response = await this.CreatePlantHarvestCycle(harvestId, plantId, plantVarietyId);
+            var returnString = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                Assert.NotEmpty(returnString);
+                Assert.True(Guid.TryParse(returnString, out var plantHarvestCycleId));
+            }
+            else
+            {
+                Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
+                returnString = await response.Content.ReadAsStringAsync();
+                Assert.NotEmpty(returnString);
+                Assert.Contains("This plant is already a part of this plan", returnString);
+            }
+            return returnString;
         }
         #endregion
     }

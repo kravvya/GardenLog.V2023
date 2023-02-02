@@ -1,4 +1,4 @@
-﻿namespace PlantCatalog.Contract;
+﻿namespace PlantHarvest.Contract;
 
 public static class HarvestRoutes
 {
@@ -27,4 +27,13 @@ public static class HarvestRoutes
     public const string DeleteWorkLog = WorkLogBase + "/{id}";
 
     public const string GetWorkLogs = WorkLogBase + "/{entityType}/{entityId}";
+
+    public const string PlantTaskBase = "/v1/api/tasks";
+    public const string CreateTask = PlantTaskBase;
+    public const string UpdateTask = PlantTaskBase + "/{id}";
+    public const string CompleteTask  = PlantTaskBase + "/{id}/Complete";
+
+    public const string GetTasks = PlantTaskBase;
+    public const string GetActiveTasks = PlantTaskBase + "/Active";
+
 }
