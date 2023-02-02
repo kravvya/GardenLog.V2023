@@ -15,8 +15,7 @@ namespace PlantHarvest.IntegrationTest.Clients
         public WorkLogClient(Uri baseUrl, HttpClient httpClient)
         {
             _baseUrl = baseUrl;
-            _httpClient = httpClient;
-            _httpClient.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
+            _httpClient = httpClient;               
         }
 
         #region Work Log

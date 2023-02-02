@@ -1,4 +1,5 @@
 ﻿using PlantHarvest.IntegrationTest.Clients;
+using System.Net.Http;
 
 namespace PlantHarvest.IntegrationTest.Fixture;
 
@@ -16,6 +17,8 @@ public class PlantHarvestServiceFixture : PlantHarvestApplicationFactory<Program
         FixtureId = Guid.NewGuid().ToString();
         
         var client = _factory.CreateClient();
+
+        client.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
 
         PlantHarvestClient = new PlantHarvestClient(client.BaseAddress, client);
         WorkLogClient = new WorkLogClient(client.BaseAddress, client);

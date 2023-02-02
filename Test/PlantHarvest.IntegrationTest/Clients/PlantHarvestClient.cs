@@ -21,7 +21,6 @@ namespace PlantHarvest.IntegrationTest.Clients
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
-            _httpClient.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
         }
 
         #region Harvest Cycle
