@@ -133,8 +133,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             }
 
 
-            //_harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
-            _harvestCycleRepository.Update(harvest);
+            _harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
+            //_harvestCycleRepository.Update(harvest);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -172,8 +172,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             _logger.LogError("Exception generating plant schedules. PLantHarvest will still save", ex);
         }
 
-        //_harvestCycleRepository.UpdatePlantHarvestCycle(command.PlantHarvestCycleId, harvest);
-        _harvestCycleRepository.Update(harvest);
+        _harvestCycleRepository.UpdatePlantHarvestCycle(command.PlantHarvestCycleId, harvest);
+        //_harvestCycleRepository.Update(harvest);
 
         await _unitOfWork.SaveChangesAsync();
 
