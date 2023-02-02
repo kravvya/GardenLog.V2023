@@ -16,4 +16,6 @@ public abstract record PlantBase
     public List<string> Tags { get; set; } = new();
     public List<string> VarietyColors { get; set; } = new();
     public HarvestSeasonEnum HarvestSeason { get; set; }
+    public int? DaysToMaturityMin { get; set; }
+    public int? DaysToMaturityMax { get; set; }
 }

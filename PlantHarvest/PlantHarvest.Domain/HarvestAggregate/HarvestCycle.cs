@@ -153,6 +153,12 @@ namespace PlantHarvest.Domain.HarvestAggregate
             AddChildDomainEvent(HarvestEventTriggerEnum.PlantScheduleDeleted, new TriggerEntity(EntityTypeEnum.PlantSchedule, plantScheduleId));
 
         }
+
+        public void DeleteAllSystemGeneratedSchedules(string plantHarvestCycleId)
+        {
+            var plant = _plants.First(p => p.Id == plantHarvestCycleId);
+            plant.DeleteAllSystemGeneratedSchedules();
+        }
         #endregion
     }
 }

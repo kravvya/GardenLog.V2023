@@ -171,5 +171,10 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     {
         this._plantCalendar.RemoveAll(s => s.Id == plantScheduleId);
     }
+
+    public void DeleteAllSystemGeneratedSchedules()
+    {
+        this._plantCalendar.RemoveAll(s => s.IsSystemGenerated);
+    }
     #endregion
 }

@@ -29,6 +29,7 @@
     <ProjectReference Include="..\PlantHarvest.Contract\PlantHarvest.Contract.csproj" />
     <ProjectReference Include="..\PlantHarvest.Domain\PlantHarvest.Domain.csproj" />
     <ProjectReference Include="..\PlantHarvest.Infrastructure\PlantHarvest.Infrastructure.csproj" />
+    <ProjectReference Include="..\PlantHarvest.Orchestrator\PlantHarvest.Orchestrator.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,8 +15,8 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     private readonly WorkLogClient _workLogClient;
 
     public const string TEST_HARVEST_CYCLE_NAME = "Test Harvest Cycle";
-    private const string TEST_PLANT_ID = "Fake-Plant-Id";
-    private const string TEST_PLANT_VARIETY_ID = "Fake-Plant-Variety-Id";
+    private const string TEST_PLANT_ID = "a461feac-a128-4b56-ab35-89ef71264107";
+    private const string TEST_PLANT_VARIETY_ID = "7cfcc6cc-db99-4dc7-b2dc-88e6959896de";
 
     private const string TEST_DELETE_PLANT_ID = "Delete-Fake-Plant-Id";
     private const string TEST_DELETE_VARIETY_ID = "Delete-Fake-Variety-Id";

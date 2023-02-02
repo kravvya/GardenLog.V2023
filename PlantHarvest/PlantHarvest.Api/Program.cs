@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlantHarvest.Domain.WorkLogAggregate;
 using PlantHarvest.Infrastructure.ApiClients;
 using PlantHarvest.Infrastructure.Data.Repositories;
+
 using Serilog;
 using Serilog.Enrichers.Span;
 using System.Text.Json.Serialization;
@@ -53,8 +54,10 @@ try
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
+    builder.Services.AddScoped<IScheduleBuilder, ScheduleBuilder>();
 
     builder.Services.AddHttpClient<IPlantCatalogApiClient, PlantCatalogApiClient>();
+    builder.Services.AddHttpClient<IUserManagementApiClient, UserManagementApiClient>();
 
     builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
     builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();

@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using System.Collections.ObjectModel;
 
 namespace PlantHarvest.Infrastructure.ApiClients;
 
 public interface IPlantCatalogApiClient
 {
+    Task<PlantViewModel> GetPlant(string plantId);
     Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId);
+    Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string plantVarietyId);
 }
 
 public class PlantCatalogApiClient : IPlantCatalogApiClient
@@ -14,6 +17,7 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
     private readonly IMemoryCache _cache;
 
     private const string GROW_CACHE_KEY = "Plant:{0}Grow:{1}";
+    private const string PLANT_CACHE_KEY = "Plant:{0}";
     private const int CACHE_DURATION = 60;
 
     public PlantCatalogApiClient(HttpClient httpClient, IConfiguration confguration, ILogger<PlantCatalogApiClient> logger, IMemoryCache cache)
@@ -51,8 +55,52 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
             });
         }
 
-
-
         return growInstruction;
+    }
+
+    public async Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string plantVarietyId)
+    {
+        PlantVarietyViewModel _variety = null;
+
+        string route = Routes.GetPlantVariety.Replace("{plantId}", plantId).Replace("{id}", plantVarietyId);
+
+        var response = await _httpClient.ApiGetAsync<PlantVarietyViewModel>(route);
+
+        if (!response.IsSuccess)
+        {
+            _logger.LogError($"Unable to get Plant Grow Instruction for plantId: {plantId} and growId {plantVarietyId}");
+            return null;
+        }
+
+        _variety = response.Response;
+
+        return _variety;
+    }
+
+    public async Task<PlantViewModel> GetPlant(string plantId)
+    {
+        PlantViewModel _plant = null;
+        string key = string.Format(PLANT_CACHE_KEY, plantId);
+
+        if (!_cache.TryGetValue(key, out _plant))
+        {
+            string route = Routes.GetPlantById.Replace("{id}", plantId);
+
+            var response = await _httpClient.ApiGetAsync<PlantViewModel>(route);
+
+            if (!response.IsSuccess)
+            {
+                _logger.LogError($"Unable to get Plant : {plantId}");
+                return null;
+            }
+
+            _plant = response.Response;
+            _cache.Set(key, _plant, new MemoryCacheEntryOptions()
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(CACHE_DURATION)
+            });
+        }
+
+        return _plant;
     }
 }

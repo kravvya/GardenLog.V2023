@@ -180,7 +180,8 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
             p.MapProperty(m => m.GrowInstructionsCount).SetDefaultValue(0);
             p.MapProperty(m => m.VarietyCount).SetDefaultValue(0);
             p.MapMember(m => m.HarvestSeason).SetSerializer(new EnumToStringArraySerializer<HarvestSeasonEnum>()).SetDefaultValue(HarvestSeasonEnum.Unspecified);
-
+            p.MapProperty(m => m.DaysToMaturityMin).SetDefaultValue(0);
+            p.MapProperty(m => m.DaysToMaturityMax).SetDefaultValue(0);
 
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();

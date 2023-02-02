@@ -43,7 +43,7 @@ else
     serviceUrl = "https://localhost:44304/";
     imageServiceUrl = "https://localhost:44391/";
     harvestServiceUrl = "https://localhost:44336/";
-    userServiceUrl = "https://localhost:5121/";
+    userServiceUrl = "http://localhost:5212/";
 
     serviceUrl = "https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
     imageServiceUrl = "https://imagecatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";

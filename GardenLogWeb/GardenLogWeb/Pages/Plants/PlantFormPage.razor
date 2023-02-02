@@ -13,8 +13,10 @@
                 @if (isInitialized)
                 {
                     <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                        
                         <FluentValidationValidator />
                         <CustomValidation @ref="customValidation" />
+
                         @*<ValidationSummary />*@
                         <div class="col-md-1">
                             <label for="color" class="form-label">Select color</label>
@@ -138,6 +140,26 @@
                                 </Body>
                             </FormCard>
                         </div>
+
+                        <div class="col-md-4">
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
+                                <Header>
+                                    <label for="DaysToSproutMin" class="card-subtitle mb-2 text-light">Maturity after(days)</label>
+                                </Header>
+                                <Body>
+                                    <div class="d-flex justify-content-start flex-nowrap">
+                                        <div class="px-2"> <span>From</span> </div>
+                                        <div class="px-2">
+                                            <InputNumber Class="form-control" @bind-Value="@plant.DaysToMaturityMin" id="DaysToSproutMin" />
+                                        </div>
+                                        <div class="px-2"> <span>to</span> </div>
+                                        <div class="px-2">
+                                            <InputNumber Class="form-control" @bind-Value="@plant.DaysToMaturityMax" id="DaysToSproutMax" />
+                                        </div>
+                                    </div>
+                                </Body>
+                            </FormCard>
+                        </div>
                         <div class="col-md-10">
                             <FormCard>
                                 <Header>
@@ -164,12 +186,12 @@
                                 <Body>
                                     <div class="variety-colors" role="group" aria-label=">Variety Colors">
                                         @foreach (var color in varietyColors)
-                                            {
-                                                <div class="form-check form-check-inline color">
+                                        {
+                                            <div class="form-check form-check-inline color">
                                                 <input class="btn-check" type="checkbox" id="@color.Name" value="@color.Name" autocomplete="off" onclick=@(() => ToggleVarietyColor(color))>
-                                                    <label class="btn btn-outline-dark" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
-                                                </div>
-                                            }
+                                                <label class="btn btn-outline-dark" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
+                                            </div>
+                                        }
                                     </div>
                                 </Body>
                             </FormCard>
@@ -215,7 +237,7 @@
     protected override async Task OnInitializedAsync()
     {
         breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-              
+
         varietyColors = _verifyService.GetPlantVarietyColors();
 
         foreach (var code in _verifyService.GetCodeList<GrowToleranceEnum>(true))

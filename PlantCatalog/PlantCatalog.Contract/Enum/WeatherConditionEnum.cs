@@ -16,6 +16,7 @@ namespace PlantCatalog.Contract.Enum
         WarmSoil = 4,
         [Description("After danger of frost")]
         AfterDangerOfFrost = 5,
+        [Description("Mid Summer")]
         MidSummer = 6
     }
 }

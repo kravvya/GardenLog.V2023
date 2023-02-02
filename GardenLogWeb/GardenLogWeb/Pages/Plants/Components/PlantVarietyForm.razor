@@ -8,7 +8,7 @@
 
     @if (isInitialized)
     {
-        <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+        <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmitAsync" class="row g-3">
             <FluentValidationValidator />
             <CustomValidation @ref="customValidation" />
             @*<ValidationSummary />*@
@@ -252,6 +252,8 @@
             this.plantVariety.LightRequirement = this.plant.LightRequirement;
             this.plantVariety.MoistureRequirement = this.plant.MoistureRequirement;
             this.plantVariety.GrowTolerance = this.plant.GrowTolerance;
+            this.plantVariety.DaysToMaturityMin = this.plant.DaysToMaturityMin;
+            this.plantVariety.DaysToMaturityMax = this.plant.DaysToMaturityMax;
             this.plantVariety.Colors = new();
             this.plantVariety.Tags = new();
             isEdit = false;
@@ -270,7 +272,7 @@
     }
 
 
-    protected async Task HandleValidSubmit()
+    protected async Task HandleValidSubmitAsync()
     {
         _logger.Log(LogLevel.Information, "Plant Variety Form passed valdiate");
 

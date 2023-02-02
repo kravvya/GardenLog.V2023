@@ -1,5 +1,7 @@
 ﻿using GardenLog.SharedKernel.Interfaces;
+using PlantCatalog.Contract.ViewModels;
 using PlantHarvest.Infrastructure.ApiClients;
+using System.Collections.ObjectModel;
 
 namespace PlantHarvest.Api.CommandHandlers;
 
@@ -9,7 +11,7 @@ public interface IHarvestCommandHandler
     Task<string> CreateHarvestCycle(CreateHarvestCycleCommand request);
     Task<string> DeleteHarvestCycle(string id);
     Task<string> UpdateHarvestCycle(UpdateHarvestCycleCommand request);
-          
+
     Task<string> AddPlantHarvestCycle(CreatePlantHarvestCycleCommand request);
     Task<string> DeletePlantHarvestCycle(string harvestCyleId, string id);
     Task<string> UpdatePlantHarvestCycle(UpdatePlantHarvestCycleCommand request);
@@ -25,15 +27,15 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     private readonly IHarvestCycleRepository _harvestCycleRepository;
     private readonly ILogger<HarvestCommandHandler> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IPlantCatalogApiClient _plantCatalogApi;
+    private readonly IScheduleBuilder _scheduleBuilder;
 
-    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IPlantCatalogApiClient plantCatalogApi)
+    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IScheduleBuilder scheduleBuilder)
     {
         _unitOfWork = unitOfWork;
         _harvestCycleRepository = harvestCycleRepository;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
-        _plantCatalogApi = plantCatalogApi;
+        _scheduleBuilder = scheduleBuilder;
     }
 
     #region Harvest Cycle
@@ -119,7 +121,20 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
             var plantId = harvest.AddPlantHarvestCycle(command);
 
-            _harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
+            try
+            {
+                var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
+
+                ApplyPlantSchedules(generatedSchedules, harvest, plantId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception generating plant schedules. PLantHarvest will still save", ex);
+            }
+
+
+            //_harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
+            _harvestCycleRepository.Update(harvest);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -145,7 +160,20 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         harvest.UpdatePlantHarvestCycle(command);
 
-        _harvestCycleRepository.UpdatePlantHarvestCycle(command.PlantHarvestCycleId, harvest);
+        try
+        {
+            var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
+
+            ApplyPlantSchedules(generatedSchedules, harvest, command.PlantHarvestCycleId);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception generating plant schedules. PLantHarvest will still save", ex);
+        }
+
+        //_harvestCycleRepository.UpdatePlantHarvestCycle(command.PlantHarvestCycleId, harvest);
+        _harvestCycleRepository.Update(harvest);
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -219,7 +247,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         //{
         //    throw new ArgumentException($"This type of task is already scheduled", nameof(command.TaskType));
         //}
-                
+
         harvest.UpdatePlantSchedule(command);
 
         _harvestCycleRepository.Update(harvest);
@@ -245,5 +273,19 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     }
 
     #endregion
+
+    private void ApplyPlantSchedules(ReadOnlyCollection<CreatePlantScheduleCommand> schedules, HarvestCycle harvest, string plantHarvestCycleId)
+    {
+        if (schedules == null || schedules.Count == 0) { return; }
+
+        harvest.DeleteAllSystemGeneratedSchedules(plantHarvestCycleId);
+
+        foreach (var schedule in schedules)
+        {
+            schedule.PlantHarvestCycleId = plantHarvestCycleId;
+            harvest.AddPlantSchedule(schedule);
+        }
+
+    }
 }
 

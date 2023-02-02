@@ -85,8 +85,9 @@ namespace PlantCatalog.IntegrationTest.Clients
                 SeedViableForYears = 10,
                 Type = Contract.Enum.PlantTypeEnum.Vegetable,
                 Tags= new List<string>() { "Bush", "Pole"},
-                VarietyColors= new List<string>() { "Black"}
-
+                VarietyColors= new List<string>() { "Black"},
+                DaysToMaturityMin = 10,
+                DaysToMaturityMax = 20
             };
         }
         #endregion

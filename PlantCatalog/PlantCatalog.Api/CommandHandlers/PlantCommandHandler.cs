@@ -53,7 +53,9 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.GardenTip,
             request.SeedViableForYears,
             request.Tags,
-            request.VarietyColors);
+            request.VarietyColors,
+            request.DaysToMaturityMin,
+            request.DaysToMaturityMax);
 
         _plantRepository.Add(plant);
 
@@ -85,7 +87,9 @@ public class PlantCommandHandler : IPlantCommandHandler
             request.GardenTip,
             request.SeedViableForYears,
             request.Tags,
-            request.VarietyColors);
+            request.VarietyColors,
+            request.DaysToMaturityMin,
+            request.DaysToMaturityMax);
 
         _plantRepository.Update(plant);
 

@@ -72,7 +72,7 @@ namespace PlantHarvest.IntegrationTest.Clients
             {
                 HarvestCycleName = name,
                 StartDate = DateTime.Now,
-                GardenId = "garden1",
+                GardenId = "39131fc5-61f5-43e2-9243-a537a75487b1",
                 Notes = "Integration test Harvest Cycle"
             };
         }
@@ -137,7 +137,7 @@ namespace PlantHarvest.IntegrationTest.Clients
                 PlantVarietyName = "Test Variety",
                 SeedVendorName = null,
                 SeedVendorId = null,
-                PlantGrowthInstructionId = "Fake Growth Instruction",
+                PlantGrowthInstructionId = "b295d016-35ed-4650-9e62-ab8b5791c4a9",
                 PlantGrowthInstructionName = "Test Growth Instruction",
                 PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors,
                 Notes = "Created by Integration test",

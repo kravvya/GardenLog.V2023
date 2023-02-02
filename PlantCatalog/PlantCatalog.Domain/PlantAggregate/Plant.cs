@@ -15,6 +15,8 @@ public class Plant : BaseEntity, IAggregateRoot
     public GrowToleranceEnum GrowTolerance { get; private set; }
     public string GardenTip { get; private set; }
     public int? SeedViableForYears { get; private set; }
+    public int? DaysToMaturityMin { get; set; }
+    public int? DaysToMaturityMax { get; set; }
     public int GrowInstructionsCount
     {
         get{
@@ -36,8 +38,8 @@ public class Plant : BaseEntity, IAggregateRoot
     private Plant() { }
 
     private Plant(string Name, string Description, string Color, PlantLifecycleEnum Lifecycle, PlantTypeEnum Type, MoistureRequirementEnum MoistureRequirement
-        ,LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears
-        ,int GrowInstructionCount, int VarietyCount, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions
+        ,LightRequirementEnum LightRequirement, GrowToleranceEnum GrowTolerance, string GardenTip, int? SeedViableForYears, int? DaysToMaturityMin, int? DaysToMaturityMax
+        , int GrowInstructionCount, int VarietyCount, List<string> Tags, List<string> VarietyColors, List<PlantGrowInstruction> GrowInstructions
         ,HarvestSeasonEnum HarvestSeason)
     {
         this.Name = Name;
@@ -55,6 +57,8 @@ public class Plant : BaseEntity, IAggregateRoot
         _varietyColors = VarietyColors;
         _growInstructions = GrowInstructions;
         this.HarvestSeason = HarvestSeason;
+        this.DaysToMaturityMin= DaysToMaturityMin;
+        this.DaysToMaturityMax= DaysToMaturityMax;
     }
 
     public static Plant Create(
@@ -69,7 +73,9 @@ public class Plant : BaseEntity, IAggregateRoot
         string gardenTip,
         int? seedViableForYears,
         IList<string> tags,
-        IList<string> varietyColors
+        IList<string> varietyColors,
+        int? daysToMaturityMin,
+        int? daysToMaturityMax
         )
     {
         var plant = new Plant()
@@ -84,7 +90,9 @@ public class Plant : BaseEntity, IAggregateRoot
             LightRequirement = lightRequirement,
             GrowTolerance = growTolerance,
             GardenTip = gardenTip,
-            SeedViableForYears = seedViableForYears
+            SeedViableForYears = seedViableForYears,
+            DaysToMaturityMin = daysToMaturityMin,
+            DaysToMaturityMax=daysToMaturityMax
         };
 
         plant._tags.AddRange(tags);
@@ -109,7 +117,9 @@ public class Plant : BaseEntity, IAggregateRoot
         string gardenTip,
         int? seedViableForYears,
         List<string> tags,
-        List<string> varietyColors)
+        List<string> varietyColors,
+        int? daysToMaturityMin, 
+        int? daysToMaturityMax)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Description = description ?? throw new ArgumentNullException(nameof(description));
@@ -121,6 +131,8 @@ public class Plant : BaseEntity, IAggregateRoot
         GrowTolerance = growTolerance;
         GardenTip = gardenTip;
         SeedViableForYears = seedViableForYears;
+        DaysToMaturityMin = daysToMaturityMin;
+        DaysToMaturityMax = daysToMaturityMax;
 
         UpdateCollection<string>(this._tags, tags);
         UpdateCollection<string>(this._varietyColors, varietyColors);
