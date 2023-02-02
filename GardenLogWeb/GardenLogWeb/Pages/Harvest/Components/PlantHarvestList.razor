@@ -89,11 +89,11 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="col-xs-5">Plant</th>
-                                <th class="col-xs-1">Seeding Date</th>
-                                <th class="col-xs-1">Transplant Date</th>
-                                <th class="col-xs-1">Qty</th>
-                                <th class="col-xs-3">Location</th>
+                                <th class="col-xs-5 fw-semibold ">Plant</th>
+                                <th class="col-xs-1 fw-semibold">Seeding Date</th>
+                                <th class="col-xs-1 fw-semibold">Transplant Date</th>
+                                <th class="col-xs-1 fw-semibold">Qty</th>
+                                <th class="col-xs-3 fw-semibold">Location</th>
                                 <th class="col-xs-1"><button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button></th>
                             </tr>
                         </thead>
@@ -103,7 +103,8 @@
                                 <tr style="border-bottom: 5px solid @GetColor(plant);">
                                     <td class="col-xs-5" style="border-left: 5px solid @GetColor(plant);">
                                         <a class="text-dark" role="button" @onclick="@(() => ViewPlant(plant))">
-                                            <span class="lead fw-bold">@GetPlantName(plant)</span></a>
+                                            <span class="fw-semibold">@GetPlantName(plant)</span>
+                                        </a>
                                     </td>
                                     <td class="col-xs-1">@GetDateValue(plant.SeedingDateTime)</td>
                                     <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>

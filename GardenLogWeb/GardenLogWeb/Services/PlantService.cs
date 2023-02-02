@@ -616,7 +616,7 @@ public class PlantService : IPlantService
         List<PlantModel> plants = null;
         List<PlantNameModel> plantNames = null;
 
-        if (!_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
         {
             var index = plants.FindIndex(p => p.PlantId == plant.PlantId);
             if (index > -1)
@@ -632,7 +632,7 @@ public class PlantService : IPlantService
             }
         }
 
-        if (!_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
+        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
         {
             var index = plantNames.FindIndex(p => p.PlantId == plant.PlantId);
             if (index > -1)
@@ -652,9 +652,8 @@ public class PlantService : IPlantService
         List<PlantModel> plants = null;
         List<PlantNameModel> plantNames = null;
 
-        if (!_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
         {
-
             var index = plants.FindIndex(p => p.PlantId == plantId);
             if (index > -1)
             {
@@ -662,9 +661,8 @@ public class PlantService : IPlantService
             }
         }
 
-        if (!_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
+        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
         {
-
             var index = plantNames.FindIndex(p => p.PlantId == plantId);
             if (index > -1)
             {

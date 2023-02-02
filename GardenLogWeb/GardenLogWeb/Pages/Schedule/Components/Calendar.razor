@@ -1,6 +1,7 @@
 ﻿@using PlantHarvest.Contract.Base;
 @inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
+@inject NavigationManager _navigationManager;
 
 <div>
     @if (IsInitialized)
@@ -48,7 +49,7 @@
             @foreach (var plant in _plants)
             {
                 <div class="row flex-nowrap plant-schedule">
-                    <div class="col-2 plant-name mb-1  "><small>@plant.GetPlantName()</small></div>
+                    <div class="col-2 plant-name mb-1  "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><small>@plant.GetPlantName()</small></a></div>
                     <div class="col-10 plant-calendar ">
                         <div class="row flex-nowrap year g-0 mb-1  " id="@plant.GetPlantName()-year">
                             @for (int month = 1; month < 13; month++)
@@ -88,7 +89,7 @@
     public async void Initialize(HarvestCycleModel harvest)
     {
         _harvest = harvest;
-        //_plants = await _harvestService.GetPlantHarvests(_harvest.HarvestCycleId, false);
+        _plants = await _harvestService.GetPlantHarvests(_harvest.HarvestCycleId, false);
 
         _garden = await _gardenService.GetGarden(_harvest.GardenId, true);
 
@@ -96,57 +97,6 @@
         _firstFrostDate = new DateTime(DateTime.Now.Year, _garden.FirstFrostDate.Month, _garden.FirstFrostDate.Day);
 
         IsInitialized = true;
-        _plants = new();
-        _plants.Add(new PlantHarvestCycleModel()
-            {
-                PlantName = "Tomato",
-                PlantVarietyName = "Big Red",
-                PlantCalendar = new List<PlantScheduleViewModel>(){
-                        new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("02/10/2023"),
-                            EndDate = DateTime.Parse("02/24/2023"),
-                            TaskType = WorkLogReasonEnum.SowIndoors
-                        },
-                         new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("06/01/2023"),
-                            EndDate = DateTime.Parse("06/01/2023"),
-                            TaskType = WorkLogReasonEnum.TransplantOutside
-                        },
-                         new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("08/15/2023"),
-                            EndDate = DateTime.Parse("09/18/2023"),
-                            TaskType = WorkLogReasonEnum.Harvest
-                        }
-                }
-            });
-        _plants.Add(new PlantHarvestCycleModel()
-            {
-                PlantName = "Pepper",
-                PlantVarietyName = "Summer Bell",
-                PlantCalendar = new List<PlantScheduleViewModel>(){
-                        new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("04/01/2023"),
-                            EndDate = DateTime.Parse("04/01/2023"),
-                            TaskType = WorkLogReasonEnum.SowIndoors
-                        },
-                         new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("06/15/2023"),
-                            EndDate = DateTime.Parse("06/15/2023"),
-                            TaskType = WorkLogReasonEnum.TransplantOutside
-                        },
-                         new PlantScheduleViewModel()
-                        {
-                            StartDate = DateTime.Parse("08/15/2023"),
-                            EndDate = DateTime.Parse("09/18/2023"),
-                            TaskType = WorkLogReasonEnum.Harvest
-                        }
-                }
-            });
         StateHasChanged();
     }
 
@@ -247,6 +197,11 @@
         }
 
         return taskClass;
+    }
+
+    protected void ViewPlant(PlantHarvestCycleModel plant)
+    {
+        _navigationManager.NavigateToViewPlant(plant.PlantId);
     }
 }
 

@@ -294,7 +294,10 @@ public class HarvestCycleService : IHarvestCycleService
         {
             plant.PlantHarvestCycleId = response.Response;
 
-            AddOrUpdateToPlantHarvestCycleList(plant);
+            //forse refresh to get plant schedule into cache
+            await GetPlantHarvest(plant.HarvestCycleId, plant.PlantHarvestCycleId, true);
+
+            //AddOrUpdateToPlantHarvestCycleList(newPlant);
 
             _toastService.ShowToast($"Plant is added to the Garden Plan", GardenLogToastLevel.Success);
         }
@@ -318,7 +321,8 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            AddOrUpdateToPlantHarvestCycleList(plant);
+            await GetPlantHarvest(plant.HarvestCycleId, plant.PlantHarvestCycleId, true);
+            // AddOrUpdateToPlantHarvestCycleList(plant);
 
             _toastService.ShowToast($"Garden Plan is successfully updated.", GardenLogToastLevel.Success);
         }
