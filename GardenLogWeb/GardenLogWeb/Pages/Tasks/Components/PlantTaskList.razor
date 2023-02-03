@@ -9,61 +9,143 @@
 
 <div class="row">
 
-    @if (_tasks == null || _tasks.Count == 0)
-    {
-        <p><em>Empty</em></p>
-        <div><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></div>
-    }
-    else
-    {
-        <div class="table-responsive-md">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Plant</th>
-                        <th scope="col">Reason</th>
-                        <th scope="col">Target Date</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Note</th>
-                        <th><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
+    <div id="task-filter" class="col-md-2 d-md-block collapse">
+        <h3 class="text-uppercase text-primary d-none d-md-block">Filters</h3>
+        <EditForm Model=@_filter>
+            <div class="d-flex flex-wrap">
+
+                <div id="type-filter" class="my-3 mx-1">
+                    <h5 class="text-uppercase text-primary">Type</h5>
+                    @foreach (var type in _filter.WorkLogReasonEnum)
                     {
-                        <tr>
-                            <td class="@GetClass(task.Type)">&nbsp;&nbsp;</td>
-                            <td>@task.PlantName</td>                            
-                            <td>@(_verifyService.GetDescription<WorkLogReasonEnum>(task.Type))</td>
-                            <td>@task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd</td>
-                            <td>@task.Title</td>
-                            <td colspan="2">@task.Notes</td>
-                        </tr>
+                        @if (_tasks.Any(t => t.Type.ToString().Equals(type.EnumItem.Key)))
+                        {
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="type.IsSelected" id="@type.EnumItem.Key" />
+                                <label class="form-check-label" for="@type.EnumItem.Key">
+                                    @type.EnumItem.Value
+                                </label>
+                            </div>
+                        }
                     }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4"></td>
-                        <td><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    }
+                    <a id="clear-type" role='button' onclick=@(() => Clear(_filter.WorkLogReasonEnum))>Clear</a>
+                </div>
+
+                <div id="Completed-filter" class="my-3 mx-1">
+                    <h5 class="text-uppercase text-primary">Completed Tasks</h5>
+                    <div class="form-check">
+                        <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="_filter.ShowCompletedTasks" id="showCompletedTasks" />
+                        <label class="form-check-label" for="showCompletedTasks">
+                            Show Completed Tasks
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+
+    <div id="tasks" class="col-md-9">
+        <section>
+            <article id="taskList">
+                @if (_tasks == null || _tasks.Count == 0)
+                {
+                    <p><em>Empty</em></p>
+                    <div><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></div>
+                }
+                else
+                {
+                    <div id="toggle-filter" class="d-md-none py-2">
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#task-filter" aria-expanded="false" aria-controls="task-filter">Filters</button>
+                    </div>
+
+                    <div class="table-responsive-md">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Plant</th>
+                                    <th scope="col">Reason</th>
+                                    <th scope="col">Target Date</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Note</th>
+                                    <th><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
+                                {
+                                    if (IsVisible(task))
+                                    {
+                                        <tr>
+                                            <td class="@GetClass(task.Type)">&nbsp;&nbsp;</td>
+                                            <td>@task.PlantName</td>
+                                            <td>
+                                                @(
+                                                    _verifyService.GetDescription<WorkLogReasonEnum>(task.Type)
+                                                    )
+                                            </td>
+                                            <td>@task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</td>
+                                            <td>@task.Title</td>
+                                            <td colspan="2">@task.Notes</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6"></td>
+                                    <td><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+            </article>
+        </section>
+    </div>
 </div>
 
 
 @code {
     private ModalView? _plantTaskFormModal;
     private PlantTaskForm? _plantTaskForm;
+    private TaskFilter? _filter;
 
     private List<PlantTaskModel> _tasks { get; set; } = new();
 
+    protected override void OnInitialized()
+    {
+        _filter = new TaskFilter(_verifyService, ShowCompletedTasksChanged);
+
+    }
+
     public async void Initialize()
     {
-        _tasks = await _taskService.GetPlantTasks(false);
-       
+        _tasks = await _taskService.GetActivePlantTasks(false);
+
+        StateHasChanged();
+    }
+
+    public bool IsVisible(PlantTaskModel task)
+    {
+        if (_filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected) && !_filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(task.Type.ToString())))
+            return false;
+
+        return true;
+    }
+    public void Clear(List<CheckableEnum> options)
+    {
+        options.ForEach(o => o.IsSelected = false);
+    }
+
+    private async Task ShowCompletedTasksChanged(bool showCompeltedTasks)
+    {
+        if (showCompeltedTasks)
+            _tasks = await _taskService.GetPlantTasks(false);
+        else
+        {
+            _tasks = await _taskService.GetActivePlantTasks(false);
+        }
         StateHasChanged();
     }
 
@@ -83,6 +165,13 @@
     private async Task ClosePlantTaskForm(PlantTaskModel task)
     {
         await _plantTaskFormModal?.CloseModal();
+
+
+        if (_filter.ShowCompletedTasks)
+            _tasks = await _taskService.GetPlantTasks(false);
+        else
+            _tasks = await _taskService.GetActivePlantTasks(false);
+
 
         StateHasChanged();
     }

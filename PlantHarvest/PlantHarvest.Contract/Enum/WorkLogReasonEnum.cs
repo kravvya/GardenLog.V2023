@@ -22,10 +22,10 @@ public enum WorkLogReasonEnum : int
     Plant = 7,
     [Description("Maintenance")]
     Maintenance = 8,
-    [Description("So Indoors")]
+    [Description("Sow Indoors")]
     SowIndoors = 9,
     [Description("Sow Outside")]
-    SowOutside = 9,
+    SowOutside = 10,
     [Description("Transplant Outside")]
-    TransplantOutside = 10
+    TransplantOutside = 11
 }

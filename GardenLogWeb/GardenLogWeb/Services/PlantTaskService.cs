@@ -197,13 +197,7 @@ public class PlantTaskService : IPlantTaskService
                 return;
             }
         }
-        else
-        {
-            tasks = new List<PlantTaskModel>();
-            _cacheService.Set(PLANT_TASK_KEY, tasks, DateTime.Now.AddMinutes(CACHE_DURATION));
-        }
-        tasks.Add(task);
-
+       
         if (!task.CompletedDateTime.HasValue)
         {
             tasks = null;
