@@ -3,7 +3,7 @@
 
 public record PlantTaskBase
 {
-    public string Description { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     public WorkLogReasonEnum Type { get; set; }
     public DateTime CreatedDateTime { get; set; }
     public DateTime TargetDateStart { get; set; }

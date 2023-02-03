@@ -4,7 +4,7 @@ namespace PlantHarvest.Domain.WorkLogAggregate;
 
 public class PlantTask : BaseEntity, IAggregateRoot
 {
-    public string Description { get; private set; }
+    public string Title { get; private set; }
     public WorkLogReasonEnum Type { get; private set; }
     public DateTime CreatedDateTime { get; private set; }
     public DateTime TargetDateStart { get; private set; }
@@ -24,7 +24,7 @@ public class PlantTask : BaseEntity, IAggregateRoot
     }
 
     private PlantTask(
-        string description,
+        string title,
         WorkLogReasonEnum type,
         DateTime createdDateTime,
         DateTime targetDateStart,
@@ -39,7 +39,7 @@ public class PlantTask : BaseEntity, IAggregateRoot
         string userProfileId
         )
     {
-        this.Description = description;
+        this.Title = title;
         this.Type = type;
         this.CreatedDateTime = createdDateTime;
         this.TargetDateStart = targetDateStart;
@@ -55,7 +55,7 @@ public class PlantTask : BaseEntity, IAggregateRoot
     }
 
     public static PlantTask Create(
-        string description,
+        string title,
         WorkLogReasonEnum type,
         DateTime createdDateTime,
         DateTime targetDateStart,
@@ -74,7 +74,7 @@ public class PlantTask : BaseEntity, IAggregateRoot
         var task = new PlantTask()
         {
             Id = Guid.NewGuid().ToString(),
-            Description = description,
+            Title = title,
             Type = type,
             CreatedDateTime = createdDateTime,
             TargetDateStart = targetDateStart,

@@ -6,7 +6,7 @@ public class PlantTaskValidator<T> : AbstractValidator<T>
     public PlantTaskValidator()
     {
         RuleFor(command => command.HarvestCycleId).NotEmpty().Length(3, 100);
-        RuleFor(command => command.Description).NotEmpty().Length(3, 1000);
+        RuleFor(command => command.Title).NotEmpty().Length(3, 1000);
         RuleFor(command => command.PlantHarvestCycleId).NotEmpty().Length(3, 100); ;
         RuleFor(command => command.PlantName).NotEmpty().Length(3, 100); ;
         RuleFor(command => command.CreatedDateTime).NotEmpty();

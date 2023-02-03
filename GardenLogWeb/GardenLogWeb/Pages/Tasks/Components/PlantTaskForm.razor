@@ -1,0 +1,189 @@
+﻿@inject ILogger<WorkLogForm> _logger;
+@inject IPlantTaskService _taskService;
+@inject IVerifyService _verifyService;
+@inject IHarvestCycleService _harvestService;
+
+<article id="taskForm">
+    <div class="container">
+        @if (IsInitialized)
+        {
+            <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
+                <FluentValidationValidator />
+                <CustomValidation @ref="_customValidation" />
+                @*<ValidationSummary />*@
+
+                <div class="row mt-3">
+                    <div class="col-11">
+                        <FormCard Class="border-info" HeaderClass="text-bg-info">
+                            <Header>
+                                <label for="reason" class="card-subtitle mb-2 text-light">Task Detail</label>
+                            </Header>
+                            <Body>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="HarvestCycleId">Garden Plan</label>
+                                        <InputSelect class="form-select" @bind-Value="_task.HarvestCycleId" id="HarvestCycleId" @oninput="@ReloadHarvestOptions">
+                                            @foreach (var harvest in _harvests)
+                                            {
+                                                <option Value="@harvest.HarvestCycleId">@harvest.HarvestCycleName</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => _task.HarvestCycleId)" />
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="PlantHarvestCycleId">Plant</label>
+                                        <InputSelect class="form-select" @bind-Value="_task.PlantHarvestCycleId" id="PlantHarvestCycleId" @oninput="@SetPlantName">
+                                            @foreach (var plant in _plants)
+                                            {
+                                                <option Value="@plant.PlantHarvestCycleId">@plant.GetPlantName()</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => _task.PlantHarvestCycleId)" />
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="reason">Reason</label>
+                                        <InputSelect class="form-select" @bind-Value="_task.Type" id="reason">
+                                            @foreach (var item in Enum.GetValues<WorkLogReasonEnum>().Where(p => p != WorkLogReasonEnum.Unspecified))
+                                            {
+                                                <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => _task.Type)" />
+                                    </div>
+                                </div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-11">
+                        <FormCard Class="border-info" HeaderClass="text-bg-info">
+                            <Header>
+                                <label for="TargetDateStart" class="card-subtitle mb-2 text-light">Target Dates</label>
+                            </Header>
+                            <Body>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="TargetDateStart">Start Date</label>
+                                        <InputDate class="form-control" id="TargetDateStart" @bind-Value="@_task.TargetDateStart" />
+                                        <ValidationMessage For="@(() => _task.TargetDateStart)" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="TargetDateEnd">End Date</label>
+                                        <InputDate class="form-control" id="TargetDateEnd" @bind-Value="@_task.TargetDateEnd" />
+                                        <ValidationMessage For="@(() => _task.TargetDateEnd)" />
+                                    </div>
+                                </div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-11">
+                        <FormCard Class="border-info" HeaderClass="text-bg-info">
+                            <Header>
+                                <label for="Title" class="card-subtitle mb-2 text-light">Descritpion</label>
+                            </Header>
+                            <Body>
+                                <div class="row mb-3">
+                                     <div class="col-md-10">
+                                        <label for="Title">Title</label>
+                                        <InputText Class="form-control" Id="log" @bind-Value="@_task.Title" />
+                                        <ValidationMessage For="@(() => _task.Title)" />
+                                    </div>
+
+                                    <div class="col-md-10">
+                                        <label for="Notes">Note</label>
+                                        <InputTextArea Class="form-control" Id="log" @bind-Value="@_task.Notes" />
+                                        <ValidationMessage For="@(() => _task.Notes)" />
+                                    </div>
+                                </div>
+                            </Body>
+                        </FormCard>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="modal-footer">
+                        <span>
+                            <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        </span>
+                    </div>
+                </div>
+            </EditForm>
+        }
+    </div>
+</article>
+@code {
+    [Parameter] public Func<PlantTaskModel, Task> OnClose { get; set; }
+
+    private PlantTaskModel _task;
+    private CustomValidation _customValidation;
+    private EditContext _editContext;
+
+    private bool IsInitialized = false;
+    IList<HarvestCycleModel> _harvests;
+    IList<PlantHarvestCycleModel> _plants = new List<PlantHarvestCycleModel>();
+
+    public async void Initialize()
+    {
+        _harvests = await _harvestService.GetHarvestList(false);
+
+
+        _task = new PlantTaskModel();
+
+        _task.CreatedDateTime=DateTime.Now;
+        _task.IsSystemGenerated = false;
+
+        _editContext = new(_task);
+        _editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        IsInitialized = true;
+        StateHasChanged();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _logger.Log(LogLevel.Information, "Image Form passed valdiate");
+
+        _customValidation?.ClearErrors();
+
+        ApiResponse response = await _taskService.CreatePlantTask(_task);
+
+        if (response.ValidationProblems != null)
+        {
+            _customValidation?.DisplayErrors(response.ValidationProblems);
+        }
+
+        if (response.IsSuccess)
+        {
+            await OnClose(_task);
+        }
+    }
+
+    protected async Task ReloadHarvestOptions(ChangeEventArgs e)
+    {
+        _plants = null;
+
+        string? harvestId = (e != null ? (string)e.Value : _task?.HarvestCycleId);
+
+        if (!string.IsNullOrWhiteSpace(harvestId))
+        {
+            var plants = await _harvestService.GetPlantHarvests(harvestId, false);
+        }
+        StateHasChanged();
+    }
+
+    private void SetPlantName(ChangeEventArgs e)
+    {
+        string plantHarvestId = (e != null ? (string)e.Value : _task?.PlantHarvestCycleId);
+        if (!string.IsNullOrWhiteSpace(plantHarvestId))
+        {
+            _task.PlantName = _plants.First(p => p.PlantHarvestCycleId == plantHarvestId).GetPlantName();
+        }
+    
+    }
+}

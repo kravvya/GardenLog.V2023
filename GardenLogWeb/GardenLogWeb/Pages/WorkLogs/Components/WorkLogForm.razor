@@ -2,7 +2,7 @@
 @inject IWorkLogService _workLogService;
 @inject IVerifyService _verifyService;
 
-<article id="imageForm">
+<article id="workLogForm">
     <div class="container">
         @if (IsInitialized)
         {
@@ -72,7 +72,7 @@
 
     private async Task HandleValidSubmit()
     {
-        _logger.Log(LogLevel.Information, "Image Form passed valdiate");
+        _logger.Log(LogLevel.Information, "Work Log Form passed valdiate");
 
         _customValidation?.ClearErrors();
 

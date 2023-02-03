@@ -65,7 +65,7 @@ namespace PlantHarvest.IntegrationTest.Clients
             return new CreatePlantTaskCommand()
             {
                 PlantName = "Test Plant Name",
-                Description = "Created by Intergration Test",
+                Title = "Created by Intergration Test",
                 HarvestCycleId = harvestCycleId,
                 IsSystemGenerated = true,
                 Notes = "Created by Integration Test",

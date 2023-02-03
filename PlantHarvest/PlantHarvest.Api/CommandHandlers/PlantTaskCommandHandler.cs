@@ -37,7 +37,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
         string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
 
 
-        var task = PlantTask.Create(request.Description, request.Type
+        var task = PlantTask.Create(request.Title, request.Type
             , request.CreatedDateTime, request.TargetDateStart, request.TargetDateStart, request.CompletedDateTime
             , request.HarvestCycleId, request.PlantHarvestCycleId, request.PlantName, request.PlantScheduleId, request.Notes, request.IsSystemGenerated, userProfileId);
 

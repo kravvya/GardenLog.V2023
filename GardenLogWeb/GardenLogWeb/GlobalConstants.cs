@@ -18,6 +18,7 @@ global using UserManagement.Contract.ViewModels;
 global using GardenLogWeb.Models.UserProfile;
 global using UserManagement.Contract;
 global using PlantHarvest.Contract;
+global using GardenLogWeb.Models.Task;
 
 namespace GardenLogWeb;
 

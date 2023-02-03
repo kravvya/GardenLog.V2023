@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Api", "UserM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.IntegrationTest", "Test\UserManagement.IntegrationTest\UserManagement.IntegrationTest.csproj", "{E7C6CCCA-B78E-4F80-AA4F-E343BA71919E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantHarvest.Orchestrator", "PlantHarvest\PlantHarvest.Orchestrator\PlantHarvest.Orchestrator.csproj", "{E6F1C5B1-9CD3-4777-9528-CE786631BDF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.Orchestrator", "PlantHarvest\PlantHarvest.Orchestrator\PlantHarvest.Orchestrator.csproj", "{E6F1C5B1-9CD3-4777-9528-CE786631BDF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

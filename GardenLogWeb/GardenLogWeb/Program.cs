@@ -22,6 +22,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IVerifyService, VerifyService>();
 builder.Services.AddScoped<IGardenService, GardenService>();
 builder.Services.AddScoped<IWorkLogService, WorkLogService>();
+builder.Services.AddScoped<IPlantTaskService, PlantTaskService>();
 
 builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<IGardenLogToastService, GardenLogToastService>();

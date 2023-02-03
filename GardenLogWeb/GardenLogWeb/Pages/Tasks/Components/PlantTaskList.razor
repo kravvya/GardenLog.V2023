@@ -1,0 +1,105 @@
+﻿@inject IPlantTaskService _taskService;
+@inject IVerifyService _verifyService;
+
+<ModalView OnCloseModal="ClosePlantTaskFormModal" @ref="_plantTaskFormModal">
+    <Body>
+        <PlantTaskForm OnClose=@ClosePlantTaskForm @ref=_plantTaskForm />
+    </Body>
+</ModalView>
+
+<div class="row">
+
+    @if (_tasks == null || _tasks.Count == 0)
+    {
+        <p><em>Empty</em></p>
+        <div><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></div>
+    }
+    else
+    {
+        <div class="table-responsive-md">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Plant</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Target Date</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Note</th>
+                        <th><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
+                    {
+                        <tr>
+                            <td class="@GetClass(task.Type)">&nbsp;&nbsp;</td>
+                            <td>@task.PlantName</td>                            
+                            <td>@(_verifyService.GetDescription<WorkLogReasonEnum>(task.Type))</td>
+                            <td>@task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd</td>
+                            <td>@task.Title</td>
+                            <td colspan="2">@task.Notes</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"></td>
+                        <td><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+</div>
+
+
+@code {
+    private ModalView? _plantTaskFormModal;
+    private PlantTaskForm? _plantTaskForm;
+
+    private List<PlantTaskModel> _tasks { get; set; } = new();
+
+    public async void Initialize()
+    {
+        _tasks = await _taskService.GetPlantTasks(false);
+       
+        StateHasChanged();
+    }
+
+    private async Task AddTask()
+    {
+        _plantTaskForm.Initialize();
+        await _plantTaskFormModal?.OpenModal("Add new task", GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
+    private async Task ClosePlantTaskFormModal()
+    {
+        await _plantTaskFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task ClosePlantTaskForm(PlantTaskModel task)
+    {
+        await _plantTaskFormModal?.CloseModal();
+
+        StateHasChanged();
+    }
+
+    private string GetClass(WorkLogReasonEnum reason)
+    {
+
+        switch (reason)
+        {
+            case WorkLogReasonEnum.Harvest:
+                return "table-success";
+            case WorkLogReasonEnum.Issue:
+                return "table-danger";
+            case WorkLogReasonEnum.IssueResolution:
+                return "table-warning";
+            default:
+                return "";
+        }
+    }
+}
