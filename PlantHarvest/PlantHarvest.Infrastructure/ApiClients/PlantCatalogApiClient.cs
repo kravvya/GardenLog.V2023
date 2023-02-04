@@ -25,7 +25,7 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
         _httpClient = httpClient;
         _logger = logger;
         _cache = cache;
-        var plantUrl = confguration["Services:PlantCatalog.Api"];
+       var plantUrl = confguration["Services:PlantCatalog.Api"];
         _logger.LogInformation($"Plant URL @ {plantUrl}");
 
         _httpClient.BaseAddress = new Uri(plantUrl);
