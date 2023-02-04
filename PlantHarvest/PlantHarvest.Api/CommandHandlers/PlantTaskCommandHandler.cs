@@ -42,7 +42,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
 
         var task = PlantTask.Create(request.Title, request.Type
-            , request.CreatedDateTime, request.TargetDateStart, request.TargetDateStart, request.CompletedDateTime
+            , request.CreatedDateTime, request.TargetDateStart, request.TargetDateEnd, request.CompletedDateTime
             , request.HarvestCycleId, request.PlantHarvestCycleId, request.PlantName, request.PlantScheduleId, request.Notes, request.IsSystemGenerated, userProfileId);
 
         _taskRepository.Add(task);
