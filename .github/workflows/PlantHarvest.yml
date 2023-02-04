@@ -54,6 +54,9 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore
     
+    - name: UnitTest
+      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.UnitTest/PlantHarvest.UnitTest.csproj -c Release --no-build
+
     - name: Test
       run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.IntegrationTest/PlantHarvest.IntegrationTest.csproj -c Release --no-build
       
