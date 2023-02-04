@@ -1,6 +1,8 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedKernel.Interfaces;
-
+using MediatR;
+using PlantHarvest.Api.Extensions;
+using System.Threading.Tasks;
 
 namespace PlantHarvest.Api.CommandHandlers;
 
@@ -19,13 +21,15 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
     private readonly IPlantTaskRepository _taskRepository;
     private readonly ILogger<PlantTaskCommandHandler> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMediator _mediator;
 
-    public PlantTaskCommandHandler(IUnitOfWork unitOfWork, IPlantTaskRepository workLogRepository, ILogger<PlantTaskCommandHandler> logger, IHttpContextAccessor httpContextAccessor)
+    public PlantTaskCommandHandler(IUnitOfWork unitOfWork, IPlantTaskRepository workLogRepository, ILogger<PlantTaskCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _taskRepository = workLogRepository;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
+        _mediator = mediator;
     }
 
     #region Plant Task
@@ -43,6 +47,8 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
         _taskRepository.Add(task);
 
+        await _mediator.DispatchDomainEventsAsync(task);
+
         await _unitOfWork.SaveChangesAsync();
 
         return task.Id;
@@ -58,6 +64,8 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
         _taskRepository.Update(task);
 
+        await _mediator.DispatchDomainEventsAsync(task);
+
         await _unitOfWork.SaveChangesAsync();
 
         return task.Id;
@@ -67,7 +75,13 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
     {
         _logger.LogInformation("Received request to delete task {0}", id);
 
+        var task = await _taskRepository.GetByIdAsync(id);
+
+        task.Delete();
+
         _taskRepository.Delete(id);
+
+        await _mediator.DispatchDomainEventsAsync(task);
 
         await _unitOfWork.SaveChangesAsync();
 

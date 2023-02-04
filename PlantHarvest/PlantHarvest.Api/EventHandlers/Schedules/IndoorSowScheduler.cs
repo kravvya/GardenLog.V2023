@@ -1,11 +1,11 @@
 ﻿using MongoDB.Driver.Linq;
-namespace PlantHarvest.Orchestrator.Schedules;
+namespace PlantHarvest.Api.Schedules;
 
 public class IndoorSowScheduler : SchedulerBase, IScheduler
 {
     public bool CanSchedule(PlantGrowInstructionViewModel growInstruction)
     {
-        return growInstruction.PlantingMethod == PlantingMethodEnum.SeedIndoors && growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue;
+        return growInstruction.PlantingMethod == plant.PlantingMethodEnum.SeedIndoors && growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue;
     }
 
     public CreatePlantScheduleCommand Schedule(PlantGrowInstructionViewModel growInstruction, GardenViewModel garden,int? daysToMaturityMin, int? daysToMaturityMax)
@@ -18,7 +18,7 @@ public class IndoorSowScheduler : SchedulerBase, IScheduler
         {
             return new CreatePlantScheduleCommand()
             {
-                TaskType= harvest.WorkLogReasonEnum.SowIndoors,
+                TaskType= WorkLogReasonEnum.SowIndoors,
                 StartDate = startDate.Value, 
                 EndDate = startDate.Value.AddDays(7 * growInstruction.StartSeedWeeksRange.Value),
                 IsSystemGenerated = true,

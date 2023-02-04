@@ -5,7 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-
+using PlantHarvest.Contract.Query;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
 
@@ -43,6 +43,28 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
         .ToListAsync();
 
         return data;
+    }
+
+    public async Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasksForUser(PlantTaskSearch search, string userProfileId)
+    {
+        List<FilterDefinition<PlantTask>> filters = new();
+        if (!string.IsNullOrEmpty(search.PlantHarvestCycleId))
+        {
+            filters.Add(Builders<PlantTask>.Filter.Eq("PlantHarvestCycleId", search.PlantHarvestCycleId));
+        }
+        if (search.Reason.HasValue)
+        {
+            filters.Add(Builders<PlantTask>.Filter.Eq("Type", search.Reason.Value.ToString()));
+        }
+        filters.Add(Builders<PlantTask>.Filter.Eq("UserProfileId", userProfileId));
+
+        var data = await Collection
+        .Find<PlantTask>(Builders<PlantTask>.Filter.And(filters))
+        .As<PlantTaskViewModel>()
+        .ToListAsync();
+
+        return data;
+
     }
 
     protected override IMongoCollection<PlantTask> GetCollection()

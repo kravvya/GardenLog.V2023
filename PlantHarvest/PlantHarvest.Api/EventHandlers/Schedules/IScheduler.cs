@@ -1,8 +1,4 @@
-﻿
-
-using PlantHarvest.Contract.Commands;
-
-namespace PlantHarvest.Orchestrator.Schedules;
+﻿namespace PlantHarvest.Api.Schedules;
 
 public interface IScheduler
 {

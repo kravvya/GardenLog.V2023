@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using PlantHarvest.Domain.WorkLogAggregate;
 using PlantHarvest.Infrastructure.ApiClients;
 using PlantHarvest.Infrastructure.Data.Repositories;
-
+using PlantHarvest.Orchestrator.Tasks;
 using Serilog;
 using Serilog.Enrichers.Span;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
@@ -77,6 +78,7 @@ try
         options.AddGlWebPolicy();
     });
 
+    builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
     //TODO Add Healthchecks!!!!
 

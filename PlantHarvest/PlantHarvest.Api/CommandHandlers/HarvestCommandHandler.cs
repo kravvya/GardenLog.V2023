@@ -1,5 +1,7 @@
 ﻿using GardenLog.SharedKernel.Interfaces;
+using MediatR;
 using PlantCatalog.Contract.ViewModels;
+using PlantHarvest.Api.Extensions;
 using PlantHarvest.Infrastructure.ApiClients;
 using System.Collections.ObjectModel;
 
@@ -28,14 +30,16 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     private readonly ILogger<HarvestCommandHandler> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IScheduleBuilder _scheduleBuilder;
+    private readonly IMediator _mediator;
 
-    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IScheduleBuilder scheduleBuilder)
+    public HarvestCommandHandler(IUnitOfWork unitOfWork, IHarvestCycleRepository harvestCycleRepository, ILogger<HarvestCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IScheduleBuilder scheduleBuilder, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _harvestCycleRepository = harvestCycleRepository;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
         _scheduleBuilder = scheduleBuilder;
+        _mediator = mediator;
     }
 
     #region Harvest Cycle
@@ -63,6 +67,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         _harvestCycleRepository.Add(harvest);
 
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
         await _unitOfWork.SaveChangesAsync();
 
         return harvest.Id;
@@ -86,6 +92,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         _harvestCycleRepository.Update(harvest);
 
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
         await _unitOfWork.SaveChangesAsync();
 
         return harvest.Id;
@@ -94,8 +102,13 @@ public class HarvestCommandHandler : IHarvestCommandHandler
     public async Task<string> DeleteHarvestCycle(string id)
     {
         _logger.LogInformation("Received request to delete harvest cycle {@id}", id);
+        var harvest = await _harvestCycleRepository.GetByIdAsync(id);
+
+        harvest.Delete();
 
         _harvestCycleRepository.Delete(id);
+
+        await _mediator.DispatchDomainEventsAsync(harvest);
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -136,6 +149,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             _harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
             //_harvestCycleRepository.Update(harvest);
 
+            await _mediator.DispatchDomainEventsAsync(harvest);
+
             await _unitOfWork.SaveChangesAsync();
 
             return plantId;
@@ -175,6 +190,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         _harvestCycleRepository.UpdatePlantHarvestCycle(command.PlantHarvestCycleId, harvest);
         //_harvestCycleRepository.Update(harvest);
 
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
         await _unitOfWork.SaveChangesAsync();
 
         return command.PlantHarvestCycleId;
@@ -189,6 +206,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         harvest.DeletePlantHarvestCycle(id);
 
         _harvestCycleRepository.DeletePlantHarvestCycle(id, harvest);
+
+        await _mediator.DispatchDomainEventsAsync(harvest);
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -219,6 +238,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             var scheduleId = harvest.AddPlantSchedule(command);
 
             _harvestCycleRepository.Update(harvest);
+
+            await _mediator.DispatchDomainEventsAsync(harvest);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -252,6 +273,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         _harvestCycleRepository.Update(harvest);
 
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
         await _unitOfWork.SaveChangesAsync();
 
         return command.PlantScheduleId;
@@ -266,6 +289,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         harvest.DeletePlantSchedule(plantHarvestCycleId, plantScheduleId);
 
         _harvestCycleRepository.Update(harvest);
+
+        await _mediator.DispatchDomainEventsAsync(harvest);
 
         await _unitOfWork.SaveChangesAsync();
 

@@ -4,11 +4,17 @@ global using PlantHarvest.Contract.ViewModels;
 global using PlantHarvest.Api.CommandHandlers;
 global using PlantHarvest.Api.QueryHandlers;
 global using GardenLog.SharedInfrastructure.Extensions;
-global using PlantHarvest.Orchestrator.Schedules;
+global using PlantHarvest.Api.Schedules;
 global using PlantHarvest.Domain.PlantTaskAggregate;
 global using PlantHarvest.Domain.WorkLogAggregate;
 global using PlantHarvest.Contract;
+global using PlantCatalog.Contract.ViewModels;
+global using PlantHarvest.Contract.Enum;
+global using UserManagement.Contract.ViewModels;
+global using plant = PlantCatalog.Contract.Enum;
+global using PlantHarvest.Domain.HarvestAggregate.Events.Meta;
 
+global using MediatR;
 public static class GlobalConstants
 {
     public const string PLANTCATALOG_API = "PlantCatalog.Api";

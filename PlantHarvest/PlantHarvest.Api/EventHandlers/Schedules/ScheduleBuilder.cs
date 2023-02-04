@@ -1,7 +1,8 @@
-﻿using PlantHarvest.Contract.Commands;
+﻿using PlantHarvest.Infrastructure.ApiClients;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
-namespace PlantHarvest.Orchestrator.Schedules;
+namespace PlantHarvest.Api.Schedules;
 
 public interface IScheduleBuilder
 {

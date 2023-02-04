@@ -1,4 +1,5 @@
 ﻿using PlantHarvest.Contract.Commands;
+using PlantHarvest.Domain.HarvestAggregate.Events;
 
 namespace PlantHarvest.Domain.HarvestAggregate;
 
@@ -139,17 +140,29 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
         this.Set<PlantingMethodEnum>(() => this.PlantingMethod, command.PlantingMethod);
 
-        if (this.DomainEvents != null && this.DomainEvents.Count > 0)
+        foreach (var evt in DomainEvents)
         {
-            this.DomainEvents.Clear();
-            addHarvestEvent(HarvestEventTriggerEnum.PlantHarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id));
+            addHarvestEvent(((HarvestChildEvent)evt).Trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id));
         }
+
+
     }
 
     protected override void AddDomainEvent(string attributeName)
     {
-        this.DomainEvents.Add(
-            new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+        switch (attributeName)
+        {
+            case "SeedingDate":
+                this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleSeeded, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                break;
+            default:
+                if (!this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleUpdated))
+                {
+                    this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                }
+                break;
+        }
+
     }
 
     #region Plant Schedule
@@ -158,7 +171,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         var schedule = PlantSchedule.Create(command);
 
         this._plantCalendar.Add(schedule);
-        
+
         return schedule.Id;
     }
 

@@ -1,30 +1,27 @@
-﻿using MongoDB.Driver.Linq;
+﻿namespace PlantHarvest.Api.Schedules;
 
-
-namespace PlantHarvest.Orchestrator.Schedules;
-
-public class TransplantScheduler : SchedulerBase, IScheduler
+public class OutdoorSowScheduler : SchedulerBase, IScheduler
 {
     public bool CanSchedule(PlantGrowInstructionViewModel growInstruction)
     {
-        return growInstruction.PlantingMethod != PlantingMethodEnum.DirectSeed && growInstruction.TransplantWeeksAheadOfWeatherCondition.HasValue;
+        return growInstruction.PlantingMethod == plant.PlantingMethodEnum.DirectSeed && growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue;
     }
 
     public CreatePlantScheduleCommand Schedule(PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
     {
-        DateTime? startDate = GetStartDateBasedOnWeatherCondition(growInstruction.TransplantAheadOfWeatherCondition, 
-                                    growInstruction.TransplantWeeksAheadOfWeatherCondition.Value,
+        DateTime? startDate = GetStartDateBasedOnWeatherCondition(growInstruction.StartSeedAheadOfWeatherCondition,
+                                    growInstruction.StartSeedWeeksAheadOfWeatherCondition.Value,
                                     garden);
-
+             
         if (startDate.HasValue)
         {
             return new CreatePlantScheduleCommand()
             {
-                TaskType = harvest.WorkLogReasonEnum.TransplantOutside,
+                TaskType = WorkLogReasonEnum.SowOutside,
                 StartDate = startDate.Value,
                 EndDate = startDate.Value.AddDays(7 * growInstruction.StartSeedWeeksRange.Value),
                 IsSystemGenerated = true,
-                Notes = growInstruction.TransplantInstructions
+                Notes = growInstruction.StartSeedInstructions
             };
         }
 

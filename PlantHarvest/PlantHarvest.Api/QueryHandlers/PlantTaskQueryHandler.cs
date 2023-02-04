@@ -1,10 +1,13 @@
-﻿namespace PlantHarvest.Api.QueryHandlers;
+﻿using PlantHarvest.Contract.Query;
+
+namespace PlantHarvest.Api.QueryHandlers;
 
 
 public interface IPlantTaskQueryHandler
 {
     Task<IReadOnlyCollection<PlantTaskViewModel>> GetPlantTasks();
     Task<IReadOnlyCollection<PlantTaskViewModel>> GetActivePlantTasks();
+    Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasks(PlantTaskSearch search);
 }
 
 
@@ -36,4 +39,10 @@ public class PlantTaskQueryHandler : IPlantTaskQueryHandler
         return await _taskRepository.GetActivePlantTasksForUser(userProfileId);
     }
 
+    public async Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasks(PlantTaskSearch search)
+    {
+        _logger.LogInformation($"Received request to search for tasks {search}");
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        return await _taskRepository.SearchPlantTasksForUser(search, userProfileId);
+    }
 }

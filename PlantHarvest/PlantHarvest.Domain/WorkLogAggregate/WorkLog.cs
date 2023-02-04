@@ -72,13 +72,18 @@ public class WorkLog : BaseEntity, IAggregateRoot
         DateTime eventDateTime,
         WorkLogReasonEnum reason)
     {
-        this.Set < string>(() => this.Log, log);
-        this.Set < WorkLogEntityEnum>(() => this.RelatedEntity , entity);
-        this.Set <string>(() => this.RelatedEntityid , entityId);
-        this.Set < DateTime>(() => this.EventDateTime , eventDateTime);
-        this.Set<WorkLogReasonEnum>(() => this.Reason , reason);
+        this.Set<string>(() => this.Log, log);
+        this.Set<WorkLogEntityEnum>(() => this.RelatedEntity, entity);
+        this.Set<string>(() => this.RelatedEntityid, entityId);
+        this.Set<DateTime>(() => this.EventDateTime, eventDateTime);
+        this.Set<WorkLogReasonEnum>(() => this.Reason, reason);
 
-       
+    }
+
+    public void Delete()
+    {
+        this.DomainEvents.Add(
+            new WorkLogEvent(this, WorkLogEventTriggerEnum.WorkLogDeleted, new WorkLogTriggerEntity(WorkLogEntityTypeEnum.WorkLog, this.Id)));
     }
 
     protected override void AddDomainEvent(string attributeName)

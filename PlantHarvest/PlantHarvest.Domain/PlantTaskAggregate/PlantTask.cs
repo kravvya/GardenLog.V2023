@@ -1,5 +1,7 @@
 ﻿
 
+using System.Threading.Tasks;
+
 namespace PlantHarvest.Domain.WorkLogAggregate;
 
 public class PlantTask : BaseEntity, IAggregateRoot
@@ -107,6 +109,12 @@ public class PlantTask : BaseEntity, IAggregateRoot
         this.Set<DateTime?>(() => this.CompletedDateTime, completedDateTime);
         this.Set<string>(() => this.Notes, notes);
 
+    }
+
+    public void Delete()
+    {
+        this.DomainEvents.Add(
+        new PlantTaskEvent(this, PlantTaskEventTriggerEnum.PlantTaskDeleted, new PlantTaskTriggerEntity(PlantTaskEntityTypeEnum.PlantTask, this.Id)));
     }
 
     protected override void AddDomainEvent(string attributeName)

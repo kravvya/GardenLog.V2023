@@ -1,6 +1,8 @@
-﻿using GardenLog.SharedInfrastructure.Extensions;
-using GardenLog.SharedKernel.Interfaces;
+﻿using GardenLog.SharedKernel.Interfaces;
+using MediatR;
+using PlantHarvest.Api.Extensions;
 using PlantHarvest.Domain.WorkLogAggregate;
+using System.Threading.Tasks;
 
 namespace PlantHarvest.Api.CommandHandlers;
 
@@ -18,13 +20,15 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
     private readonly IWorkLogRepository _workLogRepository;
     private readonly ILogger<WorkLogCommandHandler> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMediator _mediator;
 
-    public WorkLogCommandHandler(IUnitOfWork unitOfWork, IWorkLogRepository workLogRepository, ILogger<WorkLogCommandHandler> logger, IHttpContextAccessor httpContextAccessor)
+    public WorkLogCommandHandler(IUnitOfWork unitOfWork, IWorkLogRepository workLogRepository, ILogger<WorkLogCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _workLogRepository = workLogRepository;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
+        _mediator = mediator;
     }
 
     #region Work log
@@ -46,6 +50,8 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
 
         _workLogRepository.Add(workLog);
 
+        await _mediator.DispatchDomainEventsAsync(workLog);
+
         await _unitOfWork.SaveChangesAsync();
 
         return workLog.Id;
@@ -63,6 +69,8 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
 
         _workLogRepository.Update(workLog);
 
+        await _mediator.DispatchDomainEventsAsync(workLog);
+
         await _unitOfWork.SaveChangesAsync();
 
         return workLog.Id;
@@ -72,7 +80,13 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
     {
         _logger.LogInformation("Received request to delete work log {0}", id);
 
+        var workLog = await _workLogRepository.GetByIdAsync(id);
+
+        workLog.Delete();
+
         _workLogRepository.Delete(id);
+
+        await _mediator.DispatchDomainEventsAsync(workLog);
 
         await _unitOfWork.SaveChangesAsync();
 

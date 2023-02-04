@@ -1,4 +1,8 @@
-﻿namespace PlantHarvest.Orchestrator.Schedules;
+﻿
+
+
+
+namespace PlantHarvest.Api.Schedules;
 
 public class HarvestScheduler : SchedulerBase, IScheduler
 {
@@ -17,7 +21,7 @@ public class HarvestScheduler : SchedulerBase, IScheduler
         {
             return new CreatePlantScheduleCommand()
             {
-                TaskType = harvest.WorkLogReasonEnum.Harvest,
+                TaskType = WorkLogReasonEnum.Harvest,
                 StartDate = transplantDate.Value.AddDays(daysToMaturityMin.Value),
                 EndDate = transplantDate.Value.AddDays(daysToMaturityMax.Value),
                 IsSystemGenerated = true,

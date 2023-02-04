@@ -83,6 +83,12 @@ namespace PlantHarvest.Domain.HarvestAggregate
           new HarvestEvent(this, HarvestEventTriggerEnum.HarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.HarvestCyce, this.Id)));
         }
 
+        public void Delete()
+        {
+            this.DomainEvents.Add(
+         new HarvestEvent(this, HarvestEventTriggerEnum.HarvestCycleDeleted, new TriggerEntity(EntityTypeEnum.HarvestCyce, this.Id)));
+        }
+
         #region Events
         protected override void AddDomainEvent(string attributeName)
         {
