@@ -81,7 +81,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>, INotif
                 HarvestCycleId = harvestEvent.HarvestId,
                 IsSystemGenerated = true,
                 PlantHarvestCycleId = plant.Id,
-                PlantName = plant.PlantName,
+                PlantName = string.IsNullOrEmpty(plant.PlantVarietyName)? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}",
                 PlantScheduleId = schedule.Id,
                 TargetDateStart = schedule.StartDate,
                 TargetDateEnd = schedule.EndDate,
