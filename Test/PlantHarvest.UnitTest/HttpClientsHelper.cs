@@ -14,7 +14,7 @@ namespace PlantHarvest.UnitTest
         public const string PLANT_CATALOG_URL = "http://PlantCatalog.Api";
         public const string USER_MANAGEMENT_URL = "http://UserManagement.Api";
 
-        public static HttpClient GetPlantCatalogHttpClientForGrowInstructions(PlantingMethodEnum plantingMethod)
+        public static HttpClient GetPlantCatalogHttpClientForGrowInstructions(PlantCatalog.Contract.Enum.PlantingMethodEnum plantingMethod)
         {
             List<KeyValuePair<string, string>> expectedresponses = new();
 

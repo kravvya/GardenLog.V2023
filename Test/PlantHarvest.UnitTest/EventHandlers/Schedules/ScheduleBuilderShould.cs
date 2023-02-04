@@ -43,7 +43,7 @@ public class ScheduleBuilderShould
     }
 
     [Fact]
-    public async Task Builder_CreatesIndoorSowSchduleAsync()
+    public async Task ScheduleBuilder_Creates_IndoorSow_TransplantOutside_Harvst_SchdulesAsync()
     {
         var builder = new ScheduleBuilder(_apiClinet, _userManagementApiClient);
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using PlantCatalog.Contract.ViewModels;
-using System.Text.Json;
+﻿using PlantCatalog.Contract.ViewModels;
 
 namespace PlantHarvest.UnitTest;
 
@@ -11,7 +9,7 @@ internal class PlantsHelper
     public static string PLANT_VARIETY_ID = "TestPlantVarietyId";
     public static string GROW_INSTRUCTION_ID = "GrowInstructionId";
 
-    public static string GetGrowInstruction(PlantingMethodEnum plantingMethod)
+    public static string GetGrowInstruction(PlantCatalog.Contract.Enum.PlantingMethodEnum plantingMethod)
     {
         var grow = new PlantGrowInstructionViewModel()
         {

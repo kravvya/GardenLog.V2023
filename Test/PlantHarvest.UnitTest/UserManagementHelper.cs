@@ -5,6 +5,7 @@ namespace PlantHarvest.UnitTest;
 internal class UserManagementHelper
 {
     public const string GARDEN_ID = "TestGarden";
+    public const string USER_PROFILE_ID = "TestUserId";
 
     public static string GetGarden()
     {
