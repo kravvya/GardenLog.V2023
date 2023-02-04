@@ -96,17 +96,17 @@ public static class NavigationManagerExtensions
 
     public static string GetGardenPlanAddPlantUrl(this NavigationManager navigationManager, string harvestId)
     {
-        return $"/addplant/garden_plan/{harvestId}";
+        return $"addplant/garden_plan/{harvestId}";
     }
 
     public static string GetGardenPlanEditPlantUrl(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
     {
-        return $"/editplant/garden_plan/{harvestId}/plant/{plantHarvestId}";
+        return $"editplant/garden_plan/{harvestId}/plant/{plantHarvestId}";
     }
 
     public static string GetGardensUrl(this NavigationManager navigationManager)
     {
-        return $"/editplant/garden_plan/gardens";
+        return $"editplant/garden_plan/gardens";
     }
 
     public static void NavigateToPlants(this NavigationManager navigationManager)
