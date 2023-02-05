@@ -1,3 +1,3 @@
 ﻿namespace PlantHarvest.Domain.HarvestAggregate.Events.Meta;
 
-public record TriggerEntity(EntityTypeEnum entityType, string entityId);
+public record TriggerEntity(EntityTypeEnum entityType, string EntityId);

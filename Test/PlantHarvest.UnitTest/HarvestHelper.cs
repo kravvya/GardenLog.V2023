@@ -16,16 +16,16 @@ namespace PlantHarvest.UnitTest
         public static string PLANT_TASK_ID = "PlantTaskId";
         public const string WORK_LOG_ID = "WorkLogId";
 
-        public static HarvestEvent GetPlantHarvestEvent(HarvestEventTriggerEnum trigger, PlantHarvest.Contract.Enum.PlantingMethodEnum plantingMethod, WorkLogReasonEnum taskType)
-        {
-            var harvest = GetHarvestCycle();
-            var plantHarvestId = harvest.AddPlantHarvestCycle(GetCommandToCreatePlantHarvestCycle(plantingMethod));
-            harvest.AddPlantSchedule(GetCommandToCreateSchedule(plantHarvestId, taskType));
+        //public static HarvestEvent GetPlantHarvestEvent(HarvestEventTriggerEnum trigger, PlantHarvest.Contract.Enum.PlantingMethodEnum plantingMethod, WorkLogReasonEnum taskType)
+        //{
+        //    var harvest = GetHarvestCycle();
+        //    var plantHarvestId = harvest.AddPlantHarvestCycle(GetCommandToCreatePlantHarvestCycle(plantingMethod));
+        //    harvest.AddPlantSchedule(GetCommandToCreateSchedule(plantHarvestId, taskType));
 
-            var evt = new HarvestEvent(harvest, trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, plantHarvestId));
+        //    var evt = new HarvestEvent(harvest, trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, plantHarvestId));
 
-            return evt;
-        }
+        //    return evt;
+        //}
 
         public static HarvestCycle GetHarvestCycle()
         {

@@ -1,7 +1,8 @@
 ﻿Task: SowInside
 Trigger: New PlantHarvestCycle
 Target Date: PlantHarvestCycle - Schedule
-Resolution: PlantHarvestCycle deleted - Seeded date on the PlantHarvestCycle - WorkLog to seed
+Resolution: PlantHarvestCycle deleted - Seeded date on the PlantHarvestCycle 
+
 
 Task: SowOutside
 Trigger: New PlantHarvestCycle
@@ -38,3 +39,5 @@ Resolution: fertilizer, PlantHarvestCycle.Transplant
 NO - Add handler for WorkLog to update PlantHarvestCycle with dates
 Add handler for PlantHarvestCycle to generate WorkLog - when dates change
 
+SeededDate -> SowIndoor WorkLog
+GeminationDate -> Information WorkLog
