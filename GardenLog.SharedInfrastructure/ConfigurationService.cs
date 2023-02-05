@@ -9,6 +9,7 @@ namespace GardenLog.SharedInfrastructure
     {
         string GetImageBlobConnectionString();
         MongoSettings GetImageCatalogMongoSettings();
+        string GetOpenWeartherApplicationId();
         MongoSettings GetPlantCatalogMongoSettings();
     }
 
@@ -25,7 +26,7 @@ namespace GardenLog.SharedInfrastructure
 
         public MongoSettings GetPlantCatalogMongoSettings()
         {
-             var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
+            var mongoSettings = _configuration.GetSection(MongoSettings.SECTION).Get<MongoSettings>();
 
             if (string.IsNullOrWhiteSpace(mongoSettings.Password))
             {
@@ -41,7 +42,7 @@ namespace GardenLog.SharedInfrastructure
             {
                 _logger.LogInformation("DB PASSWORD WAS LOCATED! YEHAA");
             }
-            return mongoSettings;  
+            return mongoSettings;
         }
 
         public MongoSettings GetImageCatalogMongoSettings()
@@ -77,6 +78,21 @@ namespace GardenLog.SharedInfrastructure
                 _logger.LogInformation("IMAGE BLBL URL WAS FOUND! YEHAA");
             }
             return blobConnectionString;
+        }
+
+        public string GetOpenWeartherApplicationId()
+        {
+            var openWeartherAppId = _configuration.GetValue<string>("openweather-appid");
+
+            if (string.IsNullOrWhiteSpace(openWeartherAppId))
+            {
+                _logger.LogCritical("OpenWeatherAppId is not found. Do not expect any good things to happen");
+            }
+            else
+            {
+                _logger.LogInformation("OPEN WEATHER APP ID WAS LOCATED! YEHAA");
+            }
+            return openWeartherAppId;
         }
 
 
