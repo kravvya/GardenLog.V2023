@@ -13,7 +13,7 @@
                 @if (isInitialized)
                 {
                     <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
-                        
+
                         <FluentValidationValidator />
                         <CustomValidation @ref="customValidation" />
 
@@ -43,18 +43,31 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-12">
-                            <label for="description">Description</label>
-                            <InputTextArea Class="form-control" Id="description" @bind-Value="@plant.Description" rows="3" />
-                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Description)" /></div>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
+                                <Header>
+                                    <label for="description">Description</label>
+                                </Header>
+                                <Body>
+                                    <InputTextArea Class="form-control" Id="description" @bind-Value="@plant.Description" rows="3" />
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => plant.Description)" /></div>
+                                </Body>
+                            </FormCard>
                         </div>
                         <div class="col-12">
-                            <label for="tip">Garden Tips</label>
-                            <InputTextArea Class="form-control" Id="tip" @bind-Value="@plant.GardenTip" rows="3" />
-                            <div class="invalid-feedback"><ValidationMessage For="@(() => plant.GardenTip)" /></div>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
+                                <Header>
+                                    <label for="tip">Garden Tips</label>
+                                </Header>
+                                <Body>
+                                    <InputTextArea Class="form-control" Id="tip" @bind-Value="@plant.GardenTip" rows="3" />
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => plant.GardenTip)" /></div>
+                                </Body>
+                            </FormCard>
                         </div>
                         <div class="col-md-2">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="Lifecyle">Lifecycle</label>
                                 </Header>
@@ -73,7 +86,7 @@
                             </FormCard>
                         </div>
                         <div class="col-md-2">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="Tolerances">Tolerances</label>
                                 </Header>
@@ -91,7 +104,7 @@
                             </FormCard>
                         </div>
                         <div class="col-md-2">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="LightRequirement">Light Requirements</label>
                                 </Header>
@@ -110,7 +123,7 @@
                             </FormCard>
                         </div>
                         <div class="col-md-3">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="MoistureRequirement">Moisture Requirements</label>
                                 </Header>
@@ -130,7 +143,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="seed-viable-for-years">Seeds viable for (yrs)</label>
                                 </Header>
@@ -161,7 +174,7 @@
                             </FormCard>
                         </div>
                         <div class="col-md-10">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="plant-characteristics-tags">Plant Characteristics</label>
                                 </Header>
@@ -179,7 +192,7 @@
                             </FormCard>
                         </div>
                         <div class="col-md-10">
-                            <FormCard>
+                            <FormCard Class="border-info" HeaderClass="text-bg-info">
                                 <Header>
                                     <label for="type">Variety Colors</label>
                                 </Header>

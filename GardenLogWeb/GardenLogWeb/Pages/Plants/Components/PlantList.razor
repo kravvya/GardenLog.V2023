@@ -103,7 +103,7 @@
                                     <th scope="col">Grow Conditions</th>
                                     <th scope="col">Type</th>
                                     <th scope="col">Notes</th>
-                                    <th><div @onclick=@CreatePlant class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></th>
+                                    <th><div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -121,7 +121,7 @@
                                                 <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
                                             </td>
                                             <td class="col-3">
-                                                <button type="button" class="btn btn btn-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
+                                                <button type="button" class="btn btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
                                                 <button type="button" class="btn btn-secondary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-flower1">&nbsp;</span></button>
                                                 <button type="button" class="btn btn-secondary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-card-checklist">&nbsp;</span></button>
                                             </td>
@@ -135,7 +135,7 @@
                                     <td />
                                     <td />
                                     <td />
-                                    <td> <div @onclick=@CreatePlant class="btn d-inline-block  btn-primary"><span class="bi bi-plus-lg">Add</span></div></td>
+                                    <td> <div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></td>
                                 </tr>
                             </tfoot>
                         </table>
