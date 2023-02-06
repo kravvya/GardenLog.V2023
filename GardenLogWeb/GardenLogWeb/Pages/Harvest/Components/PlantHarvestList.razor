@@ -121,6 +121,9 @@
                                         <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewPlantHarvestImage(plant))">
                                             <span class="bi bi-images" aria-hidden="true">&nbsp;</span>
                                         </button>
+                                        <button type="button" class="btn btn-info" title="Logs" @onclick="@(() => ViewPlantHarvestLogs(plant))">
+                                            <span class="bi bi-journal" aria-hidden="true"></span>
+                                        </button>
                                     </td>
                                 </tr>
                             }
@@ -319,6 +322,11 @@
         _filterDescription = description.ToString();
         _filteredHarvestPLants = harvestPlants;
         base.StateHasChanged();
+    }
+
+     private void ViewPlantHarvestLogs(PlantHarvestCycleViewModel harvest)
+    {
+        _navigationManager.NavigateToGardenPlanWorkLogsForPlant(harvest.HarvestCycleId, harvest.PlantHarvestCycleId);
     }
 
     public void Dispose()

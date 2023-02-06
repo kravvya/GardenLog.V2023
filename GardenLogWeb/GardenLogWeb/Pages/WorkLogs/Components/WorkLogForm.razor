@@ -1,4 +1,4 @@
-﻿@using GardenLog.SharedKernel;
+﻿
 @inject ILogger<WorkLogForm> _logger;
 @inject IHarvestCycleService _harvestService;
 @inject IWorkLogService _workLogService;
@@ -58,10 +58,10 @@
 
     private bool IsInitialized = false;
 
-    public async Task InitializeAsync(RelatedEntityTypEnum relatedEntityType, string relatedEntityId)
+    public async Task InitializeAsync(List<RelatedEntity> relatedEntities)
     {
         _workLog = new WorkLogModel();
-        _workLog.RelatedEntities = await BuildRelatedEntities(relatedEntityType, relatedEntityId);
+        _workLog.RelatedEntities = relatedEntities;
         _workLog.EnteredDateTime = DateTime.Now;
         _workLog.EventDateTime = DateTime.Now;
 
@@ -90,18 +90,5 @@
         }
     }
 
-    private async Task<List<RelatedEntity>> BuildRelatedEntities(RelatedEntityTypEnum entityType, string entityId)
-    {
-        List<RelatedEntity> relatedEntities = new();
-
-        switch (entityType)
-        {
-            case RelatedEntityTypEnum.HarvestCycle:
-                var harvest = await _harvestService.GetHarvest(entityId, true);
-                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, entityId, harvest.HarvestCycleName));
-                break;
-        }
-
-        return relatedEntities;
-    }
+   
 }

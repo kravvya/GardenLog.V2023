@@ -1,5 +1,5 @@
 ﻿@page "/worklogs/{RelatedEntity}/{RelatedEntityId}"
-
+@page "/worklogs/{RelatedEntity}/{RelatedEntityId}/plants/{PlantHarvestCycleId}"
 
 
 @inject IHarvestCycleService _harvestService;
@@ -18,6 +18,9 @@
 
     [Parameter]
     public string RelatedEntityId { get; set; }
+
+    [Parameter]
+    public string PlantHarvestCycleId { get; set; }
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
     private WorkLogList _workLogList;
@@ -45,11 +48,18 @@
 
         if (firstRender)
         {
-            string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
-            RelatedEntityTypEnum type;
-            if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
+            if (!string.IsNullOrEmpty(PlantHarvestCycleId))
             {
-                _workLogList.Initialize(type, RelatedEntityId);
+                _workLogList.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, PlantHarvestCycleId, RelatedEntityId);
+            }
+            else
+            {
+                string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
+                RelatedEntityTypEnum type;
+                if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
+                {
+                    _workLogList.Initialize(type, RelatedEntityId, RelatedEntityId);
+                }
             }
         }
     }
@@ -62,11 +72,21 @@
         {
             case RelatedEntityTypEnum.HarvestCycle:
                 var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
-                if (!string.IsNullOrEmpty(harvest.GardenName))
+
+                if (!string.IsNullOrEmpty(PlantHarvestCycleId))
                 {
-                    _title = $"{harvest.HarvestCycleName} at {harvest.GardenName}";
+                    var plantHarvest = await _harvestService.GetPlantHarvest(harvest.HarvestCycleId, PlantHarvestCycleId, false);
+                    _title = plantHarvest.GetPlantName();
                 }
-                _title = harvest.HarvestCycleName;
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(harvest.GardenName))
+                    {
+                        _title = $"{harvest.HarvestCycleName} at {harvest.GardenName}";
+                    }
+                    _title = harvest.HarvestCycleName;
+                }
 
                 _breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
                 _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));

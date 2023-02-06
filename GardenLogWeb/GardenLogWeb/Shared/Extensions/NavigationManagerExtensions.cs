@@ -79,6 +79,11 @@ public static class NavigationManagerExtensions
         return $"worklogs/garden_plan/{harvestId}";
     }
 
+    public static string GetGardenPlanWorkLogsForPlantUrl(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
+    {
+        return $"worklogs/garden_plan/{harvestId}/plants/{plantHarvestId}";
+    }
+
     public static string GetPlantTasksUrl(this NavigationManager navigationManager)
     {
         return $"tasks/";
@@ -185,6 +190,11 @@ public static class NavigationManagerExtensions
         navigationManager.NavigateTo(navigationManager.GetGardenPlanWorkLogsUrl(harvestId));
     }
 
+    public static void NavigateToGardenPlanWorkLogsForPlant(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanWorkLogsForPlantUrl(harvestId, plantHarvestId));
+    }
+        
     public static void NavigateToPlantTasks(this NavigationManager navigationManager, string harvestId)
     {
         navigationManager.NavigateTo(navigationManager.GetPlantTasksUrl());
