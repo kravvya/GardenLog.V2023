@@ -32,7 +32,10 @@
 
     private async Task OnAddPlantVarietyImage()
     {
-        ImageForm.Initialize(ImageEntityEnum.PlantVariety, PlantVariety.PlantVarietyId);
+        List<RelatedEntity> relatedEntities = new();
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, PlantVariety.PlantVarietyId, PlantVariety.Name));
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, PlantVariety.PlantId, Plant.Name));
+        ImageForm.Initialize(RelatedEntityTypEnum.PlantVariety, PlantVariety.PlantVarietyId, relatedEntities);
         await ImageFormModal?.OpenModal(PlantVariety.Name, Plant.Color);
         StateHasChanged();
     }
@@ -52,7 +55,7 @@
     {
         await ImageFormModal?.CloseModal();
 
-        if(PlantVariety.ImageFileName == ImageService.NO_IMAGE)
+        if (PlantVariety.ImageFileName == ImageService.NO_IMAGE)
         {
             PlantVariety.ImageFileName = image.FileName;
             PlantVariety.ImageLabel = image.Label;

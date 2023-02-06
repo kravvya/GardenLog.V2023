@@ -31,7 +31,8 @@ public class ImageCommandHandler : IImageCommandHandler
             request.RelatedEntityId,
             request.FileName,
             request.FileType,
-            userProfileId
+            userProfileId,
+            request.RelatedEntities
            );
 
         _imageRepository.Add(image);

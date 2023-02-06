@@ -1,4 +1,6 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
+using GardenLog.SharedKernel;
+using GardenLog.SharedKernel.Enum;
 using ImageCatalog.Contract;
 using ImageCatalog.Contract.Commands;
 using ImageCatalog.Contract.Queries;
@@ -56,19 +58,6 @@ namespace ImageCatalog.IntegrationTest.Clients
             using var requestContent = searchQuery.ToJsonStringContent();
 
             return await this._httpClient.PostAsync(url, requestContent);
-        }
-
-        private static CreateImageCommand PopulateCreateImageCommand(string name)
-        {
-            return new CreateImageCommand()
-            {
-                FileName = "TestFile.test",
-                FileType = "*.test",
-                ImageName = "TestFile",
-                Label = "Test Label",
-                RelatedEntityId = "TestEntity1",
-                RelatedEntityType = Contract.Enum.ImageEntityEnum.Plant
-            };
         }
 
         #endregion

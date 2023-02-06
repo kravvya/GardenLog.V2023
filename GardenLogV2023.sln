@@ -61,6 +61,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowConditions.Contract", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowConditions.Api", "GrowConditions\GrowConditions.Api\GrowConditions.Api.csproj", "{738B6693-C5DB-403B-A905-5F7977D6D217}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdminTool", "AdminTool", "{3B7B063B-15B2-4A3C-A41A-45C7BC205354}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GardenLogAdminConsole", "AdminTool\GardenLogAdminConsole\GardenLogAdminConsole.csproj", "{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +159,10 @@ Global
 		{738B6693-C5DB-403B-A905-5F7977D6D217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{738B6693-C5DB-403B-A905-5F7977D6D217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{738B6693-C5DB-403B-A905-5F7977D6D217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +188,7 @@ Global
 		{3DD6B43F-2188-493A-BD1E-1580DDD2C563} = {ED1FCD09-2B7B-46E8-82B0-0CECA7827DDF}
 		{27A986B0-8352-4D7C-97D3-0F03823A89EB} = {3CB1BE6C-C850-437A-9F9E-79D418398462}
 		{738B6693-C5DB-403B-A905-5F7977D6D217} = {3CB1BE6C-C850-437A-9F9E-79D418398462}
+		{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD} = {3B7B063B-15B2-4A3C-A41A-45C7BC205354}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8BCCE8DF-C7F2-4369-843F-B3695CBEDA8B}

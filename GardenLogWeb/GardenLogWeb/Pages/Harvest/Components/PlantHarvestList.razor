@@ -178,14 +178,19 @@
 
     private async Task AddPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
-        _imageForm.Initialize(ImageEntityEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
+        List<RelatedEntity> relatedEntities = new();
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, harvestPlant.GetPlantName()));
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, harvestPlant.PlantId, harvestPlant.PlantName));
+        if(!string.IsNullOrWhiteSpace(harvestPlant.PlantVarietyId)) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, harvestPlant.PlantVarietyId, harvestPlant.PlantVarietyName));
+       
+        _imageForm.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, relatedEntities);
         await _imageFormModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
         StateHasChanged();
     }
 
     private async Task ViewPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
-        _imageList.Initialize(ImageEntityEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
+        _imageList.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
         await _imageListModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
 
         StateHasChanged();

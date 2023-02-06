@@ -18,7 +18,7 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
     private readonly ILogger<PlantRepository> _logger;
 
     public PlantRepository(IUnitOfWork unitOfWork, ILogger<PlantRepository> logger)
-        : base(unitOfWork,logger)
+        : base(unitOfWork, logger)
     {
         _logger = logger;
     }
@@ -111,7 +111,7 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
 
         data.GrowInstructions.ForEach(g => g.PlantId = data._id);
 
-        return data.GrowInstructions.First(g => g.PlantGrowInstructionId==id);
+        return data.GrowInstructions.First(g => g.PlantGrowInstructionId == id);
     }
 
     public void AddPlantGrowInstruction(string plantGrowInstructionId, Plant plant)
@@ -185,17 +185,20 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
 
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
-            p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id" ).Select(c => c.Name).ToArray());
+            p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());
 
         });
 
-        BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+        if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
         {
-            p.AutoMap();
-            //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
-            //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
-            p.UnmapMember(m => m.DomainEvents);
-        });
+            BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+            {
+                p.AutoMap();
+                //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
+                //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
+                p.UnmapMember(m => m.DomainEvents);
+            });
+        }
 
         BsonClassMap.RegisterClassMap<PlantBase>(p =>
         {

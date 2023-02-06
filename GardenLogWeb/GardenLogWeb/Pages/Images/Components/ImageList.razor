@@ -41,7 +41,7 @@
     List<ImageViewModel> _images { get; set; } = new List<ImageViewModel>();
     ImageViewModel? _image { get; set; }
 
-    public async Task Initialize(ImageEntityEnum relatedEntityType, string relatedEntityId)
+    public async Task Initialize(RelatedEntityTypEnum relatedEntityType, string relatedEntityId)
     {
         if (!string.IsNullOrEmpty(relatedEntityId))
         {
@@ -53,7 +53,7 @@
             }
             StateHasChanged();
 
-            if (relatedEntityType == ImageEntityEnum.Plant)
+            if (relatedEntityType == RelatedEntityTypEnum.Plant)
             {
                 await LoadPlantImagesWithHarvest(relatedEntityId);
             }
@@ -69,7 +69,7 @@
             var entities = new List<GetImagesByRelatedEntity>();
             plantHarvests.ForEach(ph =>
             {
-                entities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantHarvestCycle, ph.PlantHarvestCycleId, true));
+                entities.Add(new GetImagesByRelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, ph.PlantHarvestCycleId, true));
             });
 
             var images = await _imageService.GetImagesInBulk(entities);

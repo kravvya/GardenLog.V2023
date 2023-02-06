@@ -42,7 +42,7 @@ namespace GardenLogWeb.Services
                 _logger.LogInformation("Gardens not in cache or forceRefresh");
 
                 var gardenTast = GetAllGardens();
-                var imagesTask = _imageService.GetImages(ImageEntityEnum.Plant, false);
+                var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
 
                 await Task.WhenAll(gardenTast, imagesTask);
 

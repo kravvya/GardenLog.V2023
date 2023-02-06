@@ -23,7 +23,7 @@ public class CreateImageCommandValidator : AbstractValidator<CreateImageCommand>
         RuleFor(command => command.RelatedEntityType).NotEmpty();
         RuleFor(command => command.FileName).NotEmpty();
         RuleFor(command => command.FileType).NotEmpty();
-
+        RuleFor(command => command.RelatedEntities).NotEmpty();
     }
 }
 

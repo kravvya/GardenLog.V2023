@@ -79,7 +79,7 @@
 
     private string GetTile(HarvestCycleModel harvest)
     {
-        
+
         if(!string.IsNullOrEmpty(harvest.GardenName))
         {
             return $"{harvest.HarvestCycleName} at {harvest.GardenName}";
@@ -89,7 +89,9 @@
 
     private async Task onAddHarvestImage(HarvestCycleViewModel harvest)
     {
-        _imageForm.Initialize(ImageEntityEnum.HarvestCycle, harvest.HarvestCycleId);
+        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName) };
+
+        _imageForm.Initialize(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, relatedEntities);
         await _imageFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }

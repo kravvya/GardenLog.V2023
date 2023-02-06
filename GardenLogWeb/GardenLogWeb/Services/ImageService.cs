@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs;
-using ImageCatalog.Contract.Enum;
+using GardenLog.SharedKernel.Enum;
 using ImageCatalog.Contract.Queries;
-using ImageCatalog.Contract.ViewModels;
 using Microsoft.AspNetCore.Components.Forms;
 using img = ImageCatalog.Contract;
 
@@ -10,8 +9,8 @@ namespace GardenLogWeb.Services;
 public interface IImageService
 {
     Task<ApiObjectResponse<string>> CreateImage(ImageViewModel image);
-    Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly);
-    Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly);
+    Task<List<ImageViewModel>> GetImages(RelatedEntityTypEnum entityType, string entityId, bool FilterUserOnly);
+    Task<List<ImageViewModel>> GetImages(RelatedEntityTypEnum entityType, bool FilterUserOnly);
     Task<List<ImageViewModel>> GetImagesInBulk(List<GetImagesByRelatedEntity> entities);
     string GetRawImageUrl(string fileName);
     string GetThumbnailImageUrl(string fileName);
@@ -35,7 +34,7 @@ public class ImageService : IImageService
         _httpClientFactory = clientFactory;
         _toastService = toastService;
     }
-    public async Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, bool FilterUserOnly)
+    public async Task<List<ImageViewModel>> GetImages(RelatedEntityTypEnum entityType, bool FilterUserOnly)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 
@@ -46,7 +45,7 @@ public class ImageService : IImageService
         return response.Response;
     }
 
-    public async Task<List<ImageViewModel>> GetImages(ImageEntityEnum entityType, string entityId, bool FilterUserOnly)
+    public async Task<List<ImageViewModel>> GetImages(RelatedEntityTypEnum entityType, string entityId, bool FilterUserOnly)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.IMAGEPLANTCATALOG_API);
 

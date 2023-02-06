@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using ImageCatalog.Contract.Enum;
+using GardenLog.SharedKernel.Enum;
 
 namespace ImageCatalog.Contract.Queries;
 
-public record GetImagesByRelatedEntity(ImageEntityEnum RelatedEntityType, string? RelatedEntityId, bool FilterUserOnly);
+public record GetImagesByRelatedEntity(RelatedEntityTypEnum RelatedEntityType, string? RelatedEntityId, bool FilterUserOnly);
 
 public record GetImagesByRelatedEntities
 {

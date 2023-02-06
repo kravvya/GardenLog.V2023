@@ -103,7 +103,11 @@
 
     private async Task OnAddPlantVarietyImage(PlantVarietyModel variety)
     {
-        ImageForm.Initialize(ImageEntityEnum.PlantVariety, variety.PlantVarietyId);
+        List<RelatedEntity> relatedEntities = new();
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, variety.PlantVarietyId, variety.Name));
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, variety.PlantId, Plant.Name));
+
+        ImageForm.Initialize(RelatedEntityTypEnum.PlantVariety, variety.PlantVarietyId, relatedEntities);
         await ImageFormModal?.OpenModal(variety.Name, Plant.Color);
         StateHasChanged();
     }

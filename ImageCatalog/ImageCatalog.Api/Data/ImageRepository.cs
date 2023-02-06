@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace ImageCatalog.Api.Data;
 
-public interface IImageRepository: IRepository<Image>
+public interface IImageRepository : IRepository<Image>
 {
     Task<IReadOnlyCollection<ImageViewModel>> GetImagesByRelatedEntitiesAsync(GetImagesByRelatedEntities request, string userProfileId);
     Task<IReadOnlyCollection<ImageViewModel>> GetImagesByRelatedEntityAsync(GetImagesByRelatedEntity request, string userProfileId);
@@ -45,7 +45,7 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
         return images.AsReadOnly();
     }
 
-    private async Task<IReadOnlyCollection<ImageViewModel>> SearchForImages(ImageEntityEnum relatedEntityType, string relatedEntityId, string userFilter)
+    private async Task<IReadOnlyCollection<ImageViewModel>> SearchForImages(RelatedEntityTypEnum relatedEntityType, string relatedEntityId, string userFilter)
     {
         List<FilterDefinition<Image>> filters = new();
 
@@ -88,24 +88,26 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
             p.SetDiscriminator("image");
             //p.MapIdMember(c => c.PlantId).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
             //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
-            p.MapMember(m => m.RelatedEntityType).SetSerializer(new EnumSerializer<ImageEntityEnum>(BsonType.String));
-
+            p.MapMember(m => m.RelatedEntityType).SetSerializer(new EnumSerializer<RelatedEntityTypEnum>(BsonType.String));
         });
 
-        BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+        if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
         {
-            p.AutoMap();
-            //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
-            //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
-            p.UnmapMember(m => m.DomainEvents);
-        });
+            BsonClassMap.RegisterClassMap<BaseEntity>(p =>
+            {
+                p.AutoMap();
+                //p.MapIdMember(c => c.Id).SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance);
+                //p.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId));
+                p.UnmapMember(m => m.DomainEvents);
+            });
+        }
 
         BsonClassMap.RegisterClassMap<ImageBase>(p =>
         {
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.RelatedEntityType).SetSerializer(new EnumSerializer<ImageEntityEnum>(BsonType.String));
+            p.MapMember(m => m.RelatedEntityType).SetSerializer(new EnumSerializer<RelatedEntityTypEnum>(BsonType.String));
         });
 
         BsonClassMap.RegisterClassMap<ImageViewModel>(p =>

@@ -39,14 +39,15 @@
 
     private async Task OnAddPlantImage()
     {
-        ImageForm.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
+        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Plant, Plant.PlantId, Plant.Name) };
+        ImageForm.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId, relatedEntities);
         await ImageFormModal?.OpenModal(Plant.Name, Plant.Color);
         StateHasChanged();
     }
 
     private async Task onViewGallery()
     {
-        _imageList.Initialize(ImageEntityEnum.Plant, Plant.PlantId);
+        _imageList.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId);
         await _imageListModal?.OpenModal(Plant.Name, Plant.Color);
 
         StateHasChanged();

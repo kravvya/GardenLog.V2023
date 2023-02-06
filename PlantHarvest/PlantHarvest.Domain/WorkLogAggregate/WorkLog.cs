@@ -10,7 +10,7 @@ public class WorkLog : BaseEntity, IAggregateRoot
     public DateTime EventDateTime { get; private set; }
     public WorkLogReasonEnum Reason { get; private set; }
     public string UserProfileId { get; private set; }
-    public IList<GardenLog.SharedKernel.RelatedEntity>RelatedEntities { get; private set; }
+    public IList<RelatedEntity>RelatedEntities { get; private set; }
 
     private WorkLog()
     {
@@ -23,7 +23,7 @@ public class WorkLog : BaseEntity, IAggregateRoot
         DateTime eventDateTime,
         WorkLogReasonEnum reason,
         string userProfileId,
-        IList<GardenLog.SharedKernel.RelatedEntity> relatedEntities)
+        IList<RelatedEntity> relatedEntities)
     {
         this.Log = log;
         this.EnteredDateTime = enteredDateTime;
@@ -38,7 +38,7 @@ public class WorkLog : BaseEntity, IAggregateRoot
         DateTime eventDateTime,
         WorkLogReasonEnum reason,
         string userProfileId,
-        IList<GardenLog.SharedKernel.RelatedEntity> relatedEntities
+        IList<RelatedEntity> relatedEntities
         )
     {
         DateTime timestamp = DateTime.Now;
@@ -55,7 +55,7 @@ public class WorkLog : BaseEntity, IAggregateRoot
         };
 
         work.DomainEvents.Add(
-            new WorkLogEvent(work, WorkLogEventTriggerEnum.WorkLogCreated, new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.WorkLog, work.Id, string.Empty)));
+            new WorkLogEvent(work, WorkLogEventTriggerEnum.WorkLogCreated, new RelatedEntity(RelatedEntityTypEnum.WorkLog, work.Id, string.Empty)));
 
         return work;
     }

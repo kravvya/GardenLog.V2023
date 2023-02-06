@@ -1,3 +1,4 @@
+using GardenLog.SharedKernel.Enum;
 using ImageCatalog.Contract.Queries;
 
 namespace ImageCatalog.IntegrationTest
@@ -83,7 +84,7 @@ namespace ImageCatalog.IntegrationTest
         [Fact]
         public async Task Search_Should_Return_Test_Plant_Images()
         {
-            GetImagesByRelatedEntity search = new(Contract.Enum.ImageEntityEnum.Plant, TEST_RELATED_ENTITY_ID, false);
+            GetImagesByRelatedEntity search = new(RelatedEntityTypEnum.Plant, TEST_RELATED_ENTITY_ID, false);
 
             List<ImageViewModel>? images = await RunImageSearch(search);
 
@@ -107,7 +108,7 @@ namespace ImageCatalog.IntegrationTest
         [Fact]
         public async Task Search_Should_Return_All_Plant_Images()
         {
-            GetImagesByRelatedEntity search = new(Contract.Enum.ImageEntityEnum.Plant, string.Empty, false);
+            GetImagesByRelatedEntity search = new(RelatedEntityTypEnum.Plant, string.Empty, false);
 
             List<ImageViewModel>? images = await RunImageSearch(search);
 
@@ -126,7 +127,7 @@ namespace ImageCatalog.IntegrationTest
 
         private async Task<ImageViewModel> GetFileToWorkWith()
         {
-            GetImagesByRelatedEntity search = new(Contract.Enum.ImageEntityEnum.Plant, TEST_RELATED_ENTITY_ID, false);
+            GetImagesByRelatedEntity search = new(RelatedEntityTypEnum.Plant, TEST_RELATED_ENTITY_ID, false);
 
             List<ImageViewModel>? images = await RunImageSearch(search);
 

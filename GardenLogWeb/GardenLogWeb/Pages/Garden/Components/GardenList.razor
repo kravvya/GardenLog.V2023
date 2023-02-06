@@ -94,7 +94,8 @@
 
     private async Task AddGardenImage(GardenModel garden)
     {
-        _imageForm.Initialize(ImageEntityEnum.Garden, garden.GardenId);
+        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Garden, garden.GardenId, garden.Name) };
+        _imageForm.Initialize(RelatedEntityTypEnum.Garden, garden.GardenId, relatedEntities);
         await _imageFormModal.OpenModal(garden.Name, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }

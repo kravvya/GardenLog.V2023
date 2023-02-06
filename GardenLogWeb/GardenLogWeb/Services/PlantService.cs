@@ -1,8 +1,4 @@
-﻿using GardenLogWeb.Models;
-using ImageCatalog.Contract.Enum;
-using ImageCatalog.Contract.Queries;
-using Microsoft.Extensions.Options;
-using System.Text.Json.Serialization;
+﻿using ImageCatalog.Contract.Queries;
 
 namespace GardenLogWeb.Services;
 
@@ -73,7 +69,7 @@ public class PlantService : IPlantService
 
             var plantsTask = GetAllPlants();
 
-            var imagesTask = _imageService.GetImages(ImageEntityEnum.Plant, false);
+            var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
 
             await Task.WhenAll(plantsTask, imagesTask);
 
@@ -262,7 +258,7 @@ public class PlantService : IPlantService
                 List<GetImagesByRelatedEntity> relatedEntities = new();
                 foreach (var variety in plantVarietyList)
                 {
-                    relatedEntities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantVariety, variety.PlantVarietyId, false));
+                    relatedEntities.Add(new GetImagesByRelatedEntity(RelatedEntityTypEnum.PlantVariety, variety.PlantVarietyId, false));
                 }
                 var images = await _imageService.GetImagesInBulk(relatedEntities);
 
@@ -308,7 +304,7 @@ public class PlantService : IPlantService
                 List<GetImagesByRelatedEntity> relatedEntities = new();
                 foreach (var variety in plantVarietyList)
                 {
-                    relatedEntities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantVariety, variety.PlantVarietyId, false));
+                    relatedEntities.Add(new GetImagesByRelatedEntity(RelatedEntityTypEnum.PlantVariety, variety.PlantVarietyId, false));
                 }
                 var images = await _imageService.GetImagesInBulk(relatedEntities);
 
@@ -341,7 +337,7 @@ public class PlantService : IPlantService
         PlantVarietyModel plantVariety = null;
 
         var plantVarietyTask = GetPlantVarietyFromServer(plantId, plantVerietyId);
-        var imagesTask = _imageService.GetImages(ImageEntityEnum.PlantVariety, plantVerietyId, false);
+        var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.PlantVariety, plantVerietyId, false);
 
         await Task.WhenAll(plantVarietyTask, imagesTask);
 

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>154ba38d-5b11-4116-84be-013028448797</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\ImageCatalog\ImageCatalog.Api\appsettings.json" Link="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj" />
+    <ProjectReference Include="..\..\PlantCatalog\PlantCatalog.Infrustructure\PlantCatalog.Infrustructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,10 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
+using GardenLog.SharedKernel.Enum;
+using GardenLog.SharedKernel;
 using ImageCatalog.Contract;
 using ImageCatalog.Contract.Commands;
 using ImageCatalog.Contract.Queries;
+using MongoDB.Driver;
 
 namespace ImageCatalog.IntegrationTest.Clients
 {
@@ -67,15 +70,17 @@ namespace ImageCatalog.IntegrationTest.Clients
 
         private static CreateImageCommand PopulateCreateImageCommand(string name)
         {
-            return new CreateImageCommand()
+            var command =  new CreateImageCommand()
             {
-                FileName = "TestFile.test",
+                FileName = name,
                 FileType = "*.test",
                 ImageName = "TestFile",
                 Label = "Test Label",
                 RelatedEntityId = "TestEntity1",
-                RelatedEntityType = Contract.Enum.ImageEntityEnum.Plant
+                RelatedEntityType = RelatedEntityTypEnum.Plant
             };
+            command.RelatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, "TestEntity1", string.Empty));
+            return command;
         }
         
         #endregion

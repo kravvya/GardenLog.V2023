@@ -1,6 +1,4 @@
-﻿using GardenLogWeb.Pages.Schedule.Components;
-
-namespace GardenLogWeb.Models.Harvest;
+﻿namespace GardenLogWeb.Models.Harvest;
 
 public record PlantHarvestCycleModel : PlantHarvestCycleViewModel
 {

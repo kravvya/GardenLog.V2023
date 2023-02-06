@@ -49,11 +49,12 @@
     private CustomValidation customValidation;
     private EditContext editContext;
 
-    public void Initialize(ImageEntityEnum relatedEntityType, string relatedEntityId)
+    public void Initialize(RelatedEntityTypEnum relatedEntityType, string relatedEntityId, List<RelatedEntity> relatedEntities)
     {
         Image = new ImageViewModel();
         Image.RelatedEntityType = relatedEntityType;
         Image.RelatedEntityId = relatedEntityId;
+        Image.RelatedEntities = relatedEntities;
 
         //Image.FileName = $"{image.RelatedEntityType}_{image.RelatedEntityId}_{DateTime.Now}{Path.GetExtension(image.FileName)}";
 

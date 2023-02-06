@@ -63,9 +63,9 @@
         if (!string.IsNullOrWhiteSpace(RelatedEntity))
         {
             string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
-            ImageEntityEnum type;
+            RelatedEntityTypEnum type;
 
-            if (Enum.TryParse<ImageEntityEnum>(relatedEntityType, out type))
+            if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
             {
                 _firstImage = true;
 
@@ -73,7 +73,7 @@
 
                 _images = await _imageService.GetImages(type, RelatedEntityId, true);
 
-                if (type == ImageEntityEnum.Plant)
+                if (type == RelatedEntityTypEnum.Plant)
                 {
                     await LoadPlantImagesWithHarvest(RelatedEntityId);
                 }
@@ -99,13 +99,13 @@
         return "";
     }
 
-    private async Task SetupPageTitleAndBreadCrumb(ImageEntityEnum relatedEntityType, string relatedEntitytId)
+    private async Task SetupPageTitleAndBreadCrumb(RelatedEntityTypEnum relatedEntityType, string relatedEntitytId)
     {
         _description = string.Empty;
 
         switch (relatedEntityType)
         {
-            case ImageEntityEnum.HarvestCycle:
+            case RelatedEntityTypEnum.HarvestCycle:
                 var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
                 if (!string.IsNullOrEmpty(harvest.GardenName))
                 {
@@ -117,7 +117,7 @@
                 _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));
                 _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenPlanImagesUrl (relatedEntitytId), true));
                 break;
-            case ImageEntityEnum.Garden:
+            case RelatedEntityTypEnum.Garden:
                 var garden = await _gardenService.GetGarden(relatedEntitytId, true);
                 _title = garden.Name;
 
@@ -127,7 +127,7 @@
         }
        
     }
-
+    //TODO - We can simplify this code. As long as we add plantId to the list of RelatedEntities for PlantHarvest images, this additional lookup is not needed.
     protected async Task LoadPlantImagesWithHarvest(string plantId)
     {
         var plantHarvests = await _harvestService.GetPlantHarvestsByPLantId(plantId);
@@ -137,7 +137,7 @@
             var entities = new List<GetImagesByRelatedEntity>();
             plantHarvests.ForEach(ph =>
             {
-                entities.Add(new GetImagesByRelatedEntity(ImageEntityEnum.PlantHarvestCycle, ph.PlantHarvestCycleId, true));
+                entities.Add(new GetImagesByRelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, ph.PlantHarvestCycleId, true));
             });
 
             var images = await _imageService.GetImagesInBulk(entities);

@@ -1,5 +1,4 @@
 ﻿using GardenLog.SharedKernel;
-using GardenLog.SharedKernel.Interfaces;
 
 namespace ImageCatalog.Api.Model;
 
@@ -8,11 +7,12 @@ public class Image : BaseEntity, IEntity
     public string UserProfileId { get; private set; }
     public string ImageName { get; private set; }
     public string Label { get; private set; }
-    public ImageEntityEnum RelatedEntityType { get; private set; }
+    public RelatedEntityTypEnum RelatedEntityType { get; private set; }
     public string RelatedEntityId { get; private set; }
     public string FileName { get; private set; }
     public string FileType { get; private set; }
     public DateTime CreatedDateTimeUtc { get; private set; }
+    public IList<RelatedEntity> RelatedEntities { get; private set; }
 
     private Image()
     {
@@ -22,13 +22,17 @@ public class Image : BaseEntity, IEntity
     public static Image Create(
         string imageName,
         string label,
-        ImageEntityEnum relatedEntity,
+        RelatedEntityTypEnum relatedEntity,
         string relatedEntityId,
         string fileName,
         string fileType,
-        string userProfileId
+        string userProfileId,
+        IList<RelatedEntity> relatedEntities
         )
     {
+        if (relatedEntities == null) { relatedEntities = new List<RelatedEntity>(); }
+        if (!relatedEntities.Any(e => e.EntityType == relatedEntity)) { relatedEntities.Add(new RelatedEntity(relatedEntity, relatedEntityId, string.Empty)); }
+
         var image = new Image()
         {
             Id = System.Guid.NewGuid().ToString(),
@@ -39,11 +43,12 @@ public class Image : BaseEntity, IEntity
             FileName = fileName,
             FileType = fileType,
             UserProfileId = userProfileId,
-            CreatedDateTimeUtc = DateTime.UtcNow
+            CreatedDateTimeUtc = DateTime.UtcNow,
+            RelatedEntities= relatedEntities
         };
 
         image.DomainEvents.Add(
-            new ImageEvent(image, ImageCatalogEventTriggerEnum.ImageCreated, new TriggerEntity(image.RelatedEntityType, image.RelatedEntityId)));
+            new ImageEvent(image, ImageCatalogEventTriggerEnum.ImageCreated, new RelatedEntity(image.RelatedEntityType, image.RelatedEntityId, string.Empty)));
 
         return image;
     }
@@ -54,12 +59,17 @@ public class Image : BaseEntity, IEntity
         this.Set<string>(() => this.Label, label);
     }
 
+    public void SetRelatedEntities(IList<RelatedEntity> relatedEntities)
+    {
+        this.RelatedEntities = relatedEntities;
+    }
+
     protected override void AddDomainEvent(string attributeName)
     {
         if (this.DomainEvents.Count == 0)
         {
             if (attributeName.Equals("Label"))
-                this.DomainEvents.Add(new ImageEvent(this, ImageCatalogEventTriggerEnum.LabelChanged, new TriggerEntity(this.RelatedEntityType, this.RelatedEntityId)));
+                this.DomainEvents.Add(new ImageEvent(this, ImageCatalogEventTriggerEnum.LabelChanged, new RelatedEntity(this.RelatedEntityType, this.RelatedEntityId, string.Empty)));
         }
     }
 
