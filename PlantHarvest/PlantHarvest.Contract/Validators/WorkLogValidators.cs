@@ -5,7 +5,7 @@ public class WorkLogValidator<T> : AbstractValidator<T>
 {
     public WorkLogValidator()
     {
-        RuleFor(command => command.RelatedEntityid).NotEmpty().Length(3, 100);
+        RuleFor(command => command.RelatedEntities).NotEmpty();
         RuleFor(command => command.Log).NotEmpty().Length(3, 1000);
         RuleFor(command => command.EventDateTime).NotNull();
         RuleFor(command => command.Reason).Must(r => r != WorkLogReasonEnum.Unspecified).WithMessage("Please select reason");

@@ -1,17 +1,16 @@
-﻿using PlantHarvest.Domain.WorkLogAggregate.Events;
-using PlantHarvest.Domain.WorkLogAggregate.Events.Meta;
+﻿using GardenLog.SharedKernel.Enum;
+using PlantHarvest.Domain.WorkLogAggregate.Events;
 
 namespace PlantHarvest.Domain.WorkLogAggregate;
 
 public class WorkLog : BaseEntity, IAggregateRoot
 {
     public string Log { get; private set; }
-    public WorkLogEntityEnum RelatedEntity { get; private set; }
-    public string RelatedEntityid { get; private set; }
     public DateTime EnteredDateTime { get; private set; }
     public DateTime EventDateTime { get; private set; }
     public WorkLogReasonEnum Reason { get; private set; }
     public string UserProfileId { get; private set; }
+    public IList<GardenLog.SharedKernel.RelatedEntity>RelatedEntities { get; private set; }
 
     private WorkLog()
     {
@@ -20,29 +19,26 @@ public class WorkLog : BaseEntity, IAggregateRoot
 
     public WorkLog(
         string log,
-        WorkLogEntityEnum entity,
-        string entityId,
         DateTime enteredDateTime,
         DateTime eventDateTime,
         WorkLogReasonEnum reason,
-        string userProfileId)
+        string userProfileId,
+        IList<GardenLog.SharedKernel.RelatedEntity> relatedEntities)
     {
         this.Log = log;
-        this.RelatedEntity = entity;
-        this.RelatedEntityid = entityId;
         this.EnteredDateTime = enteredDateTime;
         this.EventDateTime = eventDateTime;
         this.Reason = reason;
         this.UserProfileId = userProfileId;
+        this.RelatedEntities = relatedEntities;
     }
 
     public static WorkLog Create(
         string log,
-        WorkLogEntityEnum entity,
-        string entityId,
         DateTime eventDateTime,
         WorkLogReasonEnum reason,
-        string userProfileId
+        string userProfileId,
+        IList<GardenLog.SharedKernel.RelatedEntity> relatedEntities
         )
     {
         DateTime timestamp = DateTime.Now;
@@ -51,8 +47,7 @@ public class WorkLog : BaseEntity, IAggregateRoot
         {
             Id = Guid.NewGuid().ToString(),
             Log = log,
-            RelatedEntity = entity,
-            RelatedEntityid = entityId,
+            RelatedEntities = relatedEntities,
             EnteredDateTime = timestamp,
             EventDateTime = eventDateTime,
             Reason = reason,
@@ -60,21 +55,17 @@ public class WorkLog : BaseEntity, IAggregateRoot
         };
 
         work.DomainEvents.Add(
-            new WorkLogEvent(work, WorkLogEventTriggerEnum.WorkLogCreated, new WorkLogTriggerEntity(WorkLogEntityTypeEnum.WorkLog, work.Id)));
+            new WorkLogEvent(work, WorkLogEventTriggerEnum.WorkLogCreated, new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.WorkLog, work.Id, string.Empty)));
 
         return work;
     }
 
     public void Update(
         string log,
-        WorkLogEntityEnum entity,
-        string entityId,
         DateTime eventDateTime,
         WorkLogReasonEnum reason)
     {
         this.Set<string>(() => this.Log, log);
-        this.Set<WorkLogEntityEnum>(() => this.RelatedEntity, entity);
-        this.Set<string>(() => this.RelatedEntityid, entityId);
         this.Set<DateTime>(() => this.EventDateTime, eventDateTime);
         this.Set<WorkLogReasonEnum>(() => this.Reason, reason);
 
@@ -83,12 +74,12 @@ public class WorkLog : BaseEntity, IAggregateRoot
     public void Delete()
     {
         this.DomainEvents.Add(
-            new WorkLogEvent(this, WorkLogEventTriggerEnum.WorkLogDeleted, new WorkLogTriggerEntity(WorkLogEntityTypeEnum.WorkLog, this.Id)));
+            new WorkLogEvent(this, WorkLogEventTriggerEnum.WorkLogDeleted, new RelatedEntity(RelatedEntityTypEnum.WorkLog, this.Id, string.Empty)));
     }
 
     protected override void AddDomainEvent(string attributeName)
     {
         this.DomainEvents.Add(
-              new WorkLogEvent(this, WorkLogEventTriggerEnum.WorkLogUpdated, new WorkLogTriggerEntity(WorkLogEntityTypeEnum.WorkLog, this.Id)));
+              new WorkLogEvent(this, WorkLogEventTriggerEnum.WorkLogUpdated, new RelatedEntity(RelatedEntityTypEnum.WorkLog, this.Id, string.Empty)));
     }
 }

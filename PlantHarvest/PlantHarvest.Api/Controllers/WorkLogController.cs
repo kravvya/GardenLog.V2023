@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GardenLog.SharedKernel.Enum;
+using Microsoft.AspNetCore.Mvc;
 using PlantCatalog.Contract;
 using PlantHarvest.Contract.Enum;
 using PlantHarvest.Domain.WorkLogAggregate.Events.Meta;
@@ -30,7 +31,7 @@ public class WorkLogController : Controller
     [ProducesResponseType(typeof(IReadOnlyCollection<WorkLogViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<WorkLogViewModel>>> GetAllWorkLogs(string entityType, string entityId)
     {
-        WorkLogEntityEnum type = Enum.Parse<WorkLogEntityEnum>(entityType);
+        RelatedEntityTypEnum type = Enum.Parse<RelatedEntityTypEnum>(entityType);
         return Ok(await _queryHandler.GetWorkLogs(type, entityId));
 
     }

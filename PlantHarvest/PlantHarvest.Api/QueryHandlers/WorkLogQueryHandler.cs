@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
-using GardenLog.SharedInfrastructure.Extensions;
-using PlantHarvest.Contract.Enum;
-using PlantHarvest.Domain.WorkLogAggregate;
+using GardenLog.SharedKernel.Enum;
 
 namespace PlantHarvest.Api.QueryHandlers;
 
 public interface IWorkLogQueryHandler
 {
-    Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogs(WorkLogEntityEnum enityType, string entityId);
+    Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogs(RelatedEntityTypEnum enityType, string entityId);
 }
 
 
@@ -27,7 +25,7 @@ public class WorkLogQueryHandler : IWorkLogQueryHandler
     }
 
   
-    public async Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogs(WorkLogEntityEnum enityType, string entityId)
+    public async Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogs(RelatedEntityTypEnum enityType, string entityId)
     {
         _logger.LogInformation("Received request to get work logs");
         string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);

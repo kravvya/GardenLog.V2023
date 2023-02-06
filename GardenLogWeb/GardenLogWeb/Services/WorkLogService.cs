@@ -1,11 +1,14 @@
-﻿namespace GardenLogWeb.Services;
+﻿using GardenLog.SharedKernel;
+using GardenLog.SharedKernel.Enum;
+
+namespace GardenLogWeb.Services;
 
 public interface IWorkLogService
 {
-    Task<List<WorkLogModel>> GetWorkLogs(WorkLogEntityEnum entityType, string entityId, bool forceRefresh);
+    Task<List<WorkLogModel>> GetWorkLogs(RelatedEntityTypEnum entityType, string entityId, bool forceRefresh);
     Task<ApiObjectResponse<string>> CreateWorkLog(WorkLogModel workModel);
     Task<ApiResponse> UpdateWorkLog(WorkLogModel workModel);
-    Task<ApiResponse> DeleteWorkLog(string id, WorkLogEntityEnum entityType, string entityId);
+    Task<ApiResponse> DeleteWorkLog(string id, IList<RelatedEntity> relatedEntities);
 }
 
 public class WorkLogService : IWorkLogService
@@ -29,7 +32,7 @@ public class WorkLogService : IWorkLogService
 
     #region Public Work Log Functions
 
-    public async Task<List<WorkLogModel>> GetWorkLogs(WorkLogEntityEnum entityType, string entityId, bool forceRefresh)
+    public async Task<List<WorkLogModel>> GetWorkLogs(RelatedEntityTypEnum entityType, string entityId, bool forceRefresh)
     {
         List<WorkLogModel> workLogs;
         string key = string.Format(WORK_LOG_KEY, entityType, entityId);
@@ -102,7 +105,7 @@ public class WorkLogService : IWorkLogService
         return response;
     }
 
-    public async Task<ApiResponse> DeleteWorkLog(string id, WorkLogEntityEnum entityType, string entityId)
+    public async Task<ApiResponse> DeleteWorkLog(string id, IList<RelatedEntity> relatedEntities)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
@@ -118,7 +121,7 @@ public class WorkLogService : IWorkLogService
         }
         else
         {
-            RemoveFromWorkLogList(id,  entityType,  entityId);
+            RemoveFromWorkLogList(id, relatedEntities);
 
             _toastService.ShowToast($"Working notes deleted.", GardenLogToastLevel.Success);
         }
@@ -129,7 +132,7 @@ public class WorkLogService : IWorkLogService
 
 
     #region Private Work Log Functions
-    private async Task<List<WorkLogModel>> GetWorkLogs(WorkLogEntityEnum entityType, string entityId)
+    private async Task<List<WorkLogModel>> GetWorkLogs(RelatedEntityTypEnum entityType, string entityId)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
@@ -148,36 +151,41 @@ public class WorkLogService : IWorkLogService
 
     private void AddOrUpdateToWorkLogList(WorkLogModel workLog)
     {
-        string key = string.Format(WORK_LOG_KEY, workLog.RelatedEntity, workLog.RelatedEntityid);
-        List<WorkLogModel>? workLogs = null;
-
-        if (_cacheService.TryGetValue<List<WorkLogModel>>(key, out workLogs))
+        foreach (var relatedEntity in workLog.RelatedEntities)
         {
-            var index = workLogs.FindIndex(p => p.WorkLogId == workLog.WorkLogId);
-            if (index > -1)
+            string key = string.Format(WORK_LOG_KEY, relatedEntity.EntityType, relatedEntity.EntityId);
+            List<WorkLogModel>? workLogs = null;
+
+            if (_cacheService.TryGetValue<List<WorkLogModel>>(key, out workLogs))
             {
-                workLogs[index] = workLog;
-                return;
+                var index = workLogs.FindIndex(p => p.WorkLogId == workLog.WorkLogId);
+                if (index > -1)
+                {
+                    workLogs[index] = workLog;
+                    return;
+                }
             }
+            else
+            {
+                workLogs = new List<WorkLogModel>();
+                _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(CACHE_DURATION));
+            }
+            workLogs.Add(workLog);
         }
-        else
-        {
-            workLogs = new List<WorkLogModel>();
-            _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(CACHE_DURATION));
-        }
-        workLogs.Add(workLog);
-
     }
 
-    private void RemoveFromWorkLogList(string harvestId, WorkLogEntityEnum entityType, string entityId)
+    private void RemoveFromWorkLogList(string workLogId, IList<RelatedEntity> relatedEntities)
     {
-        string key = string.Format(WORK_LOG_KEY, entityType, entityId);
-        if (_cacheService.TryGetValue<List<WorkLogModel>>(WORK_LOG_KEY, out var workLogs))
+        foreach (var relatedEntity in relatedEntities)
         {
-            var index = workLogs.FindIndex(p => p.WorkLogId == harvestId);
-            if (index > -1)
+            string key = string.Format(WORK_LOG_KEY, relatedEntity.EntityType, relatedEntity.EntityId);
+            if (_cacheService.TryGetValue<List<WorkLogModel>>(WORK_LOG_KEY, out var workLogs))
             {
-                workLogs.RemoveAt(index);
+                var index = workLogs.FindIndex(p => p.WorkLogId == workLogId);
+                if (index > -1)
+                {
+                    workLogs.RemoveAt(index);
+                }
             }
         }
     }

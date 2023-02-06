@@ -59,7 +59,7 @@ public class Garden : BaseEntity, IAggregateRoot
         };
 
         garden.DomainEvents.Add(
-                  new GardenEvent(garden, UserProfileEventTriggerEnum.GardenCreated, new TriggerEntity(EntityTypeEnum.Garden, garden.Id)));
+                  new GardenEvent(garden, UserProfileEventTriggerEnum.GardenCreated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.Garden, garden.Id)));
 
         return garden;
     }
@@ -95,7 +95,7 @@ public class Garden : BaseEntity, IAggregateRoot
         this._gardenBeds.Add(gardenBed);
 
         this.DomainEvents.Add(
-         new GardenEvent(this, UserProfileEventTriggerEnum.GardenBedCreated, new TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
+         new GardenEvent(this, UserProfileEventTriggerEnum.GardenBedCreated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
 
         return gardenBed.Id;
     }
@@ -107,12 +107,12 @@ public class Garden : BaseEntity, IAggregateRoot
 
     public void DeleteGardenBed(string id)
     {
-        AddChildDomainEvent(UserProfileEventTriggerEnum.GardenBedDeleted, new TriggerEntity(EntityTypeEnum.GardenBed, id));
+        AddChildDomainEvent(UserProfileEventTriggerEnum.GardenBedDeleted, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.GardenBed, id));
 
     }
     #endregion
 
-    private void AddChildDomainEvent(UserProfileEventTriggerEnum trigger, TriggerEntity entity)
+    private void AddChildDomainEvent(UserProfileEventTriggerEnum trigger, UserManagment.Api.Model.Meta.TriggerEntity entity)
     {
         var newEvent = new GardenEvent(this, trigger, entity);
 
@@ -125,7 +125,7 @@ public class Garden : BaseEntity, IAggregateRoot
         if (this.DomainEvents.Count == 0)
         {
             this.DomainEvents.Add(
-                  new GardenEvent(this, UserProfileEventTriggerEnum.GardenUpdated, new TriggerEntity(EntityTypeEnum.Garden, this.Id)));
+                  new GardenEvent(this, UserProfileEventTriggerEnum.GardenUpdated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.Garden, this.Id)));
         }
     }
 }

@@ -53,12 +53,12 @@
     private ModalView? _workLogFormModal;
     private WorkLogForm? _workLogForm;
 
-    private WorkLogEntityEnum _relatedEntityType;
+    private RelatedEntityTypEnum _relatedEntityType;
     private string _relatedEntitytId;
 
     private List<WorkLogModel> _workLogs { get; set; } = new();
 
-    public async void Initialize(WorkLogEntityEnum relatedEntityType, string relatedEntitytId)
+    public async void Initialize(RelatedEntityTypEnum relatedEntityType, string relatedEntitytId)
     {
         _workLogs = await _workLogService.GetWorkLogs(relatedEntityType, relatedEntitytId, true);
         _relatedEntitytId = relatedEntitytId;
@@ -68,8 +68,8 @@
 
     private async Task AddWorkLog()
     {
-        _workLogForm.Initialize(_relatedEntityType, _relatedEntitytId);
-        await _workLogFormModal?.OpenModal("Add new note", "#A0C136");
+        _workLogForm.InitializeAsync(_relatedEntityType, _relatedEntitytId);
+        await _workLogFormModal?.OpenModal("Add new note", GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 

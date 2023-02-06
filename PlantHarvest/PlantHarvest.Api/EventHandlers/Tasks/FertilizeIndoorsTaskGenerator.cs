@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver.Linq;
+﻿using GardenLog.SharedKernel.Enum;
+using MongoDB.Driver.Linq;
 using PlantHarvest.Domain.HarvestAggregate.Events;
 using PlantHarvest.Domain.WorkLogAggregate.Events;
 using PlantHarvest.Infrastructure.ApiClients;
@@ -13,13 +14,15 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
     private readonly IPlantTaskQueryHandler _taskQueryHandler;
     private readonly IPlantCatalogApiClient _plantCatalogApi;
     private readonly IHarvestQueryHandler _harvestQueryHandler;
+    private readonly ILogger<FertilizeIndoorsTaskGenerator> _logger;
 
-    public FertilizeIndoorsTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler)
+    public FertilizeIndoorsTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<FertilizeIndoorsTaskGenerator> logger)
     {
         _taskCommandHandler = taskCommandHandler;
         _taskQueryHandler = taskQueryHandler;
         _plantCatalogApi = plantCatalogApi;
         _harvestQueryHandler = harvestQueryHandler;
+        _logger = logger;
     }
 
     public async Task Handle(HarvestEvent harvestEvent, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
 
     public async Task Handle(WorkLogEvent workEvent, CancellationToken cancellationToken)
     {
-        if (workEvent.Work.Reason == WorkLogReasonEnum.FertilizeIndoors && !string.IsNullOrEmpty(workEvent.Work.RelatedEntityid))
+        if (workEvent.Work.Reason == WorkLogReasonEnum.FertilizeIndoors)
         {
             await CompleteFertilizeIndoorsTask(workEvent);
             await CreateFertilizeIndoorsTask(workEvent);
@@ -50,27 +53,36 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
 
     private async Task CompleteFertilizeIndoorsTask(WorkLogEvent workEvent)
     {
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = workEvent.TriggerEntity.entityId, Reason = WorkLogReasonEnum.FertilizeIndoors });
-        if (tasks != null && tasks.Any())
+        var plantHarvestRelatedEntity = workEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
+
+        if (plantHarvestRelatedEntity != null)
         {
-            foreach (var task in tasks)
+            var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvestRelatedEntity.EntityId, Reason = WorkLogReasonEnum.FertilizeIndoors });
+            if (tasks != null && tasks.Any())
             {
-                await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
+                foreach (var task in tasks)
                 {
-                    PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = workEvent.Work.EventDateTime,
-                    Notes = task.Notes,
-                    TargetDateEnd = task.TargetDateEnd,
-                    TargetDateStart = task.TargetDateStart
-                });
-            };
+                    await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
+                    {
+                        PlantTaskId = task.PlantTaskId,
+                        CompletedDateTime = workEvent.Work.EventDateTime,
+                        Notes = task.Notes,
+                        TargetDateEnd = task.TargetDateEnd,
+                        TargetDateStart = task.TargetDateStart
+                    });
+                };
+            }
+        }
+        else
+        {
+            _logger.LogError($"Unable to complete task based on workLog: {workEvent.Work.Id}. Plant Harvest is not found");
         }
     }
 
     private async Task CreateFertilizeIndoorsTask(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        if(plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
+        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
         {
             return;
         }
@@ -89,7 +101,7 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
                                 plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
                                 plantHarvest.GerminationDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
 
-          
+
             var command = new CreatePlantTaskCommand()
             {
                 CreatedDateTime = DateTime.UtcNow,
@@ -134,7 +146,7 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
         var firstFertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
                             plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
                             plantHarvest.GerminationDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
-       
+
         var command = new CreatePlantTaskCommand()
         {
             CreatedDateTime = DateTime.UtcNow,

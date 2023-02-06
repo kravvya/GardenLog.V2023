@@ -1,12 +1,11 @@
 ﻿using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel;
+using GardenLog.SharedKernel.Enum;
 using GardenLog.SharedKernel.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-using PlantHarvest.Contract.Enum;
-using PlantHarvest.Domain.WorkLogAggregate;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
 
@@ -21,11 +20,11 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
         _logger = logger;
     }
 
-    public async Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogsByEntity(WorkLogEntityEnum entityType, string entityId, string userProfileId)
+    public async Task<IReadOnlyCollection<WorkLogViewModel>> GetWorkLogsByEntity(RelatedEntityTypEnum entityType, string entityId, string userProfileId)
     {
         List<FilterDefinition<WorkLog>> filters = new();
-        filters.Add(Builders<WorkLog>.Filter.Eq("RelatedEntity", entityType));
-        filters.Add(Builders<WorkLog>.Filter.Eq("RelatedEntityid", entityId));
+        filters.Add(Builders<WorkLog>.Filter.Eq("RelatedEntities.EntityType", entityType));
+        filters.Add(Builders<WorkLog>.Filter.Eq("RelatedEntities.EntityId", entityId));
         filters.Add(Builders<WorkLog>.Filter.Eq("UserProfileId", userProfileId));
 
         var data = await Collection
@@ -51,7 +50,6 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
             p.SetIgnoreExtraElements(true);
             p.SetDiscriminator("work-log");
 
-            p.MapMember(m => m.RelatedEntity).SetSerializer(new EnumSerializer<WorkLogEntityEnum>(BsonType.String));
             p.MapMember(m => m.Reason).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
         });
 
@@ -72,7 +70,6 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.RelatedEntity).SetSerializer(new EnumSerializer<WorkLogEntityEnum>(BsonType.String));
             p.MapMember(m => m.Reason).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
         });
 
@@ -82,6 +79,14 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
             p.MapMember(m => m.WorkLogId).SetElementName("_id");
+        });
+
+        BsonClassMap.RegisterClassMap<RelatedEntity>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.EntityType).SetSerializer(new EnumSerializer<RelatedEntityTypEnum>(BsonType.String));
         });
     }
 

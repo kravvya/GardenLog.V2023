@@ -10,4 +10,8 @@
     <PackageReference Include="FluentValidation" Version="11.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\GardenLog.SharedKernel\GardenLog.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

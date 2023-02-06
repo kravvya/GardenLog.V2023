@@ -1,4 +1,5 @@
-﻿using PlantHarvest.Contract.ViewModels;
+﻿using GardenLog.SharedKernel.Enum;
+using PlantHarvest.Contract.ViewModels;
 using PlantHarvest.IntegrationTest.Clients;
 using PlantHarvest.IntegrationTest.Fixture;
 using System.Net.Http.Json;
@@ -28,7 +29,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
 
-        var response = await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
+        var response = await _workLogClient.CreateWorkLog(RelatedEntityTypEnum.HarvestCycle, harvestId);
 
         var returnString = await response.Content.ReadAsStringAsync();
 
@@ -43,7 +44,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
     [Fact]
     public async Task Post_WorkLog_ShouldNotCreateNewWorkLog_WithoutEntityId()
     {
-        var response = await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, string.Empty);
+        var response = await _workLogClient.CreateWorkLog(RelatedEntityTypEnum.HarvestCycle, string.Empty);
 
         var returnString = await response.Content.ReadAsStringAsync();
 
@@ -52,7 +53,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         Assert.True(response.StatusCode == System.Net.HttpStatusCode.BadRequest);
         Assert.NotEmpty(returnString);
-        Assert.Contains("'Related Entityid' must not be empty.", returnString);
+        Assert.Contains("'Related Entities' must not be empty.", returnString);
     }
 
     [Fact]
@@ -111,7 +112,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
         var workLogs = await GetWorkLogsToWorkWith(harvestId);
         if (workLogs.Count == 0)
         {
-            await _workLogClient.CreateWorkLog(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
+            await _workLogClient.CreateWorkLog(RelatedEntityTypEnum.HarvestCycle, harvestId);
         }
         workLogs = await GetWorkLogsToWorkWith(harvestId);
 
@@ -123,7 +124,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
     private async Task<List<WorkLogViewModel>> GetWorkLogsToWorkWith(string harvestId)
     {
-        var response = await _workLogClient.GetWorkLogs(Contract.Enum.WorkLogEntityEnum.HarvestCycle, harvestId);
+        var response = await _workLogClient.GetWorkLogs(RelatedEntityTypEnum.HarvestCycle, harvestId);
 
         var options = new JsonSerializerOptions
         {

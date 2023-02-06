@@ -99,7 +99,7 @@ public class Plant : BaseEntity, IAggregateRoot
         plant._varietyColors.AddRange(varietyColors);
 
         plant.DomainEvents.Add(
-            new PlantEvent(plant, PlantEventTriggerEnum.PlantCreated, new TriggerEntity(EntityTypeEnum.Plant, plant.Id)));
+            new PlantEvent(plant, PlantEventTriggerEnum.PlantCreated, new Events.Meta.TriggerEntity(EntityTypeEnum.Plant, plant.Id)));
 
         return plant;
 
@@ -138,7 +138,7 @@ public class Plant : BaseEntity, IAggregateRoot
         UpdateCollection<string>(this._varietyColors, varietyColors);
 
         this.DomainEvents.Add(
-           new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new TriggerEntity(EntityTypeEnum.Plant, this.Id)));
+           new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new Events.Meta.TriggerEntity(EntityTypeEnum.Plant, this.Id)));
     }
 
     private static void UpdateCollection<T>(List<T> existingList, List<T> newList)
@@ -159,10 +159,10 @@ public class Plant : BaseEntity, IAggregateRoot
     protected override void AddDomainEvent(string attributeName)
     {
         this.DomainEvents.Add(
-          new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new TriggerEntity(EntityTypeEnum.Plant, this.Id)));
+          new PlantEvent(this, PlantEventTriggerEnum.PlantUpdated, new Events.Meta.TriggerEntity(EntityTypeEnum.Plant, this.Id)));
     }
 
-    private void AddChildDomainEvent(PlantEventTriggerEnum trigger, TriggerEntity entity)
+    private void AddChildDomainEvent(PlantEventTriggerEnum trigger, Events.Meta.TriggerEntity entity)
     {
         var newEvent = new PlantEvent(this, trigger, entity);
 
@@ -182,7 +182,7 @@ public class Plant : BaseEntity, IAggregateRoot
         this._growInstructions.Add(instruction);
 
         this.DomainEvents.Add(
-          new PlantEvent(this, PlantEventTriggerEnum.GrowInstructionAddedToPlant, new TriggerEntity(EntityTypeEnum.GrowingInstruction, instruction.Id)));
+          new PlantEvent(this, PlantEventTriggerEnum.GrowInstructionAddedToPlant, new Events.Meta.TriggerEntity(EntityTypeEnum.GrowingInstruction, instruction.Id)));
 
         return instruction.Id;
     }
@@ -207,7 +207,7 @@ public class Plant : BaseEntity, IAggregateRoot
             this.HarvestSeason |= grow.HarvestSeason;
         }
 
-        AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionDeleted, new TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
+        AddChildDomainEvent(PlantEventTriggerEnum.GrowInstructionDeleted, new Events.Meta.TriggerEntity(EntityTypeEnum.GrowingInstruction, plantGrowInstructionId));
 
     }
 
@@ -221,7 +221,7 @@ public class Plant : BaseEntity, IAggregateRoot
         this.VarietyCount += 1;
                 
         this.DomainEvents.Add(
-          new PlantEvent(this, PlantEventTriggerEnum.PlantVarietyCreated, new TriggerEntity(EntityTypeEnum.PlantVariety, variety.Id)));
+          new PlantEvent(this, PlantEventTriggerEnum.PlantVarietyCreated, new Events.Meta.TriggerEntity(EntityTypeEnum.PlantVariety, variety.Id)));
 
         return variety;
     }
@@ -236,7 +236,7 @@ public class Plant : BaseEntity, IAggregateRoot
     {
         this.VarietyCount -= 1;
 
-        AddChildDomainEvent(PlantEventTriggerEnum.PlantVarietyDeleted, new TriggerEntity(EntityTypeEnum.PlantVariety, varietyId));
+        AddChildDomainEvent(PlantEventTriggerEnum.PlantVarietyDeleted, new Events.Meta.TriggerEntity(EntityTypeEnum.PlantVariety, varietyId));
 
     }
 

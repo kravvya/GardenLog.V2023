@@ -81,7 +81,7 @@ public class PlantVariety : BaseEntity, IEntity
 
     public void Update(
         UpdatePlantVarietyCommand command,
-        Action<PlantEventTriggerEnum, TriggerEntity> addPlantEvent
+        Action<PlantEventTriggerEnum, Events.Meta.TriggerEntity> addPlantEvent
     )
     {
         Set<string>(() => this.Name, command.Name);
@@ -102,14 +102,14 @@ public class PlantVariety : BaseEntity, IEntity
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
             this.DomainEvents.Clear();
-            addPlantEvent(PlantEventTriggerEnum.PlantVarietyUpdated, new TriggerEntity(EntityTypeEnum.PlantVariety, this.Id));
+            addPlantEvent(PlantEventTriggerEnum.PlantVarietyUpdated, new Events.Meta.TriggerEntity(EntityTypeEnum.PlantVariety, this.Id));
         }
     }
 
     protected override void AddDomainEvent(string attributeName)
     {
         this.DomainEvents.Add(
-            new PlantChildEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new TriggerEntity(EntityTypeEnum.GrowingInstruction, this.Id)));
+            new PlantChildEvent(PlantEventTriggerEnum.GrowInstructionUpdated, new Events.Meta.TriggerEntity(EntityTypeEnum.GrowingInstruction, this.Id)));
     }
 
 

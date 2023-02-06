@@ -7,7 +7,7 @@ public record WeatherEvent : BaseDomainEvent
 {
     public WeatherUpdate Weather { get; init; }
     public string Trigger { get; set; }
-    public TriggerEntity TriggerEntity { get; set; }
+    public Meta.TriggerEntity TriggerEntity { get; set; }
     public string UserProfileId { get { return Weather.UserProfileId; } init { } }
     private WeatherEvent() { }
 

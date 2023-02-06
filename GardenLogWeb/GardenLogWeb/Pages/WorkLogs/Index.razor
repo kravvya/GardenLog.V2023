@@ -30,9 +30,9 @@
         if (!string.IsNullOrWhiteSpace(RelatedEntity))
         {
             string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
-            WorkLogEntityEnum type;
+            RelatedEntityTypEnum type;
 
-            if (Enum.TryParse<WorkLogEntityEnum>(relatedEntityType, out type))
+            if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
             {
                 await SetupPage(type, RelatedEntityId);
 
@@ -46,21 +46,21 @@
         if (firstRender)
         {
             string relatedEntityType = RelatedEntity.Replace("garden_plan", "HarvestCycle");
-            WorkLogEntityEnum type;
-            if (Enum.TryParse<WorkLogEntityEnum>(relatedEntityType, out type))
+            RelatedEntityTypEnum type;
+            if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
             {
                 _workLogList.Initialize(type, RelatedEntityId);
             }
         }
     }
 
-    private async Task SetupPage(WorkLogEntityEnum relatedEntityType, string relatedEntitytId)
+    private async Task SetupPage(RelatedEntityTypEnum relatedEntityType, string relatedEntitytId)
     {
         _description = string.Empty;
 
         switch (relatedEntityType)
         {
-            case WorkLogEntityEnum.HarvestCycle:
+            case RelatedEntityTypEnum.HarvestCycle:
                 var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
                 if (!string.IsNullOrEmpty(harvest.GardenName))
                 {

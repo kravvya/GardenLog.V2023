@@ -1,4 +1,6 @@
-﻿using PlantHarvest.Domain.HarvestAggregate.Events;
+﻿using GardenLog.SharedKernel;
+using GardenLog.SharedKernel.Enum;
+using PlantHarvest.Domain.HarvestAggregate.Events;
 using System.Text;
 
 namespace PlantHarvest.Api.EventHandlers.Tasks;
@@ -28,22 +30,25 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
 
     public async Task GenerateSowIndoorsWorkLog(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest.Plants.First((Func<PlantHarvestCycle, bool>)(p => p.Id == harvestEvent.TriggerEntity.EntityId));
 
         StringBuilder note = new();
-        if (plant.NumberOfSeeds.HasValue) { note.Append($"{plant.NumberOfSeeds} seeds of "); }
-        note.Append(plant.PlantName);
-        if (!string.IsNullOrWhiteSpace(plant.SeedCompanyName)) { note.Append($"from {plant.SeedCompanyName} "); }
-        note.Append($" were planted indoors on {plant.SeedingDate.Value} ");
+        if (plantHarvest.NumberOfSeeds.HasValue) { note.Append($"{plantHarvest.NumberOfSeeds} seeds of "); }
+        note.Append(plantHarvest.PlantName);
+        if (!string.IsNullOrWhiteSpace(plantHarvest.SeedCompanyName)) { note.Append($"from {plantHarvest.SeedCompanyName} "); }
+        note.Append($" were planted indoors on {plantHarvest.SeedingDate.Value} ");
+
+        var relatedEntities = new List<GardenLog.SharedKernel.RelatedEntity>();
+        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
+        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantHarvest.PlantName));
 
         var command = new CreateWorkLogCommand()
         {
             EnteredDateTime = DateTime.Now,
-            EventDateTime = plant.SeedingDate.Value,
+            EventDateTime = plantHarvest.SeedingDate.Value,
             Log = note.ToString(),
             Reason = WorkLogReasonEnum.SowIndoors,
-            RelatedEntity = WorkLogEntityEnum.PlantHarvestCycle,
-            RelatedEntityid = plant.Id
+            RelatedEntities = relatedEntities
         };
         await _workLogCommandHandler.CreateWorkLog(command);
     }
@@ -51,23 +56,25 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
 
     public async Task GenerateInformationWorkLogForGenrmatedEvent(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest.Plants.First((Func<PlantHarvestCycle, bool>)(p => p.Id == harvestEvent.TriggerEntity.EntityId));
 
         StringBuilder note = new();
-        if (plant.GerminationRate.HasValue) { note.Append($"{plant.GerminationRate.Value}% germanation of "); }
-        note.Append(plant.PlantName);
-        note.Append($"  on {plant.GerminationDate.Value.ToShortDateString()} ");
-        if (!string.IsNullOrEmpty(plant.SeedCompanyName)) { note.Append($" from {plant.SeedCompanyName} "); }
-       
+        if (plantHarvest.GerminationRate.HasValue) { note.Append($"{plantHarvest.GerminationRate.Value}% germanation of "); }
+        note.Append(plantHarvest.PlantName);
+        note.Append($"  on {plantHarvest.GerminationDate.Value.ToShortDateString()} ");
+        if (!string.IsNullOrEmpty(plantHarvest.SeedCompanyName)) { note.Append($" from {plantHarvest.SeedCompanyName} "); }
+
+        var relatedEntities = new List<GardenLog.SharedKernel.RelatedEntity>();
+        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
+        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantHarvest.PlantName));
 
         var command = new CreateWorkLogCommand()
         {
             EnteredDateTime = DateTime.Now,
-            EventDateTime = plant.GerminationDate.Value,
+            EventDateTime = plantHarvest.GerminationDate.Value,
             Log = note.ToString(),
             Reason = WorkLogReasonEnum.Information,
-            RelatedEntity = WorkLogEntityEnum.PlantHarvestCycle,
-            RelatedEntityid = plant.Id
+            RelatedEntities = relatedEntities
         };
         await _workLogCommandHandler.CreateWorkLog(command);
     }

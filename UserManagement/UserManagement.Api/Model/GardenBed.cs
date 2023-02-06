@@ -31,13 +31,13 @@ public class GardenBed : BaseEntity, IEntity
         };
 
         gardenBed.DomainEvents.Add(
-                  new GardenChildEvent(UserProfileEventTriggerEnum.GardenBedCreated, new TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
+                  new GardenChildEvent(UserProfileEventTriggerEnum.GardenBedCreated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.GardenBed, gardenBed.Id)));
 
         return gardenBed;
     }
 
 
-    public void Update(UpdateGardenBedCommand command, Action<UserProfileEventTriggerEnum, TriggerEntity> addGardenEvent)
+    public void Update(UpdateGardenBedCommand command, Action<UserProfileEventTriggerEnum, UserManagment.Api.Model.Meta.TriggerEntity> addGardenEvent)
     {
         this.Set<string>(() => this.Name, command.Name);
         this.Set<int?>(() => this.RowNumber, command.RowNumber);
@@ -51,7 +51,7 @@ public class GardenBed : BaseEntity, IEntity
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
             this.DomainEvents.Clear();
-            addGardenEvent(UserProfileEventTriggerEnum.GardenBedUpdated, new TriggerEntity(EntityTypeEnum.GardenBed, this.Id));
+            addGardenEvent(UserProfileEventTriggerEnum.GardenBedUpdated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.GardenBed, this.Id));
         }
     }
 
@@ -60,7 +60,7 @@ public class GardenBed : BaseEntity, IEntity
         if (this.DomainEvents.Count == 0)
         {
             this.DomainEvents.Add(
-                  new GardenChildEvent(UserProfileEventTriggerEnum.GardenBedUpdated, new TriggerEntity(EntityTypeEnum.GardenBed, this.Id)));
+                  new GardenChildEvent(UserProfileEventTriggerEnum.GardenBedUpdated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.GardenBed, this.Id)));
         }
     }
 }

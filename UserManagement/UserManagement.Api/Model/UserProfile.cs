@@ -26,7 +26,7 @@ public class UserProfile :   BaseEntity, IAggregateRoot
         };
 
         user.DomainEvents.Add(
-                  new UserProfileEvent(user, UserProfileEventTriggerEnum.UserProfileCreated, new TriggerEntity(EntityTypeEnum.UserProfile, user.Id)));
+                  new UserProfileEvent(user, UserProfileEventTriggerEnum.UserProfileCreated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.UserProfile, user.Id)));
 
         return user;
     }
@@ -48,7 +48,7 @@ public class UserProfile :   BaseEntity, IAggregateRoot
         if (this.DomainEvents.Count == 0)
         {
             this.DomainEvents.Add(
-                  new UserProfileEvent(this, UserProfileEventTriggerEnum.UserProfileUpdated, new TriggerEntity(EntityTypeEnum.UserProfile, this.Id)));
+                  new UserProfileEvent(this, UserProfileEventTriggerEnum.UserProfileUpdated, new UserManagment.Api.Model.Meta.TriggerEntity(EntityTypeEnum.UserProfile, this.Id)));
         }
     }
 }

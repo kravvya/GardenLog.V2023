@@ -94,7 +94,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Create_Fertilize_Task_When_Plant_Harvest_Germinated ()
     {
-        var IndoorSawTaskGenerator = new FertilizeIndoorsTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object);
+        var IndoorSawTaskGenerator = new FertilizeIndoorsTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<FertilizeIndoorsTaskGenerator>>().Object);
 
       
         var harvest = HarvestHelper.GetHarvestCycle();

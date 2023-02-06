@@ -1,4 +1,6 @@
-﻿using PlantHarvest.Contract.Commands;
+﻿using GardenLog.SharedKernel.Enum;
+using GardenLog.SharedKernel;
+using PlantHarvest.Contract.Commands;
 using PlantHarvest.Contract.Enum;
 using PlantHarvest.Contract.ViewModels;
 using PlantHarvest.Domain.HarvestAggregate;
@@ -107,31 +109,35 @@ namespace PlantHarvest.UnitTest
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(7),
                 IsSystemGenerated = true,
-                Notes = "Test SChedule",
+                Notes = "Test Schedule",
                 TaskType = taskType
             };
         }
         #endregion
 
         #region WorkLog
-        public static WorkLogEvent GetWorkLogEvent(WorkLogEventTriggerEnum trigger, string plantHarvestCycleId, WorkLogReasonEnum taskType)
+        public static WorkLogEvent GetWorkLogEvent(WorkLogEventTriggerEnum trigger, string harvestId, string harvestName, string plantHarvestCycleId, string plantName, WorkLogReasonEnum taskType)
         {
-            var workLog = GetWorkLog(plantHarvestCycleId, taskType);
+            var workLog = GetWorkLog(harvestId, harvestName, plantHarvestCycleId,  plantName, taskType);
            
-            var evt = new WorkLogEvent(workLog, trigger, new WorkLogTriggerEntity(WorkLogEntityTypeEnum.WorkLog, WORK_LOG_ID));
+            var evt = new WorkLogEvent(workLog, trigger, new RelatedEntity(RelatedEntityTypEnum.WorkLog, WORK_LOG_ID, string.Empty));
 
             return evt;
         }
 
-        public static WorkLog GetWorkLog(string plantHarvestCyceld, WorkLogReasonEnum taskType)
+        public static WorkLog GetWorkLog(string harvestId, string harvestName, string plantHarvestCyceld, string plantName, WorkLogReasonEnum taskType)
         {
+            var relatedEntities = new List<RelatedEntity>();
+
+            relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestId, harvestName));
+            relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvestCyceld, plantName));
+
             return WorkLog.Create(
                 "Test WorkLog Log",
-                WorkLogEntityEnum.PlantHarvestCycle,
-                plantHarvestCyceld,
                 DateTime.Now,
                 taskType,
-                UserManagementHelper.USER_PROFILE_ID);
+                UserManagementHelper.USER_PROFILE_ID,
+                relatedEntities);
 
         }
         #endregion

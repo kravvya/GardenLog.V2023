@@ -42,11 +42,10 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
 
         var workLog = WorkLog.Create(
                  log: request.Log,
-                 entity: request.RelatedEntity,
-                 entityId: request.RelatedEntityid,
                  eventDateTime: request.EventDateTime,
                  reason: request.Reason,
-                 userProfileId: userProfileId);
+                 userProfileId: userProfileId,
+                 relatedEntities: request.RelatedEntities);
 
         _workLogRepository.Add(workLog);
 
@@ -65,7 +64,7 @@ public class WorkLogCommandHandler : IWorkLogCommandHandler
 
        var workLog = await _workLogRepository.GetByIdAsync(request.WorkLogId);
 
-        workLog.Update(request.Log, request.RelatedEntity, request.RelatedEntityid, request.EventDateTime, request.Reason);
+        workLog.Update(request.Log, request.EventDateTime, request.Reason);
 
         _workLogRepository.Update(workLog);
 

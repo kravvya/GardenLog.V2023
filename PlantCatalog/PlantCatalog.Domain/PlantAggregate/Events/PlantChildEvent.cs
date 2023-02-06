@@ -6,9 +6,9 @@ namespace PlantCatalog.Domain.PlantAggregate.Events
     public record PlantChildEvent : BaseDomainEvent
     {
         public PlantEventTriggerEnum Trigger { get; init; }
-        public TriggerEntity TriggerEntity { get; init; }
+        public Meta.TriggerEntity TriggerEntity { get; init; }
 
-        public PlantChildEvent(PlantEventTriggerEnum trigger, TriggerEntity entity)
+        public PlantChildEvent(PlantEventTriggerEnum trigger, Meta.TriggerEntity entity)
         {
             Trigger = trigger;
             TriggerEntity = entity;

@@ -1,4 +1,6 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
+using GardenLog.SharedKernel;
+using GardenLog.SharedKernel.Enum;
 using PlantCatalog.Contract;
 using PlantHarvest.Contract;
 using PlantHarvest.Contract.Commands;
@@ -20,7 +22,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
         #region Work Log
         
-        public async Task<HttpResponseMessage> CreateWorkLog(WorkLogEntityEnum entityType, string entityId)
+        public async Task<HttpResponseMessage> CreateWorkLog(RelatedEntityTypEnum entityType, string entityId)
         {
             var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreateWorkLog}/";
 
@@ -48,22 +50,28 @@ namespace PlantHarvest.IntegrationTest.Clients
             return await this._httpClient.DeleteAsync(url.Replace("{id}", id));
         }
 
-        public async Task<HttpResponseMessage> GetWorkLogs(WorkLogEntityEnum entityType, string entityId)
+        public async Task<HttpResponseMessage> GetWorkLogs(RelatedEntityTypEnum entityType, string entityId)
         {
             var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetWorkLogs}/";
             return await this._httpClient.GetAsync(url.Replace("{entityType}", entityType.ToString()).Replace("{entityId}", entityId));
         }
 
-        private static CreateWorkLogCommand PopulateCreateWorkLogCommand(WorkLogEntityEnum entityType, string entityId)
+        private static CreateWorkLogCommand PopulateCreateWorkLogCommand(RelatedEntityTypEnum entityType, string entityId)
         {
+
+            var relatedEntities = new List<RelatedEntity>();
+            if(!string.IsNullOrEmpty(entityId))
+            {
+                relatedEntities.Add(new RelatedEntity(entityType, entityId, "Test HarvestCycle"));
+            }
+
             return new CreateWorkLogCommand()
             {
                 Log = "Created by Integration test",
                 EventDateTime = DateTime.Now,
                 EnteredDateTime = DateTime.Now,
                 Reason = Contract.Enum.WorkLogReasonEnum.Information,
-                RelatedEntity = entityType,
-                RelatedEntityid = entityId
+                RelatedEntities = relatedEntities
             };
         }
         #endregion
