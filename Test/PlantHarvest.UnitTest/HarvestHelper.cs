@@ -14,6 +14,7 @@ namespace PlantHarvest.UnitTest
 {
     internal class HarvestHelper
     {
+        public static string HARVEST_CYCLE_ID = "HarvestCycleId";
         public static string PLANT_HARVEST_CYCLE_ID = "PlantHarvestCycleId";
         public static string PLANT_TASK_ID = "PlantTaskId";
         public const string WORK_LOG_ID = "WorkLogId";
@@ -71,6 +72,39 @@ namespace PlantHarvest.UnitTest
             };
         }
 
+        public static PlantHarvestCycleViewModel GetPlantHarvestCycleViewModel(PlantHarvest.Contract.Enum.PlantingMethodEnum plantingMethod, PlantScheduleViewModel schedule)
+        {
+            return new PlantHarvestCycleViewModel()
+            {
+                PlantHarvestCycleId = PLANT_HARVEST_CYCLE_ID,
+                DesiredNumberOfPlants = 30,
+                FirstHarvestDate = null,
+                LastHarvestDate = null,
+                GardenBedId = null,
+                GardenBedName = null,
+                GerminationDate = null,
+                GerminationRate = null,
+                HarvestCycleId = HARVEST_CYCLE_ID,
+                Notes = "Test PLant Harvest Cycle Note",
+                NumberOfSeeds = 30,
+                NumberOfTransplants = null,
+                PlantGrowthInstructionId = PlantsHelper.GROW_INSTRUCTION_ID,
+                PlantGrowthInstructionName = "Test Grow Instruction Name",
+                PlantId = PlantsHelper.PLANT_ID,
+                PlantingMethod = plantingMethod,
+                PlantName = "Test Plant",
+                PlantVarietyId = PlantsHelper.PLANT_VARIETY_ID,
+                PlantVarietyName = "Test Variety Name",
+                SeedingDateTime = null,
+                SeedVendorId = "SeedVendorId",
+                SeedVendorName = "Good Seeds",
+                TotalItems = 0,
+                TotalWeightInPounds = 0,
+                TransplantDate = null,
+                PlantCalendar = new List<PlantScheduleViewModel>() { schedule }
+            };
+        }
+
         #region Plant Task
         public static PlantTaskViewModel GetPlantTaskViewModel(string plantTaskId, string plantHarvestCycleId, WorkLogReasonEnum taskType)
         {
@@ -101,13 +135,13 @@ namespace PlantHarvest.UnitTest
             };
         }
 
-        public static PlantScheduleViewModel GetPlantScheduleViewModel(string plantHarvestCycleId, WorkLogReasonEnum taskType)
+        public static PlantScheduleViewModel GetPlantScheduleViewModel(string plantHarvestCycleId, WorkLogReasonEnum taskType, DateTime startDate)
         {
             return new PlantScheduleViewModel()
             {
                 PlantHarvestCycleId = plantHarvestCycleId,
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(7),
+                StartDate = startDate,
+                EndDate = startDate.AddDays(7),
                 IsSystemGenerated = true,
                 Notes = "Test Schedule",
                 TaskType = taskType

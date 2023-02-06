@@ -63,7 +63,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
     private async Task DeleteIndoorSowTask(HarvestEvent harvestEvent)
     {
         var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id });
+        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.SowIndoors });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)

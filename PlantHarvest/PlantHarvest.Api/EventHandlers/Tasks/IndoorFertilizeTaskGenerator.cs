@@ -8,15 +8,15 @@ using System.Text;
 namespace PlantHarvest.Orchestrator.Tasks;
 
 
-public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>, INotificationHandler<WorkLogEvent>
+public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, INotificationHandler<WorkLogEvent>
 {
     private readonly IPlantTaskCommandHandler _taskCommandHandler;
     private readonly IPlantTaskQueryHandler _taskQueryHandler;
     private readonly IPlantCatalogApiClient _plantCatalogApi;
     private readonly IHarvestQueryHandler _harvestQueryHandler;
-    private readonly ILogger<FertilizeIndoorsTaskGenerator> _logger;
+    private readonly ILogger<IndoorFertilizeTaskGenerator> _logger;
 
-    public FertilizeIndoorsTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<FertilizeIndoorsTaskGenerator> logger)
+    public IndoorFertilizeTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<IndoorFertilizeTaskGenerator> logger)
     {
         _taskCommandHandler = taskCommandHandler;
         _taskQueryHandler = taskQueryHandler;
@@ -125,9 +125,13 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
 
     private async Task CreateFertilizeIndoorsTask(WorkLogEvent workLogEvent)
     {
-        return;
-        //TODO - to make this work, worklog needs both HarvestCycleId and PlantHarvestCycleId. 
-        var plantHarvest = await _harvestQueryHandler.GetPlantHarvestCycle("", "");
+        var harvestRelatedEntity = workLogEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.HarvestCycle);
+        if (harvestRelatedEntity == null) { return;  }
+
+        var plantHarvestRelatedEntity = workLogEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
+        if (plantHarvestRelatedEntity == null) { return; }
+
+        var plantHarvest = await _harvestQueryHandler.GetPlantHarvestCycle(harvestRelatedEntity.EntityId, plantHarvestRelatedEntity.EntityId);
 
         if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
         {
@@ -141,11 +145,17 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
             return;
         }
 
-        //assume this is first time we are going to fertilize. So use germination date as a base. All subsequent fertilizations will be based onthe last fertilie event from WorkLog
+        //we just fertilized. So use worklog eventdate as a base. 
+        var fertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
+                            workLogEvent.Work.EventDateTime.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
+                            workLogEvent.Work.EventDateTime.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
 
-        var firstFertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
-                            plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
-                            plantHarvest.GerminationDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
+        //make sure that fertilization date is before projected transplant date
+        var transplantSchedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.TransplantOutside);
+        if(transplantSchedule!= null && transplantSchedule.StartDate <= fertilizeDate)
+        {
+            return;
+        }
 
         var command = new CreatePlantTaskCommand()
         {
@@ -155,8 +165,8 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
             PlantHarvestCycleId = plantHarvest.PlantHarvestCycleId,
             PlantName = string.IsNullOrEmpty(plantHarvest.PlantVarietyName) ? plantHarvest.PlantName : $"{plantHarvest.PlantName} - {plantHarvest.PlantVarietyName}",
             PlantScheduleId = string.Empty,
-            TargetDateStart = firstFertilizeDate,
-            TargetDateEnd = firstFertilizeDate.AddDays(1),
+            TargetDateStart = fertilizeDate,
+            TargetDateEnd = fertilizeDate.AddDays(1),
             Type = WorkLogReasonEnum.FertilizeIndoors,
             Title = "Fertilize Seedlings",
             Notes = GetFertilizeIndoorsNotes(growInstruction)
@@ -179,7 +189,7 @@ public class FertilizeIndoorsTaskGenerator : INotificationHandler<HarvestEvent>,
     private async Task DeleteFertilizeIndoorsTask(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id });
+        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.FertilizeIndoors });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)

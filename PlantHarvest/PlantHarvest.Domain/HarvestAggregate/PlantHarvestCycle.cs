@@ -158,6 +158,9 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             case "GerminationDate":
                 if(this.GerminationDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleGerminated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
+            case "TransplantDate":
+                if (this.TransplantDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleTransplanted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                break;
             default:
                 if (!this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleUpdated))
                 {
