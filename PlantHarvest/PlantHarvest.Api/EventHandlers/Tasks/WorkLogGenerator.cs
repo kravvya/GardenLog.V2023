@@ -36,7 +36,7 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
         if (plantHarvest.NumberOfSeeds.HasValue) { note.Append($"{plantHarvest.NumberOfSeeds} seeds of "); }
         note.Append(plantHarvest.PlantName);
         if (!string.IsNullOrWhiteSpace(plantHarvest.SeedCompanyName)) { note.Append($"from {plantHarvest.SeedCompanyName} "); }
-        note.Append($" were planted indoors on {plantHarvest.SeedingDate.Value} ");
+        note.Append($" were planted indoors on {plantHarvest.SeedingDate.Value.ToShortDateString()} ");
 
         var relatedEntities = new List<GardenLog.SharedKernel.RelatedEntity>();
         relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
