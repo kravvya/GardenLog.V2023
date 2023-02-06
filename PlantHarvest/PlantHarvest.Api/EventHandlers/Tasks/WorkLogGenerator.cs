@@ -40,7 +40,8 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
 
         var relatedEntities = new List<GardenLog.SharedKernel.RelatedEntity>();
         relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
-        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantHarvest.PlantName));
+        string plantName = string.IsNullOrEmpty(plantHarvest.PlantVarietyName) ? plantHarvest.PlantName : $"{plantHarvest.PlantName}-{plantHarvest.PlantVarietyName}";
+        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantName));
 
         var command = new CreateWorkLogCommand()
         {
