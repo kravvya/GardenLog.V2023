@@ -2,6 +2,7 @@
 using MediatR;
 using PlantCatalog.Contract.ViewModels;
 using PlantHarvest.Api.Extensions;
+using PlantHarvest.Domain.HarvestAggregate;
 using PlantHarvest.Infrastructure.ApiClients;
 using System.Collections.ObjectModel;
 
@@ -132,13 +133,13 @@ public class HarvestCommandHandler : IHarvestCommandHandler
                 throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
             }
 
-            var plantId = harvest.AddPlantHarvestCycle(command);
+            var plantHarvestId = harvest.AddPlantHarvestCycle(command);
 
             try
             {
-                var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
+              var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(harvest.Plants.First(p => p.Id == plantHarvestId), command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
 
-                ApplyPlantSchedules(generatedSchedules, harvest, plantId);
+                ApplyPlantSchedules(generatedSchedules, harvest, plantHarvestId);
             }
             catch (Exception ex)
             {
@@ -146,14 +147,14 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             }
 
 
-            _harvestCycleRepository.AddPlantHarvestCycle(plantId, harvest);
+            _harvestCycleRepository.AddPlantHarvestCycle(plantHarvestId, harvest);
             //_harvestCycleRepository.Update(harvest);
 
             await _mediator.DispatchDomainEventsAsync(harvest);
 
             await _unitOfWork.SaveChangesAsync();
 
-            return plantId;
+            return plantHarvestId;
         }
         catch (Exception ex)
         {
@@ -177,7 +178,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         try
         {
-            var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
+            var generatedSchedules = await _scheduleBuilder.GeneratePlantCalendarBasedOnGrowInstruction(harvest.Plants.First(p => p.Id == command.PlantHarvestCycleId), command.PlantId, command.PlantGrowthInstructionId, command.PlantVarietyId, harvest.GardenId);
 
             ApplyPlantSchedules(generatedSchedules, harvest, command.PlantHarvestCycleId);
 

@@ -10,7 +10,7 @@ public class TransplantScheduler : SchedulerBase, IScheduler
         return growInstruction.PlantingMethod != plant.PlantingMethodEnum.DirectSeed && growInstruction.TransplantWeeksAheadOfWeatherCondition.HasValue;
     }
 
-    public CreatePlantScheduleCommand Schedule(PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
+    public CreatePlantScheduleCommand Schedule(PlantHarvestCycle plantHarvest, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
     {
         DateTime? startDate = GetStartDateBasedOnWeatherCondition(growInstruction.TransplantAheadOfWeatherCondition, 
                                     growInstruction.TransplantWeeksAheadOfWeatherCondition.Value,

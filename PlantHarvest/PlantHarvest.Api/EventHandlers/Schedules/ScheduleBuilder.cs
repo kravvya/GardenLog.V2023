@@ -6,7 +6,7 @@ namespace PlantHarvest.Api.Schedules;
 
 public interface IScheduleBuilder
 {
-    Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(string plantId, string growInstructionId, string plantVarietyId, string gardenId);
+    Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string growInstructionId, string plantVarietyId, string gardenId);
 }
 
 public class ScheduleBuilder : IScheduleBuilder
@@ -23,7 +23,7 @@ public class ScheduleBuilder : IScheduleBuilder
         LoadSchedulers();
     }
 
-    public async Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(string plantId, string growInstructionId, string plantVarietyId, string gardenId)
+    public async Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string growInstructionId, string plantVarietyId, string gardenId)
     {
         List<CreatePlantScheduleCommand> plantSchedules = new List<CreatePlantScheduleCommand>();
 
@@ -57,7 +57,7 @@ public class ScheduleBuilder : IScheduleBuilder
 
         _schedulers.Where(s => s.CanSchedule(growInstruction)).ToList().ForEach(s =>
         {
-            var schedule = s.Schedule(growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
+            var schedule = s.Schedule(plantHarvest, growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
             if (schedule != null)
             {
                 plantSchedules.Add(schedule);

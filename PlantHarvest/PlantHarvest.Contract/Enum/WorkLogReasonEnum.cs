@@ -6,26 +6,28 @@ public enum WorkLogReasonEnum : int
 {
     [Description("Unspecified")]
     Unspecified = 0,
+    [Description("Fertilize Indoors")]
+    FertilizeIndoors = 1,
     [Description("Fertilize")]
-    Fertilize = 1,
+    FertilizeOutside = 2,
     [Description("Harden Off")]
-    Harden = 2,
+    Harden = 3,
     [Description("Harvest")]
-    Harvest = 3,
+    Harvest = 4,
     [Description("Information")]
-    Information =4,
+    Information =5,
     [Description("Issue")]
-    Issue = 5,
+    Issue = 6,
     [Description("Issue Resolution")]
-    IssueResolution = 6,
+    IssueResolution = 7,
     [Description("Plant")]
-    Plant = 7,
+    Plant = 8,
     [Description("Maintenance")]
-    Maintenance = 8,
+    Maintenance = 9,
     [Description("Sow Indoors")]
-    SowIndoors = 9,
+    SowIndoors = 10,
     [Description("Sow Outside")]
-    SowOutside = 10,
+    SowOutside = 11,
     [Description("Transplant Outside")]
-    TransplantOutside = 11
+    TransplantOutside = 12
 }

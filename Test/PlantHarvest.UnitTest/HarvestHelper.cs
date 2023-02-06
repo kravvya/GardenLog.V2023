@@ -61,8 +61,8 @@ namespace PlantHarvest.UnitTest
                 PlantVarietyId = PlantsHelper.PLANT_VARIETY_ID,
                 PlantVarietyName = "Test Variety Name",
                 SeedingDateTime = null,
-                SeedVendorId = null,
-                SeedVendorName = null,
+                SeedVendorId = "SeedVendorId",
+                SeedVendorName = "Good Seeds",
                 TotalItems = 0,
                 TotalWeightInPounds = 0,
                 TransplantDate = null

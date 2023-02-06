@@ -47,12 +47,16 @@ public class ScheduleBuilderShould
     {
         var builder = new ScheduleBuilder(_apiClinet, _userManagementApiClient);
 
-        var schedues = await builder.GeneratePlantCalendarBasedOnGrowInstruction(PlantsHelper.PLANT_ID, PlantsHelper.GROW_INSTRUCTION_ID, PlantsHelper.PLANT_VARIETY_ID,UserManagementHelper.GARDEN_ID);
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+
+        var schedues = await builder.GeneratePlantCalendarBasedOnGrowInstruction(harvest.Plants.First(p => p.Id == plantHarvestId), PlantsHelper.PLANT_ID, PlantsHelper.GROW_INSTRUCTION_ID, PlantsHelper.PLANT_VARIETY_ID,UserManagementHelper.GARDEN_ID);
 
         Assert.NotNull(schedues);
         Assert.NotEmpty(schedues);
         Assert.Contains(schedues, schedule => schedule.TaskType == WorkLogReasonEnum.SowIndoors);
         Assert.Contains(schedues, schedule => schedule.TaskType == WorkLogReasonEnum.TransplantOutside);
         Assert.Contains(schedues, schedule => schedule.TaskType == WorkLogReasonEnum.Harvest);
+        Assert.Contains(schedues, schedule => schedule.Notes.Equals("Desired number of plants: 30. Seeds from Good Seeds. Fertilize with Half Strength Balanced. Start Seeding Instrunctions"));
     }
 }

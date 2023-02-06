@@ -11,7 +11,7 @@ public class HarvestScheduler : SchedulerBase, IScheduler
         return true;
     }
 
-    public CreatePlantScheduleCommand Schedule(PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
+    public CreatePlantScheduleCommand Schedule(PlantHarvestCycle harvestCycle, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
     {
         DateTime? transplantDate = GetStartDateBasedOnWeatherCondition(growInstruction.TransplantAheadOfWeatherCondition, 
                                     growInstruction.TransplantWeeksAheadOfWeatherCondition.Value,

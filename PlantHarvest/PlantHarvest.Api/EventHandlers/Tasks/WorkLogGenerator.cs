@@ -54,7 +54,7 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
         var plant = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
 
         StringBuilder note = new();
-        if (plant.GerminationRate.HasValue) { note.Append($"{plant.GerminationRate.Value}% gemmanation of "); }
+        if (plant.GerminationRate.HasValue) { note.Append($"{plant.GerminationRate.Value}% germanation of "); }
         note.Append(plant.PlantName);
         note.Append($"  on {plant.GerminationDate.Value.ToShortDateString()} ");
         if (!string.IsNullOrEmpty(plant.SeedCompanyName)) { note.Append($" from {plant.SeedCompanyName} "); }
