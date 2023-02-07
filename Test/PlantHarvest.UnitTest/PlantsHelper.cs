@@ -74,4 +74,23 @@ internal class PlantsHelper
 
         return JsonSerializer.Serialize(variety, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
     }
+
+
+    public static string GetPlant()
+    {
+        var plant = new PlantViewModel()
+        {
+            Name = "Test Variety",
+            DaysToMaturityMax = 110,
+            DaysToMaturityMin = 120,
+            Description = "Description",
+            GrowTolerance = GrowToleranceEnum.LightFrost,
+           LightRequirement = LightRequirementEnum.FullShade,
+            MoistureRequirement = MoistureRequirementEnum.InchPerWeek,
+            PlantId = PLANT_ID,
+            Tags = new() { "Tag" }
+        };
+
+        return JsonSerializer.Serialize(plant, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+    }
 }

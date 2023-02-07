@@ -13,5 +13,7 @@ public enum HarvestEventTriggerEnum
     PlantScheduleDeleted = 9,
     PlantHarvestCycleSeeded = 10,
     PlantHarvestCycleGerminated = 11,
-    PlantHarvestCycleTransplanted = 12
+    PlantHarvestCycleTransplanted = 12,
+    PlantHarvestCycleHarvested = 13,
+    PlantHarvestCycleCompleted = 14
 }

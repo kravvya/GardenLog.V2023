@@ -4,12 +4,12 @@ using PlantHarvest.Domain.WorkLogAggregate.Events;
 namespace PlantHarvest.Orchestrator.Tasks;
 
 
-public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INotificationHandler<WorkLogEvent>
+public class OutsideSawTaskGenerator : INotificationHandler<HarvestEvent>//, INotificationHandler<WorkLogEvent>
 {
     private readonly IPlantTaskCommandHandler _taskCommandHandler;
     private readonly IPlantTaskQueryHandler _taskQueryHandler;
 
-    public IndoorSawTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler)
+    public OutsideSawTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler)
     {
         _taskCommandHandler = taskCommandHandler;
         _taskQueryHandler = taskQueryHandler;
@@ -20,30 +20,24 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
         switch (harvestEvent.Trigger)
         {
             case HarvestEventTriggerEnum.PlantAddedToHarvestCycle:
-                await CreateIndoorSowTask(harvestEvent);
+                await CreateOutsideSowTask(harvestEvent);
                 break;
             case HarvestEventTriggerEnum.PlantHarvestCycleSeeded:
-                await CompleteIndoorSowTasks(harvestEvent);
+                await CompleteOutsideSowTasks(harvestEvent);
                 break;
             case HarvestEventTriggerEnum.PlantHarvestCycleDeleted:
-                await DeleteIndoorSowTask(harvestEvent);
+                await DeleteOutsideSowTask(harvestEvent);
                 break;
 
         }
     }
 
-    //public async Task Handle(WorkLogEvent workEvent, CancellationToken cancellationToken)
-    //{
-    //    if (workEvent.Work.Reason == WorkLogReasonEnum.SowIndoors && !string.IsNullOrEmpty(workEvent.Work.RelatedEntityid))
-    //    {
-    //        await CompleteIndoorSowTasks(workEvent);
-    //    }
-    //}
-
-    private async Task CompleteIndoorSowTasks(HarvestEvent harvestEvent)
+    private async Task CompleteOutsideSowTasks(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.SowIndoors });
+        if (plantHarvest.PlantingMethod != PlantingMethodEnum.DirectSeed) return;
+
+        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.SowOutside });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)
@@ -60,10 +54,10 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
         }
     }
 
-    private async Task DeleteIndoorSowTask(HarvestEvent harvestEvent)
+    private async Task DeleteOutsideSowTask(HarvestEvent harvestEvent)
     {
         var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.SowIndoors });
+        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.SowOutside });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)
@@ -73,12 +67,11 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
         }
     }
 
-    private async Task CreateIndoorSowTask(HarvestEvent harvestEvent)
+    private async Task CreateOutsideSowTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors) return;
+        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var schedule = plant.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.SowOutside);
 
-        var schedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.SowIndoors);
         if (schedule != null)
         {
             var command = new CreatePlantTaskCommand()
@@ -86,13 +79,13 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
                 CreatedDateTime = DateTime.UtcNow,
                 HarvestCycleId = harvestEvent.HarvestId,
                 IsSystemGenerated = true,
-                PlantHarvestCycleId = plantHarvest.Id,
-                PlantName = string.IsNullOrEmpty(plantHarvest.PlantVarietyName) ? plantHarvest.PlantName : $"{plantHarvest.PlantName} - {plantHarvest.PlantVarietyName}",
+                PlantHarvestCycleId = plant.Id,
+                PlantName = string.IsNullOrEmpty(plant.PlantVarietyName)? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}",
                 PlantScheduleId = schedule.Id,
                 TargetDateStart = schedule.StartDate,
                 TargetDateEnd = schedule.EndDate,
-                Type = WorkLogReasonEnum.SowIndoors,
-                Title = "Sow Seeds Indoors",
+                Type = WorkLogReasonEnum.SowOutside,
+                Title = "Sow Outside",
                 Notes = schedule.Notes,
             };
 

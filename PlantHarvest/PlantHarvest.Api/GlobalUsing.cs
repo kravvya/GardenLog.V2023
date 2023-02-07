@@ -19,5 +19,6 @@ public static class GlobalConstants
 {
     public const string PLANTCATALOG_API = "PlantCatalog.Api";
     public const int DEFAULT_FertilizeFrequencyForSeedlingsInWeeks = 2;
+    public const int DEFAULT_FertilizeFrequencyInWeeks = 4;
     public const int DEFAULT_HardenOffPeriodInDays = 7;
 }

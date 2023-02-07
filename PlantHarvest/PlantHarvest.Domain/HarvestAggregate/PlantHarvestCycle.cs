@@ -138,7 +138,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.TotalItems, command.TotalItems);
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
-        this.Set<PlantingMethodEnum>(() => this.PlantingMethod, command.PlantingMethod);
 
         foreach (var evt in DomainEvents)
         {
@@ -160,6 +159,12 @@ public class PlantHarvestCycle : BaseEntity, IEntity
                 break;
             case "TransplantDate":
                 if (this.TransplantDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleTransplanted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                break;
+            case "FirstHarvestDate":
+                if(FirstHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleHarvested, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                break;
+            case "LastHarvestDate":
+                if (LastHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleCompleted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             default:
                 if (!this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleUpdated))

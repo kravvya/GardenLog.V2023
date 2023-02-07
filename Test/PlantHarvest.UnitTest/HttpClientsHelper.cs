@@ -24,6 +24,9 @@ namespace PlantHarvest.UnitTest
             expectedresponses.Add(new KeyValuePair<string, string>(
                     Routes.GetPlantVariety.Replace("{plantId}", PlantsHelper.PLANT_ID).Replace("{id}", PlantsHelper.PLANT_VARIETY_ID), PlantsHelper.GetPlantVariety()));
 
+            expectedresponses.Add(new KeyValuePair<string, string>(
+                    Routes.GetPlantById.Replace("{id}", PlantsHelper.PLANT_ID), PlantsHelper.GetPlant()));
+
 
             return HttpClientTestHelper.GetMockedHttpClient(HttpStatusCode.OK, expectedresponses, new Uri(PLANT_CATALOG_URL));
         }

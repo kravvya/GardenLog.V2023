@@ -1,5 +1,6 @@
 ﻿using GardenLog.SharedKernel.Enum;
 using MongoDB.Driver.Linq;
+using PlantCatalog.Contract.Enum;
 using PlantHarvest.Domain.HarvestAggregate.Events;
 using PlantHarvest.Domain.WorkLogAggregate.Events;
 using PlantHarvest.Infrastructure.ApiClients;
@@ -8,15 +9,15 @@ using System.Text;
 namespace PlantHarvest.Orchestrator.Tasks;
 
 
-public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, INotificationHandler<WorkLogEvent>
+public class OutdoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, INotificationHandler<WorkLogEvent>
 {
     private readonly IPlantTaskCommandHandler _taskCommandHandler;
     private readonly IPlantTaskQueryHandler _taskQueryHandler;
     private readonly IPlantCatalogApiClient _plantCatalogApi;
     private readonly IHarvestQueryHandler _harvestQueryHandler;
-    private readonly ILogger<IndoorFertilizeTaskGenerator> _logger;
+    private readonly ILogger<OutdoorFertilizeTaskGenerator> _logger;
 
-    public IndoorFertilizeTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<IndoorFertilizeTaskGenerator> logger)
+    public OutdoorFertilizeTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<OutdoorFertilizeTaskGenerator> logger)
     {
         _taskCommandHandler = taskCommandHandler;
         _taskQueryHandler = taskQueryHandler;
@@ -29,14 +30,17 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
     {
         switch (harvestEvent.Trigger)
         {
-            case HarvestEventTriggerEnum.PlantHarvestCycleGerminated:
-                await CreateFertilizeIndoorsTask(harvestEvent);
-                break;
             case HarvestEventTriggerEnum.PlantHarvestCycleTransplanted:
-                await DeleteFertilizeIndoorsTask(harvestEvent);
+                await CreateFertilizeOutdoorTask(harvestEvent);
                 break;
             case HarvestEventTriggerEnum.PlantHarvestCycleDeleted:
-                await DeleteFertilizeIndoorsTask(harvestEvent);
+                await DeleteFertilizeOutdoorTask(harvestEvent);
+                break;
+            case HarvestEventTriggerEnum.PlantHarvestCycleHarvested:
+                await DeleteFertilizeOutdoorTask(harvestEvent);
+                break;
+            case HarvestEventTriggerEnum.PlantHarvestCycleCompleted:
+                await DeleteFertilizeOutdoorTask(harvestEvent);
                 break;
 
         }
@@ -44,20 +48,20 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     public async Task Handle(WorkLogEvent workEvent, CancellationToken cancellationToken)
     {
-        if (workEvent.Work.Reason == WorkLogReasonEnum.FertilizeIndoors)
+        if (workEvent.Work.Reason == WorkLogReasonEnum.FertilizeOutside)
         {
-            await CompleteFertilizeIndoorsTask(workEvent);
-            await CreateFertilizeIndoorsTask(workEvent);
+            await CompleteFertilizeOutdoorTask(workEvent);
+            await CreateFertilizeOutdoorTask(workEvent);
         }
     }
 
-    private async Task CompleteFertilizeIndoorsTask(WorkLogEvent workEvent)
+    private async Task CompleteFertilizeOutdoorTask(WorkLogEvent workEvent)
     {
         var plantHarvestRelatedEntity = workEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
 
         if (plantHarvestRelatedEntity != null)
         {
-            var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvestRelatedEntity.EntityId, Reason = WorkLogReasonEnum.FertilizeIndoors });
+            var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvestRelatedEntity.EntityId, Reason = WorkLogReasonEnum.FertilizeOutside });
             if (tasks != null && tasks.Any())
             {
                 foreach (var task in tasks)
@@ -79,27 +83,27 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
         }
     }
 
-    private async Task CreateFertilizeIndoorsTask(HarvestEvent harvestEvent)
+    private async Task CreateFertilizeOutdoorTask(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
+        if (!plantHarvest.TransplantDate.HasValue)
         {
             return;
         }
 
         var growInstruction = await _plantCatalogApi.GetPlantGrowInstruction(plantHarvest.PlantId, plantHarvest.PlantGrowthInstructionId);
 
-        if (growInstruction == null || growInstruction.FertilizerForSeedlings == PlantCatalog.Contract.Enum.FertilizerEnum.Unspecified)
+        if (growInstruction == null || growInstruction.Fertilizer == FertilizerEnum.Unspecified)
         {
             return;
         }
 
-        //assume this is first time we are going to fertilize. So use germination date as a base. All subsequent fertilizations will be based onthe last fertilie event from WorkLog
+        //assume this is first time we are going to fertilize. So use tranplant date date as a base. All subsequent fertilizations will be based on the last fertilie event from WorkLog
         if (growInstruction != null)
         {
-            var firstFertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
-                                plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
-                                plantHarvest.GerminationDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
+            var firstFertilizeDate = growInstruction.FertilizeFrequencyInWeeks.HasValue ?
+                                plantHarvest.TransplantDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyInWeeks.Value) :
+                                plantHarvest.TransplantDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyInWeeks);
 
 
             var command = new CreatePlantTaskCommand()
@@ -112,9 +116,9 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
                 PlantScheduleId = string.Empty,
                 TargetDateStart = firstFertilizeDate,
                 TargetDateEnd = firstFertilizeDate.AddDays(1),
-                Type = WorkLogReasonEnum.FertilizeIndoors,
-                Title = "Fertilize Seedlings",
-                Notes = GetFertilizeIndoorsNotes(growInstruction)
+                Type = WorkLogReasonEnum.FertilizeOutside,
+                Title = "Fertilize",
+                Notes = GetFertilizeOutsideNotes(growInstruction)
             };
 
             await _taskCommandHandler.CreatePlantTask(command);
@@ -123,7 +127,7 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     }
 
-    private async Task CreateFertilizeIndoorsTask(WorkLogEvent workLogEvent)
+    private async Task CreateFertilizeOutdoorTask(WorkLogEvent workLogEvent)
     {
         var harvestRelatedEntity = workLogEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.HarvestCycle);
         if (harvestRelatedEntity == null) { return;  }
@@ -133,26 +137,26 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
         var plantHarvest = await _harvestQueryHandler.GetPlantHarvestCycle(harvestRelatedEntity.EntityId, plantHarvestRelatedEntity.EntityId);
 
-        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
+        if (!plantHarvest.TransplantDate.HasValue)
         {
             return;
         }
 
         var growInstruction = await _plantCatalogApi.GetPlantGrowInstruction(plantHarvest.PlantId, plantHarvest.PlantGrowthInstructionId);
 
-        if (growInstruction == null || growInstruction.FertilizerForSeedlings == PlantCatalog.Contract.Enum.FertilizerEnum.Unspecified)
+        if (growInstruction == null || growInstruction.Fertilizer == FertilizerEnum.Unspecified)
         {
             return;
         }
 
         //we just fertilized. So use worklog eventdate as a base. 
-        var fertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
-                            workLogEvent.Work.EventDateTime.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
-                            workLogEvent.Work.EventDateTime.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
+        var fertilizeDate = growInstruction.FertilizeFrequencyInWeeks.HasValue ?
+                            workLogEvent.Work.EventDateTime.AddDays(7 * growInstruction.FertilizeFrequencyInWeeks.Value) :
+                            workLogEvent.Work.EventDateTime.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyInWeeks);
 
-        //make sure that fertilization date is before projected transplant date
-        var transplantSchedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.TransplantOutside);
-        if(transplantSchedule!= null && transplantSchedule.StartDate <= fertilizeDate)
+        //make sure that fertilization date is before projected harvest date
+        var harvestSchedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.Harvest);
+        if(harvestSchedule!= null && harvestSchedule.StartDate <= fertilizeDate)
         {
             return;
         }
@@ -167,29 +171,29 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
             PlantScheduleId = string.Empty,
             TargetDateStart = fertilizeDate,
             TargetDateEnd = fertilizeDate.AddDays(1),
-            Type = WorkLogReasonEnum.FertilizeIndoors,
-            Title = "Fertilize Seedlings",
-            Notes = GetFertilizeIndoorsNotes(growInstruction)
+            Type = WorkLogReasonEnum.FertilizeOutside,
+            Title = "Fertilize",
+            Notes = GetFertilizeOutsideNotes(growInstruction)
         };
 
         await _taskCommandHandler.CreatePlantTask(command);
     }
 
-    private static string GetFertilizeIndoorsNotes(PlantGrowInstructionViewModel growInstruction)
+    private static string GetFertilizeOutsideNotes(PlantGrowInstructionViewModel growInstruction)
     {
         StringBuilder notes = new();
-        notes.Append($"Fertilize with {growInstruction.FertilizerForSeedlings.GetDescription()} ");
-        if (growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue)
-            notes.Append($" every {growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value} weeks.");
+        notes.Append($"Fertilize with {growInstruction.Fertilizer.GetDescription()} ");
+        if (growInstruction.FertilizeFrequencyInWeeks.HasValue)
+            notes.Append($" every {growInstruction.FertilizeFrequencyInWeeks.Value} weeks.");
         else
-            notes.Append($" every {GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks} weeks.");
+            notes.Append($" every {GlobalConstants.DEFAULT_FertilizeFrequencyInWeeks} weeks.");
         return notes.ToString();
     }
 
-    private async Task DeleteFertilizeIndoorsTask(HarvestEvent harvestEvent)
+    private async Task DeleteFertilizeOutdoorTask(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.FertilizeIndoors });
+        var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.FertilizeOutside });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)
