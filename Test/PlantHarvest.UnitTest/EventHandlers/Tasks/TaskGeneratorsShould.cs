@@ -35,6 +35,18 @@ public class TaskGeneratorsShould
               HarvestHelper.GetPlantTaskViewModel(HarvestHelper.PLANT_TASK_ID, HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.FertilizeIndoors)
            }).AsReadOnly());
 
+        _taskQueryHandlerMock.SetupGet(x => x.SearchPlantTasks(It.Is<PlantTaskSearch>(s => s.Reason == WorkLogReasonEnum.TransplantOutside)).Result)
+        .Returns((new List<PlantTaskViewModel>()
+          {
+              HarvestHelper.GetPlantTaskViewModel(HarvestHelper.PLANT_TASK_ID, HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.TransplantOutside)
+          }).AsReadOnly());
+
+        _taskQueryHandlerMock.SetupGet(x => x.SearchPlantTasks(It.Is<PlantTaskSearch>(s => s.Reason == WorkLogReasonEnum.Harden)).Result)
+        .Returns((new List<PlantTaskViewModel>()
+          {
+              HarvestHelper.GetPlantTaskViewModel(HarvestHelper.PLANT_TASK_ID, HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.Harden)
+          }).AsReadOnly());
+
         var httpPlantCatalogClient = HttpClientsHelper.GetPlantCatalogHttpClientForGrowInstructions(PlantCatalog.Contract.Enum.PlantingMethodEnum.SeedIndoors);
 
         var configMock = new Mock<IConfiguration>();
@@ -195,5 +207,62 @@ public class TaskGeneratorsShould
 
     }
 
+    #endregion
+
+    #region "Transplant Outside"
+    [Fact]
+    public async Task TaskGenerator_Creates_TransplantOutside_Task_When_PlantHarvest_Seeded()
+    {
+        var tranplantOutsideTaskGenerator = new TransplantOutsideTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object);
+
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.Now, NumberOfSeeds=100, PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
+
+        harvest.AddPlantSchedule(HarvestHelper.GetCommandToCreateSchedule(plantHarvestId, WorkLogReasonEnum.TransplantOutside));
+
+        await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.TransplantOutside)), Times.Once);
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.Harden)), Times.Once);
+      
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Complete_TransplantOutside_Task_When_PlantHarvest_Is_Transplanted()
+    {
+        var tranplantOutsideTaskGenerator = new TransplantOutsideTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object);
+
+        //await IndoorSawTaskGenerator.Handle(HarvestHelper.GetWorkLogEvent(WorkLogEventTriggerEnum.WorkLogCreated
+        //                                                                    , HarvestHelper.PLANT_HARVEST_CYCLE_ID
+        //                                                                    , WorkLogReasonEnum.SowIndoors), new CancellationToken());
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { TransplantDate = DateTime.UtcNow, NumberOfTransplants=50, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleTransplanted);
+
+        await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+
+        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Deletes_TransplantOutside_Task_When_PlantHarvest_Removed()
+    {
+        var tranplantOutsideTaskGenerator = new TransplantOutsideTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.DeletePlantHarvestCycle(plantHarvestId);
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleDeleted);
+
+        await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(2));
+    }
     #endregion
 }

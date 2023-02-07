@@ -14,7 +14,7 @@ public class WorkLogGeneratorsShould
     }
 
     [Fact]
-    public async Task WorkLogGenerator_Creates_WorkLog_When_PlantWorkLog_Sends_Seeded_Event()
+    public async Task WorkLogGenerator_Creates_WorkLog_When_PlantHarvest_Sends_Seeded_Event()
     {
         var workLogGenerator = new WorkLogGenerator(_workLogCommandHandlerMock.Object);
 
@@ -30,7 +30,7 @@ public class WorkLogGeneratorsShould
     }
 
     [Fact]
-    public async Task WorkLogGenerator_Creates_WorkLog_When_PlantWorkLog_Sends_Germinated_Event()
+    public async Task WorkLogGenerator_Creates_WorkLog_When_PlantHarvest_Sends_Germinated_Event()
     {
         var workLogGenerator = new WorkLogGenerator(_workLogCommandHandlerMock.Object);
 
@@ -43,6 +43,22 @@ public class WorkLogGeneratorsShould
         await workLogGenerator.Handle((HarvestEvent)evt, new CancellationToken());
 
         _workLogCommandHandlerMock.Verify(t => t.CreateWorkLog(It.Is<CreateWorkLogCommand>(c => c.Reason == WorkLogReasonEnum.Information)), Times.Once);
-        _workLogCommandHandlerMock.Verify(t => t.CreateWorkLog(It.Is<CreateWorkLogCommand>(c => c.Log.Equals($"80% germanation of Test Plant  on {DateTime.Now.ToShortDateString()}  from Good seeds "))), Times.Once);
+        _workLogCommandHandlerMock.Verify(t => t.CreateWorkLog(It.Is<CreateWorkLogCommand>(c => c.Log.Equals($"80% germanation of Test Plantfrom Good seeds  were germinated on {DateTime.Now.ToShortDateString()} "))), Times.Once);
+    }
+
+    [Fact]
+    public async Task WorkLogGenerator_Creates_WorkLog_When_PlantHarvest_Sends_Transplanted_Event()
+    {
+        var workLogGenerator = new WorkLogGenerator(_workLogCommandHandlerMock.Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { TransplantDate = DateTime.Now, NumberOfTransplants=50, PlantVarietyName="Test Vaiery", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleTransplanted);
+
+        await workLogGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _workLogCommandHandlerMock.Verify(t => t.CreateWorkLog(It.Is<CreateWorkLogCommand>(c => c.Reason == WorkLogReasonEnum.TransplantOutside)), Times.Once);
+        _workLogCommandHandlerMock.Verify(t => t.CreateWorkLog(It.Is<CreateWorkLogCommand>(c => c.Log.Contains($"50 plants of Test Plant-Test Vaiery  were transplanted outside on {DateTime.Now.ToShortDateString()} "))), Times.Once);
     }
 }

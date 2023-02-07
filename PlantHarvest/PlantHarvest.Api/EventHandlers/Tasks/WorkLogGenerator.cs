@@ -24,6 +24,9 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
             case HarvestEventTriggerEnum.PlantHarvestCycleGerminated:
                 await GenerateInformationWorkLogForGenrmatedEvent(harvestEvent);
                 break;
+            case HarvestEventTriggerEnum.PlantHarvestCycleTransplanted:
+                await GenerateTransplantOutsideWorkLog(harvestEvent);
+                break;
         }
    
     }
@@ -35,6 +38,7 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
         StringBuilder note = new();
         if (plantHarvest.NumberOfSeeds.HasValue) { note.Append($"{plantHarvest.NumberOfSeeds} seeds of "); }
         note.Append(plantHarvest.PlantName);
+        if (!string.IsNullOrWhiteSpace(plantHarvest.PlantVarietyName)) { note.Append($"-{plantHarvest.PlantVarietyName} "); }
         if (!string.IsNullOrWhiteSpace(plantHarvest.SeedCompanyName)) { note.Append($"from {plantHarvest.SeedCompanyName} "); }
         note.Append($" were planted indoors on {plantHarvest.SeedingDate.Value.ToShortDateString()} ");
 
@@ -54,7 +58,6 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
         await _workLogCommandHandler.CreateWorkLog(command);
     }
 
-
     public async Task GenerateInformationWorkLogForGenrmatedEvent(HarvestEvent harvestEvent)
     {
         var plantHarvest = harvestEvent.Harvest.Plants.First((Func<PlantHarvestCycle, bool>)(p => p.Id == harvestEvent.TriggerEntity.EntityId));
@@ -62,12 +65,13 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
         StringBuilder note = new();
         if (plantHarvest.GerminationRate.HasValue) { note.Append($"{plantHarvest.GerminationRate.Value}% germanation of "); }
         note.Append(plantHarvest.PlantName);
-        note.Append($"  on {plantHarvest.GerminationDate.Value.ToShortDateString()} ");
-        if (!string.IsNullOrEmpty(plantHarvest.SeedCompanyName)) { note.Append($" from {plantHarvest.SeedCompanyName} "); }
+        if (!string.IsNullOrWhiteSpace(plantHarvest.PlantVarietyName)) { note.Append($"-{plantHarvest.PlantVarietyName} "); }
+        if (!string.IsNullOrWhiteSpace(plantHarvest.SeedCompanyName)) { note.Append($"from {plantHarvest.SeedCompanyName} "); }
+        note.Append($" were germinated on {plantHarvest.GerminationDate.Value.ToShortDateString()} ");
 
-        var relatedEntities = new List<GardenLog.SharedKernel.RelatedEntity>();
-        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
-        relatedEntities.Add(new GardenLog.SharedKernel.RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantHarvest.PlantName));
+        var relatedEntities = new List<RelatedEntity>();
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantHarvest.PlantName));
 
         var command = new CreateWorkLogCommand()
         {
@@ -75,6 +79,33 @@ public class WorkLogGenerator : INotificationHandler<HarvestEvent>
             EventDateTime = plantHarvest.GerminationDate.Value,
             Log = note.ToString(),
             Reason = WorkLogReasonEnum.Information,
+            RelatedEntities = relatedEntities
+        };
+        await _workLogCommandHandler.CreateWorkLog(command);
+    }
+
+    public async Task GenerateTransplantOutsideWorkLog(HarvestEvent harvestEvent)
+    {
+        var plantHarvest = harvestEvent.Harvest.Plants.First((Func<PlantHarvestCycle, bool>)(p => p.Id == harvestEvent.TriggerEntity.EntityId));
+
+        StringBuilder note = new();
+        if (plantHarvest.NumberOfTransplants.HasValue) { note.Append($"{plantHarvest.NumberOfTransplants} plants of "); }
+        note.Append(plantHarvest.PlantName);
+        if (!string.IsNullOrWhiteSpace(plantHarvest.PlantVarietyName)) { note.Append($"-{plantHarvest.PlantVarietyName} "); }
+        if (!string.IsNullOrWhiteSpace(plantHarvest.SeedCompanyName)) { note.Append($"from {plantHarvest.SeedCompanyName} "); }
+        note.Append($" were transplanted outside on {plantHarvest.TransplantDate.Value.ToShortDateString()} ");
+
+        var relatedEntities = new List<RelatedEntity>();
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvestEvent.Harvest.Id, harvestEvent.Harvest.HarvestCycleName));
+        string plantName = string.IsNullOrEmpty(plantHarvest.PlantVarietyName) ? plantHarvest.PlantName : $"{plantHarvest.PlantName}-{plantHarvest.PlantVarietyName}";
+        relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.Id, plantName));
+
+        var command = new CreateWorkLogCommand()
+        {
+            EnteredDateTime = DateTime.Now,
+            EventDateTime = plantHarvest.TransplantDate.Value,
+            Log = note.ToString(),
+            Reason = WorkLogReasonEnum.TransplantOutside,
             RelatedEntities = relatedEntities
         };
         await _workLogCommandHandler.CreateWorkLog(command);
