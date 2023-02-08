@@ -8,6 +8,12 @@
     </Body>
 </ModalView>
 
+<ModalView OnCloseModal="ClosePlantHarvestMiniFormModal" @ref="_plantHarvestMiniFormModal">
+    <Body>
+        <PlantHarvestCycleMiniForm OnClose=@ClosePlantHarvestCycleMiniForm @ref=_plantHarvestMiniForm />
+    </Body>
+</ModalView>
+
 <div class="row">
 
     <div id="task-filter" class="col-md-2 d-md-block collapse">
@@ -59,16 +65,17 @@
                 else
                 {
                     <div class="table-responsive-md  d-none d-sm-block">
+                        <div class="d-flex justify-content-end"><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add Custom Task</span></div></div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col"></th>
-                                    <th scope="col">Plant</th>
                                     <th scope="col">Reason</th>
+                                    <th scope="col">Plant</th>
                                     <th scope="col">Target Date</th>
                                     <th scope="col">Title</th>
                                     <th scope="col">Note</th>
-                                    <th><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></th>
+                                    <th scope="col">Completed</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,25 +85,31 @@
                                     {
                                         <tr>
                                             <td class="@GetTableClass(task.Type)">&nbsp;&nbsp;</td>
-                                            <td><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></td>
                                             <td>
                                                 @(
                                                     _verifyService.GetDescription<WorkLogReasonEnum>(task.Type)
                                                     )
                                             </td>
+                                            <td><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></td>
                                             <td>@task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</td>
                                             <td>@task.Title</td>
-                                            <td colspan="2">@task.Notes</td>
+                                            <td colspan="1">@task.Notes</td>
+                                            <td class="align-middle">
+                                                @if (task.CompletedDateTime.HasValue)
+                                                {
+                                                    @task.CompletedDateTime.Value.ToShortDateString()
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-info" type="button" role="navigation" @onclick=@(() => ResolveTask(task))>
+                                                        <span class="bi bi-check-lg">&nbsp;</span>
+                                                    </button>
+                                                }
+                                            </td>
                                         </tr>
                                     }
                                 }
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="6"></td>
-                                    <td><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
 
@@ -107,7 +120,7 @@
                             {
                                 <div class="col-sm-6">
                                     <div class="card mb-2 @GetCardClass(task.Type)">
-                                        <div class="card-header" >
+                                        <div class="card-header">
                                             @task.Title
                                         </div>
                                         <div class="card-body row task-facts_list ">
@@ -121,19 +134,31 @@
                                             </dl>
                                         </div>
                                         <div class="card-footer">
-                                            @*<button type="button" class="btn btn-outline-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
-                                            <button type="button" class="btn btn-outline-primary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-journal-richtext">&nbsp;</span></button>
-                                            <button type="button" class="btn btn-outline-primary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-journals">&nbsp;</span></button>*@
+                                            @if (task.CompletedDateTime.HasValue)
+                                            {
+                                                <div class="card-body row task-facts_list ">
+                                                    <dl class="col">
+                                                        <dt class="task-facts_term">Completed On:</dt>
+                                                        <dd class="task-facts-item">@task.CompletedDateTime.Value.ToShortDateString()</dd>
+                                                    </dl>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-info" type="button" role="navigation" @onclick=@(() => ResolveTask(task))>
+                                                    <span class="bi bi-check-lg">&nbsp;</span>
+                                                </button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             }
                         }
                         <div class="d-flex justify-content-end">
-                             <button @onclick="(() => AddTask())" class="btn btn-secondary"><span class="bi bi-plus-lg">Add</span></button>
+                            <button @onclick="(() => AddTask())" class="btn btn-secondary"><span class="bi bi-plus-lg">Add</span></button>
                         </div>
-                       
-                </div>
+
+                    </div>
                 }
             </article>
         </section>
@@ -144,6 +169,8 @@
 @code {
     private ModalView? _plantTaskFormModal;
     private PlantTaskForm? _plantTaskForm;
+    private ModalView? _plantHarvestMiniFormModal;
+    private PlantHarvestCycleMiniForm? _plantHarvestMiniForm;
     private TaskFilter? _filter;
 
     private List<PlantTaskModel> _tasks { get; set; } = new();
@@ -191,6 +218,13 @@
         StateHasChanged();
     }
 
+    private async Task ResolveTask(PlantTaskViewModel task)
+    {
+        _plantHarvestMiniForm.Initialize(task.HarvestCycleId, task.PlantHarvestCycleId, task.Type);
+        await _plantHarvestMiniFormModal?.OpenModal("Resolve task", GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
     private async Task ClosePlantTaskFormModal()
     {
         await _plantTaskFormModal?.CloseModal();
@@ -200,6 +234,26 @@
     private async Task ClosePlantTaskForm(PlantTaskModel task)
     {
         await _plantTaskFormModal?.CloseModal();
+
+
+        if (_filter.ShowCompletedTasks)
+            _tasks = await _taskService.GetPlantTasks(false);
+        else
+            _tasks = await _taskService.GetActivePlantTasks(false);
+
+
+        StateHasChanged();
+    }
+
+    private async Task ClosePlantHarvestMiniFormModal()
+    {
+        await _plantHarvestMiniFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task ClosePlantHarvestCycleMiniForm(PlantHarvestCycleModel task)
+    {
+        await _plantHarvestMiniFormModal?.CloseModal();
 
 
         if (_filter.ShowCompletedTasks)
@@ -245,6 +299,6 @@
 
     protected void ViewPlantHarvestCycle(PlantTaskModel task)
     {
-        _navigationManager.NavigateToGardenPlanEditPlant (task.HarvestCycleId, task.PlantHarvestCycleId);
+        _navigationManager.NavigateToGardenPlanEditPlant(task.HarvestCycleId, task.PlantHarvestCycleId);
     }
 }

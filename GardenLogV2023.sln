@@ -53,17 +53,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Api", "UserM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.IntegrationTest", "Test\UserManagement.IntegrationTest\UserManagement.IntegrationTest.csproj", "{E7C6CCCA-B78E-4F80-AA4F-E343BA71919E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantHarvest.UnitTest", "Test\PlantHarvest.UnitTest\PlantHarvest.UnitTest.csproj", "{3DD6B43F-2188-493A-BD1E-1580DDD2C563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantHarvest.UnitTest", "Test\PlantHarvest.UnitTest\PlantHarvest.UnitTest.csproj", "{3DD6B43F-2188-493A-BD1E-1580DDD2C563}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GrowConditions", "GrowConditions", "{3CB1BE6C-C850-437A-9F9E-79D418398462}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowConditions.Contract", "GrowConditions\GrowConditions.Contract\GrowConditions.Contract.csproj", "{27A986B0-8352-4D7C-97D3-0F03823A89EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrowConditions.Contract", "GrowConditions\GrowConditions.Contract\GrowConditions.Contract.csproj", "{27A986B0-8352-4D7C-97D3-0F03823A89EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowConditions.Api", "GrowConditions\GrowConditions.Api\GrowConditions.Api.csproj", "{738B6693-C5DB-403B-A905-5F7977D6D217}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrowConditions.Api", "GrowConditions\GrowConditions.Api\GrowConditions.Api.csproj", "{738B6693-C5DB-403B-A905-5F7977D6D217}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdminTool", "AdminTool", "{3B7B063B-15B2-4A3C-A41A-45C7BC205354}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GardenLogAdminConsole", "AdminTool\GardenLogAdminConsole\GardenLogAdminConsole.csproj", "{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GardenLogAdminConsole", "AdminTool\GardenLogAdminConsole\GardenLogAdminConsole.csproj", "{4B9D2BAA-9061-43D5-81AC-25349CB6D6AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
