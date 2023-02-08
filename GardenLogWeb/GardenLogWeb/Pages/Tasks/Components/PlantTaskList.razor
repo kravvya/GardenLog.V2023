@@ -1,5 +1,6 @@
 ﻿@inject IPlantTaskService _taskService;
 @inject IVerifyService _verifyService;
+@inject NavigationManager _navigationManager;
 
 <ModalView OnCloseModal="ClosePlantTaskFormModal" @ref="_plantTaskFormModal">
     <Body>
@@ -43,6 +44,9 @@
             </div>
         </EditForm>
     </div>
+    <div id="toggle-filter" class="d-md-none py-2">
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#task-filter" aria-expanded="false" aria-controls="task-filter">Filters</button>
+    </div>
 
     <div id="tasks" class="col-md-9">
         <section>
@@ -54,11 +58,7 @@
                 }
                 else
                 {
-                    <div id="toggle-filter" class="d-md-none py-2">
-                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#task-filter" aria-expanded="false" aria-controls="task-filter">Filters</button>
-                    </div>
-
-                    <div class="table-responsive-md">
+                    <div class="table-responsive-md  d-none d-sm-block">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -77,8 +77,8 @@
                                     if (IsVisible(task))
                                     {
                                         <tr>
-                                            <td class="@GetClass(task.Type)">&nbsp;&nbsp;</td>
-                                            <td>@task.PlantName</td>
+                                            <td class="@GetTableClass(task.Type)">&nbsp;&nbsp;</td>
+                                            <td><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></td>
                                             <td>
                                                 @(
                                                     _verifyService.GetDescription<WorkLogReasonEnum>(task.Type)
@@ -99,6 +99,41 @@
                             </tfoot>
                         </table>
                     </div>
+
+                    <div class="row d-block d-sm-none">
+                        @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
+                        {
+                            if (IsVisible(task))
+                            {
+                                <div class="col-sm-6">
+                                    <div class="card mb-2 @GetCardClass(task.Type)">
+                                        <div class="card-header" >
+                                            @task.Title
+                                        </div>
+                                        <div class="card-body row task-facts_list ">
+                                            <dl class="col">
+                                                <dt class="task-facts_term">Plant:</dt>
+                                                <dd class="task-facts-item"><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></dd>
+                                                <dt class="task-facts_term">Task Due:</dt>
+                                                <dd class="task-facts-item"> @task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</dd>
+                                                <dt class="task-facts_term">Notes:</dt>
+                                                <dd class="task-facts-item">@task.Notes</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="card-footer">
+                                            @*<button type="button" class="btn btn-outline-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-outline-primary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-journal-richtext">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-outline-primary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-journals">&nbsp;</span></button>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div class="d-flex justify-content-end">
+                             <button @onclick="(() => AddTask())" class="btn btn-secondary"><span class="bi bi-plus-lg">Add</span></button>
+                        </div>
+                       
+                </div>
                 }
             </article>
         </section>
@@ -176,7 +211,7 @@
         StateHasChanged();
     }
 
-    private string GetClass(WorkLogReasonEnum reason)
+    private string GetTableClass(WorkLogReasonEnum reason)
     {
 
         switch (reason)
@@ -190,5 +225,26 @@
             default:
                 return "";
         }
+    }
+
+    private string GetCardClass(WorkLogReasonEnum reason)
+    {
+
+        switch (reason)
+        {
+            case WorkLogReasonEnum.Harvest:
+                return "text-bg-success";
+            case WorkLogReasonEnum.Issue:
+                return "text-bg-danger";
+            case WorkLogReasonEnum.IssueResolution:
+                return "text-bg-warning";
+            default:
+                return "bg-light";
+        }
+    }
+
+    protected void ViewPlantHarvestCycle(PlantTaskModel task)
+    {
+        _navigationManager.NavigateToGardenPlanEditPlant (task.HarvestCycleId, task.PlantHarvestCycleId);
     }
 }

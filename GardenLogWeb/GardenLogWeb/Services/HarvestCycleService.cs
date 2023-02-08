@@ -419,13 +419,14 @@ public class HarvestCycleService : IHarvestCycleService
                 plants[index] = plant;
                 return;
             }
+            plants.Add(plant);
         }
-        else
-        {
-            plants = new List<PlantHarvestCycleModel>();
-            _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
-        }
-        plants.Add(plant);
+        //else
+        //{
+        //    plants = new List<PlantHarvestCycleModel>();
+        //    _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
+        //}
+       
 
     }
     private void RemoveFromPlantHarvestCycleList(string harvestId, string id)
