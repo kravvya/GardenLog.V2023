@@ -491,6 +491,107 @@ public class TaskGeneratorsShould
     }
     #endregion
 
+    #region Record Germination Date
+
+    [Fact]
+    public async Task TaskGenerator_Creates_Germinate_Task_When_PlantHarvest_Seeded()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow, NumberOfSeeds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.Information)), Times.Once);
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Title == GerminateTaskGenerator.GERMINATE_TASK_TITLE)), Times.Once);
+    }
+
+    
+    [Fact]
+    public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Removed()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
+        harvest.DeletePlantHarvestCycle(plantHarvestId);
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleDeleted);
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Transplanted()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { LastHarvestDate = DateTime.UtcNow, TotalItems = 50, TotalWeightInPounds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleCompleted);
+
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Harvested()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { LastHarvestDate = DateTime.UtcNow, TotalItems = 50, TotalWeightInPounds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleCompleted);
+
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Complete()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { LastHarvestDate = DateTime.UtcNow, TotalItems = 50, TotalWeightInPounds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleCompleted);
+
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Completes_Germinate_Task_When_PlantHarvest_Germinated()
+    {
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { GerminationDate = DateTime.UtcNow, GerminationRate=50, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleGerminated);
+
+
+        await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+    }
+    #endregion
+
 
     private void SetupHarvestQueryHandlerMock()
     {
@@ -535,5 +636,11 @@ public class TaskGeneratorsShould
          {
               HarvestHelper.GetPlantTaskViewModel(HarvestHelper.PLANT_TASK_ID, HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.Harvest)
          }).AsReadOnly());
+
+        _taskQueryHandlerMock.SetupGet(x => x.SearchPlantTasks(It.Is<PlantTaskSearch>(s => s.Reason == WorkLogReasonEnum.Information && s.IncludeResolvedTasks==false)).Result)
+     .Returns((new List<PlantTaskViewModel>()
+       {
+              HarvestHelper.GetPlantTaskViewModel(HarvestHelper.PLANT_TASK_ID, HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.Information, GerminateTaskGenerator.GERMINATE_TASK_TITLE)
+       }).AsReadOnly());
     }
 }

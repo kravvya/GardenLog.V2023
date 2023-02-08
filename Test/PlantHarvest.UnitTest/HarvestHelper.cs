@@ -106,7 +106,7 @@ namespace PlantHarvest.UnitTest
         }
 
         #region Plant Task
-        public static PlantTaskViewModel GetPlantTaskViewModel(string plantTaskId, string plantHarvestCycleId, WorkLogReasonEnum taskType)
+        public static PlantTaskViewModel GetPlantTaskViewModel(string plantTaskId, string plantHarvestCycleId, WorkLogReasonEnum taskType, string title ="")
         {
             return new PlantTaskViewModel()
             {
@@ -116,7 +116,8 @@ namespace PlantHarvest.UnitTest
                 TargetDateEnd = DateTime.Now.AddDays(7),
                 IsSystemGenerated = true,
                 Notes = "Test SChedule",
-                Type = taskType
+                Type = taskType,
+                Title = title
             };
         }
         #endregion
@@ -126,11 +127,11 @@ namespace PlantHarvest.UnitTest
         {
             return new CreatePlantScheduleCommand()
             {
-                PlantHarvestCycleId= plantHarvestCycleId,
+                PlantHarvestCycleId = plantHarvestCycleId,
                 StartDate = DateTime.Now.AddDays(1),
-                EndDate= DateTime.Now.AddDays(7),
-                IsSystemGenerated= true,
-                Notes="Test SChedule",
+                EndDate = DateTime.Now.AddDays(7),
+                IsSystemGenerated = true,
+                Notes = "Test SChedule",
                 TaskType = taskType
             };
         }
@@ -152,8 +153,8 @@ namespace PlantHarvest.UnitTest
         #region WorkLog
         public static WorkLogEvent GetWorkLogEvent(WorkLogEventTriggerEnum trigger, string harvestId, string harvestName, string plantHarvestCycleId, string plantName, WorkLogReasonEnum taskType)
         {
-            var workLog = GetWorkLog(harvestId, harvestName, plantHarvestCycleId,  plantName, taskType);
-           
+            var workLog = GetWorkLog(harvestId, harvestName, plantHarvestCycleId, plantName, taskType);
+
             var evt = new WorkLogEvent(workLog, trigger, new RelatedEntity(RelatedEntityTypEnum.WorkLog, WORK_LOG_ID, string.Empty));
 
             return evt;

@@ -48,18 +48,24 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
     public async Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasksForUser(PlantTaskSearch search, string userProfileId)
     {
         List<FilterDefinition<PlantTask>> filters = new();
+        var builder = Builders<PlantTask>.Filter;
+
         if (!string.IsNullOrEmpty(search.PlantHarvestCycleId))
         {
-            filters.Add(Builders<PlantTask>.Filter.Eq("PlantHarvestCycleId", search.PlantHarvestCycleId));
+            filters.Add(builder.Eq("PlantHarvestCycleId", search.PlantHarvestCycleId));
         }
         if (search.Reason.HasValue)
         {
-            filters.Add(Builders<PlantTask>.Filter.Eq("Type", search.Reason.Value.ToString()));
+            filters.Add(builder.Eq("Type", search.Reason.Value.ToString()));
         }
-        filters.Add(Builders<PlantTask>.Filter.Eq("UserProfileId", userProfileId));
+        if (!search.IncludeResolvedTasks)
+        {
+            filters.Add(builder.Eq("CompletedDateTime", BsonNull.Value));
+        }
+        filters.Add(builder.Eq("UserProfileId", userProfileId));
 
         var data = await Collection
-        .Find<PlantTask>(Builders<PlantTask>.Filter.And(filters))
+        .Find<PlantTask>(builder.And(filters))
         .As<PlantTaskViewModel>()
         .ToListAsync();
 
