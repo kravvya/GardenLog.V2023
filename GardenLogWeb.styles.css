@@ -418,3 +418,12 @@ svg .bbox-handle[b-8fnu6zxx74] {
 .harvest[b-ujk4hcd76g] {
     background-color: #fd7e14;
 }
+/* /Pages/Tasks/Components/PlantTaskList.razor.rz.scp.css */
+.task-facts_list .task-facts_term[b-m78ppq40sw] {
+    color: #709a41;
+    text-transform: uppercase;
+}
+
+.task-facts_list .task-facts-item[b-m78ppq40sw] {
+    border-bottom: 2px solid #c5c5c5;
+}
