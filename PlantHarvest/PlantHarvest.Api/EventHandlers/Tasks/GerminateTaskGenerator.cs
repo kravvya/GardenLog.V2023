@@ -50,10 +50,10 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
 
         if (plantHarvest != null && plantHarvest.GerminationDate.HasValue)
         {
-            var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.FertilizeIndoors, IncludeResolvedTasks=false });
+            var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.Information, IncludeResolvedTasks=false });
             if (tasks != null && tasks.Any())
             {
-                foreach (var task in tasks)
+                foreach (var task in tasks.Where(t => t.Title == "GERMINATE_TASK_TITLE").ToList())
                 {
                     await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                     {
@@ -68,7 +68,7 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
         }
         else
         {
-            _logger.LogError($"Unable to complete task for recroding ate seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant Harvest is not found");
+            _logger.LogError($"Unable to complete task for recording when seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant is not found");
         }
     }
 
