@@ -1,5 +1,67 @@
 @import '_content/Blazored.Toast/Blazored.Toast.bundle.scp.css';
 
+/* /Pages/GardenLayout/Components/DraggableSelector.razor.rz.scp.css */
+svg .selector[b-b1eu6fojp0] {
+    fill: rgba(66,166,211,0.75);
+}
+
+rect.selector[b-b1eu6fojp0], line.selector[b-b1eu6fojp0] {
+    stroke-width: 3;
+    stroke-dasharray: 14, 5;
+    stroke: rgba(66,166,211,0.75);
+    fill: none;
+}
+
+svg .rotator[b-b1eu6fojp0] {
+    fill: rgba(255,120,0,0.75);
+}
+
+svg .top-left-resizer[b-b1eu6fojp0] {
+    cursor: nw-resize;
+}
+
+svg .null-left-resizer[b-b1eu6fojp0] {
+    cursor: w-resize;
+}
+
+svg .bottom-left-resizer[b-b1eu6fojp0] {
+    cursor: sw-resize;
+}
+
+svg .bottom-null-resizer[b-b1eu6fojp0] {
+    cursor: s-resize;
+}
+
+svg .bottom-right-resizer[b-b1eu6fojp0] {
+    cursor: se-resize;
+}
+
+svg .null-right-resizer[b-b1eu6fojp0] {
+    cursor: e-resize;
+}
+
+svg .top-right-resizer[b-b1eu6fojp0] {
+    cursor: ne-resize;
+}
+
+svg .top-null-resizer[b-b1eu6fojp0] {
+    cursor: n-resize;
+}
+/* /Pages/GardenLayout/Components/GardenHorizontalRuler.razor.rz.scp.css */
+.garden-plan .label[b-uc5uotjnmg] {
+    font-size: 11px;
+    font-family: monospace;
+}
+/* /Pages/GardenLayout/Components/GardenVerticalRuler.razor.rz.scp.css */
+.garden-plan .vertical-ruler-div[b-usku2q1xli] {
+    margin-right: -11px;
+    margin-top: 21px;
+}
+
+.garden-plan .label[b-usku2q1xli] {
+    font-size: 11px;
+    font-family: monospace;
+}
 /* /Pages/Harvest/Components/PlantHarvestList.razor.rz.scp.css */
 .plant-list li[b-3g2l5ue8cg] {
     color: #666;
