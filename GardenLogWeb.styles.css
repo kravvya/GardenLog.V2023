@@ -52,12 +52,21 @@ svg .top-null-resizer[b-b1eu6fojp0] {
     font-size: 11px;
     font-family: monospace;
 }
-/* /Pages/GardenLayout/Components/GardenVerticalRuler.razor.rz.scp.css */
-.garden-plan .vertical-ruler-div[b-usku2q1xli] {
-    margin-right: -11px;
-    margin-top: 21px;
+/* /Pages/GardenLayout/Components/GardenLayout.razor.rz.scp.css */
+#smallrect rect[b-nk5vnj32xk] {
+    stroke: saddlebrown;
+    fill: tan;
 }
 
+#bigrect rect[b-nk5vnj32xk] {
+    stroke: saddlebrown
+}
+/* /Pages/GardenLayout/Components/GardenLayoutView.razor.rz.scp.css */
+.vertical-ruler-div[b-o7e16haq02] {
+    margin-right: -18px;
+    margin-top: 24px;
+}
+/* /Pages/GardenLayout/Components/GardenVerticalRuler.razor.rz.scp.css */
 .garden-plan .label[b-usku2q1xli] {
     font-size: 11px;
     font-family: monospace;
