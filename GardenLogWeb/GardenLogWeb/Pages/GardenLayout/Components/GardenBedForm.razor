@@ -88,7 +88,7 @@
     private bool _isEdit = false;
     private CustomValidation customValidation;
 
-    public async void Initialize(GardenBedModel? gardenBed, GardenModel garden)
+    public async void Initialize(GardenBedModel? gardenBed, GardenModel garden, double x, double y)
     {
         _gardenBed = gardenBed;
         _garden = garden;
@@ -96,7 +96,10 @@
         if (_gardenBed == null)
         {
             _gardenBed = new GardenBedModel();
-            _gardenBed.GardenId = _gardenBed.Id;
+            _gardenBed.GardenId = garden.GardenId;
+            _gardenBed.X = x;
+            _gardenBed.Y = y;
+            _gardenBed.Rotate = 0;
         }
 
         _isEdit = !string.IsNullOrEmpty(_gardenBed.GardenBedId);

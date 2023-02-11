@@ -27,8 +27,8 @@ public class GardenBedValidator<T> : AbstractValidator<T>
         RuleFor(command => command.Name).NotEmpty().Length(3, 50);
         RuleFor(command => command.Length).NotEmpty().NotEqual(0);
         RuleFor(command => command.Width).NotEmpty().NotEqual(0);
-        RuleFor(command => command.X).NotEmpty().NotEqual(0);
-        RuleFor(command => command.Y).NotEmpty().NotEqual(0);
+        RuleFor(command => command.X).NotEmpty();
+        RuleFor(command => command.Y).NotEmpty();
         RuleFor(command => command.Notes).NotEmpty().Length(3, 1000);
     }
 }

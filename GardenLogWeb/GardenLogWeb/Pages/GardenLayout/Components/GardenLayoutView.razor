@@ -164,7 +164,7 @@
 
     private async Task AddGardenBed()
     {
-        _gardenBedForm.Initialize(null, Garden);
+        _gardenBedForm.Initialize(null, Garden, _settings.StartX, _settings.StartY);
         await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
