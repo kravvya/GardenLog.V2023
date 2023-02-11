@@ -1,13 +1,13 @@
 ﻿<rect x=0 y=0
     height="@(Component?.GetHeightInPixels())" width="@(Component?.GetWidthInPixels())"  
-    transform="translate(@Component.X, @Component.Y) rotate(@(Component?.Rotate),@(Component?.GetWidthInPixels()/2),@(Component?.GetHeightInPixels()/2))" 
-    @attributes="AdditionalAttributes" cursor=@_cursor @onmousedown=OnDown ></rect>
+    transform="translate(@Component?.X, @Component?.Y) rotate(@(Component?.Rotate),@(Component?.GetWidthInPixels()/2),@(Component?.GetHeightInPixels()/2))" 
+    @attributes="AdditionalAttributes" cursor=@_cursor @onmousedown=OnDown  class="@Component?.CssClass"></rect>
 
 @code {
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; }
 
-    [Parameter] public IVisualComponent Component { get; set; }
+    [Parameter] public IVisualComponent? Component { get; set; }
 
     [Parameter] public Action<IVisualComponent, MouseEventArgs> ComponentSelected { get; set; }
 

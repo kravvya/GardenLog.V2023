@@ -26,7 +26,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     {
         get
         {
-            if (GardenLength / 12 * TickFootHeight > _maxSvgHeight)
+            if (GardenLength * TickFootHeight > _maxSvgHeight)
             {
                 if (ViewBoxY == 0)
                 {
@@ -39,10 +39,10 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
             {
                 if (ViewBoxY == 0)
                 {
-                    ViewBoxY = GardenLength / 12 * TickFootHeight + _margin;
+                    ViewBoxY = GardenLength * TickFootHeight + _margin;
                     _viewBoxY = ViewBoxY;
                 }
-                return GardenLength / 12 * TickFootHeight + _margin;
+                return GardenLength * TickFootHeight + _margin;
             }
         }
     }
@@ -51,7 +51,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     {
         get
         {
-            if (GardenWidth / 12 * TickFootWidth > _maxSvgWidth)
+            if (GardenWidth * TickFootWidth > _maxSvgWidth)
             {
                 if (ViewBoxX == 0)
                 {
@@ -64,10 +64,10 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
             {
                 if (ViewBoxX == 0)
                 {
-                    ViewBoxX = GardenWidth / 12 * TickFootWidth + _margin;
+                    ViewBoxX = GardenWidth * TickFootWidth + _margin;
                     _viewBoxX = ViewBoxX;
                 }
-                return GardenWidth / 12 * TickFootWidth + _margin;
+                return GardenWidth * TickFootWidth + _margin;
             }
         }
     }
@@ -88,7 +88,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     {
         get
         {
-            return GardenLength / 12 * TickFootHeight;
+            return GardenLength * TickFootHeight;
         }
     }
 
@@ -96,7 +96,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     {
         get
         {
-            return GardenWidth / 12 * TickFootWidth;
+            return GardenWidth * TickFootWidth;
         }
     }
     public void MoveDown()

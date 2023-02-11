@@ -10,7 +10,6 @@ public abstract record GardenBedBase
     public double Width { get; set; }
     public double X { get; set; }
     public double Y { get; set; }
-    public string? BorderColor { get; set; }
     public GardenBedTypeEnum Type { get; set; }
     public double Rotate { get; set; }
 

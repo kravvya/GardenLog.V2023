@@ -12,6 +12,9 @@ namespace GardenLogWeb.Services
         Task<ApiResponse> UpdateGarden(GardenModel garden);
         Task<ApiResponse> DeleteGarden(string gardenId);
         Task<List<GardenBedModel>> GetGardenBeds(string gardenId, bool useCache);
+        Task<ApiResponse> DeleteGardenBed(string gardenId, string id);
+        Task<ApiObjectResponse<string>> CreateGardenBed(GardenBedModel gardenBed);
+        Task<ApiResponse> UpdateGardenBed(GardenBedModel gardenBed);
     }
 
     public class GardenService : IGardenService
@@ -111,7 +114,7 @@ namespace GardenLogWeb.Services
 
                 garden = response.Response;
 
-               await AddOrUpdateToGardenList(garden);
+                await AddOrUpdateToGardenList(garden);
             }
 
             return garden;
@@ -213,10 +216,84 @@ namespace GardenLogWeb.Services
                 if (gardenBedList.Count > 0)
                 {
                     AddGardenBedsToCache(gardenId, gardenBedList);
-                }               
+                }
             }
 
             return gardenBedList;
+        }
+
+        public async Task<ApiObjectResponse<string>> CreateGardenBed(GardenBedModel gardenBed)
+        {
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+
+            var response = await httpClient.ApiPostAsync(GardenRoutes.CreateGardenBed, gardenBed);
+
+            if (response.ValidationProblems != null)
+            {
+                _toastService.ShowToast($"Unable to add Garden Bed to Garden. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+            }
+            else if (!response.IsSuccess)
+            {
+                _toastService.ShowToast($"Received an invalid response from Garden Bed  Post: {response.ErrorMessage}", GardenLogToastLevel.Error);
+            }
+            else
+            {
+                gardenBed.GardenBedId = response.Response;
+                        
+
+                AddOrUpdateToGardenBedList(gardenBed);
+
+                _toastService.ShowToast($"Garden Bed  is added to the Garden ", GardenLogToastLevel.Success);
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> UpdateGardenBed(GardenBedModel gardenBed)
+        {
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+
+            var response = await httpClient.ApiPutAsync(GardenRoutes.UpdateGardenBed.Replace("{gardenId}", gardenBed.GardenId).Replace("{id}", gardenBed.GardenBedId), gardenBed);
+
+            if (response.ValidationProblems != null)
+            {
+                _toastService.ShowToast($"Unable to update a Garden Bed. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+            }
+            else if (!response.IsSuccess)
+            {
+                _toastService.ShowToast($"Received an invalid response: {response.ErrorMessage}", GardenLogToastLevel.Error);
+            }
+            else
+            {
+                AddOrUpdateToGardenBedList(gardenBed);
+
+                _toastService.ShowToast($"Garden Bed is successfully updated.", GardenLogToastLevel.Success);
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> DeleteGardenBed(string gardenId, string id)
+        {
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+
+            var response = await httpClient.ApiDeleteAsync(GardenRoutes.DeleteGardenBed.Replace("{gardenId}", gardenId).Replace("{id}", id));
+
+            if (response.ValidationProblems != null)
+            {
+                _toastService.ShowToast($"Unable to delete garden bed. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+            }
+            else if (!response.IsSuccess)
+            {
+                _toastService.ShowToast($"Received an invalid response: {response.ErrorMessage}", GardenLogToastLevel.Error);
+            }
+            else
+            {
+                RemoveFromGardenBedList(gardenId, id);
+
+                _toastService.ShowToast($"Garden Bed deleted.", GardenLogToastLevel.Success);
+            }
+            return response;
         }
         #endregion
 
@@ -271,7 +348,7 @@ namespace GardenLogWeb.Services
             {
                 var index = gardens.FindIndex(p => p.GardenId == garden.GardenId);
                 if (index > -1)
-                {                  
+                {
                     gardens[index] = garden;
                 }
                 else
@@ -282,13 +359,13 @@ namespace GardenLogWeb.Services
             else
             {
                 await GetGardens(true);
-            }           
+            }
         }
 
         private void RemoveFromGardenList(string gardenId)
         {
             List<GardenModel> gardens = null;
-          
+
             if (!_cacheService.TryGetValue<List<GardenModel>>(GARDENS_KEY, out gardens))
             {
 
@@ -301,6 +378,9 @@ namespace GardenLogWeb.Services
 
         }
 
+
+
+        #region Private Garden Bed
         private List<GardenBedModel> GetGardenBedsFromCache(string gardenId)
         {
             string cacheKey = string.Format(GARDEN_BED_KEY, gardenId);
@@ -312,42 +392,42 @@ namespace GardenLogWeb.Services
             return gardenBedList;
         }
 
-        private Task<List<GardenBedModel>> GetGardenBeds(string gardenId)
+        private async Task<List<GardenBedModel>> GetGardenBeds(string gardenId)
         {
-            //var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
 
-            //var response = await httpClient.ApiGetAsync<List<GardenBedModel>>(GardenRoutes.GetGardenBeds.Replace("{gardenId}", gardenId));
+            var response = await httpClient.ApiGetAsync<List<GardenBedModel>>(GardenRoutes.GetGardenBeds.Replace("{gardenId}", gardenId));
 
-            //if (!response.IsSuccess)
+            if (!response.IsSuccess)
+            {
+                _toastService.ShowToast("Unable to get Garden Beds", GardenLogToastLevel.Error);
+                return null;
+            }
+
+            return response.Response;
+
+            //List<GardenBedModel> gardenBeds = new();
+            //gardenBeds.Add(new GardenBedModel()
             //{
-            //    _toastService.ShowToast("Unable to get Garden Beds", GardenLogToastLevel.Error);
-            //    return null;
-            //}
+            //    BorderColor = "red",
+            //    X = 100,
+            //    Y = 50,
+            //    Name = "Leeks",
+            //    Length = 10 * 12,
+            //    Width = 30
+            //});
 
-            //return response.Response;
+            //gardenBeds.Add(new GardenBedModel()
+            //{
+            //    BorderColor = "blue",
+            //    X = 500,
+            //    Y = 50,
+            //    Name = "Leeks",
+            //    Length = 10 * 12,
+            //    Width = 30
+            //});
 
-            List<GardenBedModel> gardenBeds = new();
-            gardenBeds.Add(new GardenBedModel()
-            {
-                BorderColor = "red",
-                X = 100,
-                Y = 50,
-                Name = "Leeks",
-                Length = 10 * 12,
-                Width = 30
-            });
-
-            gardenBeds.Add(new GardenBedModel()
-            {
-                BorderColor = "blue",
-                X = 500,
-                Y = 50,
-                Name = "Leeks",
-                Length = 10 * 12,
-                Width = 30
-            });
-
-            return Task.FromResult(gardenBeds);
+            //return Task.FromResult(gardenBeds);
         }
 
         private void AddGardenBedsToCache(string gardenId, List<GardenBedModel> gardenBedList)
@@ -356,5 +436,38 @@ namespace GardenLogWeb.Services
 
             _cacheService.Set(cacheKey, gardenBedList, DateTime.Now.AddMinutes(10));
         }
+
+        private void AddOrUpdateToGardenBedList(GardenBedModel gardenBed)
+        {
+            List<GardenBedModel>? beds = null;
+            string key = string.Format(GARDENS_KEY, gardenBed.GardenId);
+
+            if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out beds))
+            {
+                var index = beds.FindIndex(p => p.GardenBedId == gardenBed.GardenBedId);
+                if (index > -1)
+                {
+                    beds[index] = gardenBed;
+                    return;
+                }
+                beds.Add(gardenBed);
+            }
+
+
+        }
+        private void RemoveFromGardenBedList(string gardenId, string id)
+        {
+            string key = string.Format(GARDENS_KEY, gardenId);
+            if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out var beds))
+            {
+                var index = beds.FindIndex(p => p.GardenBedId == id);
+                if (index > -1)
+                {
+                    beds.RemoveAt(index);
+                }
+            }
+        }
+        #endregion
+
     }
 }

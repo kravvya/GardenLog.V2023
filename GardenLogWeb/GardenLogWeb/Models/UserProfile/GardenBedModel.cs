@@ -1,9 +1,13 @@
 ﻿using GardenLogWeb.Pages.GardenLayout.Components;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GardenLogWeb.Models.UserProfile;
 
 public record GardenBedModel : GardenBedViewModel, IVisualComponent
 {
+    public string? CssClass { get => this.Type.ToString(); }
+    public string Id { get => this.GardenBedId; }
+
     public double GetHeightInPixels()
     {
         return this.Length / 12 * GardenPlanSettings.TickFootHeight;

@@ -1,19 +1,74 @@
 ﻿@inject IGardenService _gardenService;
+@inject NavigationManager _navigationManager;
+
+
+<ModalView OnCloseModal="CloseGardenFormModal" @ref="_gardenFormModal">
+    <Body>
+        <GardenForm OnClose=@CloseGardenForm @ref=_gardenForm />
+    </Body>
+</ModalView>
+
+<ModalView OnCloseModal="CloseImageFormModal" @ref="_imageFormModal">
+    <Body>
+        <ImageForm OnClose=@CloseImageFormModal @ref=_imageForm />
+    </Body>
+</ModalView>
+
+<ModalView OnCloseModal="CloseGardenBedFormModal" @ref="_gardenBedFormModal">
+    <Body>
+        <GardenBedForm OnClose=@CloseGardenBedForm @ref=_gardenBedForm />
+    </Body>
+</ModalView>
+
+
+@if (Garden != null)
+{
+    <div class="row justify-content-start">
+        <div class="Garden-card col-auto mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>
+                        @Garden.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="garden-facts_list row mt-2 mt-lg-0">
+                        <div class="garden-facts-item mt-1">
+                            <dt class="garden-facts_term">Dimensions</dt>
+                            <dd class="garden-facts_definition col">@(Garden.Width)ft x @(Garden.Length)ft</dd>
+                            <dt class="garden-facts_term">Area</dt>
+                            <dd class="garden-facts_definition col">@(Garden.Width * Garden.Length) sq. ft</dd>
+                            <dt class="garden-facts_term">Number of Beds</dt>
+                            <dd class="garden-facts_definition col">??</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary" title="Edit Garden" @onclick="@(() => EditGarden())">
+                            <span class="bi bi-pencil">&nbsp;</span>
+                        </button>
+                        @if (Garden.Length > 0 && Garden.Width > 0)
+                        {
+                            <button type="button" class="btn btn-warning" title="Add Garden Bed" @onclick="@(() => AddGardenBed())">
+                                <span class="bi bi-layout-sidebar-inset">&nbsp;</span>
+                            </button>
+                        }
+                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddGardenImage())">
+                            <span class="bi bi-card-image">&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewGardenImage())">
+                            <span class="bi bi-images" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @if (_settings != null)
 {
-    <div class="row g-3 align-items-center p-2">
-        <div class="col-auto">
-            <input type="number" @bind=_settings.ViewBoxY class="form-control" /> @_settings.SvgHeight
-        </div>
-        <div class="col-auto">
-            <input type="number" @bind=_settings.ViewBoxX class="form-control" />@_settings.SvgWidth
-        </div>
-        <div class="col-auto">
-            <input type="number" @bind=_settings.Zoom class="form-control" />
-        </div>
-    </div>
-
     <div class="garden-layout-container">
         <div class="garden-plan">
             <div class="d-flex flex-nowrap mb-3">
@@ -60,13 +115,102 @@
     public GardenModel Garden { get; set; }
     private GardenPlanSettings _settings = null;
 
+    private ModalView _imageFormModal { get; set; }
+    private ImageForm _imageForm { get; set; }
+    private ModalView? _gardenFormModal;
+    private GardenForm? _gardenForm;
+    private ModalView? _gardenBedFormModal;
+    private GardenBedForm? _gardenBedForm;
+
     protected override void OnParametersSet()
-    {       
+    {
         if (Garden != null)
         {
             _settings = new GardenPlanSettings(Garden.Length, Garden.Width);
 
             StateHasChanged();
         }
+    }
+
+    private async Task EditGarden()
+    {
+        _gardenForm.Initialize(Garden);
+        await _gardenFormModal?.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
+    private async Task AddGardenImage()
+    {
+        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Garden, Garden.GardenId, Garden.Name) };
+        _imageForm.Initialize(RelatedEntityTypEnum.Garden, Garden.GardenId, relatedEntities);
+        await _imageFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
+    private async Task CloseGardenFormModal()
+    {
+        await _gardenFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseGardenForm(GardenModel garden)
+    {
+        await _gardenFormModal?.CloseModal();
+
+        Garden = garden;
+
+        StateHasChanged();
+    }
+
+    private async Task AddGardenBed()
+    {
+        _gardenBedForm.Initialize(null, Garden);
+        await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
+    private async Task CloseGardenBedFormModal()
+    {
+        await _gardenBedFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseGardenBedForm(GardenBedModel gardenBed)
+    {
+        await _gardenBedFormModal?.CloseModal();
+
+
+        StateHasChanged();
+    }
+
+
+    private async Task CloseImageFormModal()
+    {
+        await _imageFormModal.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseImageFormModal(ImageViewModel image)
+    {
+        if (image != null)
+        {
+            if (Garden != null)
+            {
+                if (string.IsNullOrEmpty(Garden.ImageFileName) || Garden.ImageFileName == ImageService.NO_IMAGE)
+                {
+                    Garden.ImageFileName = image.FileName;
+                    Garden.ImageLabel = image.Label;
+                }
+                Garden.Images.Add(image);
+            }
+        }
+
+        await _imageFormModal.CloseModal();
+        StateHasChanged();
+    }
+
+    private void ViewGardenImage()
+    {
+        _navigationManager.NavigateToGardenImages(Garden.GardenId);
     }
 }

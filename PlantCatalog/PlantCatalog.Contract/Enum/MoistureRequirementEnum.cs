@@ -6,8 +6,8 @@ namespace PlantCatalog.Contract.Enum
     {
         [Description("Unspecified")]
         Unspecified = 0,
-        [Description("Drout Tolerant")]
-        DroutTolerant = 1,
+        [Description("Drought  Tolerant")]
+        DroughtTolerant = 1,
         [Description("At least 1in per week")]
         InchPerWeek = 2,
         [Description("1 to 2 in per week")]

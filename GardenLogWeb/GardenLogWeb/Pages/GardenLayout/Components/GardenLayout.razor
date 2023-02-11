@@ -1,13 +1,15 @@
 ﻿@inject IMouseService _mouseService;
 @inject IKeyService _keyService;
 @inject IGardenService _gardenService;
+@implements IDisposable;
 
 
 <svg width="@Settings.SvgWidth" height="@Settings.SvgHeight" viewBox="@Settings.StartX @Settings.StartY @Settings.ViewBoxX @Settings.ViewBoxY"
      @onkeydown=@(e => _keyService.KeyDown(this, e))
      @onmousemove=@(e => _mouseService.MouseMove(this, e))
      @onmouseup=@(e => _mouseService.MouseUp(this, e))
-     @onmouseout=@(e => _mouseService.MouseLeave(this, e))>
+     @onmouseout=@(e => _mouseService.MouseLeave(this, e))
+     tabindex="0">
     <defs>
         @*small background box*@
         <pattern id="smallrect" x="0" y="0" width="48" height="48" viewBox="0 0 48 48" patternUnits="userSpaceOnUse">
@@ -43,10 +45,12 @@
     List<GardenBedModel> _gardenBeds = new();
 
     DraggableSelector _draggableComponent;
+    IVisualComponent _selected;
 
     protected override async Task OnInitializedAsync()
     {
         _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+        _keyService.OnKeyDown += OnKeyDown;
     }
 
     protected void ComponentSelected(IVisualComponent selected, MouseEventArgs e)
@@ -59,5 +63,28 @@
         _draggableComponent.Intitialize(null, Settings, null);
     }
 
+    void OnKeyDown(object? _, KeyboardEventArgs e)
+    {
+        Console.WriteLine(e.Key);
+        switch (e.Key)
+        {
+            case "Delete":
+                if (_selected != null)
+                {
+                    Console.WriteLine("Delete bed");
+                    _gardenService.DeleteGardenBed(Garden.GardenId, _selected.Id).GetAwaiter();
+                    _gardenBeds = _gardenService.GetGardenBeds(Garden.GardenId, true).GetAwaiter().GetResult();
+                    ComponentNotSelected();
+                }
+                break;
+        }
+    }
+
+
+    public void Dispose()
+    {
+
+        _keyService.OnKeyDown -= OnKeyDown;
+    }
 }
 

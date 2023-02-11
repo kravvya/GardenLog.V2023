@@ -2,7 +2,7 @@
 @inject ILogger<GardenForm> _logger;
 @inject IGardenService _gardenService;
 
-<article id="harvestCycleForm">
+<article id="gardenForm">
     <div class="container">
         @if (_isInitialized && _garden != null)
         {
@@ -57,12 +57,12 @@
 
                 <div class="row">
                     <div class="col-md-5">
-                        <label for="Length">Length (in)</label>
-                        <InputNumber T="double" class="form-control" id="LastFrostDate" @bind-Value="@_garden.Length" />
+                        <label for="Length">Length (ft)</label>
+                        <InputNumber T="double" class="form-control" id="Length" @bind-Value="@_garden.Length" />
                         <ValidationMessage For="@(() => _garden.Length)" />
                     </div>
                     <div class="col-md-5">
-                        <label for="Width">Width (in)</label>
+                        <label for="Width">Width (ft)</label>
                         <InputNumber T="double" class="form-control" id="Width" @bind-Value="@_garden.Width" />
                         <ValidationMessage For="@(() => _garden.Width)" />
                     </div>
