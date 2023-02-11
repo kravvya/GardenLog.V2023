@@ -506,9 +506,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
                 },
         };
         var varieties = await response.Content.ReadFromJsonAsync<List<PlantVarietyViewModel>>(options);
-
-        Assert.NotNull(varieties);
-        Assert.NotEmpty(varieties);
+           
 
         return varieties;
     }

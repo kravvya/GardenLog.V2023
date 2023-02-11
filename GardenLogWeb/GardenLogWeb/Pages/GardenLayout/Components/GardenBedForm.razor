@@ -13,7 +13,7 @@
 
                 <div class="row">
 
-                    <div class="col-md-2">
+                    <div class="col-md-10">
                         <label for="Type" class="form-label">Type</label>
                         <InputSelect class="form-select" @bind-Value="_gardenBed.Type">
                             @foreach (var item in Enum.GetValues<GardenBedTypeEnum>().Where(p => p != GardenBedTypeEnum.Unspecified))
@@ -23,32 +23,33 @@
                         </InputSelect>
                         <ValidationMessage For="@(() => _gardenBed.Type)" />
                     </div>
-
-                    <div class="col-md-2">
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
                         <label for="RowNumber">Row Number</label>
                         <InputNumber class="form-control" id="RowNumber" @bind-Value="@_gardenBed.RowNumber" />
                         <ValidationMessage For="@(() => _gardenBed.RowNumber)" />
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <label for="name">Name</label>
                         <InputText class="form-control" id="name" @bind-Value="@_gardenBed.Name" />
                         <ValidationMessage For="@(() => _gardenBed.Name)" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <label for="Length">Length (in)</label>
                         <InputNumber T="double" class="form-control" id="Length" @bind-Value="@_gardenBed.Length" />
                         <ValidationMessage For="@(() => _gardenBed.Length)" />
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <label for="Width">Width (in)</label>
                         <InputNumber T="double" class="form-control" id="Width" @bind-Value="@_gardenBed.Width" />
                         <ValidationMessage For="@(() => _gardenBed.Width)" />
                     </div>
                 </div>
 
-                <div class="col-md-10">
+                <div class="col-md-12">
                     <label for="description">Description</label>
                     <InputTextArea Class="form-control" Id="description" @bind-Value="@_gardenBed.Notes" rows="5" />
                     <ValidationMessage For="@(() => _gardenBed.Notes)" />
@@ -82,7 +83,7 @@
 
     private bool _isInitialized = false;
     private GardenBedModel _gardenBed = null;
-    private GardenModel _garden= null;
+    private GardenModel _garden = null;
     private EditContext _editContext;
     private bool _isEdit = false;
     private CustomValidation customValidation;
@@ -95,7 +96,7 @@
         if (_gardenBed == null)
         {
             _gardenBed = new GardenBedModel();
-            _gardenBed.GardenBedId = _gardenBed.Id;
+            _gardenBed.GardenId = _gardenBed.Id;
         }
 
         _isEdit = !string.IsNullOrEmpty(_gardenBed.GardenBedId);
