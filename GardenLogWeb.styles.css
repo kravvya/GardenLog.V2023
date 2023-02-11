@@ -66,10 +66,30 @@ svg .top-null-resizer[b-b1eu6fojp0] {
     margin-right: -18px;
     margin-top: 24px;
 }
+
+.garden-facts_list .garden-facts_term[b-o7e16haq02] {
+    color: #709a41;
+    text-transform: uppercase;
+}
+
+.garden-facts_list .garden-facts-item[b-o7e16haq02] {
+    border-bottom: 2px solid #c5c5c5;
+}
 /* /Pages/GardenLayout/Components/GardenVerticalRuler.razor.rz.scp.css */
 .garden-plan .label[b-usku2q1xli] {
     font-size: 11px;
     font-family: monospace;
+}
+/* /Pages/GardenLayout/Components/RectGardenBed.razor.rz.scp.css */
+
+rect.InGround[b-mcdhcszdo5] {
+    stroke-width: 6;
+    stroke: rgba(145, 84, 6, 0.75);
+}
+
+rect.RaisedBed[b-mcdhcszdo5] {
+    stroke-width: 6;
+    stroke: rgba(153, 177, 179, 0.89);
 }
 /* /Pages/Harvest/Components/PlantHarvestList.razor.rz.scp.css */
 .plant-list li[b-3g2l5ue8cg] {
