@@ -127,7 +127,7 @@ public class GardenClient
         return new CreateGardenBedCommand()
         {
             GardenId = gardenId,
-            BorderColor = "purple",
+            //BorderColor = "purple",
             Name = name,
             Length = 20,
             Width = 3,

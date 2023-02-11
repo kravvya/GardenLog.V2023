@@ -8,7 +8,6 @@ public class GardenBed : BaseEntity, IEntity
     public double Width { get; private set; }
     public double X { get; private set; }
     public double Y { get; private set; }
-    public string? BorderColor { get; private set; }
     public string Notes { get; private set; }
     public GardenBedTypeEnum Type { get; private set; }
     public double Rotate { get; set; }
@@ -26,7 +25,6 @@ public class GardenBed : BaseEntity, IEntity
             Width = command.Width,
             X = command.X,
             Y = command.Y,
-            BorderColor = command.BorderColor,
             Notes = command.Notes,
             Type = command.Type,
             Rotate = command.Rotate,
@@ -47,7 +45,6 @@ public class GardenBed : BaseEntity, IEntity
         this.Set<double>(() => this.Width, command.Width);
         this.Set<double>(() => this.X, command.X);
         this.Set<double>(() => this.Y, command.Y);
-        this.Set<string?>(() => this.BorderColor, command.BorderColor);
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<double>(() => this.Rotate, command.Rotate);
 
