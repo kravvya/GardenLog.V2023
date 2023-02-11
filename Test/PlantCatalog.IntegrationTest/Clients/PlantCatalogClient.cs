@@ -80,7 +80,7 @@ namespace PlantCatalog.IntegrationTest.Clients
                 GrowTolerance = Contract.Enum.GrowToleranceEnum.LightFrost | Contract.Enum.GrowToleranceEnum.HardFrost,
                 Lifecycle = Contract.Enum.PlantLifecycleEnum.Cool,
                 LightRequirement = Contract.Enum.LightRequirementEnum.FullShade,
-                MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroutTolerant,
+                MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroughtTolerant,
                 Name = name,
                 SeedViableForYears = 10,
                 Type = Contract.Enum.PlantTypeEnum.Vegetable,
@@ -227,7 +227,7 @@ namespace PlantCatalog.IntegrationTest.Clients
                 HeightInInches= 100,
                 IsHeirloom= true,
                 LightRequirement=Contract.Enum.LightRequirementEnum.FullShade,
-                MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroutTolerant,
+                MoistureRequirement = Contract.Enum.MoistureRequirementEnum.DroughtTolerant,
                 Tags= new List<string>() { "Dark"},
                 Title = "Very Black Variety"
             };
