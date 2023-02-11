@@ -196,6 +196,7 @@ public class PlantTaskService : IPlantTaskService
                 tasks[index] = task;
                 return;
             }
+            tasks.Add(task);
         }
        
         if (!task.CompletedDateTime.HasValue)
@@ -210,13 +211,8 @@ public class PlantTaskService : IPlantTaskService
                     tasks[index] = task;
                     return;
                 }
+                tasks.Add(task);
             }
-            //else
-            //{
-            //    tasks = new List<PlantTaskModel>();
-            //    _cacheService.Set(PLANT_ACTIVE_TASK_KEY, tasks, DateTime.Now.AddMinutes(CACHE_DURATION));
-            //}
-            tasks.Add(task);
         }
 
     }
