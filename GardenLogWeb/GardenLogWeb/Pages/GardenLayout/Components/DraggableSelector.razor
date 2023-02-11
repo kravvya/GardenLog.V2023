@@ -1,0 +1,194 @@
+﻿@inject IMouseService _mouseService;
+@inject IKeyService _keyService;
+
+@if (_component != null)
+{
+    <g class="selector-box" transform="translate(@_x, @_y) rotate(@(_component?.Rotate),@(_component?.GetWidthInPixels()/2),@(_component?.GetHeightInPixels()/2))">
+
+        <rect x="0" y="0" width="@_component?.GetWidthInPixels()" height="@_component?.GetHeightInPixels()" class="selector"></rect>
+
+        <line x1="@(_component?.GetWidthInPixels()/2)" y1="0" x2="@(_component?.GetWidthInPixels()/2)" y2="-14" class="selector"></line>
+
+        <ellipse cx="@(_component?.GetWidthInPixels()/2)" cy="-14" rx="5" ry="5" class="selector rotator" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Rotate))></ellipse>
+
+        <ellipse cx="0" cy="0" rx="5" ry="5" class="selector top-left-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.UpperLeft))></ellipse>
+        <ellipse cx="0" cy="@(_component?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector null-left-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Left))></ellipse>
+        <ellipse cx="0" cy="@_component?.GetHeightInPixels()" rx="5" ry="5" class="selector bottom-left-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.BottomLeft))></ellipse>
+
+        <ellipse cx="@(_component?.GetWidthInPixels()/2)" cy="@_component?.GetHeightInPixels()" rx="5" ry="5" class="selector bottom-null-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Bottom))></ellipse>
+
+        <ellipse cx="@_component?.GetWidthInPixels()" cy="@_component?.GetHeightInPixels()" rx="5" ry="5" class="selector bottom-right-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.BottomRight))></ellipse>
+        <ellipse cx="@_component?.GetWidthInPixels()" cy="@(_component?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector null-right-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Right))></ellipse>
+        <ellipse cx="@_component?.GetWidthInPixels()" cy="0" rx="5" ry="5" class="selector top-right-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.UpperRight))></ellipse>
+
+        <ellipse cx="@(_component?.GetWidthInPixels()/2)" cy="0" rx="5" ry="5" class="selector top-null-resizer" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Upper))></ellipse>
+    </g>
+}
+@code {
+    public IVisualComponent? _component;
+    public GardenPlanSettings? _settings;
+    double _x;
+    double _y;
+    double _cursorX;
+    double _cursorY;
+    bool _isMoving;
+    ComponentChanges _changes = ComponentChanges.Unspecified;
+
+    public void Intitialize(IVisualComponent component, GardenPlanSettings settings, MouseEventArgs e)
+    {
+
+        _settings = settings;
+        _component = component;
+
+        if (component != null)
+        {
+            _x = _component.X;
+            _y = component.Y;
+
+            _mouseService.OnMove += OnMove;
+            _mouseService.OnUp += OnUp;
+            _keyService.OnKeyDown += OnKeyDown;
+
+            _changes = ComponentChanges.Move;
+            _cursorX = e.ClientX;
+            _cursorY = e.ClientY;
+        }
+        else
+        {
+            _x = 0;
+            _y = 0;
+            _mouseService.OnMove -= OnMove;
+            _mouseService.OnUp -= OnUp;
+            _keyService.OnKeyDown -= OnKeyDown;
+            _changes = ComponentChanges.Unspecified;
+        }
+
+        StateHasChanged();
+    }
+
+    void OnResizerDown(MouseEventArgs e, ComponentChanges changes)
+    {
+        Console.WriteLine(changes);
+        _changes = changes;
+
+        _cursorX = e.ClientX;
+        _cursorY = e.ClientY;
+    }
+
+    void OnUp(object? _, MouseEventArgs e)
+    {
+        _changes = ComponentChanges.Unspecified;
+    }
+
+    void OnMove(object? _, MouseEventArgs e)
+    {
+        if (_changes == ComponentChanges.Unspecified)
+            return;
+
+
+        switch (_changes)
+        {
+            case ComponentChanges.Move:
+                _x = _x - (_cursorX - e.ClientX);
+                _y = _y - (_cursorY - e.ClientY);
+
+                _component.X = _x;
+                _component.Y = _y;
+                break;
+            case ComponentChanges.UpperLeft:
+                _x = _x - (_cursorX - e.ClientX);
+                _y = _y - (_cursorY - e.ClientY);
+
+                _component.X = _x;
+                _component.Y = _y;
+
+                _component.IncreaseLengthByPixels(_cursorY - e.ClientY);
+                _component.IncreaseWidthByPixels(_cursorX - e.ClientX);
+                break;
+            case ComponentChanges.Left:
+
+                _x = _x - (_cursorX - e.ClientX);
+
+                _component.X = _x;
+
+                _component.IncreaseWidthByPixels(_cursorX - e.ClientX);
+                break;
+            case ComponentChanges.BottomLeft:
+                _component.IncreaseLengthByPixels(-1 * (_cursorY - e.ClientY));
+                _component.IncreaseWidthByPixels(-1 * (_cursorX - e.ClientX));
+                break;
+            case ComponentChanges.Bottom:
+                _component.IncreaseLengthByPixels(-1 * (_cursorY - e.ClientY));
+                break;
+            case ComponentChanges.BottomRight:
+                _component.IncreaseLengthByPixels(-1 * (_cursorY - e.ClientY));
+                _component.IncreaseWidthByPixels(-1 * (_cursorX - e.ClientX));
+                break;
+            case ComponentChanges.Right:
+                _component.IncreaseWidthByPixels(-1 * (_cursorX - e.ClientX));
+                break;
+            case ComponentChanges.UpperRight:
+
+                _y = _y - (_cursorY - e.ClientY);
+
+                _component.Y = _y;
+
+                _component.IncreaseLengthByPixels((_cursorY - e.ClientY));
+                _component.IncreaseWidthByPixels(-1 * (_cursorX - e.ClientX));
+                break;
+            case ComponentChanges.Upper:
+
+                _y = _y - (_cursorY - e.ClientY);
+
+                _component.Y = _y;
+
+                _component.IncreaseLengthByPixels((_cursorY - e.ClientY));
+                break;
+            case ComponentChanges.Rotate:
+
+                double centerX = _x + _component.GetWidthInPixels() / 2;
+                double centerY = _y + _component.GetHeightInPixels() / 2;
+                Console.WriteLine($"{e.ClientY} - {centerY} - {e.ClientX} - {centerX}");
+                _component.Rotate = Math.Atan2(e.ClientY - centerY, e.ClientX - centerX) * 100;
+                Console.WriteLine(_component.Rotate);
+                break;
+        }
+
+
+        _cursorX = e.ClientX;
+        _cursorY = e.ClientY;
+
+        StateHasChanged();
+    }
+
+    void OnKeyDown(object? _, KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                _y++;
+                // YChanged.InvokeAsync(_y.Value);
+                break;
+            case "ArrowUp":
+                _y--;
+                //YChanged.InvokeAsync(_y.Value);
+                break;
+            case "ArrowRight":
+                _x++;
+                //XChanged.InvokeAsync(_x.Value);
+                break;
+            case "ArrowLeft":
+                _x--;
+                //XChanged.InvokeAsync(_x.Value);
+                break;
+        }
+    }
+
+    public void Dispose()
+    {
+        _mouseService.OnMove -= OnMove;
+        _mouseService.OnUp -= OnUp;
+        _keyService.OnKeyDown -= OnKeyDown;
+    }
+}
+

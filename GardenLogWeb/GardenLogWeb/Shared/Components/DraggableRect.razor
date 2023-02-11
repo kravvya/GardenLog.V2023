@@ -12,7 +12,7 @@
     double _cursorY;
 
     [Parameter]
-    public VisualComponent Component { get; set; }
+    public IVisualComponent Component { get; set; }
 
 
     [Parameter]
@@ -33,7 +33,7 @@
 
     [Parameter] public EventCallback<double> YChanged { get; set; }
 
-    [Parameter] public EventCallback<VisualComponent> ComponentSelected { get; set; }
+    [Parameter] public EventCallback<IVisualComponent> ComponentSelected { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; }

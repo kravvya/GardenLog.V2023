@@ -1,5 +1,7 @@
 ﻿
 
+using ImageCatalog.Contract.Queries;
+
 namespace GardenLogWeb.Services
 {
     public interface IGardenService
@@ -9,6 +11,7 @@ namespace GardenLogWeb.Services
         Task<ApiObjectResponse<string>> CreateGarden(GardenModel garden);
         Task<ApiResponse> UpdateGarden(GardenModel garden);
         Task<ApiResponse> DeleteGarden(string gardenId);
+        Task<List<GardenBedModel>> GetGardenBeds(string gardenId, bool useCache);
     }
 
     public class GardenService : IGardenService
@@ -21,6 +24,7 @@ namespace GardenLogWeb.Services
 
         private const int CACHE_DURATION = 10;
         private const string GARDENS_KEY = "Gardens";
+        private const string GARDEN_BED_KEY = "Garden_{0}_Bed";
 
         public GardenService(ILogger<GardenService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService)
         {
@@ -192,6 +196,30 @@ namespace GardenLogWeb.Services
 
         #endregion
 
+        #region Garden Bed Functions
+        public async Task<List<GardenBedModel>> GetGardenBeds(string gardenId, bool useCache)
+        {
+            List<GardenBedModel> gardenBedList = null;
+
+            if (useCache)
+            {
+                gardenBedList = GetGardenBedsFromCache(gardenId);
+            }
+
+            if (gardenBedList == null)
+            {
+                gardenBedList = await GetGardenBeds(gardenId);
+
+                if (gardenBedList.Count > 0)
+                {
+                    AddGardenBedsToCache(gardenId, gardenBedList);
+                }               
+            }
+
+            return gardenBedList;
+        }
+        #endregion
+
         #region Private Garden functions
         //private List<GardenViewModel> GetAllGardens()
         //{
@@ -271,6 +299,62 @@ namespace GardenLogWeb.Services
                 }
             }
 
+        }
+
+        private List<GardenBedModel> GetGardenBedsFromCache(string gardenId)
+        {
+            string cacheKey = string.Format(GARDEN_BED_KEY, gardenId);
+
+            List<GardenBedModel> gardenBedList = null;
+
+            _cacheService.TryGetValue<List<GardenBedModel>>(cacheKey, out gardenBedList);
+
+            return gardenBedList;
+        }
+
+        private Task<List<GardenBedModel>> GetGardenBeds(string gardenId)
+        {
+            //var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+
+            //var response = await httpClient.ApiGetAsync<List<GardenBedModel>>(GardenRoutes.GetGardenBeds.Replace("{gardenId}", gardenId));
+
+            //if (!response.IsSuccess)
+            //{
+            //    _toastService.ShowToast("Unable to get Garden Beds", GardenLogToastLevel.Error);
+            //    return null;
+            //}
+
+            //return response.Response;
+
+            List<GardenBedModel> gardenBeds = new();
+            gardenBeds.Add(new GardenBedModel()
+            {
+                BorderColor = "red",
+                X = 100,
+                Y = 50,
+                Name = "Leeks",
+                Length = 10 * 12,
+                Width = 30
+            });
+
+            gardenBeds.Add(new GardenBedModel()
+            {
+                BorderColor = "blue",
+                X = 500,
+                Y = 50,
+                Name = "Leeks",
+                Length = 10 * 12,
+                Width = 30
+            });
+
+            return Task.FromResult(gardenBeds);
+        }
+
+        private void AddGardenBedsToCache(string gardenId, List<GardenBedModel> gardenBedList)
+        {
+            string cacheKey = string.Format(GARDEN_BED_KEY, gardenId);
+
+            _cacheService.Set(cacheKey, gardenBedList, DateTime.Now.AddMinutes(10));
         }
     }
 }

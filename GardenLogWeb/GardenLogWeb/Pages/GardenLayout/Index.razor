@@ -1,0 +1,32 @@
+﻿@page "/gardens/{GardenId}/layout";
+
+@inject IGardenService _gardenService;
+@inject NavigationManager _navigationManager;
+
+<Page Title="@_title" Description="Review, Edit and Create Garden Layout" BreadcrumbLinks="@_breadcrumbLinks">
+    <PageContent>
+        <GardenLayoutView Garden=@_garden />
+    </PageContent>
+</Page>
+
+@code {
+    [Parameter]
+    public string GardenId { get; set; }
+
+    private List<BreadcrumbLink> _breadcrumbLinks = new();
+
+    private GardenModel _garden = null;
+
+    private string _title;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _garden = await _gardenService.GetGarden(GardenId, true);
+
+        _title = $"{_garden.Name} Layout";
+        _breadcrumbLinks.Add(new BreadcrumbLink("Gardens", _navigationManager.GetGardensUrl(), false)); 
+        _breadcrumbLinks.Add(new BreadcrumbLink(_title, _navigationManager.GetGardenLayoutUrl(GardenId), true)); ;
+
+    }
+}
+

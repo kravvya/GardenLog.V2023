@@ -111,7 +111,12 @@ public static class NavigationManagerExtensions
 
     public static string GetGardensUrl(this NavigationManager navigationManager)
     {
-        return $"editplant/garden_plan/gardens";
+        return $"gardens";
+    }
+
+    public static string GetGardenLayoutUrl(this NavigationManager navigationManager, string gardenId)
+    {
+        return $"gardens/{gardenId}/layout";
     }
 
     public static void NavigateToPlants(this NavigationManager navigationManager)
@@ -223,5 +228,10 @@ public static class NavigationManagerExtensions
     public static void NavigateToGardes(this NavigationManager navigationManager)
     {
         navigationManager.NavigateTo(navigationManager.GetGardensUrl());
+    }
+
+    public static void NavigateToGardenLayout(this NavigationManager navigationManager, string gardenId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenLayoutUrl(gardenId));
     }
 }

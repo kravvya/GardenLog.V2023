@@ -1,0 +1,46 @@
+﻿svg .selector {
+    fill: rgba(66,166,211,0.75);
+}
+
+rect.selector, line.selector {
+    stroke-width: 3;
+    stroke-dasharray: 14, 5;
+    stroke: rgba(66,166,211,0.75);
+    fill: none;
+}
+
+svg .rotator {
+    fill: rgba(255,120,0,0.75);
+}
+
+svg .top-left-resizer {
+    cursor: nw-resize;
+}
+
+svg .null-left-resizer {
+    cursor: w-resize;
+}
+
+svg .bottom-left-resizer {
+    cursor: sw-resize;
+}
+
+svg .bottom-null-resizer {
+    cursor: s-resize;
+}
+
+svg .bottom-right-resizer {
+    cursor: se-resize;
+}
+
+svg .null-right-resizer {
+    cursor: e-resize;
+}
+
+svg .top-right-resizer {
+    cursor: ne-resize;
+}
+
+svg .top-null-resizer {
+    cursor: n-resize;
+}

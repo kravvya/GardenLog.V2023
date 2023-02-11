@@ -14,15 +14,10 @@
 
     private GardenList _gardenList;
 
-    private string _title;
-    private string _description;
-
     protected override void OnInitialized()
     {
-        _description = string.Empty;
-        _title = "Gardens";
         _breadcrumbLinks.Add(new BreadcrumbLink("Gardens", _navigationManager.GetGardensUrl(), true)); ;
 
     }
 }
-
+ 

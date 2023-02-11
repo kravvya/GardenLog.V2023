@@ -4,13 +4,14 @@ public class GardenBed : BaseEntity, IEntity
 {
     public string Name { get; private set; }
     public int? RowNumber { get; private set; }
-    public int Length { get; private set; }
-    public int Width { get; private set; }
+    public double Length { get; private set; }
+    public double Width { get; private set; }
     public double X { get; private set; }
     public double Y { get; private set; }
     public string? BorderColor { get; private set; }
     public string Notes { get; private set; }
     public GardenBedTypeEnum Type { get; private set; }
+    public double Rotate { get; set; }
 
     public GardenBed() { }
 
@@ -27,7 +28,8 @@ public class GardenBed : BaseEntity, IEntity
             Y = command.Y,
             BorderColor = command.BorderColor,
             Notes = command.Notes,
-            Type = command.Type
+            Type = command.Type,
+            Rotate = command.Rotate,
         };
 
         gardenBed.DomainEvents.Add(
@@ -41,12 +43,13 @@ public class GardenBed : BaseEntity, IEntity
     {
         this.Set<string>(() => this.Name, command.Name);
         this.Set<int?>(() => this.RowNumber, command.RowNumber);
-        this.Set<int>(() => this.Length, command.Length);
-        this.Set<int>(() => this.Width, command.Width);
+        this.Set<double>(() => this.Length, command.Length);
+        this.Set<double>(() => this.Width, command.Width);
         this.Set<double>(() => this.X, command.X);
         this.Set<double>(() => this.Y, command.Y);
         this.Set<string?>(() => this.BorderColor, command.BorderColor);
         this.Set<string>(() => this.Notes, command.Notes);
+        this.Set<double>(() => this.Rotate, command.Rotate);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {

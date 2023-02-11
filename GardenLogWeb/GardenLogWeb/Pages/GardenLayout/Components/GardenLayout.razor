@@ -1,0 +1,63 @@
+﻿@inject IMouseService _mouseService;
+@inject IKeyService _keyService;
+@inject IGardenService _gardenService;
+
+
+<svg width="@Settings.SvgWidth" height="@Settings.SvgHeight" viewBox="@Settings.StartX @Settings.StartY @Settings.ViewBoxX @Settings.ViewBoxY"
+     @onkeydown=@(e => _keyService.KeyDown(this, e))
+     @onmousemove=@(e => _mouseService.MouseMove(this, e))
+     @onmouseup=@(e => _mouseService.MouseUp(this, e))
+     @onmouseout=@(e => _mouseService.MouseLeave(this, e))>
+    <defs>
+        @*small background box*@
+        <pattern id="smallrect" x="0" y="0" width="48" height="48" viewBox="0 0 48 48" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="48" height="48" stroke-width="0.4"></rect>
+        </pattern>
+        @*group of small background boxes*@
+        <pattern id="bigrect" x="0" y="0" width="240" height="240" viewBox="0 0 240 240" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="240" height="240" fill="url(#smallrect)" stroke-width="1"></rect>
+        </pattern>
+        @*garden bed background box*@
+        <pattern id="bed-pat" x="0" y="0" width="48" height="48" viewBox="0 0 48 48" patternUnits="userSpaceOnUse">
+            <image x="0" y="0" width="48" height="48" href=" images/garden-bed-background.png"></image>
+        </pattern>
+    </defs>
+    <rect x="0" y="0" width="@(Settings.GardenLayoutWidth)" height="@(Settings.GardenLayoutHeight)" fill="url(#bigrect)" id="bg" @onmousedown=ComponentNotSelected></rect>
+
+    <g>
+        @foreach (var bed in _gardenBeds)
+        {
+            <RectGardenBed Component=@bed ComponentSelected=@ComponentSelected Settings=@Settings fill="url(#bed-pat)"></RectGardenBed>
+            <text><text x="@bed.X" y="@bed.Y" text-anchor="start" alignment-baseline="hanging" style="fill:#fff;fill-opacity: .25;">@bed.Name</text></text>
+        }
+    </g>
+    <DraggableSelector @ref=_draggableComponent />
+</svg>
+
+
+@code {
+    [Parameter] public GardenModel? Garden { get; set; }
+
+    [Parameter] public GardenPlanSettings? Settings { get; set; }
+
+    List<GardenBedModel> _gardenBeds = new();
+
+    DraggableSelector _draggableComponent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+    }
+
+    protected void ComponentSelected(IVisualComponent selected, MouseEventArgs e)
+    {
+        _draggableComponent.Intitialize(selected, Settings, e);
+    }
+
+    protected void ComponentNotSelected()
+    {
+        _draggableComponent.Intitialize(null, Settings, null);
+    }
+
+}
+
