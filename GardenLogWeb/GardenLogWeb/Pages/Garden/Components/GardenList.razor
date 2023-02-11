@@ -42,6 +42,12 @@
                             <button type="button" class="btn btn-secondary" title="Edit Garden Plan" @onclick="@(() => EditGarden(garden))">
                                 <span class="bi bi-pencil">&nbsp;</span>
                             </button>
+                            @if (garden.Length > 0 && garden.Width > 0)
+                            {
+                                <button type="button" class="btn btn-warning" title="Garden Layout" @onclick="@(() => EditGardenLayout(garden))">
+                                    <span class="bi bi-grid-1x2-fill">&nbsp;</span>
+                                </button>
+                            }
                             <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddGardenImage(garden))">
                                 <span class="bi bi-card-image">&nbsp;</span>
                             </button>
@@ -145,5 +151,10 @@
     private void ViewGardenImage(GardenModel garden)
     {
         _navigationManager.NavigateToGardenPlanImages(garden.GardenId);
+    }
+
+    private void EditGardenLayout(GardenModel garden)
+    {
+        _navigationManager.NavigateToGardenLayout(garden.GardenId);
     }
 }

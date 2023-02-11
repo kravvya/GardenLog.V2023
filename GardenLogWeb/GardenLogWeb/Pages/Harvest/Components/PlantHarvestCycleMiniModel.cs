@@ -9,7 +9,7 @@ namespace GardenLogWeb.Pages.Harvest.Components
         public string? SeedVendorId { get; set; }
         public string? SeedVendorName { get; set; }
 
-        public DateTime? SeedingDateTime { get; set; } = DateTime.Now;
+        public DateTime? SeedingDate { get; set; } = DateTime.Now;
 
         public DateTime? GerminationDate { get; set; } = DateTime.Now;
         public decimal? GerminationRate { get; set; }

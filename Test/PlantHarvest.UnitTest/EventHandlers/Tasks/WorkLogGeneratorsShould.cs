@@ -19,7 +19,7 @@ public class WorkLogGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow,  PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.UtcNow,  PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         await workLogGenerator.Handle((HarvestEvent)evt, new CancellationToken());
@@ -35,7 +35,7 @@ public class WorkLogGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow,  PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.UtcNow,  PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         await workLogGenerator.Handle((HarvestEvent)evt, new CancellationToken());

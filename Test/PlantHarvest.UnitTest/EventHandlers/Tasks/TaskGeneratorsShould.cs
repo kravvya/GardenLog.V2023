@@ -84,7 +84,7 @@ public class TaskGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow, NumberOfSeeds = 101, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.UtcNow, NumberOfSeeds = 101, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         await IndoorSawTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
@@ -134,7 +134,7 @@ public class TaskGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow, NumberOfSeeds = 101, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.UtcNow, NumberOfSeeds = 101, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         await outsideSawTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
@@ -248,7 +248,7 @@ public class TaskGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.Now, NumberOfSeeds = 100, PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.Now, NumberOfSeeds = 100, PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         harvest.AddPlantSchedule(HarvestHelper.GetCommandToCreateSchedule(plantHarvestId, WorkLogReasonEnum.TransplantOutside));
@@ -501,7 +501,7 @@ public class TaskGeneratorsShould
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
-        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDateTime = DateTime.UtcNow, NumberOfSeeds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.UtcNow, NumberOfSeeds = 100, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
         var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
 
         await germinateTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());

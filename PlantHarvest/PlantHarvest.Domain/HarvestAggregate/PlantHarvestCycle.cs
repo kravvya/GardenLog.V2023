@@ -101,7 +101,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             NumberOfSeeds = plant.NumberOfSeeds,
             SeedCompanyId = plant.SeedVendorId,
             SeedCompanyName = plant.SeedVendorName,
-            SeedingDate = plant.SeedingDateTime,
+            SeedingDate = plant.SeedingDate,
             GerminationDate = plant.GerminationDate,
             GerminationRate = plant.GerminationRate,
             NumberOfTransplants = plant.NumberOfTransplants,
@@ -127,7 +127,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.NumberOfSeeds, command.NumberOfSeeds);
         this.Set<string?>(() => this.SeedCompanyId, command.SeedVendorId);
         this.Set<string?>(() => this.SeedCompanyName, command.SeedVendorName);
-        this.Set<DateTime?>(() => this.SeedingDate, command.SeedingDateTime);
+        this.Set<DateTime?>(() => this.SeedingDate, command.SeedingDate);
         this.Set<DateTime?>(() => this.GerminationDate, command.GerminationDate);
         this.Set<decimal?>(() => this.GerminationRate, command.GerminationRate);
         this.Set<int?>(() => this.NumberOfTransplants, command.NumberOfTransplants);

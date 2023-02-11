@@ -145,7 +145,7 @@ namespace PlantHarvest.IntegrationTest.Clients
                 PlantGrowthInstructionName = "Test Growth Instruction",
                 PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors,
                 Notes = "Created by Integration test",
-                SeedingDateTime = DateTime.Now
+                SeedingDate = DateTime.Now
             };
         }
         #endregion

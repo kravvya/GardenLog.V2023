@@ -26,8 +26,8 @@
 
                                     <div class="px-2">
                                         <label for="SeedingDateTime">Seeding Date</label>
-                                        <InputDate Class="form-control" @bind-Value="@_plantHarvestMini.SeedingDateTime" id="SeedingDateTime" />
-                                        <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvestMini.SeedingDateTime)" /></div>
+                                        <InputDate Class="form-control" @bind-Value="@_plantHarvestMini.SeedingDate" id="SeedingDateTime" />
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvestMini.SeedingDate)" /></div>
                                     </div>
 
                                     @if (_seedVendors != null)
@@ -193,7 +193,7 @@
 
         if (!_hideSeedDetails)
         {
-            _plantHarvest.SeedingDateTime = _plantHarvestMini.SeedingDateTime;
+            _plantHarvest.SeedingDate = _plantHarvestMini.SeedingDate;
             _plantHarvest.NumberOfSeeds = _plantHarvestMini.NumberOfSeeds;
             if(_seedVendors != null)
             {

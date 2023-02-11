@@ -25,7 +25,7 @@ public abstract record PlantHarvestCycleBase
     public string? SeedVendorId { get; set; }
     public string? SeedVendorName { get; set; }
 
-    public DateTime? SeedingDateTime { get; set; }
+    public DateTime? SeedingDate { get; set; }
 
     public DateTime? GerminationDate { get; set; }
     public decimal? GerminationRate { get; set; }
