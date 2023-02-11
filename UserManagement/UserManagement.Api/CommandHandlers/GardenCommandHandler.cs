@@ -46,7 +46,9 @@ public class GardenCommandHandler : IGardenCommandHandler
             request.Notes,
             userProfileId,
             request.LastFrostDate,
-            request.FirstFrostDate);
+            request.FirstFrostDate,
+            request.Length,
+            request.Width);
 
         _gardenRepository.Add(garden);
 
@@ -69,7 +71,10 @@ public class GardenCommandHandler : IGardenCommandHandler
         var garden = await _gardenRepository.GetByIdAsync(request.GardenId);
         if (garden == null) return 0;
 
-        garden.Update(request.Name, request.City, request.StateCode, request.Latitude, request.Longitude, request.Notes, request.LastFrostDate, request.FirstFrostDate);
+        garden.Update(request.Name, request.City, request.StateCode
+            , request.Latitude, request.Longitude
+            , request.Notes, request.LastFrostDate, request.FirstFrostDate
+            , request.Length, request.Width);
 
         _gardenRepository.Update(garden);
 

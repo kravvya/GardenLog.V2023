@@ -55,6 +55,19 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="Length">Length</label>
+                        <InputNumber T="double" class="form-control" id="LastFrostDate" @bind-Value="@_garden.Length" />
+                        <ValidationMessage For="@(() => _garden.Length)" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="Width">Width</label>
+                        <InputNumber T="double" class="form-control" id="Width" @bind-Value="@_garden.Width" />
+                        <ValidationMessage For="@(() => _garden.Width)" />
+                    </div>
+                </div>
+
                 <div class="col-md-10">
                     <label for="description">Description</label>
                     <InputTextArea Class="form-control" Id="description" @bind-Value="@_garden.Notes" rows="5" />
