@@ -53,7 +53,7 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
             var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.Information, IncludeResolvedTasks=false });
             if (tasks != null && tasks.Any())
             {
-                foreach (var task in tasks.Where(t => t.Title == "GERMINATE_TASK_TITLE").ToList())
+                foreach (var task in tasks.Where(t => t.Title == GERMINATE_TASK_TITLE).ToList())
                 {
                     await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                     {
