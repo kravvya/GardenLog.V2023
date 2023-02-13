@@ -2,18 +2,18 @@
 
 /* /Pages/GardenLayout/Components/DraggableSelector.razor.rz.scp.css */
 svg .selector[b-b1eu6fojp0] {
-    fill: rgba(66,166,211,0.75);
+    fill: #709a41;
 }
 
 rect.selector[b-b1eu6fojp0], line.selector[b-b1eu6fojp0] {
     stroke-width: 3;
     stroke-dasharray: 14, 5;
-    stroke: rgba(66,166,211,0.75);
+    stroke: #709a41;
     fill: none;
 }
 
 svg .rotator[b-b1eu6fojp0] {
-    fill: rgba(255,120,0,0.75);
+    fill: #FF7300;
 }
 
 svg .top-left-resizer[b-b1eu6fojp0] {
@@ -62,6 +62,12 @@ svg .top-null-resizer[b-b1eu6fojp0] {
     stroke: saddlebrown
 }
 /* /Pages/GardenLayout/Components/GardenLayoutView.razor.rz.scp.css */
+
+#collapse1[b-o7e16haq02] {
+    overflow-y: scroll;
+    height: 247px;
+}
+
 .vertical-ruler-div[b-o7e16haq02] {
     margin-right: -18px;
     margin-top: 24px;
@@ -82,7 +88,7 @@ svg .top-null-resizer[b-b1eu6fojp0] {
 }
 /* /Pages/GardenLayout/Components/RectGardenBed.razor.rz.scp.css */
 
-rect.InGround[b-mcdhcszdo5] {
+rect.InGroundBed[b-mcdhcszdo5] {
     stroke-width: 6;
     stroke: rgba(145, 84, 6, 0.75);
 }
