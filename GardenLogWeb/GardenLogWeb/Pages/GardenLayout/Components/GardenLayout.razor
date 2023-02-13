@@ -42,6 +42,8 @@
 
     [Parameter] public GardenPlanSettings? Settings { get; set; }
 
+    [Parameter] public Action<GardenBedModel> GardenBedSelected { get; set; }
+
     List<GardenBedModel> _gardenBeds = new();
 
     DraggableSelector _draggableComponent;
@@ -55,12 +57,18 @@
 
     protected void ComponentSelected(IVisualComponent selected, MouseEventArgs e)
     {
+        _selected = selected;
         _draggableComponent.Intitialize(selected, Settings, e);
+        GardenBedSelected((GardenBedModel)selected);
     }
 
-    protected void ComponentNotSelected()
+    protected async Task ComponentNotSelected()
     {
         _draggableComponent.Intitialize(null, Settings, null);
+        await _gardenService.UpdateGardenBed((GardenBedModel)_selected);
+        _selected = null;
+      
+        GardenBedSelected(null);
     }
 
     void OnKeyDown(object? _, KeyboardEventArgs e)

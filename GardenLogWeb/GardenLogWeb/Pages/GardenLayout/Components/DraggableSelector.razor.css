@@ -1,16 +1,16 @@
 ﻿svg .selector {
-    fill: rgba(66,166,211,0.75);
+    fill: #709a41;
 }
 
 rect.selector, line.selector {
     stroke-width: 3;
     stroke-dasharray: 14, 5;
-    stroke: rgba(66,166,211,0.75);
+    stroke: #709a41;
     fill: none;
 }
 
 svg .rotator {
-    fill: rgba(255,120,0,0.75);
+    fill: #FF7300;
 }
 
 svg .top-left-resizer {

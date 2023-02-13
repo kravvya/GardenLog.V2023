@@ -23,10 +23,47 @@
 
 @if (Garden != null)
 {
-    <div class="row justify-content-start">
-        <div class="Garden-card col-auto mb-3">
-            <div class="card">
-                <div class="card-header">
+    <div class="row ">
+        <div class="col-md-2">
+
+            <div class="card border-secondary">
+                <div class="card-header text-bg-secondary">
+                    <h5>
+                        Selected Bed
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="garden-facts_list row mt-2 mt-lg-0">
+                        <div class="garden-facts-item mt-1">
+                            <dt class="garden-facts_term">Dimensions</dt>
+                            <dd class="garden-facts_definition col">@(Garden.Width)ft x @(Garden.Length)ft</dd>
+                            <dt class="garden-facts_term">Area</dt>
+                            <dd class="garden-facts_definition col">@(Garden.Width * Garden.Length) sq. ft</dd>
+                            <dt class="garden-facts_term">Number of Beds</dt>
+                            <dd class="garden-facts_definition col">??</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary" title="Edit Garden" @onclick="@(() => EditGarden())">
+                            <span class="bi bi-pencil">&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddGardenImage())">
+                            <span class="bi bi-card-image">&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewGardenImage())">
+                            <span class="bi bi-images" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+
+            <div class="card border-info">
+                <div class="card-header text-bg-info">
                     <h5>
                         @Garden.Name
                     </h5>
@@ -48,22 +85,101 @@
                         <button type="button" class="btn btn-secondary" title="Edit Garden" @onclick="@(() => EditGarden())">
                             <span class="bi bi-pencil">&nbsp;</span>
                         </button>
-                        @if (Garden.Length > 0 && Garden.Width > 0)
+                          @if (Garden.Length > 0 && Garden.Width > 0)
                         {
                             <button type="button" class="btn btn-warning" title="Add Garden Bed" @onclick="@(() => AddGardenBed())">
                                 <span class="bi bi-layout-sidebar-inset">&nbsp;</span>
                             </button>
                         }
-                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddGardenImage())">
-                            <span class="bi bi-card-image">&nbsp;</span>
-                        </button>
-                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewGardenImage())">
-                            <span class="bi bi-images" aria-hidden="true"></span>
-                        </button>
                     </div>
                 </div>
             </div>
+
         </div>
+        
+        <div class="col-md-7">
+
+            <div class="card border-info">
+                <div class="card-header text-bg-info">
+                    <h5>
+                        Garden Beds
+                    </h5>
+                </div>
+                <div class="card-body">
+
+                    <div id="collapse1" class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">First</th>
+                                    <th scope="col">Last</th>
+                                    <th scope="col">Handle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>mdo</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>fat</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Larry</td>
+                                    <td>the Bird</td>
+                                    <td>twitter</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>mdo</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>fat</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Larry</td>
+                                    <td>the Bird</td>
+                                    <td>twitter</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>mdo</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>fat</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Larry</td>
+                                    <td>the Bird</td>
+                                    <td>twitter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+             
+            </div>
+        </div>
+        
     </div>
 }
 
@@ -81,7 +197,7 @@
                         <GardenHorizontalRuler Garden="@Garden" Settings="@_settings" />
                     </div>
                     <div class="garden_layout">
-                        <GardenLayout Garden="@Garden" Settings="@_settings" />
+                        <GardenLayout Garden="@Garden" Settings="@_settings" GardenBedSelected="@GardenBedSelected" />
                     </div>
                 </div>
             </div>
@@ -129,6 +245,14 @@
             _settings = new GardenPlanSettings(Garden.Length, Garden.Width);
 
             StateHasChanged();
+        }
+    }
+
+    private void GardenBedSelected(GardenBedModel selected)
+    {
+        if (selected != null)
+        {
+            Console.WriteLine($"GardenBed Selected {selected}");
         }
     }
 

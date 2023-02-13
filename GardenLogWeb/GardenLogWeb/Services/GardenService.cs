@@ -440,7 +440,7 @@ namespace GardenLogWeb.Services
         private void AddOrUpdateToGardenBedList(GardenBedModel gardenBed)
         {
             List<GardenBedModel>? beds = null;
-            string key = string.Format(GARDENS_KEY, gardenBed.GardenId);
+            string key = string.Format(GARDEN_BED_KEY, gardenBed.GardenId);
 
             if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out beds))
             {
@@ -457,7 +457,7 @@ namespace GardenLogWeb.Services
         }
         private void RemoveFromGardenBedList(string gardenId, string id)
         {
-            string key = string.Format(GARDENS_KEY, gardenId);
+            string key = string.Format(GARDEN_BED_KEY, gardenId);
             if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out var beds))
             {
                 var index = beds.FindIndex(p => p.GardenBedId == id);

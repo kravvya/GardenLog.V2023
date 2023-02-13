@@ -1,4 +1,10 @@
-﻿.vertical-ruler-div {
+﻿
+#collapse1 {
+    overflow-y: scroll;
+    height: 247px;
+}
+
+.vertical-ruler-div {
     margin-right: -18px;
     margin-top: 24px;
 }
