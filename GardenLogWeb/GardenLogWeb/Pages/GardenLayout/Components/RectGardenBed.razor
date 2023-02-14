@@ -1,8 +1,9 @@
-﻿<rect x=0 y=0
-    height="@(Component?.GetHeightInPixels())" width="@(Component?.GetWidthInPixels())"  
-    transform="translate(@Component?.X, @Component?.Y) rotate(@(Component?.Rotate),@(Component?.GetWidthInPixels()/2),@(Component?.GetHeightInPixels()/2))" 
-    @attributes="AdditionalAttributes" cursor=@_cursor @onmousedown=OnDown  class="@Component?.CssClass"></rect>
-
+﻿<g transform="translate(@Component?.X, @Component?.Y) rotate(@(Component?.Rotate),@(Component?.GetWidthInPixels()/2),@(Component?.GetHeightInPixels()/2))" >
+    <rect x=0 y=0
+          height="@(Component?.GetHeightInPixels())" width="@(Component?.GetWidthInPixels())"         
+          @attributes="AdditionalAttributes" cursor=@_cursor @onmousedown=OnDown class="@Component?.CssClass"></rect>
+    <text x="0" y="-20" text-anchor="start" alignment-baseline="hanging" style="fill:#fff;fill-opacity: .95;">@Component?.Name</text>
+</g>
 @code {
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; }
@@ -18,6 +19,7 @@
 
     void OnDown(MouseEventArgs e)
     {
+        Console.WriteLine("RectGardenBed - OnDown");
         ComponentSelected(Component, e);
     }
 }

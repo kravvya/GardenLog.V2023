@@ -208,6 +208,11 @@ public class GardenController : Controller
 
             return Ok(results);
         }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
         catch (Exception ex)
         {
             return Problem(ex.Message);
@@ -227,6 +232,11 @@ public class GardenController : Controller
             var results = await _commadnHandler.UpdateGardenBed(command);
 
             return results == 0 ? NotFound() : Ok(results);
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
         }
         catch (Exception ex)
         {

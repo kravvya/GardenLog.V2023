@@ -29,4 +29,52 @@ public record GardenBedModel : GardenBedViewModel, IVisualComponent
         Width += 12 * pixels / GardenPlanSettings.TickFootWidth;
         if (Width <= 0) Width = 1;
     }
+
+    public string GetLengthDisplay()
+    {
+        double feet = Length / 12;
+        int feetInt = (int)feet;
+        double inchesRemainder = Length % 12;
+
+        return ($"{feetInt}' {inchesRemainder}\"");
+    }
+
+    public string GetWidthDisplay()
+    {
+
+        double feet = Width / 12;
+        int feetInt = (int)feet;
+        double inchesRemainder = Width % 12;
+
+        return ($"{feetInt}' {inchesRemainder}\"");
+    }
+
+    public void MoveUp(int units)
+    {
+        Y -= units;
+    }
+
+    public void MoveDown(int units)
+    {
+        Y += units;
+    }
+
+    public void MoveLeft(int units)
+    {
+        X -= units;
+    }
+
+    public void MoveRight(int units)
+    {
+        X += units;
+    }
+
+    public void RotateBy(double rotate)
+    {
+        Rotate += rotate;
+        if (Rotate > 360)
+        {
+            Rotate -= 360;
+        }
+    }
 }

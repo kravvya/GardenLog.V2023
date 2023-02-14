@@ -1,6 +1,6 @@
 ﻿@inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
-
+@inject IVerifyService _verifyService;
 
 <ModalView OnCloseModal="CloseGardenFormModal" @ref="_gardenFormModal">
     <Body>
@@ -33,32 +33,62 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <dl class="garden-facts_list row mt-2 mt-lg-0">
-                        <div class="garden-facts-item mt-1">
-                            <dt class="garden-facts_term">Dimensions</dt>
-                            <dd class="garden-facts_definition col">@(Garden.Width)ft x @(Garden.Length)ft</dd>
-                            <dt class="garden-facts_term">Area</dt>
-                            <dd class="garden-facts_definition col">@(Garden.Width * Garden.Length) sq. ft</dd>
-                            <dt class="garden-facts_term">Number of Beds</dt>
-                            <dd class="garden-facts_definition col">??</dd>
+                    @if (_selected != null)
+                    {
+                        <dl class="garden-facts_list row mt-2 mt-lg-0">
+                            <div class="garden-facts-item mt-1">
+                                <dt class="garden-facts_term">Name(#)</dt>
+                                <dd class="garden-facts_definition col">@_selected.Name (@_selected.RowNumber)</dd>
+                            </div>
+                        </dl>
+                        <div class="row">
+                            <div class="col" />
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => _selected.MoveUp(12))">
+                                    <span class="bi bi-arrow-up">&nbsp;</span>
+                                </button>
+                            </div>
+                            <div class="col" />
                         </div>
-                    </dl>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => _selected.MoveLeft(12))">
+                                    <span class="bi bi-arrow-left">&nbsp;</span>
+                                </button>
+                            </div>
+                            <div class="col" />
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => _selected.MoveRight(12))">
+                                    <span class="bi bi-arrow-right">&nbsp;</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col" />
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => _selected.MoveDown(12))">
+                                    <span class="bi bi-arrow-down">&nbsp;</span>
+                                </button>
+                            </div>
+                            <div class="col" />
+                        </div>
+                    }
                 </div>
                 <div class="card-footer">
-                    <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary" title="Edit Garden" @onclick="@(() => EditGarden())">
-                            <span class="bi bi-pencil">&nbsp;</span>
-                        </button>
-                        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => AddGardenImage())">
-                            <span class="bi bi-card-image">&nbsp;</span>
-                        </button>
-                        <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewGardenImage())">
-                            <span class="bi bi-images" aria-hidden="true"></span>
-                        </button>
-                    </div>
+                    @if (_selected != null)
+                    {
+                        <div class="d-flex gap-2 gy-2 d-md-flex justify-content-around">
+                            <button type="button" class="btn btn-secondary" title="Turn left 30%" @onclick="@(() => _selected.RotateBy(150))">
+                                <span class="bi bi-arrow-90deg-left">&nbsp;</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" title="Turn right 30%" @onclick="@(() => _selected.RotateBy(30))">
+                                <span class="bi bi-arrow-90deg-right">&nbsp;</span>
+                            </button>
+
+                        </div>
+                    }
                 </div>
             </div>
-
         </div>
         <div class="col-md-3">
 
@@ -76,7 +106,7 @@
                             <dt class="garden-facts_term">Area</dt>
                             <dd class="garden-facts_definition col">@(Garden.Width * Garden.Length) sq. ft</dd>
                             <dt class="garden-facts_term">Number of Beds</dt>
-                            <dd class="garden-facts_definition col">??</dd>
+                            <dd class="garden-facts_definition col">@_gardenBeds.Count()</dd>
                         </div>
                     </dl>
                 </div>
@@ -85,7 +115,7 @@
                         <button type="button" class="btn btn-secondary" title="Edit Garden" @onclick="@(() => EditGarden())">
                             <span class="bi bi-pencil">&nbsp;</span>
                         </button>
-                          @if (Garden.Length > 0 && Garden.Width > 0)
+                        @if (Garden.Length > 0 && Garden.Width > 0)
                         {
                             <button type="button" class="btn btn-warning" title="Add Garden Bed" @onclick="@(() => AddGardenBed())">
                                 <span class="bi bi-layout-sidebar-inset">&nbsp;</span>
@@ -96,7 +126,7 @@
             </div>
 
         </div>
-        
+
         <div class="col-md-7">
 
             <div class="card border-info">
@@ -112,74 +142,43 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Lenght</th>
+                                    <th scope="col">Width</th>
+                                    <th scope="col">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>twitter</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>twitter</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>twitter</td>
-                                </tr>
+                                @foreach (var bed in _gardenBeds)
+                                {
+                                    <tr>
+                                        <th>@bed.RowNumber</th>
+                                        <td>@bed.Name</td>
+                                        <td>@(_verifyService.GetDescription<GardenBedTypeEnum>(bed.Type))</td>
+                                        <td>@bed.GetLengthDisplay()</td>
+                                        <td>@bed.GetWidthDisplay()</td>
+                                        <td>@bed.Notes</td>
+                                        <td>
+                                            <div class="d-flex gap-2 flex-nowrap">
+                                                <button type="button" class="btn btn-secondary" title="Edit GardenBed" @onclick="@(() => EditGardenBed(bed))">
+                                                    <span class="bi bi-pencil">&nbsp;</span>
+                                                </button>
+                                                <button type="button" class="btn btn-info" title="Select GardenBed" @onclick="@(() => SelectGardenBed(bed))">
+                                                    <span class="bi bi-info-square">&nbsp;</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
                 </div>
-             
+
             </div>
         </div>
-        
+
     </div>
 }
 
@@ -197,7 +196,7 @@
                         <GardenHorizontalRuler Garden="@Garden" Settings="@_settings" />
                     </div>
                     <div class="garden_layout">
-                        <GardenLayout Garden="@Garden" Settings="@_settings" GardenBedSelected="@GardenBedSelected" />
+                        <GardenLayout Garden="@Garden" GardenBeds=@_gardenBeds Settings="@_settings" GardenBedSelected="@GardenBedSelected" GardenBedDeleted="@GardenBedDeleted" @ref=_gardenLayout />
                     </div>
                 </div>
             </div>
@@ -211,7 +210,7 @@
                 </div>
                 <div class="p-2  ">
                     <label for="zoom" class="form-label">Zoom</label>
-                    <input type="range" class="form-range" min="0" max="1000" step="50" id="zoom" @bind=_settings.Zoom>
+                    <input type="range" class="form-range" min="0" max="5000" step="100" id="zoom" @bind=_settings.Zoom>
                 </div>
                 <div class="p-2">
                     <div class="btn-group" role="group" aria-label="Navigation Buttons">
@@ -229,8 +228,12 @@
 @code {
     [Parameter]
     public GardenModel Garden { get; set; }
+    List<GardenBedModel> _gardenBeds = new();
     private GardenPlanSettings _settings = null;
 
+    private GardenBedModel _selected = null;
+
+    private GardenLayout _gardenLayout;
     private ModalView _imageFormModal { get; set; }
     private ImageForm _imageForm { get; set; }
     private ModalView? _gardenFormModal;
@@ -238,22 +241,37 @@
     private ModalView? _gardenBedFormModal;
     private GardenBedForm? _gardenBedForm;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (Garden != null)
         {
+            _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
             _settings = new GardenPlanSettings(Garden.Length, Garden.Width);
 
             StateHasChanged();
         }
     }
 
-    private void GardenBedSelected(GardenBedModel selected)
+    private async Task GardenBedSelected(GardenBedModel selected, bool skipUpdate)
     {
-        if (selected != null)
-        {
-            Console.WriteLine($"GardenBed Selected {selected}");
-        }
+        Console.WriteLine("GardenLayoutView - SelectedGardenBed");
+        if (!skipUpdate && _selected != null) await _gardenService.UpdateGardenBed((GardenBedModel)_selected);
+        _selected = selected;
+        StateHasChanged();
+    }
+
+    private async Task GardenBedDeleted(String gardenId)
+    {
+        _selected = null;
+        await _gardenService.DeleteGardenBed(Garden.GardenId, gardenId);
+        _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+        StateHasChanged();
+    }
+
+    private void SelectGardenBed(GardenBedModel gardenBed)
+    {
+        Console.WriteLine("GardenLayoutView - SelectGardenBed");
+        _gardenLayout.SelectCompoenent(gardenBed);
     }
 
     private async Task EditGarden()
@@ -293,6 +311,13 @@
         StateHasChanged();
     }
 
+    private async Task EditGardenBed(GardenBedModel gardenBed)
+    {
+        _gardenBedForm.Initialize(gardenBed, Garden, _settings.StartX, _settings.StartY);
+        await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+        StateHasChanged();
+    }
+
     private async Task CloseGardenBedFormModal()
     {
         await _gardenBedFormModal?.CloseModal();
@@ -303,7 +328,7 @@
     {
         await _gardenBedFormModal?.CloseModal();
 
-
+        _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
         StateHasChanged();
     }
 

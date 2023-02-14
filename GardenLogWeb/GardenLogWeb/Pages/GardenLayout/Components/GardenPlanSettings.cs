@@ -16,7 +16,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     public double ViewBoxX { get; set; }
 
     private int _margin = 20;
-    private int _maxSvgHeight = 900;
+    private int _maxSvgHeight = 800;
     private int _maxSvgWidth = 1500;
     private double _zoom = 0;
     private double _viewBoxX;

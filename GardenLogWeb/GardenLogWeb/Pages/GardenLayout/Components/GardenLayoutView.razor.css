@@ -4,6 +4,11 @@
     height: 247px;
 }
 
+.btn{
+    max-height: 40px;
+
+}
+
 .vertical-ruler-div {
     margin-right: -18px;
     margin-top: 24px;
