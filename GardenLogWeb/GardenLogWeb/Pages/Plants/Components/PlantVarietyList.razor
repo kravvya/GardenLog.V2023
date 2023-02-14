@@ -40,6 +40,9 @@
                                 <div class="card-footer" style="background-color: @Plant.Color;">
 
                                     <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
+                                        <button type="button" class="btn btn-info" title="View Plant variety" @onclick="@(() => OpenPlantVarietyView(variety))">
+                                            <span class="bi bi-info-lg">&nbsp;</span>
+                                        </button>
                                         <button type="button" class="btn btn-secondary" title="Edit Plant variety" @onclick="@(() => EditPlantVariety(variety))">
                                             <span class="bi bi-pencil">&nbsp;</span>
                                         </button>

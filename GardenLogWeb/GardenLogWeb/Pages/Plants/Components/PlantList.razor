@@ -116,12 +116,13 @@
                                             <td class="col-1"><img src="./images/@(plant.LightRequirement).png" alt="@plant.LightRequirement" title="@plant.LightRequirement" class="img-fluid" /></td>
                                             <td class="col-1"><img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" /><img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid"></td>
                                             <td class="col-2 text-start">
-                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
-                                               @* <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
-                                                <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
+                                                <span class="fw-bold">Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
+                                                @* <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
+                                    <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
                                             </td>
                                             <td class="col-3">
-                                                <button type="button" class="btn btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
+                                                <button type="button" class="btn btn-info" title="View Plant" @onclick="@(() => ViewPlant(plant))"><span class="bi bi-info-lg">&nbsp;</span></button>
+                                                <button type="button" class="btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
                                                 <button type="button" class="btn btn-secondary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-flower1">&nbsp;</span></button>
                                                 <button type="button" class="btn btn-secondary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-card-checklist">&nbsp;</span></button>
                                             </td>
@@ -152,9 +153,9 @@
                                         </div>
                                         <div class="card-body row">
                                             <div class="col">
-                                                <span class="fw-bold" >Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
-                                               @* <span class="fw-bold">Varieties:&nbsp;</span>@DoNotDisplayZero(plant.VarietyCount)<br />
-                                                <span class="fw-bold">Instructions:&nbsp;</span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
+                                                <span class="fw-bold">Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
+                                                @* <span class="fw-bold">Varieties:&nbsp;</span>@DoNotDisplayZero(plant.VarietyCount)<br />
+                                    <span class="fw-bold">Instructions:&nbsp;</span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
                                             </div>
 
                                             <div class="col">
@@ -164,9 +165,10 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                                <button type="button" class="btn btn-outline-primary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
-                                                <button type="button" class="btn btn-outline-primary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-journal-richtext">&nbsp;</span></button>
-                                                <button type="button" class="btn btn-outline-primary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-journals">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-info" title="View Plant" @onclick="@(() => ViewPlant(plant))"><span class="bi bi-info-lg">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-secondary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-journal-richtext">&nbsp;</span></button>
+                                            <button type="button" class="btn btn-secondary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-journals">&nbsp;</span></button>
                                         </div>
                                     </div>
                                 </div>

@@ -103,8 +103,8 @@
                         <div class="garden-facts-item mt-1">
                             <dt class="garden-facts_term">Dimensions</dt>
                             <dd class="garden-facts_definition col">@(Garden.Width)ft x @(Garden.Length)ft</dd>
-                            <dt class="garden-facts_term">Area</dt>
-                            <dd class="garden-facts_definition col">@(Garden.Width * Garden.Length) sq. ft</dd>
+                            <dt class="garden-facts_term">Grow Area</dt>
+                            <dd class="garden-facts_definition col">@(GetTotalGrowArea()) sq. ft</dd>
                             <dt class="garden-facts_term">Number of Beds</dt>
                             <dd class="garden-facts_definition col">@_gardenBeds.Count()</dd>
                         </div>
@@ -356,6 +356,15 @@
 
         await _imageFormModal.CloseModal();
         StateHasChanged();
+    }
+
+    private string GetTotalGrowArea()
+    {
+        if (_gardenBeds != null)
+        {
+            return (_gardenBeds.Sum(g => g.Length * g.Width) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        return "0";
     }
 
     private void ViewGardenImage()
