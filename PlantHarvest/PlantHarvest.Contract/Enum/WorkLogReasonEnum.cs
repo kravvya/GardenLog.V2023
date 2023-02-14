@@ -29,5 +29,9 @@ public enum WorkLogReasonEnum : int
     [Description("Sow Outside")]
     SowOutside = 11,
     [Description("Transplant Outside")]
-    TransplantOutside = 12
+    TransplantOutside = 12,
+    [Description("Water Indoors")]
+    WaterIndoors = 13,
+    [Description("Water Outside")]
+    WaterOutside = 14,
 }
