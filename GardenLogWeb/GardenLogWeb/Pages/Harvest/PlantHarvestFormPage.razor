@@ -70,22 +70,6 @@
                                                 </InputSelect>
                                                 <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.PlantGrowthInstructionId)" /></div>
                                             </div>
-
-                                            @if (_gardenBeds != null)
-                                            {
-                                                <div class="px-2">
-
-                                                    <label for="GardenBed" class="form-label">Garden Bed</label>
-                                                    <InputSelect class="form-select" @bind-Value="_plantHarvest.GardenBedId" id="GardenBed">
-                                                        @foreach (var item in _gardenBeds)
-                                                        {
-                                                            <option Value="@item.GardenBedId">@item.Name</option>
-                                                        }
-                                                    </InputSelect>
-                                                    <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.GardenBedId)" /></div>
-                                                </div>
-                                            }
-
                                         </div>
                                     </Body>
                                 </FormCard>
@@ -258,7 +242,6 @@
 
     private List<PlantModel>? _plants;
     private List<PlantVarietyModel>? _varieties = null;
-    private List<GardenBedModel>? _gardenBeds = null;
     private List<SeedVendorModel>? _seedVendors = null;
 
 
@@ -354,10 +337,7 @@
         _logger.Log(LogLevel.Information, "Plant Harvest Form passed validations");
         customValidation?.ClearErrors();
 
-        if (!string.IsNullOrWhiteSpace(_plantHarvest.GardenBedId))
-        {
-            _plantHarvest.GardenBedName = _gardenBeds.First(p => p.GardenBedId == _plantHarvest.GardenBedId).Name;
-        }
+
         if (!string.IsNullOrWhiteSpace(_plantHarvest.PlantVarietyId))
         {
             _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;

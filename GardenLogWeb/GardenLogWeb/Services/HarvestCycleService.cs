@@ -16,6 +16,9 @@ public interface IHarvestCycleService
     Task<ApiResponse> UpdatePlantHarvest(PlantHarvestCycleModel plant);
     Task<ApiResponse> DeletePlantHarvest(string harvestId, string id);
     Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh);
+    Task<ApiObjectResponse<string>> CreateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant);
+    Task<ApiResponse> UpdateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant);
+    Task<ApiResponse> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id);
 }
 
 public class HarvestCycleService : IHarvestCycleService
@@ -223,18 +226,18 @@ public class HarvestCycleService : IHarvestCycleService
     public async Task<List<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestsByPLantId(string plantId)
     {
         List<PlantHarvestCycleIdentityOnlyViewModel> plants;
-       
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-            var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleIdentityOnlyViewModel>>(HarvestRoutes.GetPlantHarvestCyclesByPlant.Replace("{plantId}", plantId));
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-            if (!response.IsSuccess)
-            {
-                _toastService.ShowToast("Unable to get Garden Plan examples for this plant ", GardenLogToastLevel.Error);
-                return new List<PlantHarvestCycleIdentityOnlyViewModel>();
-            }
+        var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleIdentityOnlyViewModel>>(HarvestRoutes.GetPlantHarvestCyclesByPlant.Replace("{plantId}", plantId));
 
-            plants = response.Response;          
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Garden Plan examples for this plant ", GardenLogToastLevel.Error);
+            return new List<PlantHarvestCycleIdentityOnlyViewModel>();
+        }
+
+        plants = response.Response;
 
         return plants;
     }
@@ -242,7 +245,7 @@ public class HarvestCycleService : IHarvestCycleService
     public async Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh)
     {
         PlantHarvestCycleModel plantHarvest;
-        List<PlantHarvestCycleModel> plantHarvests= null;
+        List<PlantHarvestCycleModel> plantHarvests = null;
 
         string key = string.Format(PLANT_HARVESTS_KEY, harvestCycleId);
 
@@ -354,6 +357,8 @@ public class HarvestCycleService : IHarvestCycleService
     }
     #endregion
 
+
+
     #region Private Harvest Cycle Functions
     private async Task<List<HarvestCycleModel>> GetAllHarvests()
     {
@@ -405,6 +410,79 @@ public class HarvestCycleService : IHarvestCycleService
     }
     #endregion
 
+    #region Public Garden Bed Plant Harvest Cycle Functions
+    public async Task<ApiObjectResponse<string>> CreateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+        var url = HarvestRoutes.CreateGardenBedPlantHarvestCycle;
+
+        var response = await httpClient.ApiPostAsync(url.Replace("harvestrId", gardenBedPlant.HarvestCycleId).Replace("plantHarvestId", gardenBedPlant.PlantHarvestCycleId), gardenBedPlant);
+
+        if (response.ValidationProblems != null)
+        {
+            _toastService.ShowToast($"Unable to add Plant to Garden Layout. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+        }
+        else if (!response.IsSuccess)
+        {
+            _toastService.ShowToast($"Received an invalid response from Garden Layout Post: {response.ErrorMessage}", GardenLogToastLevel.Error);
+        }
+        else
+        {
+            gardenBedPlant.PlantHarvestCycleId = response.Response;
+
+
+            _toastService.ShowToast($"Plant is added to the Garden Layout", GardenLogToastLevel.Success);
+        }
+
+        return response;
+    }
+
+    public async Task<ApiResponse> UpdateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+
+        var url = HarvestRoutes.UpdateGardenBedPlantHarvestCycle;
+
+        var response = await httpClient.ApiPutAsync(url.Replace("{harvestId}", gardenBedPlant.HarvestCycleId).Replace("{plantHarvestId}", gardenBedPlant.PlantHarvestCycleId).Replace("{id}", gardenBedPlant.GardenBedPlantHarvestCycleId), gardenBedPlant);
+
+        if (response.ValidationProblems != null)
+        {
+            _toastService.ShowToast($"Unable to update a Garden Layout. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+        }
+        else if (!response.IsSuccess)
+        {
+            _toastService.ShowToast($"Received an invalid response: {response.ErrorMessage}", GardenLogToastLevel.Error);
+        }
+        else
+        {
+            _toastService.ShowToast($"Garden Layout is successfully updated.", GardenLogToastLevel.Success);
+        }
+
+        return response;
+    }
+
+    public async Task<ApiResponse> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string gardenBedPlantId)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+        var url = HarvestRoutes.DeleteGardenBedPlantHarvestCycle;
+        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.DeletePlantHarvestCycle.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", gardenBedPlantId);
+
+        if (response.ValidationProblems != null)
+        {
+            _toastService.ShowToast($"Unable to change Garden Layout. Please resolve validatione errors and try again.", GardenLogToastLevel.Error);
+        }
+        else if (!response.IsSuccess)
+        {
+            _toastService.ShowToast($"Received an invalid response: {response.ErrorMessage}", GardenLogToastLevel.Error);
+        }
+        else
+        {
+            _toastService.ShowToast($"Garden Layout changed.", GardenLogToastLevel.Success);
+        }
+        return response;
+    }
+    #endregion
+
     #region Private Plant Harvest Cycle
     private void AddOrUpdateToPlantHarvestCycleList(PlantHarvestCycleModel plant)
     {
@@ -426,7 +504,7 @@ public class HarvestCycleService : IHarvestCycleService
         //    plants = new List<PlantHarvestCycleModel>();
         //    _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
         //}
-       
+
 
     }
     private void RemoveFromPlantHarvestCycleList(string harvestId, string id)
@@ -441,6 +519,7 @@ public class HarvestCycleService : IHarvestCycleService
             }
         }
     }
+
     #endregion
 
 }

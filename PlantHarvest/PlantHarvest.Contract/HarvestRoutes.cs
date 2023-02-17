@@ -17,11 +17,11 @@ public static class HarvestRoutes
     public const string DeletePlantHarvestCycle = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{id}";   
     public const string GetPlantHarvestCyclesByPlant = PlantHarvestBase + "/PlanHarvestCycles/Plants/{plantId}/";
 
-    public const string CreatePlantSchedule = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{palntHarvestId}/schedules";
+    public const string CreatePlantSchedule = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/schedules";
     public const string UpdatePlantSchedule = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/schedules/{id}";
     public const string DeletePlantSchedule = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/schedules/{id}";
 
-    public const string CreateGardenBedPlantHarvestCycle = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{palntHarvestId}/gardenLayout";
+    public const string CreateGardenBedPlantHarvestCycle = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/gardenLayout";
     public const string UpdateGardenBedPlantHarvestCycle = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/gardenLayout/{id}";
     public const string DeleteGardenBedPlantHarvestCycle = PlantHarvestBase + "/{harvestId}/PlantHarvestCycles/{plantHarvestId}/gardenLayout/{id}";
 
