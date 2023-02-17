@@ -193,7 +193,7 @@
                     </Header>
                     <Body>
                         <div class="sources" role="group" aria-label="source">
-                            <input class="form-control" @bind:get="newSource" @bind:set="OnSourceInput" @ref="inputSource" />
+                            <input class="form-control" @bind:get="newSource" @bind:event="OnSourceInput" @ref="inputSource" />
                             <ul Id="sources">
                                 @foreach (var source in plantVariety.Sources)
                                 {
