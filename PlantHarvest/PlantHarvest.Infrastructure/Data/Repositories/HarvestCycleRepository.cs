@@ -101,6 +101,11 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
                     p.HarvestCycleId = data._id;
                     p.PlantHarvestCycleId = g.PlantHarvestCycleId;
                 });
+                g.GardenBedLayout.ForEach(p =>
+                {
+                    p.HarvestCycleId = data._id;
+                    p.PlantHarvestCycleId = g.PlantHarvestCycleId;
+                });
             }
         );
       
@@ -147,6 +152,11 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             {
                 g.HarvestCycleId = data._id;
                 g.PlantCalendar.ForEach(p =>
+                {
+                    p.HarvestCycleId = data._id;
+                    p.PlantHarvestCycleId = g.PlantHarvestCycleId;
+                });
+                g.GardenBedLayout.ForEach(p =>
                 {
                     p.HarvestCycleId = data._id;
                     p.PlantHarvestCycleId = g.PlantHarvestCycleId;
@@ -218,6 +228,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             g.MapMember(m => m.PlantingMethod).SetSerializer(new EnumSerializer<PlantingMethodEnum>(BsonType.String));
 
             g.MapProperty(m => m.PlantCalendar).SetDefaultValue(new List<PlantSchedule>());
+            g.MapProperty(m => m.GardenBedLayout).SetDefaultValue(new List<GardenBedPlantHarvestCycle>());
 
             var nonPublicCtors = g.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();
@@ -278,7 +289,33 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.MapMember(m => m.TaskType).SetSerializer(new EnumSerializer<WorkLogReasonEnum>(BsonType.String));
         });
 
-     
+
+        #endregion
+
+        #region Garden Bed Layout
+        BsonClassMap.RegisterClassMap<GardenBedPlantHarvestCycle>(g =>
+        {
+            g.AutoMap();
+            g.SetIgnoreExtraElements(true);
+        });
+
+
+        BsonClassMap.RegisterClassMap<GardenBedPlantHarvestCycleViewModel>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+            p.MapMember(m => m.GardenBedPlantHarvestCycleId).SetElementName("_id");
+        });
+
+        BsonClassMap.RegisterClassMap<GardenBedPlantHarvestCycleBase>(p =>
+        {
+            p.AutoMap();
+            //ignore elements not in the document 
+            p.SetIgnoreExtraElements(true);
+        });
+
+
         #endregion
     }
 

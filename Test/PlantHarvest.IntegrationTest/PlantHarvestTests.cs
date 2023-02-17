@@ -309,6 +309,71 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     }
     #endregion
 
+    #region Garden Layout Plant
+    [Fact]
+    public async Task Post_GardenBedPlantHarvestCycle_MayCreateNew()
+    {
+        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
+
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+
+        var gardenBedPlantId = await CreateGardenBedPlantHarvestCycleToWorkWith(plant);
+
+        Assert.NotNull(gardenBedPlantId);
+    }
+
+    [Fact]
+    public async Task Put_GardenBedPlantHarvestCycle_ShouldUpdate()
+    {
+        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_HARVEST_CYCLE_NAME);
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+
+        var gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
+        if (gardenBedPlant == null)
+        {
+            await _plantHarvestClient.CreateGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+            plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_PLANT_ID, TEST_PLANT_VARIETY_ID);
+            gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
+        }
+
+        gardenBedPlant.X ++;
+
+        var response = await _plantHarvestClient.UpdateGardenBedPlantHarvestCycle(gardenBedPlant);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service to update Garden Bed Plant Layout responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+    }
+
+    [Fact]
+    public async Task Delete_GardenBedPlantHarvestCycle_ShouldDelete()
+    {
+        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(TEST_DELETE_HARVEST_CYCLE_NAME);
+
+        var plant = await _plantHarvestClient.GetPlantHarvestCycleToWorkWith(harvestId, TEST_DELETE_PLANT_ID, TEST_DELETE_VARIETY_ID);
+
+        var gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
+        if (gardenBedPlant == null)
+        {
+            await _plantHarvestClient.CreateGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+            plant = await GetPlantHarvestCycleToWorkWith(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+            gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
+        }
+
+        var response = await _plantHarvestClient.DeleteGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId, gardenBedPlant.GardenBedPlantHarvestCycleId);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service to delete plant scheule responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+    }
+    #endregion
+
 
     #region Shared Private Functions
 
@@ -408,5 +473,15 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
         return returnString;
     }
 
+    private async Task<string> CreateGardenBedPlantHarvestCycleToWorkWith(PlantHarvestCycleViewModel plant)
+    {
+        var response = await _plantHarvestClient.CreateGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId);
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        Assert.NotEmpty(returnString);
+        Assert.True(Guid.TryParse(returnString, out var plantHarvestCycleId));
+
+        return returnString;
+    }
     #endregion
 }

@@ -179,7 +179,7 @@ namespace PlantHarvest.IntegrationTest.Clients
 
             return await this._httpClient.DeleteAsync(url.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", id));
         }
-      
+
         private static CreatePlantScheduleCommand PopulateCreatePlantScheduleCommand(string harvestId, string plantHarvestId)
         {
             return new CreatePlantScheduleCommand()
@@ -188,9 +188,63 @@ namespace PlantHarvest.IntegrationTest.Clients
                 PlantHarvestCycleId = plantHarvestId,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddDays(6),
-                IsSystemGenerated=true,
+                IsSystemGenerated = true,
                 TaskType = Contract.Enum.WorkLogReasonEnum.Information,
                 Notes = "Created by Integration test"
+            };
+        }
+        #endregion
+
+        #region Garden Bed Layout
+
+        public async Task<HttpResponseMessage> CreateGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.CreateGardenBedPlantHarvestCycle}";
+
+            var createPlantHarvestCycleCommand = PopulateCreateGardenBedPlantHarvestCycleCommand(harvestId, plantHarvestId);
+
+            using var requestContent = createPlantHarvestCycleCommand.ToJsonStringContent();
+
+            return await this._httpClient.PostAsync(url, requestContent);
+
+        }
+
+        public async Task<HttpResponseMessage> UpdateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleViewModel HarvestCycle)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.UpdateGardenBedPlantHarvestCycle}";
+
+            using var requestContent = HarvestCycle.ToJsonStringContent();
+
+            return await this._httpClient.PutAsync(url.Replace("{harvestId}", HarvestCycle.HarvestCycleId).Replace("{plantHarvestId}", HarvestCycle.PlantHarvestCycleId).Replace("{id}", HarvestCycle.GardenBedPlantHarvestCycleId), requestContent);
+        }
+
+        public async Task<HttpResponseMessage> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.DeleteGardenBedPlantHarvestCycle}";
+
+            return await this._httpClient.DeleteAsync(url.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", id));
+        }
+
+        private static CreateGardenBedPlantHarvestCycleCommand PopulateCreateGardenBedPlantHarvestCycleCommand(string harvestId, string plantHarvestId)
+        {
+            return new CreateGardenBedPlantHarvestCycleCommand()
+            {
+                HarvestCycleId = harvestId,
+                PlantHarvestCycleId = plantHarvestId,
+                GardenBedId = Guid.NewGuid().ToString(),
+                GardenId = Guid.NewGuid().ToString(),
+                Length = 1,
+                NumberOfPlants = 1,
+                PatternLength = 1,
+                PatternWidth = 1,
+                PlantId = Guid.NewGuid().ToString(),
+                PlantName = Guid.NewGuid().ToString(),
+                PlantsPerFoot = 1,
+                PlantVarietyId = Guid.NewGuid().ToString(),
+                PlantVarietyName = Guid.NewGuid().ToString(),
+                Width = 1,
+                X = 1,
+                Y = 1
             };
         }
         #endregion

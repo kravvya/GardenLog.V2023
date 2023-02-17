@@ -15,9 +15,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     public string? PlantGrowthInstructionName { get; private set; }
     public PlantingMethodEnum PlantingMethod { get; private set; }
 
-    public string? GardenBedId { get; private set; }
-    public string? GardenBedName { get; private set; }
-
     public int? NumberOfSeeds { get; private set; }
     public string? SeedCompanyId { get; private set; }
     public string? SeedCompanyName { get; private set; }
@@ -42,6 +39,8 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     private readonly List<PlantSchedule> _plantCalendar = new();
     public IReadOnlyCollection<PlantSchedule> PlantCalendar => _plantCalendar.AsReadOnly();
 
+    private readonly List<GardenBedPlantHarvestCycle> _gardenBedLayout = new();
+    public IReadOnlyCollection<GardenBedPlantHarvestCycle> GardenBedLayout => _gardenBedLayout.AsReadOnly();
 
     private PlantHarvestCycle()
     {
@@ -51,12 +50,11 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         , string? plantVarietyId, string? plantVarietyName
         , string plantGrowthInstructionId, string? plantGrowthInstructionName
         , PlantingMethodEnum plantingMethod
-        , string? gardenBedId, string? gardenBedName
         , int? numberOfSeeds, string? seedCompanyId, string? seedCompanyName, DateTime? seedingDate
         , DateTime? germinationDate, decimal? germinationRate
         , int? numberOfTransplants, DateTime? transplantDate
         , DateTime? firstHarvestDate, DateTime? lastHarvestDate, decimal? totalWeightInPounds, int? totalItems
-        , string Notes, int? desiredNumberOfPlants, List<PlantSchedule> plantCalendar)
+        , string Notes, int? desiredNumberOfPlants, List<PlantSchedule> plantCalendar, List<GardenBedPlantHarvestCycle> gardenBedLayout)
     {
         this.PlantId = plantId;
         this.PlantName = plantName;
@@ -65,8 +63,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.PlantGrowthInstructionId = plantGrowthInstructionId;
         this.PlantGrowthInstructionName = plantGrowthInstructionName;
         this.PlantingMethod = plantingMethod;
-        this.GardenBedId = gardenBedId;
-        this.GardenBedName = gardenBedName;
         this.NumberOfSeeds = numberOfSeeds;
         this.SeedCompanyId = seedCompanyId;
         this.SeedCompanyName = seedCompanyName;
@@ -82,6 +78,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Notes = Notes;
         this.DesiredNumberOfPlants = desiredNumberOfPlants;
         this._plantCalendar = plantCalendar;
+        this._gardenBedLayout= gardenBedLayout;
     }
 
 
@@ -96,8 +93,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             PlantVarietyName = plant.PlantVarietyName,
             PlantGrowthInstructionId = plant.PlantGrowthInstructionId,
             PlantGrowthInstructionName = plant.PlantGrowthInstructionName,
-            GardenBedId = plant.GardenBedId,
-            GardenBedName = plant.GardenBedName,
             NumberOfSeeds = plant.NumberOfSeeds,
             SeedCompanyId = plant.SeedVendorId,
             SeedCompanyName = plant.SeedVendorName,
@@ -122,8 +117,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     {
         this.Set<string?>(() => this.PlantVarietyId, command.PlantVarietyId);
         this.Set<string?>(() => this.PlantVarietyName, command.PlantVarietyName);
-        this.Set<string?>(() => this.GardenBedId, command.GardenBedId);
-        this.Set<string?>(() => this.GardenBedName, command.GardenBedName);
         this.Set<int?>(() => this.NumberOfSeeds, command.NumberOfSeeds);
         this.Set<string?>(() => this.SeedCompanyId, command.SeedVendorId);
         this.Set<string?>(() => this.SeedCompanyName, command.SeedVendorName);
@@ -200,5 +193,28 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     {
         this._plantCalendar.RemoveAll(s => s.IsSystemGenerated);
     }
+    #endregion
+
+    #region Garden Bed Layout
+    public string AddGardenBedPlantHarvestCycle(CreateGardenBedPlantHarvestCycleCommand command)
+    {
+        var gardenBedPlant = GardenBedPlantHarvestCycle.Create(command);
+
+        this._gardenBedLayout.Add(gardenBedPlant);
+
+        return gardenBedPlant.Id;
+    }
+
+    public void UpdateGardenBedPlantHarvestCycle(UpdateGardenBedPlantHarvestCycleCommand command, Action<HarvestEventTriggerEnum, TriggerEntity> addHarvestEvent)
+    {
+        this.GardenBedLayout.First(i => i.Id == command.GardenBedPlantHarvestCycleId).Update(command, addHarvestEvent);
+    }
+
+    public void DeleteGardenBedPlantHarvestCycle(string pGardenBedPlantHarvestCycleId)
+    {
+        this._plantCalendar.RemoveAll(s => s.Id == pGardenBedPlantHarvestCycleId);
+    }
+
+ 
     #endregion
 }

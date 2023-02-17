@@ -17,9 +17,6 @@ public abstract record PlantHarvestCycleBase
     public string? PlantGrowthInstructionName { get; set; }
     public PlantingMethodEnum PlantingMethod { get; set; }
 
-    public string? GardenBedId { get; set; }
-    public string? GardenBedName { get; set; }
-
     public int? NumberOfSeeds { get; set; }
 
     public string? SeedVendorId { get; set; }

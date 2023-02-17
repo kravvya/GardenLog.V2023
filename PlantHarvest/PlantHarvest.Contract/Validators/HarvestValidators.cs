@@ -39,3 +39,24 @@ public class PlantScheduleValidator<T> : AbstractValidator<T>
         RuleFor(command => command.TaskType).NotEmpty();
     }
 }
+
+public class GardenBedPlantHarvestCycleValidator<T> : AbstractValidator<T>
+    where T : GardenBedPlantHarvestCycleBase
+{
+    public GardenBedPlantHarvestCycleValidator()
+    {
+        RuleFor(command => command.HarvestCycleId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.PlantHarvestCycleId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.PlantId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.PlantName).NotEmpty().Length(2, 50);
+        RuleFor(command => command.GardenId).NotEmpty().Length(2, 50);
+        RuleFor(command => command.GardenBedId).NotEmpty().Length(2, 50);
+
+        RuleFor(command => command.NumberOfPlants).GreaterThan(0);
+        RuleFor(command => command.Length).GreaterThan(0);
+        RuleFor(command => command.Width).GreaterThan(0);
+
+        RuleFor(command => command.PatternLength).GreaterThan(0);
+        RuleFor(command => command.PatternWidth).GreaterThan(0);
+    }
+}

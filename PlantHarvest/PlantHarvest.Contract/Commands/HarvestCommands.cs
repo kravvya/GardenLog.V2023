@@ -78,3 +78,30 @@ public class UpdatePlantScheduleCommandValidator : PlantScheduleValidator<Update
     }
 }
 #endregion
+
+#region Garden Layout
+public record CreateGardenBedPlantHarvestCycleCommand : GardenBedPlantHarvestCycleBase
+{
+
+}
+
+public class CreateGardenBedPlantHarvestCycleCommandValidator : GardenBedPlantHarvestCycleValidator<CreateGardenBedPlantHarvestCycleCommand>
+{
+    public CreateGardenBedPlantHarvestCycleCommandValidator()
+    {
+    }
+}
+
+public record UpdateGardenBedPlantHarvestCycleCommand : GardenBedPlantHarvestCycleBase
+{
+    public string GardenBedPlantHarvestCycleId { get; init; }
+}
+
+public class UpdateGardenBedPlantHarvestCycleCommandValidator : GardenBedPlantHarvestCycleValidator<UpdateGardenBedPlantHarvestCycleCommand>
+{
+    public UpdateGardenBedPlantHarvestCycleCommandValidator()
+    {
+        RuleFor(command => command.GardenBedPlantHarvestCycleId).NotEmpty().Length(3, 50);
+    }
+}
+#endregion

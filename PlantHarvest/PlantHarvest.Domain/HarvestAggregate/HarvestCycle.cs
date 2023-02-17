@@ -166,5 +166,35 @@ namespace PlantHarvest.Domain.HarvestAggregate
             plant.DeleteAllSystemGeneratedSchedules();
         }
         #endregion
+
+        #region Garden Bed Layout
+        public string AddGardenBedPlantHarvestCycle(CreateGardenBedPlantHarvestCycleCommand command)
+        {
+
+            var plant = _plants.First(p => p.Id == command.PlantHarvestCycleId);
+
+            string gardenBedPlantId = plant.AddGardenBedPlantHarvestCycle(command);
+
+            this.DomainEvents.Add(
+             new HarvestEvent(this, HarvestEventTriggerEnum.GardenBedPlantHarvestCycleCreated, new TriggerEntity(EntityTypeEnum.GardenBedPlantHarvestCycle, gardenBedPlantId)));
+
+            return gardenBedPlantId;
+        }
+
+        public void UpdateGardenBedPlantHarvestCycle(UpdateGardenBedPlantHarvestCycleCommand command)
+        {
+            var plant = _plants.First(p => p.Id == command.PlantHarvestCycleId);
+            plant.UpdateGardenBedPlantHarvestCycle(command, AddChildDomainEvent);
+        }
+
+        public void DeleteGardenBedPlantHarvestCycle(string plantHarvestCycleId, string gardenBedPlantId)
+        {
+            var plant = _plants.First(p => p.Id == plantHarvestCycleId);
+            plant.DeleteGardenBedPlantHarvestCycle(gardenBedPlantId);
+
+            AddChildDomainEvent(HarvestEventTriggerEnum.GardenBedPlantHarvestCycleDeleted, new TriggerEntity(EntityTypeEnum.GardenBedPlantHarvestCycle, gardenBedPlantId));
+
+        }
+        #endregion
     }
 }

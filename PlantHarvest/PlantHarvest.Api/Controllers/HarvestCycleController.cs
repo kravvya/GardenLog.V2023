@@ -317,4 +317,71 @@ public class HarvestCycleController : Controller
         return BadRequest();
     }
     #endregion
+
+    #region Garden Bed Layout
+    [HttpPost()]
+    [Route(HarvestRoutes.CreateGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> CreateGardenBedPlantHarvestCycle([FromBody] CreateGardenBedPlantHarvestCycleCommand command)
+    {
+        try
+        {
+            string result = await _handler.AddGardenBedPlantHarvestCycle(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+    }
+
+
+    [HttpPut()]
+    [Route(HarvestRoutes.UpdateGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdateGardenBedPlantHarvestCycle([FromBody] UpdateGardenBedPlantHarvestCycleCommand command)
+    {
+        try
+        {
+            string result = await _handler.UpdateGardenBedPlantHarvestCycle(command);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(result);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName, ex.Message);
+            return BadRequest(ModelState);
+        }
+
+        return BadRequest();
+    }
+    [HttpDelete()]
+    [Route(HarvestRoutes.DeleteGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id)
+    {
+
+        string result = await _handler.DeleteGardenBedPlantHarvestCycle(harvestId, plantHarvestId, id);
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            return Ok(true);
+        }
+
+        return BadRequest();
+    }
+    #endregion
 }

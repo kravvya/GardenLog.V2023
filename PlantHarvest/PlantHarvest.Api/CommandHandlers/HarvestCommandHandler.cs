@@ -1,9 +1,5 @@
 ﻿using GardenLog.SharedKernel.Interfaces;
-using MediatR;
-using PlantCatalog.Contract.ViewModels;
 using PlantHarvest.Api.Extensions;
-using PlantHarvest.Domain.HarvestAggregate;
-using PlantHarvest.Infrastructure.ApiClients;
 using System.Collections.ObjectModel;
 
 namespace PlantHarvest.Api.CommandHandlers;
@@ -22,6 +18,10 @@ public interface IHarvestCommandHandler
     Task<string> AddPlantSchedule(CreatePlantScheduleCommand command);
     Task<string> UpdatePlantSchedule(UpdatePlantScheduleCommand command);
     Task<string> DeletePlantSchedule(string harvestCycleId, string plantHarvestCycleId, string plantScheduleId);
+
+    Task<string> AddGardenBedPlantHarvestCycle(CreateGardenBedPlantHarvestCycleCommand command);
+    Task<string> UpdateGardenBedPlantHarvestCycle(UpdateGardenBedPlantHarvestCycleCommand command);
+    Task<string> DeleteGardenBedPlantHarvestCycle(string harvestCycleId, string plantHarvestCycleId, string gardenBedPlantHarvestCycleId);
 }
 
 public class HarvestCommandHandler : IHarvestCommandHandler
@@ -296,6 +296,81 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         await _unitOfWork.SaveChangesAsync();
 
         return plantScheduleId;
+    }
+
+    #endregion
+
+    #region Garden Bed Layout
+    public async Task<String> AddGardenBedPlantHarvestCycle(CreateGardenBedPlantHarvestCycleCommand command)
+    {
+        _logger.LogInformation("Received request to create garden bed plant {0}", command);
+        try
+        {
+            var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
+
+            var plant = harvest.Plants.First(p => p.Id == command.PlantHarvestCycleId);
+            if (plant == null)
+            {
+                throw new ArgumentException("Plant can not be added to a plant that is not part of the Garden Plan", nameof(command.PlantHarvestCycleId));
+            }
+
+          
+            var scheduleId = harvest.AddGardenBedPlantHarvestCycle(command);
+
+            _harvestCycleRepository.Update(harvest);
+
+            await _mediator.DispatchDomainEventsAsync(harvest);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return scheduleId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception adding plant to the garden layout", ex);
+            throw;
+        }
+
+    }
+
+    public async Task<String> UpdateGardenBedPlantHarvestCycle(UpdateGardenBedPlantHarvestCycleCommand command)
+    {
+        _logger.LogInformation("Received request to update garden layout for the plant {0}", command);
+        var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
+
+        var plant = harvest.Plants.First(p => p.Id == command.PlantHarvestCycleId);
+        if (plant == null)
+        {
+            throw new ArgumentException("Plant can not be added to a plant that is not part of the Garden Plan", nameof(command.PlantHarvestCycleId));
+        }
+
+       
+        harvest.UpdateGardenBedPlantHarvestCycle(command);
+
+        _harvestCycleRepository.Update(harvest);
+
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return command.GardenBedPlantHarvestCycleId;
+    }
+
+    public async Task<String> DeleteGardenBedPlantHarvestCycle(string harvestCycleId, string plantHarvestCycleId, string GardenBedPlantId)
+    {
+        _logger.LogInformation($"Received request to delete plant from garden layout  {harvestCycleId} and {plantHarvestCycleId} and {GardenBedPlantId}");
+
+        var harvest = await _harvestCycleRepository.GetByIdAsync(harvestCycleId);
+
+        harvest.DeleteGardenBedPlantHarvestCycle(plantHarvestCycleId, GardenBedPlantId);
+
+        _harvestCycleRepository.Update(harvest);
+
+        await _mediator.DispatchDomainEventsAsync(harvest);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return GardenBedPlantId;
     }
 
     #endregion
