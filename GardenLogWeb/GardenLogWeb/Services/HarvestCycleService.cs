@@ -465,7 +465,7 @@ public class HarvestCycleService : IHarvestCycleService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
         var url = HarvestRoutes.DeleteGardenBedPlantHarvestCycle;
-        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.DeletePlantHarvestCycle.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", gardenBedPlantId);
+        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.DeletePlantHarvestCycle.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", gardenBedPlantId));
 
         if (response.ValidationProblems != null)
         {
