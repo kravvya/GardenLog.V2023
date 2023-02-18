@@ -197,6 +197,15 @@ svg .null-right-resizer[b-reab0licoy] {
 svg .top-null-resizer[b-reab0licoy] {
     cursor: n-resize;
 }
+/* /Pages/HarvestGardenLayout/Components/HarvestGardenLayout.razor.rz.scp.css */
+#smallrect rect[b-5p3q5oghd5] {
+    stroke: saddlebrown;
+    fill: tan;
+}
+
+#bigrect rect[b-5p3q5oghd5] {
+    stroke: saddlebrown
+}
 /* /Pages/HarvestGardenLayout/Components/HarvestGardenLayoutView.razor.rz.scp.css */
 dl[b-gybykvzwnm] {
     display: flex;
@@ -204,12 +213,46 @@ dl[b-gybykvzwnm] {
 }
 
 dt[b-gybykvzwnm] {
-    width: 33%;
+    width: 60%;
 }
 
 dd[b-gybykvzwnm] {
     margin-left: auto;
-    width: 66%;
+    width: 30%;
+}
+
+.body[b-gybykvzwnm] {
+    min-height: 300px;
+    min-width: 250px !important;
+    margin-right: 5px;
+}
+
+#collapse1[b-gybykvzwnm] {
+    overflow-y: scroll;
+    height: 247px;
+}
+
+.btn[b-gybykvzwnm] {
+    max-height: 40px;
+}
+
+.vertical-ruler-div[b-gybykvzwnm] {
+    margin-right: -18px;
+    margin-top: 24px;
+}
+
+.garden-facts_list .garden-facts_term[b-gybykvzwnm] {
+    color: #709a41;
+    text-transform: uppercase;
+}
+
+.garden-facts_list .garden-facts-item[b-gybykvzwnm] {
+    border-bottom: 2px solid #c5c5c5;
+}
+
+.plant-image[b-gybykvzwnm] {
+    max-height: 48px;
+    max-width: 48px;
 }
 /* /Pages/Images/Components/ImageList.razor.rz.scp.css */
 .plant-image[b-ya78yebwb8] {
