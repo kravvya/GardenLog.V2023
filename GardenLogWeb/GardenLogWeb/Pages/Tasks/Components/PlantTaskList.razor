@@ -1,5 +1,6 @@
 ﻿@inject IPlantTaskService _taskService;
 @inject IVerifyService _verifyService;
+@inject IHarvestCycleService _harvestService;
 @inject NavigationManager _navigationManager;
 
 <ModalView OnCloseModal="ClosePlantTaskFormModal" @ref="_plantTaskFormModal">
@@ -11,6 +12,11 @@
 <ModalView OnCloseModal="ClosePlantHarvestMiniFormModal" @ref="_plantHarvestMiniFormModal">
     <Body>
         <PlantHarvestCycleMiniForm OnClose=@ClosePlantHarvestCycleMiniForm @ref=_plantHarvestMiniForm />
+    </Body>
+</ModalView>
+<ModalView OnCloseModal="CloseWorkLogFormModal" @ref="_workLogFormModal">
+    <Body>
+        <WorkLogForm OnClose=@CloseWorkLogForm @ref=_workLogForm />
     </Body>
 </ModalView>
 
@@ -171,6 +177,8 @@
     private PlantTaskForm? _plantTaskForm;
     private ModalView? _plantHarvestMiniFormModal;
     private PlantHarvestCycleMiniForm? _plantHarvestMiniForm;
+    private ModalView? _workLogFormModal;
+    private WorkLogForm? _workLogForm;
     private TaskFilter? _filter;
 
     private List<PlantTaskModel> _tasks { get; set; } = new();
@@ -220,8 +228,18 @@
 
     private async Task ResolveTask(PlantTaskViewModel task)
     {
-        _plantHarvestMiniForm.Initialize(task.HarvestCycleId, task.PlantHarvestCycleId, task.Type);
-        await _plantHarvestMiniFormModal?.OpenModal("Resolve task", GlobalConstants.ModalFormColor);
+        switch (task.Type)
+        {
+            case WorkLogReasonEnum.FertilizeIndoors:
+                _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
+                await _workLogFormModal?.OpenModal("Add new note", GlobalConstants.ModalFormColor);
+                break;
+            default:
+                _plantHarvestMiniForm.Initialize(task.HarvestCycleId, task.PlantHarvestCycleId, task.Type);
+                await _plantHarvestMiniFormModal?.OpenModal("Resolve task", GlobalConstants.ModalFormColor);
+                break;
+        }
+
         StateHasChanged();
     }
 
@@ -295,6 +313,19 @@
             default:
                 return "bg-light";
         }
+    }
+
+    private async Task CloseWorkLogFormModal()
+    {
+        await _workLogFormModal?.CloseModal();
+        StateHasChanged();
+    }
+
+    private async Task CloseWorkLogForm(WorkLogModel workLog)
+    {
+        await _workLogFormModal?.CloseModal();
+
+        StateHasChanged();
     }
 
     protected void ViewPlantHarvestCycle(PlantTaskModel task)

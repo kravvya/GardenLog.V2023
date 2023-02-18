@@ -2,6 +2,7 @@
 @inject IKeyService _keyService;
 @inject IGardenService _gardenService;
 @inject ILogger<HarvestGardenLayout> _logger;
+@inject IImageService _imageService;
 @implements IDisposable;
 
 @if (GardenBeds != null)
@@ -31,7 +32,7 @@
                 @foreach (var plant in GardenBedHarvestPlants)
                 {
                     <pattern id="@plant.GardenBedPlantHarvestCycleId" x="0" y="0" width="@plant.GetPatternWidthInPixels()" height="@plant.GetPatternHeightInPixels()" viewBox="0 0 @plant.GetPatternHeightInPixels() @plant.GetPatternWidthInPixels()" patternUnits="userSpaceOnUse">
-                        <image x="0" y="0" width="@plant.GetPatternWidthInPixels()" height="@plant.GetPatternHeightInPixels()" href="@plant.ImageFileName"></image>
+                        <image x="0" y="0" width="@plant.GetPatternWidthInPixels()" height="@plant.GetPatternHeightInPixels()" href="@_imageService.GetThumbnailImageUrl(plant.ImageFileName)"></image>
                     </pattern>
                 }
             }

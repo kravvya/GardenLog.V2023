@@ -72,7 +72,7 @@
 
     private async Task AddWorkLog()
     {
-        _workLogForm.InitializeAsync(await BuildRelatedEntities(_relatedEntityType, _relatedEntitytId));
+        _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(_relatedEntityType, _relatedEntitytId, _harvestCycleId));
         await _workLogFormModal?.OpenModal("Add new note", GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
@@ -104,28 +104,5 @@
             default:
                 return "";
         }
-    }
-
-    private async Task<List<RelatedEntity>> BuildRelatedEntities(RelatedEntityTypEnum entityType, string entityId)
-    {
-        List<RelatedEntity> relatedEntities = new();
-
-        switch (entityType)
-        {
-            case RelatedEntityTypEnum.HarvestCycle:
-                var harvest = await _harvestService.GetHarvest(entityId, true);
-                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, entityId, harvest.HarvestCycleName));
-                break;
-            case RelatedEntityTypEnum.PlantHarvestCycle:
-                var plantHarvest = await _harvestService.GetPlantHarvest(_harvestCycleId, _relatedEntitytId, false);
-                harvest = await _harvestService.GetHarvest(_harvestCycleId, true);
-
-                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName));
-                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.PlantHarvestCycleId, plantHarvest.GetPlantName()));
-                break;
-
-        }
-
-        return relatedEntities;
     }
 }

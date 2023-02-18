@@ -58,12 +58,14 @@
 
     private bool IsInitialized = false;
 
-    public async Task InitializeAsync(List<RelatedEntity> relatedEntities)
+    public async Task InitializeAsync(List<RelatedEntity> relatedEntities, WorkLogReasonEnum? reason = null)
     {
         _workLog = new WorkLogModel();
         _workLog.RelatedEntities = relatedEntities;
         _workLog.EnteredDateTime = DateTime.Now;
         _workLog.EventDateTime = DateTime.Now;
+
+        if (reason != null) _workLog.Reason = reason.Value;
 
         _editContext = new(_workLog);
         _editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());

@@ -1,5 +1,7 @@
 ﻿using System.Net.Http;
 using System;
+using UserManagement.Contract.Base;
+using GardenLog.SharedKernel;
 
 namespace GardenLogWeb.Services;
 
@@ -19,6 +21,7 @@ public interface IHarvestCycleService
     Task<ApiObjectResponse<string>> CreateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant);
     Task<ApiResponse> UpdateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant);
     Task<ApiResponse> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id);
+    Task<List<RelatedEntity>> BuildRelatedEntities(RelatedEntityTypEnum entityType, string entityId, string harvestCycleId);
 }
 
 public class HarvestCycleService : IHarvestCycleService
@@ -55,7 +58,7 @@ public class HarvestCycleService : IHarvestCycleService
 
             var harvestTask = GetAllHarvests();
             var gardenTask = _gardenService.GetGardens(false);
-
+            
             await Task.WhenAll(harvestTask, gardenTask);
 
             harvests = harvestTask.Result;
@@ -64,8 +67,13 @@ public class HarvestCycleService : IHarvestCycleService
             if (harvests.Count > 0)
             {
                 foreach (var harvest in harvests)
-                {
-                    harvest.GardenName = gardens.FirstOrDefault(g => g.GardenId == harvest.GardenId)?.Name;
+                {                   
+                    var garden = gardens.FirstOrDefault(g => g.GardenId == harvest.GardenId);
+                    if (garden != null)
+                    {
+                        harvest.GardenName = garden.Name;
+                        harvest.CanShowLayout = garden.Length > 0 && garden.Width > 0;
+                    }
                 }
                 // Save data in cache.
                 _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
@@ -185,6 +193,29 @@ public class HarvestCycleService : IHarvestCycleService
         }
         return response;
     }
+
+    public async Task<List<RelatedEntity>> BuildRelatedEntities(RelatedEntityTypEnum entityType, string entityId, string harvestCycleId)
+    {
+        List<RelatedEntity> relatedEntities = new();
+
+        switch (entityType)
+        {
+            case RelatedEntityTypEnum.HarvestCycle:
+                var harvest = await GetHarvest(entityId, true);
+                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, entityId, harvest.HarvestCycleName));
+                break;
+            case RelatedEntityTypEnum.PlantHarvestCycle:
+                var plantHarvest = await GetPlantHarvest(harvestCycleId, entityId, false);
+                harvest = await GetHarvest(harvestCycleId, true);
+
+                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName));
+                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.PlantHarvestCycleId, plantHarvest.GetPlantName()));
+                break;
+
+        }
+
+        return relatedEntities;
+    }
     #endregion
 
     #region Public Plant Harvest Cycle Functions
@@ -197,20 +228,31 @@ public class HarvestCycleService : IHarvestCycleService
         {
             System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} not in cache or forceRefresh");
 
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+            var harvestPlantsTask = GetPlantHarvestCycles(harvestCycleId);
+            var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
+            await Task.WhenAll(harvestPlantsTask, imagesTask);
 
-            var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleModel>>(HarvestRoutes.GetPlantHarvestCycles.Replace("{harvestId}", harvestCycleId));
-
-            if (!response.IsSuccess)
-            {
-                _toastService.ShowToast("Unable to get Garden Plan deatils ", GardenLogToastLevel.Error);
-                return new List<PlantHarvestCycleModel>();
-            }
-
-            plants = response.Response;
+            plants = harvestPlantsTask.Result;
+            var images = imagesTask.Result;
 
             if (plants.Count > 0)
             {
+                foreach(var plant in plants)
+                {
+                    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
+
+                    var image = plant.Images.FirstOrDefault();
+                    if (image != null)
+                    {
+                        plant.ImageFileName = image.FileName;
+                        plant.ImageLabel = image.Label;
+                    }
+                    else
+                    {
+                        plant.ImageFileName = ImageService.NO_IMAGE;
+                        plant.ImageLabel = "Add image";
+                    }
+                }
                 // Save data in cache.
                 _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
             }
@@ -484,6 +526,20 @@ public class HarvestCycleService : IHarvestCycleService
     #endregion
 
     #region Private Plant Harvest Cycle
+    private async Task<List<PlantHarvestCycleModel>> GetPlantHarvestCycles(string harvestCycleId)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+
+        var response = await httpClient.ApiGetAsync<List<PlantHarvestCycleModel>>(HarvestRoutes.GetPlantHarvestCycles.Replace("{harvestId}", harvestCycleId));
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Garden Plan deatils ", GardenLogToastLevel.Error);
+            return new List<PlantHarvestCycleModel>();
+        }
+
+        return response.Response;
+    }
     private void AddOrUpdateToPlantHarvestCycleList(PlantHarvestCycleModel plant)
     {
         List<PlantHarvestCycleModel>? plants = null;

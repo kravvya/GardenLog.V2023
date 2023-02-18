@@ -39,19 +39,25 @@
 
                     <div class="card-footer">
                         <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
-                              <button type="button" class="btn btn-secondary" title="Edit Garden Plan" @onclick="@(() => onEditHarvest(harvest))">
+                            <button type="button" class="btn btn-secondary" title="Edit Garden Plan" @onclick="@(() => onEditHarvest(harvest))">
                                 <span class="bi bi-pencil">&nbsp;</span>
                             </button>
+                            @if (harvest.CanShowLayout)
+                            {
+                                <button type="button" class="btn btn-warning" title="Garden Plant Layout" @onclick="@(() => EditGardenPlantLayout(harvest))">
+                                    <span class="bi bi-grid-1x2-fill">&nbsp;</span>
+                                </button>
+                            }
                             <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => onAddHarvestImage(harvest))">
                                 <span class="bi bi-card-image">&nbsp;</span>
                             </button>
                             <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => ViewHarvestImage(harvest))">
-                                <span class="bi bi-images" aria-hidden="true"></span> 
+                                <span class="bi bi-images" aria-hidden="true"></span>
                             </button>
                             <button type="button" class="btn btn-info" title="Logs" @onclick="@(() => ViewHarvestLogs(harvest))">
-                                <span class="bi bi-journal" aria-hidden="true"></span> 
+                                <span class="bi bi-journal" aria-hidden="true"></span>
                             </button>
-                          
+
                         </div>
                     </div>
                 </div>
@@ -74,13 +80,15 @@
     protected override async Task OnInitializedAsync()
     {
         _harvests = await _harvestService.GetHarvestList(false);
+
+
         StateHasChanged();
     }
 
     private string GetTile(HarvestCycleModel harvest)
     {
 
-        if(!string.IsNullOrEmpty(harvest.GardenName))
+        if (!string.IsNullOrEmpty(harvest.GardenName))
         {
             return $"{harvest.HarvestCycleName} at {harvest.GardenName}";
         }
@@ -105,7 +113,7 @@
 
     private async Task onCreateHarvest()
     {
-       
+
         _harvestForm.Initialize(null);
         await _harvestFormModal.OpenModal("Create Garden Plan", GlobalConstants.ModalFormColor);
         StateHasChanged();
@@ -137,7 +145,7 @@
         StateHasChanged();
     }
 
-     private void ViewHarvestImage(HarvestCycleViewModel harvest)
+    private void ViewHarvestImage(HarvestCycleViewModel harvest)
     {
         _navigationManager.NavigateToGardenPlanImages(harvest.HarvestCycleId);
     }
@@ -145,6 +153,11 @@
     private void ViewHarvestLogs(HarvestCycleViewModel harvest)
     {
         _navigationManager.NavigateToGardenPlanWorkLogs(harvest.HarvestCycleId);
+    }
+
+    private void EditGardenPlantLayout(HarvestCycleModel harvest)
+    {
+        _navigationManager.NavigateToGardenPlanLayout(harvest.HarvestCycleId);
     }
 
 }

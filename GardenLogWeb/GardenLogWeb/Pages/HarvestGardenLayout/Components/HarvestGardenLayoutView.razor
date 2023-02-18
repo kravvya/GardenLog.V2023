@@ -3,6 +3,7 @@
 @inject NavigationManager _navigationManager;
 @inject IVerifyService _verifyService;
 @inject ILogger<HarvestGardenLayoutView> _logger;
+@inject IImageService _imageService;
 
 <ModalView OnCloseModal="CloseGardenBedPlantFormModal" @ref="_gardenBedFormModal">
     <Body>
@@ -14,7 +15,7 @@
 @if (_garden != null)
 {
     <div class="row ">
-        <div class="col-md-2">
+        <div class="col-md-4">
             <div class="card border-info">
                 <div class="card-header text-bg-info">
                     <h5>
@@ -28,7 +29,7 @@
                             <dd class="garden-facts_definition ms-auto">@(GetTotalGrowArea()) sq. ft</dd>
 
                             <dt class="garden-facts_term">Free Grow Area</dt>
-                            <dd class="garden-facts_definition  ms-auto">1000 sq. ft</dd>
+                            <dd class="garden-facts_definition  ms-auto">@(GetFreeGrowArea()) sq.ft</dd>
 
                             <dt class="garden-facts_term">Number of Beds </dt>
                             <dd class="garden-facts_definition  ms-auto">@_gardenBeds?.Count()</dd>
@@ -47,69 +48,69 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-7">
-                <div class="card border-info">
-                    <div class="card-header text-bg-info">
-                        <h5>
-                            Plants
-                        </h5>
-                    </div>
-                    <div class="card-body">
-
-                        <div id="collapse1" class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Variety</th>
-                                        <th scope="col"># Left</th>
-                                        <th scope="col"># Planned</th>
-                                        <th scope="col">Plant Date</th>
-                                        <th scope="col">Plants per sq. ft.</th>
-                                        <th scope="col">Space required</th>
-
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (_harvestPlants != null)
-                                    {
-                                        @foreach (var plant in _harvestPlants)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <img src="@plant.ImageFileName" title="@plant.ImageLabel" class="plant-image" role="button" @onclick="@(() => SelectPlantInGardenBed(plant))" />
-                                                </td>
-                                                <td>@plant.PlantName</td>
-                                                <td>@plant.PlantVarietyName</td>
-                                                <td>@plant.NumberOfPlantsLeftToAddToGardenBedLayout</td>
-                                                <td>@plant.NumberOfPlantsInGardenBedLayout</td>
-                                                <td>@plant.GetPlantingDate()</td>
-                                                <td>@plant.GetPlantsPerFoot()</td>
-                                                <td>
-                                                    @((int?)(plant.NumberOfPlantsLeftToAddToGardenBedLayout / plant.GetPlantsPerFoot())) sq. ft.
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex gap-2 flex-nowrap">
-                                                        <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
-                                                            <span class="bi bi-plus">&nbsp;</span>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
+
+        <div class="col-md-8">
+            <div class="card border-info">
+                <div class="card-header text-bg-info">
+                    <h5>
+                        Plants
+                    </h5>
+                </div>
+                <div class="card-body">
+
+                    <div id="collapse1" class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Variety</th>
+                                    <th scope="col"># Left</th>
+                                    <th scope="col"># Planned</th>
+                                    <th scope="col">Plant Date</th>
+                                    <th scope="col">Plants per sq. ft.</th>
+                                    <th scope="col">Space required</th>
+
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (_harvestPlants != null)
+                                {
+                                    @foreach (var plant in _harvestPlants)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <img src="@_imageService.GetThumbnailImageUrl(plant.ImageFileName)" title="@plant.ImageLabel" class="plant-image" role="button" @onclick="@(() => SelectPlantInGardenBed(plant))" />
+                                            </td>
+                                            <td>@plant.PlantName</td>
+                                            <td>@plant.PlantVarietyName</td>
+                                            <td>@plant.NumberOfPlantsLeftToAddToGardenBedLayout</td>
+                                            <td>@plant.NumberOfPlantsInGardenBedLayout</td>
+                                            <td>@plant.GetPlantingDate()</td>
+                                            <td>@plant.GetPlantsPerFoot()</td>
+                                            <td>
+                                                @((int?)(plant.NumberOfPlantsLeftToAddToGardenBedLayout / plant.GetPlantsPerFoot())) sq. ft.
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2 flex-nowrap">
+                                                    <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
+                                                        <span class="bi bi-plus">&nbsp;</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 }
 
@@ -150,8 +151,8 @@
 
 
 @code {
-    [Parameter]
-    public HarvestCycleModel? HarvestCycle { get; set; }
+        [Parameter]
+        public HarvestCycleModel? HarvestCycle { get; set; }
 
     private GardenPlanSettings? _settings;
     private GardenModel? _garden;
@@ -193,7 +194,7 @@
         if (_selectedGardenBedPlant != null)
         {
             _logger.LogInformation($"GardenBedHarvestPlantSelected - saving {_selectedGardenBedPlant.PlantName}");
-            if (! _skipSave) await _harvestCycleService.UpdateGardenBedPlantHarvestCycle(_selectedGardenBedPlant);
+            if (!_skipSave) await _harvestCycleService.UpdateGardenBedPlantHarvestCycle(_selectedGardenBedPlant);
         }
         _selectedGardenBedPlant = selectedGardenBedPlant;
         _skipSave = true;
@@ -204,7 +205,7 @@
     private async Task SelectPlantInGardenBed(PlantHarvestCycleModel plant)
     {
         var gardenLayoutPlant = plant.GardenBedLayout.FirstOrDefault();
-        if (gardenLayoutPlant != null && _harvestGardenLayout!= null) await _harvestGardenLayout.PlantSelectedFromTheGridOfOtherPlants(gardenLayoutPlant);
+        if (gardenLayoutPlant != null && _harvestGardenLayout != null) await _harvestGardenLayout.PlantSelectedFromTheGridOfOtherPlants(gardenLayoutPlant);
     }
 
     //method invokde by Draggable plant selector to notify View that Garden Bed Plant has changed its dimensions
@@ -275,6 +276,17 @@
         if (_gardenBeds != null)
         {
             return (_gardenBeds.Sum(g => g.Length * g.Width) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        return "0";
+    }
+
+    private string GetFreeGrowArea()
+    {
+        if (_gardenBeds != null)
+        {
+            var usedArea = _harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length * p.Width);
+            var totalArea = _gardenBeds.Sum(g => g.Length * g.Width);
+            return ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
         }
         return "0";
     }
