@@ -169,6 +169,48 @@ h1[b-3g2l5ue8cg], h2[b-3g2l5ue8cg], h3[b-3g2l5ue8cg], h4[b-3g2l5ue8cg], h5[b-3g2
 .widget.product-shorting .form-check[b-3g2l5ue8cg] {
     margin-bottom: 4px;
 }
+/* /Pages/HarvestGardenLayout/Components/DraggablePlantSelector.razor.rz.scp.css */
+svg .selector[b-reab0licoy] {
+    fill: #709a41;
+}
+
+rect.selector[b-reab0licoy], line.selector[b-reab0licoy] {
+    stroke-width: 3;
+    stroke-dasharray: 14, 5;
+    stroke: #709a41;
+    fill: none;
+}
+
+
+svg .null-left-resizer[b-reab0licoy] {
+    cursor: w-resize;
+}
+
+svg .bottom-null-resizer[b-reab0licoy] {
+    cursor: s-resize;
+}
+
+svg .null-right-resizer[b-reab0licoy] {
+    cursor: e-resize;
+}
+
+svg .top-null-resizer[b-reab0licoy] {
+    cursor: n-resize;
+}
+/* /Pages/HarvestGardenLayout/Components/HarvestGardenLayoutView.razor.rz.scp.css */
+dl[b-gybykvzwnm] {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+dt[b-gybykvzwnm] {
+    width: 33%;
+}
+
+dd[b-gybykvzwnm] {
+    margin-left: auto;
+    width: 66%;
+}
 /* /Pages/Images/Components/ImageList.razor.rz.scp.css */
 .plant-image[b-ya78yebwb8] {
     max-width: 400px;
