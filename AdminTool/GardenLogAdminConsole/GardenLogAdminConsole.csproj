@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ImageCatalog\ImageCatalog.Api\ImageCatalog.Api.csproj" />
     <ProjectReference Include="..\..\PlantCatalog\PlantCatalog.Infrustructure\PlantCatalog.Infrustructure.csproj" />
+    <ProjectReference Include="..\..\PlantHarvest\PlantHarvest.Infrastructure\PlantHarvest.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

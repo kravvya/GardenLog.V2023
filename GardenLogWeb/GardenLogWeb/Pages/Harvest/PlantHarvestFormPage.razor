@@ -340,13 +340,14 @@
 
         if (!string.IsNullOrWhiteSpace(_plantHarvest.PlantVarietyId))
         {
-            _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;
+            _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;          
         }
 
         if (!_isEdit)
         {
             _plantHarvest.PlantName = _plants.First(p => p.PlantId == _plantHarvest.PlantId).Name;
             _plantHarvest.PlantGrowthInstructionName = _growInstructions.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).Name;
+            _plantHarvest.SpacingInInches = _growInstructions.First(g => g.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).SpacingInInches;
             _plantHarvest.PlantingMethod = (PlantHarvest.Contract.Enum.PlantingMethodEnum)Enum.ToObject(typeof(PlantHarvest.Contract.Enum.PlantingMethodEnum), (int)_growInstructions.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).PlantingMethod);
         }
 
