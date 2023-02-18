@@ -229,6 +229,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
 
             g.MapProperty(m => m.PlantCalendar).SetDefaultValue(new List<PlantSchedule>());
             g.MapProperty(m => m.GardenBedLayout).SetDefaultValue(new List<GardenBedPlantHarvestCycle>());
+            g.MapProperty(m => m.SpacingInInches).SetDefaultValue(0);
 
             var nonPublicCtors = g.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
             var longestCtor = nonPublicCtors.OrderByDescending(ctor => ctor.GetParameters().Length).FirstOrDefault();

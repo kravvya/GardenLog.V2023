@@ -39,6 +39,6 @@ public abstract record PlantHarvestCycleBase
 
     public string Notes { get; set; } = string.Empty;
     public int? DesiredNumberOfPlants { get; set; }
-
+    public int? SpacingInInches { get; set; }
 }
 

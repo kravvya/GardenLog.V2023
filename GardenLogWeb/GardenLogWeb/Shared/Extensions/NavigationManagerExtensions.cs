@@ -64,6 +64,11 @@ public static class NavigationManagerExtensions
         return $"garden_plan/{harvestId}";
     }
 
+    public static string GetGardenPlanLayoutUrl(this NavigationManager navigationManager, string harvestId)
+    {
+        return $"garden_plan/{harvestId}/layout";
+    }
+
     public static string GetGardenPlanImagesUrl(this NavigationManager navigationManager, string harvestId)
     {
         return $"images/garden_plan/{harvestId}";
@@ -179,6 +184,10 @@ public static class NavigationManagerExtensions
         navigationManager.NavigateTo(navigationManager.GetGardenPlanUrl(harvestId));
     }
 
+    public static void NavigateToGardenPlanLayout(this NavigationManager navigationManager, string harvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanLayoutUrl(harvestId));
+    }
 
     public static void NavigateToGardenPlanImages(this NavigationManager navigationManager, string harvestId)
     {

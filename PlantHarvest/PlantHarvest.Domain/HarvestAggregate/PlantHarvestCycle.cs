@@ -35,6 +35,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 
     public string Notes { get; private set; }
     public int? DesiredNumberOfPlants { get; private set; }
+    public int? SpacingInInches { get; private set; }
 
     private readonly List<PlantSchedule> _plantCalendar = new();
     public IReadOnlyCollection<PlantSchedule> PlantCalendar => _plantCalendar.AsReadOnly();
@@ -54,7 +55,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         , DateTime? germinationDate, decimal? germinationRate
         , int? numberOfTransplants, DateTime? transplantDate
         , DateTime? firstHarvestDate, DateTime? lastHarvestDate, decimal? totalWeightInPounds, int? totalItems
-        , string Notes, int? desiredNumberOfPlants, List<PlantSchedule> plantCalendar, List<GardenBedPlantHarvestCycle> gardenBedLayout)
+        , string Notes, int? desiredNumberOfPlants, int? spacingInInches, List<PlantSchedule> plantCalendar, List<GardenBedPlantHarvestCycle> gardenBedLayout)
     {
         this.PlantId = plantId;
         this.PlantName = plantName;
@@ -77,6 +78,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.TotalItems = totalItems;
         this.Notes = Notes;
         this.DesiredNumberOfPlants = desiredNumberOfPlants;
+        this.SpacingInInches= spacingInInches == 0? null: spacingInInches;
         this._plantCalendar = plantCalendar;
         this._gardenBedLayout= gardenBedLayout;
     }
@@ -107,6 +109,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             TotalItems = plant.TotalItems,
             Notes = plant.Notes,
             DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
+            SpacingInInches= plant.SpacingInInches,
             PlantingMethod = plant.PlantingMethod,
         };
 
@@ -131,7 +134,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<int?>(() => this.TotalItems, command.TotalItems);
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
-
+        this.Set<int?>(() => this.SpacingInInches, command.SpacingInInches);
         foreach (var evt in DomainEvents)
         {
             addHarvestEvent(((HarvestChildEvent)evt).Trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id));
