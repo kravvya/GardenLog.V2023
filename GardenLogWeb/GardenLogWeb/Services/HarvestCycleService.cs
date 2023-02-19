@@ -58,7 +58,7 @@ public class HarvestCycleService : IHarvestCycleService
 
             var harvestTask = GetAllHarvests();
             var gardenTask = _gardenService.GetGardens(false);
-            
+
             await Task.WhenAll(harvestTask, gardenTask);
 
             harvests = harvestTask.Result;
@@ -67,7 +67,7 @@ public class HarvestCycleService : IHarvestCycleService
             if (harvests.Count > 0)
             {
                 foreach (var harvest in harvests)
-                {                   
+                {
                     var garden = gardens.FirstOrDefault(g => g.GardenId == harvest.GardenId);
                     if (garden != null)
                     {
@@ -237,7 +237,7 @@ public class HarvestCycleService : IHarvestCycleService
 
             if (plants.Count > 0)
             {
-                foreach(var plant in plants)
+                foreach (var plant in plants)
                 {
                     plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
 
@@ -252,6 +252,11 @@ public class HarvestCycleService : IHarvestCycleService
                         plant.ImageFileName = ImageService.NO_IMAGE;
                         plant.ImageLabel = "Add image";
                     }
+                    plant.GardenBedLayout.ForEach(g =>
+                    {
+                        g.ImageFileName = plant.ImageFileName;
+                        g.ImageLabel = plant.ImageLabel;
+                    });
                 }
                 // Save data in cache.
                 _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
@@ -470,8 +475,16 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            gardenBedPlant.PlantHarvestCycleId = response.Response;
+            gardenBedPlant.GardenBedPlantHarvestCycleId = response.Response;
 
+            var harvestPlant = await GetPlantHarvest(gardenBedPlant.HarvestCycleId, gardenBedPlant.PlantHarvestCycleId, false);
+            if (harvestPlant != null)
+            {
+                if (harvestPlant.GardenBedLayout.FirstOrDefault(g => g.GardenBedPlantHarvestCycleId == gardenBedPlant.GardenBedPlantHarvestCycleId) == null)
+                {
+                    harvestPlant.GardenBedLayout.Add(gardenBedPlant);
+                }
+            }
 
             _toastService.ShowToast($"Plant is added to the Garden Layout", GardenLogToastLevel.Success);
         }
@@ -506,8 +519,8 @@ public class HarvestCycleService : IHarvestCycleService
     public async Task<ApiResponse> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string gardenBedPlantId)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
-        var url = HarvestRoutes.DeleteGardenBedPlantHarvestCycle;
-        var response = await httpClient.ApiDeleteAsync(HarvestRoutes.DeletePlantHarvestCycle.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", gardenBedPlantId));
+        var url = HarvestRoutes.DeleteGardenBedPlantHarvestCycle.Replace("{harvestId}", harvestId).Replace("{plantHarvestId}", plantHarvestId).Replace("{id}", gardenBedPlantId);
+        var response = await httpClient.ApiDeleteAsync(url);
 
         if (response.ValidationProblems != null)
         {
@@ -519,7 +532,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            _toastService.ShowToast($"Garden Layout changed.", GardenLogToastLevel.Success);
+            _toastService.ShowToast($"Garden Layout deleted.", GardenLogToastLevel.Success);
         }
         return response;
     }

@@ -74,6 +74,14 @@
         _keyService.OnKeyDown += OnKeyDown;
     }
 
+    public void ForceStateHasChanged(List<GardenBedModel>? gardenBeds, List<GardenBedPlantHarvestCycleModel>? gardenBedPlants)
+    {
+        GardenBeds = gardenBeds;
+        GardenBedHarvestPlants?.Clear();
+        GardenBedHarvestPlants = gardenBedPlants;
+        StateHasChanged();
+    }
+
     protected List<GardenBedPlantHarvestCycleModel> GetPlannedPlants(GardenBedModel gardenBed)
     {
         if (GardenBedHarvestPlants == null) return new();
@@ -105,6 +113,7 @@
                     GardenBedPlantHarvestCycleModel gardenBedPLantToBeDeleted = _selectedPlant;
                     _selectedPlant = null;
                     PlantDeleted(gardenBedPLantToBeDeleted).GetAwaiter();
+                    StateHasChanged();
                 }
                 break;
         }

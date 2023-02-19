@@ -153,7 +153,7 @@
                                 @foreach (var bed in _gardenBeds)
                                 {
                                     <tr>
-                                        <th>@bed.RowNumber</th>
+                                        <td>@bed.RowNumber</td>
                                         <td>@bed.Name</td>
                                         <td>@(_verifyService.GetDescription<GardenBedTypeEnum>(bed.Type))</td>
                                         <td>@bed.GetLengthDisplay()</td>

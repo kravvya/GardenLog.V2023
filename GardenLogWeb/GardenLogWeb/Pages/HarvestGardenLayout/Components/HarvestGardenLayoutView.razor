@@ -5,7 +5,7 @@
 @inject ILogger<HarvestGardenLayoutView> _logger;
 @inject IImageService _imageService;
 
-<ModalView OnCloseModal="CloseGardenBedPlantFormModal" @ref="_gardenBedFormModal">
+<ModalView OnCloseModal="CloseGardenBedPlantFormModal" @ref="_gardenBedFormModal" ModalSize="modal-lg">
     <Body>
         <GardenBedPlantHarvestCycleForm OnClose=@CloseGardenBedPlantForm @ref=_gardenBedPlantForm />
     </Body>
@@ -151,8 +151,8 @@
 
 
 @code {
-        [Parameter]
-        public HarvestCycleModel? HarvestCycle { get; set; }
+    [Parameter]
+    public HarvestCycleModel? HarvestCycle { get; set; }
 
     private GardenPlanSettings? _settings;
     private GardenModel? _garden;
@@ -230,42 +230,37 @@
 
         await _harvestCycleService.DeleteGardenBedPlantHarvestCycle(deletedGardenBedPlant.HarvestCycleId, deletedGardenBedPlant.PlantHarvestCycleId, deletedGardenBedPlant.GardenBedPlantHarvestCycleId);
 
+        _harvestGardenLayout?.ForceStateHasChanged(_gardenBeds, _harvestPlants?.SelectMany(g => g.GardenBedLayout).ToList());
+
         StateHasChanged();
     }
 
 
 
 
-    private void CreateGardenBedHarvestPlant(PlantHarvestCycleModel plant)
+    private async Task CreateGardenBedHarvestPlant(PlantHarvestCycleModel plant)
     {
-        //_gardenBedForm.Initialize(null, Garden, _settings.StartX, _settings.StartY);
-        //await _gardenBedFormModal.OpenModal(plant.GetPlantName(), GlobalConstants.ModalFormColor);
+        if (_garden == null || _gardenBedPlantForm == null || _gardenBedFormModal == null) return;
 
-        //var gardenBed = _gardenBeds.First();
+        GardenBedPlantHarvestCycleModel gardenPlant = new()
+            {
+                //PlantHarvestCycleId = plant.PlantHarvestCycleId,
+                GardenId = _garden.GardenId,
+                ImageFileName = plant.ImageFileName,
+                ImageLabel = plant.ImageLabel,
+                NumberOfPlants = Convert.ToInt32(plant.GetPlantsPerFoot() >= 1 ? plant.GetPlantsPerFoot() : 1),
+                PlantId = plant.PlantId,
+                PlantName = plant.PlantName,
+                HarvestCycleId = plant.HarvestCycleId,
+                PlantHarvestCycleId = plant.PlantHarvestCycleId,
+                PlantVarietyId = plant.PlantVarietyId,
+                PlantVarietyName = plant.PlantVarietyName,
+                PlantsPerFoot = plant.GetPlantsPerFoot()
+            };
+        int? availablePlants = plant.DesiredNumberOfPlants - plant.GardenBedLayout.Sum(g => g.NumberOfPlants);
 
-        //GardenBedPlantHarvestCycleModel planntedPlant = new()
-        //    {
-        //        GardenBedPlantHarvestCycleId = Guid.NewGuid().ToString(),
-        //        //PlantHarvestCycleId = plant.PlantHarvestCycleId,
-        //        GardenBedId = gardenBed.GardenBedId,
-        //        //GardenId = _garden.GardenId,
-        //        ImageFileName = plant.ImageFileName,
-        //        ImageLabel = plant.ImageLabel,
-        //        NumberOfPlants = Convert.ToInt32(plant.GetPlantsPerFoot() >= 1 ? plant.GetPlantsPerFoot() : 1),
-        //        PlantId = plant.PlantId,
-        //        PlantName = plant.PlantName,
-        //        PlantsPerFoot = plant.GetPlantsPerFoot(),
-        //        Length = 0,
-        //        Width = 0
-        //    };
-        //planntedPlant.SetLengthAndWidth(gardenBed.Length, gardenBed.Width);
-
-        //plant.GardenBedLayout.Add(planntedPlant);
-
-        //_harvestGardenLayout.PlantSelectedFromTheGridOfOtherPlants(planntedPlant);
-
-        //Console.WriteLine($"Added plant to garden {planntedPlant.GardenBedId}");
-        //StateHasChanged();
+        await _gardenBedPlantForm.InitialitzeAsync(gardenPlant, availablePlants);
+        await _gardenBedFormModal.OpenModal(plant.GetPlantName(), GlobalConstants.ModalFormColor);
     }
 
 
@@ -308,7 +303,7 @@
         StateHasChanged();
     }
 
-    private async Task CloseGardenBedPlantForm(GardenBedModel gardenBed)
+    private async Task CloseGardenBedPlantForm(GardenBedPlantHarvestCycleModel gardenBedPlant)
     {
         await _gardenBedFormModal!.CloseModal();
 

@@ -6,8 +6,8 @@ public abstract record GardenBedPlantHarvestCycleBase
     public string PlantHarvestCycleId { get; set; }
     public string PlantId { get; set; }
     public string PlantName { get; set; }
-    public string PlantVarietyId { get; set; }
-    public string PlantVarietyName { get; set; }
+    public string? PlantVarietyId { get; set; }
+    public string? PlantVarietyName { get; set; }
     public string GardenId { get; set; }
     public string GardenBedId { get; set; }
     public int NumberOfPlants { get; set; }

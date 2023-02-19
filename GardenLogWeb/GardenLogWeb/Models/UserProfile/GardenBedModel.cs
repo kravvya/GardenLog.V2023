@@ -36,7 +36,15 @@ public record GardenBedModel : GardenBedViewModel, IVisualComponent
         int feetInt = (int)feet;
         double inchesRemainder = Length % 12;
 
-        return ($"{feetInt}' {inchesRemainder}\"");
+        if(inchesRemainder> 0)
+        {
+            return ($"{feetInt}' {inchesRemainder}\"");
+        }
+        else
+        {
+            return ($"{feetInt}'");
+        }
+        
     }
 
     public string GetWidthDisplay()
@@ -46,7 +54,14 @@ public record GardenBedModel : GardenBedViewModel, IVisualComponent
         int feetInt = (int)feet;
         double inchesRemainder = Width % 12;
 
-        return ($"{feetInt}' {inchesRemainder}\"");
+        if (inchesRemainder > 0)
+        {
+            return ($"{feetInt}' {inchesRemainder}\"");
+        }
+        else
+        {
+            return ($"{feetInt}'");
+        }
     }
 
     public void MoveUp(int units)

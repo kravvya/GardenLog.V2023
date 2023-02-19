@@ -1,6 +1,6 @@
 ﻿
 <div class="modal fade @modalClass" id="modalView" tabindex="-1" aria-labelledby="modalViewHeader" aria-hidden="true" role="article" style="display:@modalDisplay; overflow-y: auto;">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog @ModalSize modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header" style="background-color: @HeaderColor;">
                 <h5 class="modal-title" id="modalViewHeader">@Title</h5>
@@ -32,6 +32,8 @@
     [Parameter] public RenderFragment Footer { get; set; }
 
     [Parameter] public Func<Task> OnCloseModal { get; set; }
+
+    [Parameter] public string ModalSize { get; set; } = string.Empty;
 
     private string modalDisplay = "none;";
     private string modalClass = "";

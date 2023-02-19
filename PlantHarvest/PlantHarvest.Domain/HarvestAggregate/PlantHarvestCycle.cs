@@ -215,7 +215,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 
     public void DeleteGardenBedPlantHarvestCycle(string pGardenBedPlantHarvestCycleId)
     {
-        this._plantCalendar.RemoveAll(s => s.Id == pGardenBedPlantHarvestCycleId);
+        this._gardenBedLayout.RemoveAll(s => s.Id == pGardenBedPlantHarvestCycleId);
     }
 
  
