@@ -197,6 +197,15 @@ svg .null-right-resizer[b-reab0licoy] {
 svg .top-null-resizer[b-reab0licoy] {
     cursor: n-resize;
 }
+/* /Pages/HarvestGardenLayout/Components/GardenBedPlantHarvestCycleForm.razor.rz.scp.css */
+#collapse1[b-5cnxqxjd6k] {
+    overflow-y: scroll;
+    height: 500px;
+}
+
+.table-active[b-5cnxqxjd6k] {
+    border: #709a41;
+}
 /* /Pages/HarvestGardenLayout/Components/HarvestGardenLayout.razor.rz.scp.css */
 #smallrect rect[b-5p3q5oghd5] {
     stroke: saddlebrown;
