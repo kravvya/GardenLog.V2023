@@ -128,7 +128,7 @@ namespace GardenLogWeb.Models.Harvest
             }
             var numberOfPatternsInRow = Math.Ceiling((bedWidth / 12) / patternWidth);
             var numbeOfRows = (bedLength / 12) / patternLength;
-            return Convert.ToInt32(numberOfPatternsInRow * NumberOfPlants * PlantsPerFoot);
+            return Convert.ToInt32(numberOfPatternsInRow * numbeOfRows * PlantsPerFoot);
         }
 
         public double GetHeightInPixels()

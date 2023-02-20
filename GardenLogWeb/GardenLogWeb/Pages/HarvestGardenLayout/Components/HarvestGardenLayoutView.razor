@@ -38,14 +38,6 @@
                             <dd class="garden-facts_definition  ms-auto">@GetNumberOfFreeBeds()</dd>
                         </dl>
                     </div>
-                    <div class="card-footer">
-                        <div class="d-flex gap-2 gy-2 d-md-flex justify-content-end">
-                            <button type="button" class="btn btn-info" title="Show all plants">
-                                <span class="bi bi-eye">&nbsp;</span>
-                            </button>
-
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -53,9 +45,16 @@
         <div class="col-md-8">
             <div class="card border-info">
                 <div class="card-header text-bg-info">
-                    <h5>
-                        Plants
-                    </h5>
+                    <div class="d-flex justify-content-between">
+                        <h5>
+                            Plants
+                        </h5>
+                        <InputSelect class="form-select" @bind-Value="_harvestPlantFilter" style="max-width:250px">
+                            <option Value="available">Available Plants</option>
+                            <option Value="all">All Aplants</option>
+                        </InputSelect>
+                    </div>
+
                 </div>
                 <div class="card-body">
 
@@ -80,27 +79,30 @@
                                 {
                                     @foreach (var plant in _harvestPlants)
                                     {
-                                        <tr>
-                                            <td>
-                                                <img src="@_imageService.GetThumbnailImageUrl(plant.ImageFileName)" title="@plant.ImageLabel" class="plant-image" role="button" @onclick="@(() => SelectPlantInGardenBed(plant))" />
-                                            </td>
-                                            <td>@plant.PlantName</td>
-                                            <td>@plant.PlantVarietyName</td>
-                                            <td>@plant.NumberOfPlantsLeftToAddToGardenBedLayout</td>
-                                            <td>@plant.NumberOfPlantsInGardenBedLayout</td>
-                                            <td>@plant.GetPlantingDate()</td>
-                                            <td>@plant.GetPlantsPerFoot()</td>
-                                            <td>
-                                                @((int?)(plant.NumberOfPlantsLeftToAddToGardenBedLayout / plant.GetPlantsPerFoot())) sq. ft.
-                                            </td>
-                                            <td>
-                                                <div class="d-flex gap-2 flex-nowrap">
-                                                    <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
-                                                        <span class="bi bi-plus">&nbsp;</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @if (IsVisible(plant))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <img src="@_imageService.GetThumbnailImageUrl(plant.ImageFileName)" title="@plant.ImageLabel" class="plant-image" role="button" @onclick="@(() => SelectPlantInGardenBed(plant))" />
+                                                </td>
+                                                <td>@plant.PlantName</td>
+                                                <td>@plant.PlantVarietyName</td>
+                                                <td>@plant.NumberOfPlantsLeftToAddToGardenBedLayout</td>
+                                                <td>@plant.NumberOfPlantsInGardenBedLayout</td>
+                                                <td>@plant.GetPlantingDate()</td>
+                                                <td>@plant.GetPlantsPerFoot()</td>
+                                                <td>
+                                                    @((int?)(plant.NumberOfPlantsLeftToAddToGardenBedLayout / plant.GetPlantsPerFoot())) sq. ft.
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-2 flex-nowrap">
+                                                        <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
+                                                            <span class="bi bi-plus">&nbsp;</span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
                                     }
                                 }
                             </tbody>
@@ -168,6 +170,7 @@
     private ModalView? _gardenBedFormModal;
     private GardenBedPlantHarvestCycleForm? _gardenBedPlantForm;
     private bool _skipSave = true;
+    private string _harvestPlantFilter = "available";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -186,6 +189,15 @@
             _settings = new GardenPlanSettings(_garden.Length, _garden.Width);
             StateHasChanged();
         }
+    }
+
+    private bool IsVisible(PlantHarvestCycleModel plant)
+    {
+        if (_harvestPlantFilter.Equals("all")) return true;
+
+        if (_harvestPlantFilter.Equals("available") && plant.NumberOfPlantsLeftToAddToGardenBedLayout > 0) return true;
+
+        return false;
     }
 
     private async Task NotifyViewOfSelectedGardenBedPlant(GardenBedPlantHarvestCycleModel selectedGardenBedPlant)
