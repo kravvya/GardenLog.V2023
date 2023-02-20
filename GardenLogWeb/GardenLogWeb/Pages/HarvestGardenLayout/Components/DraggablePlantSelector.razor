@@ -5,9 +5,9 @@
 
 @if (_plant != null && _sides != null)
 {
-    <g class="selector-box" transform="translate(@(_plant.X + GardenBed?.X), @(_plant.Y + GardenBed?.Y)) rotate(@(GardenBed?.Rotate),@(GardenBed?.GetWidthInPixels()/2),@(GardenBed?.GetHeightInPixels()/2))">
+    <g class="selector-box" transform="translate(@GardenBed?.X, @GardenBed?.Y) rotate(@(GardenBed?.Rotate),@(GardenBed?.GetWidthInPixels()/2),@(GardenBed?.GetHeightInPixels()/2))">
 
-        <rect x="0" y="0" width="@_plant?.GetWidthInPixels()" height="@_plant?.GetHeightInPixels()" class="selector"></rect>
+        <rect x="@_plant.X" y="@_plant.Y" width="@_plant?.GetWidthInPixels()" height="@_plant?.GetHeightInPixels()" class="selector"></rect>
 
         @if (_plant != null && GardenBed != null)
         {
@@ -15,13 +15,13 @@
     {
     <ellipse cx="@side.X" cy="@side.Y" rx="5" ry="5" class="selector @side.CssClass" @onmousedown=@(e => OnResizerDown(e, @side.ComponentChanges)) data-original="@side.OriginalAngle" data-total="@side.TotalAngle" data-ng-mousemove="@side.ComponentChanges"></ellipse>
     }*@
-            <ellipse cx="0" cy="@(_plant?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Left)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Left))></ellipse>
+            <ellipse cx="@_plant.X" cy="@(_plant.Y + _plant?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Left)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Left))></ellipse>
 
-            <ellipse cx="@(_plant?.GetWidthInPixels()/2)" cy="@_plant?.GetHeightInPixels()" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Bottom)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Bottom))></ellipse>
+            <ellipse cx="@(_plant?.X + _plant?.GetWidthInPixels()/2)" cy="@(_plant?.Y +_plant?.GetHeightInPixels())" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Bottom)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Bottom))></ellipse>
 
-            <ellipse cx="@_plant?.GetWidthInPixels()" cy="@(_plant?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Right)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Right))></ellipse>
+            <ellipse cx="@(_plant?.X + _plant?.GetWidthInPixels())" cy="@(_plant?.Y +_plant?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Right)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Right))></ellipse>
 
-            <ellipse cx="@(_plant?.GetWidthInPixels()/2)" cy="0" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Upper)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Upper))></ellipse>
+            <ellipse cx="@(_plant?.X + _plant?.GetWidthInPixels()/2)" cy="@_plant?.Y" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Upper)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Upper))></ellipse>
         }
     </g>
 }
@@ -117,26 +117,42 @@
         if (_changes == ComponentChanges.Move)
         {
             /*
-               Top is based on the Y of the top side of the garden bed
-               Bottom is upper left corner of the garded bed + length of the garden bed - length of the plant itself
-                   (since we will be comparing to the top of the plant, we need to subtract the length of the plat so it does not "pop" out from the garden bed)
-               Left is based on the X of the left side of the garden bed
-               Right is based on the X of the left side of the garden bed + the width of the bed - width of the plant itself
-                   (since we will eb comapring to the left side of the plant, we need to subtract the length of the plant so it does not "pop" from the garden bed)
-               */
+            Top is based on the Y of the top side of the garden bed
+            Bottom is upper left corner of the garded bed + length of the garden bed - length of the plant itself
+                (since we will be comparing to the top of the plant, we need to subtract the length of the plat so it does not "pop" out from the garden bed)
+            Left is based on the X of the left side of the garden bed
+            Right is based on the X of the left side of the garden bed + the width of the bed - width of the plant itself
+                (since we will eb comapring to the left side of the plant, we need to subtract the length of the plant so it does not "pop" from the garden bed)
+            */
             var top = GardenBed.Y;
             var bottom = GardenBed.Y + GardenBed.Length / 12 * GardenPlanSettings.TickFootHeight - _plant.Length * GardenPlanSettings.TickFootHeight;
             var left = GardenBed.X;
             var right = GardenBed.X + GardenBed.Width / 12 * GardenPlanSettings.TickFootWidth - _plant.Width * GardenPlanSettings.TickFootWidth;
 
+            var deltaX = _cursorX - e.ClientX;
+            var deltaY = _cursorY - e.ClientY;
 
-            var newX = GardenBed.X + _plant?.X - (_cursorX - e.ClientX);
-            var newY = GardenBed.Y + _plant?.Y - (_cursorY - e.ClientY);
+            if (_sides!= null && _sides.FlipAxesForMove)
+            {
+                deltaY = _cursorX - e.ClientX;
+                deltaX = _cursorY - e.ClientY;
+            }
+
+            if (_sides!=null && _sides.LessIsMore)
+            {
+                deltaX = -1 * deltaX;
+                deltaY = -1 * deltaY;
+            }
+
+            var newX = GardenBed.X + _plant?.X - deltaX;
+            var newY = GardenBed.Y + _plant?.Y - deltaY;
+
+            _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");
 
             if (newX >= left && newX <= right && newY >= top && newY <= bottom)
             {
-                _plant!.X -= (_cursorX - e.ClientX);
-                _plant.Y -= (_cursorY - e.ClientY);
+                _plant!.X -= deltaX;
+                _plant.Y -= deltaY;
             }
         }
         else
