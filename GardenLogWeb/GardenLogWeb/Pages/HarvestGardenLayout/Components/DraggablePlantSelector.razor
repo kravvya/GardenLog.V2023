@@ -11,10 +11,6 @@
 
         @if (_plant != null && GardenBed != null)
         {
-            @* @foreach (var side in _sides.AdjustedSides(GardenBed.Rotate))
-    {
-    <ellipse cx="@side.X" cy="@side.Y" rx="5" ry="5" class="selector @side.CssClass" @onmousedown=@(e => OnResizerDown(e, @side.ComponentChanges)) data-original="@side.OriginalAngle" data-total="@side.TotalAngle" data-ng-mousemove="@side.ComponentChanges"></ellipse>
-    }*@
             <ellipse cx="@_plant.X" cy="@(_plant.Y + _plant?.GetHeightInPixels()/2)" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Left)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Left))></ellipse>
 
             <ellipse cx="@(_plant?.X + _plant?.GetWidthInPixels()/2)" cy="@(_plant?.Y +_plant?.GetHeightInPixels())" rx="5" ry="5" class="selector @_sides.GetCssClass(ComponentChanges.Bottom)" @onmousedown=@(e => OnResizerDown(e, ComponentChanges.Bottom))></ellipse>
@@ -202,7 +198,7 @@
                     }
                     break;
                 case ComponentChanges.Right:
-                   
+
                     /*make sure plants can not get outside of the garden bed
                        We are changing right side of the product (changing _plant.Width). Left side remains as it was (_plant.X does not change). To make sure product still fits within Garden Bed,
                        check if incrased value of the (_plant.X + _plant width in pixels) is still smaller then GardenBed's width in pixels
@@ -217,7 +213,7 @@
                     }
                     break;
                 case ComponentChanges.Upper:
-                   
+
 
                     if (_plant.Y - moveBy * _plant.PatternLength * GardenPlanSettings.TickFootHeight >= 0)
                     {
@@ -238,7 +234,27 @@
     {
         if (GardenBed == null || _plant == null) return;
 
-        switch (e.Key)
+        var direction = e.Key;
+        if(_sides!=null && _sides.FlipAxesForMove)
+        {
+            switch (direction)
+            {
+                case "ArrowDown":
+                    direction = _sides.LessIsMore ? "ArrowRight" : "ArrowLeft";
+                    break;
+                case "ArrowUp":
+                    direction = _sides.LessIsMore ? "ArrowLeft" : "ArrowRight";
+                    break;
+                case "ArrowRight":
+                    direction = _sides.LessIsMore ? "ArrowUp" : "ArrowDown";
+                    break;
+                case "ArrowLeft":
+                    direction = _sides.LessIsMore ? "ArrowDown" : "ArrowUp";
+                    break;
+            }
+        }
+
+        switch (direction)
         {
             case "ArrowDown":
                 var bottom = GardenBed.Y + GardenBed.Length / 12 * GardenPlanSettings.TickFootHeight - _plant.Length * GardenPlanSettings.TickFootHeight;

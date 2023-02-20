@@ -40,14 +40,19 @@
                                     {
                                         @foreach (var bed in _gardenBeds)
                                         {
-                                            <tr @onclick="() => GardenBedSelected(bed)" class="@GetTableClass(bed)">
-                                                <td>@bed.RowNumber</td>
-                                                <td>@bed.Name</td>
-                                                <td>@(_verifyService.GetDescription<GardenBedTypeEnum>(bed.Type))</td>
-                                                <td>@bed.GetWidthDisplay() x @bed.GetLengthDisplay()</td>
-                                                <td>@_gardenBedPlant.NumberOfPlantsPerBed(bed.Length, bed.Width)</td>
-                                                <td>@GetInUseStatus(bed)</td>
-                                            </tr>
+                                            @if (IsVisible(bed))
+                                            {
+                                                <tr @onclick="() => GardenBedSelected(bed)" class="@GetTableClass(bed)">
+                                                    <td>@bed.RowNumber</td>
+                                                    <td>@bed.Name</td>
+                                                    <td>@(
+                                                _verifyService.GetDescription<GardenBedTypeEnum>(bed.Type)
+                                                )</td>
+                                                    <td>@bed.GetWidthDisplay() x @bed.GetLengthDisplay()</td>
+                                                    <td>@_gardenBedPlant.NumberOfPlantsPerBed(bed.Length, bed.Width)</td>
+                                                    <td>@GetInUseStatus(bed)</td>
+                                                </tr>
+                                            }
                                         }
                                     }
                                 </tbody>
@@ -103,6 +108,20 @@
         StateHasChanged();
     }
 
+    private bool IsVisible(GardenBedModel bed)
+    {
+        if (_gardenBedGridFilter.Equals("all")) return true;
+
+        if (_gardenBedGridFilter.Equals("available") && _harvestPlants!= null)
+        {
+            var usedArea = _harvestPlants.SelectMany(g => g.GardenBedLayout).Where(c => c.GardenBedId == bed.GardenBedId).Sum(g => g.Length * g.Width);
+            //bed is in In and plants are in ft
+            return bed.Length * bed.Width - usedArea*144 > 144; //only return if at least 1 sq ft is open
+        }
+
+        return false;
+    }
+
     private void GardenBedSelected(GardenBedModel bed)
     {
         if (_gardenBedPlant != null)
@@ -139,7 +158,7 @@
         System.Text.StringBuilder sb = new();
         foreach (var plant in plants)
         {
-            sb.Append($"{plant.GetPlantName()} - {plant.NumberOfPlants}");
+            sb.AppendLine($"{plant.GetPlantName()} - {plant.NumberOfPlants}. ");
         }
         return sb.ToString();
     }

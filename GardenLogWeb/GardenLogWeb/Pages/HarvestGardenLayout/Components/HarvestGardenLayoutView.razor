@@ -51,7 +51,7 @@
                         </h5>
                         <InputSelect class="form-select" @bind-Value="_harvestPlantFilter" style="max-width:250px">
                             <option Value="available">Available Plants</option>
-                            <option Value="all">All Aplants</option>
+                            <option Value="all">All Plants</option>
                         </InputSelect>
                     </div>
 
@@ -96,9 +96,12 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex gap-2 flex-nowrap">
-                                                        <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
-                                                            <span class="bi bi-plus">&nbsp;</span>
-                                                        </button>
+                                                        @if (plant.NumberOfPlantsLeftToAddToGardenBedLayout > 0)
+                                                        {
+                                                            <button type="button" class="btn btn-secondary" title="Add to Garden Bed" @onclick="@(() => CreateGardenBedHarvestPlant(plant))">
+                                                                <span class="bi bi-plus">&nbsp;</span>
+                                                            </button>
+                                                        }
                                                     </div>
                                                 </td>
                                             </tr>
