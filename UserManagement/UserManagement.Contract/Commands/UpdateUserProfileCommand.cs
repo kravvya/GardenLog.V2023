@@ -4,7 +4,7 @@ namespace UserManagement.Contract.Command;
 
 public record UpdateUserProfileCommand: UserProfileBase
 {
-    public string UserProfileId { get; set; }
+    public string UserProfileId { get; set; } = string.Empty;
 }
 
 
