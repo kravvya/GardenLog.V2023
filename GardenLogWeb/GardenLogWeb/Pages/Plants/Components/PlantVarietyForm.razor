@@ -193,7 +193,7 @@
                     </Header>
                     <Body>
                         <div class="sources" role="group" aria-label="source">
-                            <input class="form-control" @bind:get="newSource" @bind:event="OnSourceInput" @ref="inputSource" />
+                            <input class="form-control" type="text" @bind:get="newSource" @bind:set="OnSourceInput" @ref="inputSource" />
                             <ul Id="sources">
                                 @foreach (var source in plantVariety.Sources)
                                 {
@@ -226,7 +226,7 @@
     private PlantModel plant { get; set; }
     private PlantVarietyModel plantVariety { get; set; }
     private ElementReference inputSource;
-    private string newSource = string.Empty;
+    private string newSource { get; set; } = string.Empty;
 
     private bool isInitialized = false;
     private bool isEdit = false;
