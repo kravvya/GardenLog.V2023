@@ -62,15 +62,15 @@ else
     harvestServiceUrl = "https://plantharvestapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
     userServiceUrl = "https://usermanagementapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
 
-    //builder.Services.AddAuthorizationCore();
-    //builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
+    builder.Services.AddAuthorizationCore();
+    builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 
-    builder.Services.AddOidcAuthentication(options =>
-    {
-        builder.Configuration.Bind("Auth0", options.ProviderOptions);
-        options.ProviderOptions.ResponseType = "code";
-        options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
-    }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
+    //builder.Services.AddOidcAuthentication(options =>
+    //{
+    //    builder.Configuration.Bind("Auth0", options.ProviderOptions);
+    //    options.ProviderOptions.ResponseType = "code";
+    //    options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
+    //}).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
 };
 
 builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));

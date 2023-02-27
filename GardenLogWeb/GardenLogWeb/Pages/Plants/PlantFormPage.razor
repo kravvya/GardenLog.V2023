@@ -186,7 +186,8 @@
                                                 <li style="background-color:@plant.Color">@tag<a role='button' onclick=@(() => RemoveTag(tag))>×</a></li>
                                             }
                                         </ul>
-                                        <input @bind:get="newTag" @bind:event="OnTagInput" @ref="inputTag" />
+                                        @*<input @bind:get="newTag" @bind:event="OnTagInput" @ref="inputTag" />*@
+                                        <input type="text" @bind="NewTag" @ref="inputTag" />
                                     </div>
                                 </Body>
                             </FormCard>
@@ -235,7 +236,14 @@
 
     private ElementReference inputTag;
     private string newTag = string.Empty;
-
+    private string NewTag
+    {
+        get => newTag;
+        set
+        {
+            OnTagInput(value);
+        }
+    }
     private bool isInitialized = false;
     private bool isEdit = false;
     private CustomValidation customValidation;
