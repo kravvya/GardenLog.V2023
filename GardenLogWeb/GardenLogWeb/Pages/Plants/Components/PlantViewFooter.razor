@@ -15,10 +15,18 @@
 
 
     <div class="d-flex gap-2 flex-nowrap justify-content-md-start">
-        <button type="button" class="btn btn-secondary" title="Edit Plant" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
-        <button type="button" class="btn btn-secondary" title="Add Variety" @onclick="@(() => OnAddVariety())"><span class="bi bi-flower1">&nbsp;</span></button>
-        <button type="button" class="btn btn-secondary" title="Add Growing Instruction" @onclick="@(() => OnAddGrowInstruction())"><span class="bi bi-card-checklist">&nbsp;</span></button>
-        <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANTS)">
+            <button type="button" class="btn btn-secondary" title="Edit Plant" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
+        </AuthorizeView>
+        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANT_VARIETIES)">
+            <button type="button" class="btn btn-secondary" title="Add Variety" @onclick="@(() => OnAddVariety())"><span class="bi bi-flower1">&nbsp;</span></button>
+        </AuthorizeView>
+        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_GROW_INSTRUCTIONS)">
+            <button type="button" class="btn btn-secondary" title="Add Growing Instruction" @onclick="@(() => OnAddGrowInstruction())"><span class="bi bi-card-checklist">&nbsp;</span></button>
+        </AuthorizeView>
+        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANTS)">
+            <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+        </AuthorizeView>
         <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => onViewGallery())">&nbsp;<span class="bi bi-images" aria-hidden="true"></span></button>
         <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => Close())"><span class="bi bi-x-circle">&nbsp;</span></button>
     </div>

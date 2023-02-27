@@ -3,6 +3,7 @@
 
 public record CreateUserProfileCommand: UserProfileBase
 {
+
 }
 
 

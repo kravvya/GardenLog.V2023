@@ -96,7 +96,14 @@ public class UserProfileController : Controller
         {
             var results = await _commadnHandler.CreateUserProfile(command);
 
+            var url = Url.Action("GetUserProfileById", "UserProfileController", new { userProfileId = results });
+
             return Ok(results);
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
+            return BadRequest(ModelState);
         }
         catch (Exception ex)
         {
@@ -117,6 +124,11 @@ public class UserProfileController : Controller
             var results = await _commadnHandler.UpdateUserProfile(command);
 
             return results == 0 ? NotFound() : Ok(results);
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
+            return BadRequest(ModelState);
         }
         catch (Exception ex)
         {
