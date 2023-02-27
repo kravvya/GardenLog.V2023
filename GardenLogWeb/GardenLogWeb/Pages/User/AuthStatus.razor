@@ -1,4 +1,5 @@
 ﻿@page "/userAuth"
+@using System.Security.Claims
 @*//@inject IAuthorizationService AuthorizationService*@
 @*@inject IAccessTokenProvider TokenProvider*@
 
@@ -6,7 +7,7 @@
 
 <AuthorizeView>
     <Authorized>
-        The user (context.User.FindFirst(ClaimTypes.Name)?.Value): @context.User.FindFirst(ClaimTypes.Name)?.Value is authorized
+        The user (context.User.FindFirst(ClaimTypes.Name)?.Value): @(context.User.FindFirst(ClaimTypes.Name)?.Value) is authorized
         <br/>
         The other user (context.User.Identity): @context.User.Identity?.Name!
          <br/>
@@ -31,9 +32,12 @@
 <br/>
 <button @onclick="@DoSomething">Do something important</button>
 
+
 <p>@auth</p>
 <p>@role</p>
 <p>@role2</p>
+<p>@userId</p>
+
 
 @code {
     [CascadingParameter]
@@ -43,6 +47,7 @@
     private string role = "";
     private string role2 = "";
     private string policy = "";
+    private string userId = "";
 
     private async Task DoSomething()
     {
@@ -68,6 +73,8 @@
                 {
                     role2 = "write:grow-instructions";
                 }
+
+                userId = user.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             }
         }
 

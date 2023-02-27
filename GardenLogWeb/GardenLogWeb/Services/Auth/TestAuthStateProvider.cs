@@ -9,8 +9,10 @@ public class TestAuthStateProvider : AuthenticationStateProvider
     {
         var claims = new List<Claim>
         {
+            new Claim("sup", "up1"),
             new Claim(ClaimTypes.Name, "Test User"),
             new Claim(ClaimTypes.Role, "master-gardener")
+
         };
         var testUser = new ClaimsIdentity(claims, "testAuthType");
         return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(testUser)));

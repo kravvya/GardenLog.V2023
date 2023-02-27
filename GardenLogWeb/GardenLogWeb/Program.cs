@@ -48,6 +48,7 @@ if (builder.HostEnvironment.IsProduction())
         builder.Configuration.Bind("Auth0", options.ProviderOptions);
         options.ProviderOptions.ResponseType = "code";
         options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
+        options.ProviderOptions.DefaultScopes.Add("email");
     }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
 }
 else
@@ -70,6 +71,7 @@ else
     //    builder.Configuration.Bind("Auth0", options.ProviderOptions);
     //    options.ProviderOptions.ResponseType = "code";
     //    options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
+    //    options.ProviderOptions.DefaultScopes.Add("email");
     //}).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
 };
 
