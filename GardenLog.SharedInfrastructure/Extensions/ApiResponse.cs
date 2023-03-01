@@ -8,7 +8,7 @@ public class ApiResponse
 
     public bool IsSuccess
     {
-        get { return StatusCode == HttpStatusCode.OK || StatusCode == HttpStatusCode.Accepted; }
+        get { return StatusCode == HttpStatusCode.OK || StatusCode == HttpStatusCode.Accepted || StatusCode == HttpStatusCode.Created || StatusCode == HttpStatusCode.NoContent; }
     }
     public string ErrorMessage { get; internal set; }
 

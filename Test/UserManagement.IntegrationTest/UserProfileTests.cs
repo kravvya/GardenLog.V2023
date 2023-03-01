@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UserManagement.Api.Model;
 using UserManagement.Contract.ViewModels;
 
 namespace UserManagement.IntegrationTest;
@@ -20,11 +21,17 @@ public partial class GardenTests // : IClassFixture<UserManagementServiceFixture
 
         _output.WriteLine($"Service to create user profile responded with {response.StatusCode} code and {returnString} message");
 
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        if (response.IsSuccessStatusCode)
         {
+            Assert.True(response.IsSuccessStatusCode);
             Assert.NotEmpty(returnString);
+            Assert.Contains("auth0|", returnString);
+            returnString = returnString.Replace("auth0|", "");
             Assert.True(Guid.TryParse(returnString, out Guid userId));
-            Assert.True(Guid.TryParse(returnString, out var harvestCycleId));
+        }
+        else
+        {
+            Assert.Contains("UserName already in use", returnString);
         }
     }
 
@@ -48,7 +55,8 @@ public partial class GardenTests // : IClassFixture<UserManagementServiceFixture
     {
         var userProfile = await GetUserProfileToWorkWith(TEST_USER);
 
-        userProfile.LastName = $"User{DateTime.Now.ToString()}";
+        userProfile.LastName = userProfile.FirstName;
+        userProfile.FirstName = userProfile.LastName == "Test"? "User" : "Test";
 
         var response = await _userProfileClient.UpdateUserProfile(userProfile);
 
@@ -64,7 +72,7 @@ public partial class GardenTests // : IClassFixture<UserManagementServiceFixture
     public async Task Delete_UserProfile_ShouldDelete()
     {
         var userProfile = await GetUserProfileToWorkWith(TEST_DELETE_USER);
-        if (userProfile == null )
+        if (userProfile == null)
         {
             await _userProfileClient.CreateUserProfile(TEST_DELETE_USER);
         }

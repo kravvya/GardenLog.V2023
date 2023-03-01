@@ -9,6 +9,7 @@ public interface IGardenQueryHandler
     Task<IReadOnlyCollection<GardenBedViewModel>> GetGardenBeds(string id);
     Task<GardenViewModel> GetGardenByName(string gardenName);
     Task<IReadOnlyCollection<GardenViewModel>> GetGardens();
+    Task<IReadOnlyCollection<GardenViewModel>> GetAllGardens();
 }
 
 public class GardenQueryHandler : IGardenQueryHandler
@@ -33,4 +34,5 @@ public class GardenQueryHandler : IGardenQueryHandler
 
     public Task<IReadOnlyCollection<GardenViewModel>> GetGardens() => _gardenRepository.GetGardens(_httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers));
 
+    public Task<IReadOnlyCollection<GardenViewModel>> GetAllGardens() => _gardenRepository.GetAllGardens();
 }

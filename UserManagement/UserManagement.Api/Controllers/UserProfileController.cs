@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using UserManagement.CommandHandlers;
 using UserManagement.Contract;
@@ -9,6 +10,7 @@ namespace UserManagement.Controllers;
 
 [Route(UserProfileRoutes.UserProfileBase)]
 [ApiController]
+[Authorize]
 public class UserProfileController : Controller
 {
     private readonly IUserProfileCommandHandler _commadnHandler;
@@ -25,6 +27,7 @@ public class UserProfileController : Controller
     [HttpGet()]
     [ActionName("GetUserProfile")]
     [Route(UserProfileRoutes.GetUserProfile)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(UserProfileViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<UserProfileViewModel>> GetUserProfile()
@@ -46,7 +49,9 @@ public class UserProfileController : Controller
     [HttpGet()]
     [ActionName("GetUserProfileById")]
     [Route(UserProfileRoutes.GetUserProfileById)]
+    [Authorize(Policy = "admin_or_tester")]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(UserProfileViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<UserProfileViewModel>> GetUserProfileById(string userProfileId)
     {
@@ -67,6 +72,8 @@ public class UserProfileController : Controller
     [HttpPost()]
     [ActionName("SearchUserProfile")]
     [Route(UserProfileRoutes.SearchUserProfile)]
+    [Authorize(Policy = "admin_or_tester")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(UserProfileViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<UserProfileViewModel>> SearchUserProfile([FromBody] SearchUserProfiles search)
@@ -87,7 +94,9 @@ public class UserProfileController : Controller
 
     [HttpPost()]
     [ActionName("CreateUserProfile")]
+    [AllowAnonymous]
     [Route(UserProfileRoutes.CreateUserProfile)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<UserProfileViewModel>> CreateUserProfile([FromBody] CreateUserProfileCommand command)
@@ -95,10 +104,8 @@ public class UserProfileController : Controller
         try
         {
             var results = await _commadnHandler.CreateUserProfile(command);
-
-            var url = Url.Action("GetUserProfileById", "UserProfileController", new { userProfileId = results });
-
             return Ok(results);
+            //return CreatedAtAction(nameof(GetUserProfile), new { });
         }
         catch (ArgumentException ex)
         {
@@ -114,6 +121,7 @@ public class UserProfileController : Controller
     [HttpPut()]
     [ActionName("UpdateUserProfile")]
     [Route(UserProfileRoutes.UpdateUserProfile)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -138,8 +146,10 @@ public class UserProfileController : Controller
 
     [HttpDelete()]
     [ActionName("DeleteUserProfile")]
+    [Authorize(Policy = "admin_or_tester")]
     [Route(UserProfileRoutes.DeleteUserProfile)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<UserProfileViewModel>> DeleteUserProfile(string userProfileId)

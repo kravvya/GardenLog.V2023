@@ -57,6 +57,16 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
         return data;
     }
 
+    public async Task<IReadOnlyCollection<GardenViewModel>> GetAllGardens()
+    {
+        var data = await Collection
+           .Find<Garden>(_ => true)
+           .As<GardenViewModel>()
+           .ToListAsync();
+
+        return data;
+    }
+
     public async Task<string> GetIdByNameAsync(string name, string userProfileId)
     {
         var idOnlyProjection = Builders<Garden>.Projection.Include(p => p.Id);

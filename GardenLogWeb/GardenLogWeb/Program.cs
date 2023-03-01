@@ -61,24 +61,33 @@ else
     serviceUrl = "https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
     imageServiceUrl = "https://imagecatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
     harvestServiceUrl = "https://plantharvestapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
-    userServiceUrl = "https://usermanagementapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
+    //userServiceUrl = "https://usermanagementapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
 
-    builder.Services.AddAuthorizationCore();
-    builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
+    //builder.Services.AddAuthorizationCore();
+    //builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 
-    //builder.Services.AddOidcAuthentication(options =>
-    //{
-    //    builder.Configuration.Bind("Auth0", options.ProviderOptions);
-    //    options.ProviderOptions.ResponseType = "code";
-    //    options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
-    //    options.ProviderOptions.DefaultScopes.Add("email");
-    //}).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
+    builder.Services.AddOidcAuthentication(options =>
+    {
+        builder.Configuration.Bind("Auth0", options.ProviderOptions);
+        options.ProviderOptions.ResponseType = "code";
+        options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
+        options.ProviderOptions.DefaultScopes.Add("email");
+    }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
 };
 
-builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl));
-builder.Services.AddHttpClient(GlobalConstants.IMAGEPLANTCATALOG_API, client => client.BaseAddress = new Uri(imageServiceUrl));
-builder.Services.AddHttpClient(GlobalConstants.PLANTHARVEST_API, client => client.BaseAddress = new Uri(harvestServiceUrl));
-builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_API, client => client.BaseAddress = new Uri(userServiceUrl));
+builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl))
+                                .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
+                                .ConfigureHandler(authorizedUrls: new[] { serviceUrl }));
+builder.Services.AddHttpClient(GlobalConstants.IMAGEPLANTCATALOG_API, client => client.BaseAddress = new Uri(imageServiceUrl))
+                                .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
+                                .ConfigureHandler(authorizedUrls: new[] { imageServiceUrl }));
+builder.Services.AddHttpClient(GlobalConstants.PLANTHARVEST_API, client => client.BaseAddress = new Uri(harvestServiceUrl))
+                                .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
+                                .ConfigureHandler(authorizedUrls: new[] { harvestServiceUrl }));
+builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_API, client => client.BaseAddress = new Uri(userServiceUrl))
+                                .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
+                                .ConfigureHandler(authorizedUrls: new[] { userServiceUrl }));
+builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_CREATEONLY_API, client => client.BaseAddress = new Uri(userServiceUrl));
 
 builder.Services.AddValidatorsFromAssemblyContaining<PlantViewModelValidator>();
 

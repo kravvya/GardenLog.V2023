@@ -30,8 +30,8 @@
     private Task<AuthenticationState>? authenticationState { get; set; }
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
-    private UserProfileForm _editProfileForm;
-    private UserProfileForm _registrationForm;
+    private UserProfileForm? _editProfileForm;
+    private UserProfileForm? _registrationForm;
 
     private UserProfileModel _userProfile;
 
@@ -55,15 +55,15 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (!firstRender) return;
 
-        if (_userProfile == null)
+        if (_userProfile == null && _registrationForm != null && !_registrationForm.IsInitialized)
         {
             _registrationForm.Initialize(null);
         }
-        else
+        else if (_userProfile != null  && _editProfileForm != null && !_editProfileForm.IsInitialized)
         {
             _editProfileForm.Initialize(_userProfile);
         }
     }
 }
+

@@ -1,5 +1,6 @@
 ﻿
 using GrowConditions.Contract.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -20,8 +21,10 @@ public class WeatherController : ControllerBase
         _weatherQueryHandler = weatherQueryHandler;
     }
 
+    [Authorize]
     [HttpGet(WeatherRoutes.GetLastWeatherUpdate)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(WeatherUpdateViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> GetLastWeatherUpdate(string gardenId)
     {
@@ -33,8 +36,10 @@ public class WeatherController : ControllerBase
         return Ok(weather);
     }
 
+    [Authorize]
     [HttpGet(WeatherRoutes.GetHistoryOfWeatherUpdates)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IList<WeatherUpdateViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> GetHistoryOfWeatherUpdates(string gardenId, int numberOfDays)
     {
@@ -54,7 +59,7 @@ public class WeatherController : ControllerBase
         try
         {
             _logger.LogInformation("Received request to run weather cycle");
-            await _weatherCommandHandler.GetWeatherUpdates();
+             _weatherCommandHandler.GetWeatherUpdates().GetAwaiter().GetResult();
             return Accepted();
         }
         catch (Exception ex)
