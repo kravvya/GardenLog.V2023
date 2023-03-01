@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PlantCatalog.Contract;
 using System.Net;
 
@@ -6,7 +7,7 @@ namespace PlantHarvest.Api.Controllers;
 
 [Route(HarvestRoutes.PlantHarvestBase)]
 [ApiController]
-
+[Authorize]
 public class HarvestCycleController : Controller
 {
     private readonly IHarvestCommandHandler _handler;
@@ -24,6 +25,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [ActionName("GetHarvestCycleById")]
     [Route(HarvestRoutes.GetHarvestCycleById)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(HarvestCycleViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<HarvestCycleViewModel>> GetHarvestCycleById(string id)
@@ -51,6 +53,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [ActionName("GetIdByHarvestCycleName")]
     [Route(HarvestRoutes.GetIdByHarvestCycleName)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<string>> GetIdByHarvestCycleName(string name)
@@ -70,6 +73,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [ActionName("GetAllHarvestCycles")]
     [Route(HarvestRoutes.GetAllHarvestCycles)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<HarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<HarvestCycleViewModel>>> GetAllHarvestCycles()
     {
@@ -81,6 +85,7 @@ public class HarvestCycleController : Controller
     [HttpPost]
     [Route(HarvestRoutes.CreateHarvestCycle)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantAsync([FromBody] CreateHarvestCycleCommand command)
     {
@@ -104,6 +109,7 @@ public class HarvestCycleController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdateHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantAsync([FromBody] UpdateHarvestCycleCommand command)
@@ -128,6 +134,7 @@ public class HarvestCycleController : Controller
 
     [HttpDelete()]
     [Route(HarvestRoutes.DeleteHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeleteHarvestCycleAsync(string id)
@@ -149,6 +156,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [ActionName("GetPlantHarvestCycleByHarvestCycleId")]
     [Route(HarvestRoutes.GetPlantHarvestCycles)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantHarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantHarvestCycleViewModel>>> GetPlantHarvestCycleByHarvestCycleIdAsync(string harvestId)
@@ -159,6 +167,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [ActionName("GetPlantHarvestCyclesByPlant")]
     [Route(HarvestRoutes.GetPlantHarvestCyclesByPlant)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantHarvestCycleViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantHarvestCycleViewModel>>> GetPlantHarvestCyclesByPlant(string plantId)
@@ -169,6 +178,7 @@ public class HarvestCycleController : Controller
     [HttpGet()]
     [Route(HarvestRoutes.GetPlantHarvestCycle)]
     [ActionName("GetPlantHarvestCycleById")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(PlantHarvestCycleViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantHarvestCycle>> GetPlantHarvestCycleByIdAsync(string harvestId, string id)
@@ -187,6 +197,7 @@ public class HarvestCycleController : Controller
 
     [HttpPost()]
     [Route(HarvestRoutes.CreatePlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantHarvestCycleAsync([FromBody] CreatePlantHarvestCycleCommand command)
@@ -212,6 +223,7 @@ public class HarvestCycleController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdatePlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantHarvestCycleAsync([FromBody] UpdatePlantHarvestCycleCommand command)
@@ -235,6 +247,7 @@ public class HarvestCycleController : Controller
     }
     [HttpDelete()]
     [Route(HarvestRoutes.DeletePlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletePlantHarvestCycleAsync(string harvestId, string id)
@@ -254,6 +267,7 @@ public class HarvestCycleController : Controller
     #region Plant Schedule
     [HttpPost()]
     [Route(HarvestRoutes.CreatePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> CreatePlantSchedule([FromBody] CreatePlantScheduleCommand command)
@@ -279,6 +293,7 @@ public class HarvestCycleController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdatePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UpdatePlantSchedule([FromBody] UpdatePlantScheduleCommand command)
@@ -302,6 +317,7 @@ public class HarvestCycleController : Controller
     }
     [HttpDelete()]
     [Route(HarvestRoutes.DeletePlantSchedule)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletePlantSchedule(string harvestId, string plantHarvestId, string id)
@@ -321,6 +337,7 @@ public class HarvestCycleController : Controller
     #region Garden Bed Layout
     [HttpPost()]
     [Route(HarvestRoutes.CreateGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> CreateGardenBedPlantHarvestCycle([FromBody] CreateGardenBedPlantHarvestCycleCommand command)
@@ -346,6 +363,7 @@ public class HarvestCycleController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdateGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UpdateGardenBedPlantHarvestCycle([FromBody] UpdateGardenBedPlantHarvestCycleCommand command)
@@ -369,6 +387,7 @@ public class HarvestCycleController : Controller
     }
     [HttpDelete()]
     [Route(HarvestRoutes.DeleteGardenBedPlantHarvestCycle)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id)

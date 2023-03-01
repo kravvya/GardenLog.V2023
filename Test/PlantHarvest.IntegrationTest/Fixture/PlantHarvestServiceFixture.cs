@@ -1,5 +1,7 @@
-﻿using PlantHarvest.IntegrationTest.Clients;
+﻿using GardenLog.SharedInfrastructure.ApiClients;
+using PlantHarvest.IntegrationTest.Clients;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace PlantHarvest.IntegrationTest.Fixture;
 
@@ -14,11 +16,16 @@ public class PlantHarvestServiceFixture : PlantHarvestApplicationFactory<Program
         _factory= new PlantHarvestApplicationFactory<Program>();
         _factory.ConfigureAwait(true);
 
+        var token = (new Auth0Helper()).GetToken(typeof(Program).Assembly);
+
         FixtureId = Guid.NewGuid().ToString();
-        
+
         var client = _factory.CreateClient();
 
-        client.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
+        client.DefaultRequestHeaders.Add("RequestUser", "auth0|ec329c32-5705-4e42-a18b-4831916a3003");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (client.BaseAddress == null) throw new ArgumentException("Base address is not set on the http client. Fixture setup aborted", "BaseAddress");
 
         PlantHarvestClient = new PlantHarvestClient(client.BaseAddress, client);
         WorkLogClient = new WorkLogClient(client.BaseAddress, client);

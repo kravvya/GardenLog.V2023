@@ -39,7 +39,7 @@ namespace GrowConditions.Api.CommandHandlers
 
                 _logger.LogInformation("Fetch weather found {count} coordinates", gardens.Count);
 
-                foreach (var garden in gardens.Where(g => g.Latitude != 0 && g.Longitude != 0))
+                foreach (var garden in gardens.Where(g => g.Latitude != -1 && g.Longitude != -1 && g.Latitude != 0 && g.Longitude != 0))
                 {
                     try
                     {
