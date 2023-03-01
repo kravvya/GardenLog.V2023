@@ -23,9 +23,8 @@ public class PlantCatalogServiceFixture : PlantCatalogApplicationFactory<Program
         client.DefaultRequestHeaders.Add("RequestUser", "auth0|ec329c32-5705-4e42-a18b-4831916a3003");
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        client.DefaultRequestHeaders.Add("Scope", "IntegrationTest");
 
-        if (client.BaseAddress == null) throw new ArgumentException("Base address is not set on the http client. Fixzture setup aborted", "BaseAddress");
+        if (client.BaseAddress == null) throw new ArgumentException("Base address is not set on the http client. Fixture setup aborted", "BaseAddress");
 
         PlantCatalogClient = new PlantCatalogClient(client.BaseAddress, client);
     }

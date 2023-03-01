@@ -50,15 +50,15 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.RegisterSwaggerForAuth("Plant Harvest Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
     builder.Services.AddScoped<IScheduleBuilder, ScheduleBuilder>();
 
-    builder.Services.AddHttpClient<IPlantCatalogApiClient, PlantCatalogApiClient>();
-    builder.Services.AddHttpClient<IUserManagementApiClient, UserManagementApiClient>();
+    builder.RegisterHttpClient<IPlantCatalogApiClient, PlantCatalogApiClient>();
+    builder.RegisterHttpClient<IUserManagementApiClient, UserManagementApiClient>();
 
     builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
     builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();
@@ -80,6 +80,9 @@ try
 
     builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
+    // 1. Add Authentication Services
+    builder.RegisterForAuthentication();
+
     //TODO Add Healthchecks!!!!
 
     var app = builder.Build();
@@ -87,14 +90,17 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
     }
+
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+    //// 2. Enable authentication middleware
+    app.UseAuthentication();
+
+    app.UseAuthorization(); ;
 
     app.UseCors("glWebPolicy");
 

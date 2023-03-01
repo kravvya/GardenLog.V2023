@@ -1,4 +1,5 @@
 ﻿using GardenLog.SharedKernel.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlantCatalog.Contract;
 using PlantHarvest.Contract.Enum;
@@ -9,7 +10,7 @@ namespace PlantHarvest.Api.Controllers;
 
 [Route(HarvestRoutes.WorkLogBase)]
 [ApiController]
-
+[Authorize]
 public class WorkLogController : Controller
 {
     private readonly IWorkLogCommandHandler _handler;
@@ -28,6 +29,7 @@ public class WorkLogController : Controller
     [HttpGet()]
     [ActionName("GetAllWorkLogs")]
     [Route(HarvestRoutes.GetWorkLogs)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<WorkLogViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<WorkLogViewModel>>> GetAllWorkLogs(string entityType, string entityId)
     {
@@ -38,6 +40,7 @@ public class WorkLogController : Controller
 
     [HttpPost]
     [Route(HarvestRoutes.CreateWorkLog)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostWorkLogAsync([FromBody] CreateWorkLogCommand command)
@@ -62,6 +65,7 @@ public class WorkLogController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdateWorkLog)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutWorkLogAsync([FromBody] UpdateWorkLogCommand command)
@@ -86,6 +90,7 @@ public class WorkLogController : Controller
 
     [HttpDelete()]
     [Route(HarvestRoutes.DeleteWorkLog)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeleteWorkLogAsync(string id)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using System.Net;
 
@@ -6,7 +7,7 @@ namespace PlantHarvest.Api.Controllers;
 
 [Route(HarvestRoutes.PlantTaskBase)]
 [ApiController]
-
+[Authorize]
 public class PlantTaskController : Controller
 {
     private readonly IPlantTaskCommandHandler _handler;
@@ -25,6 +26,7 @@ public class PlantTaskController : Controller
     [HttpGet()]
     [ActionName("GetTasks")]
     [Route(HarvestRoutes.GetTasks)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantTaskViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantTaskViewModel>>> GetTasks()
     {
@@ -34,6 +36,7 @@ public class PlantTaskController : Controller
     [HttpGet()]
     [ActionName("GetActiveTasks")]
     [Route(HarvestRoutes.GetActiveTasks)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantTaskViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantTaskViewModel>>> GetActiveTasks()
     {
@@ -42,6 +45,7 @@ public class PlantTaskController : Controller
 
     [HttpPost]
     [Route(HarvestRoutes.CreateTask)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> CreateTask([FromBody] CreatePlantTaskCommand command)
@@ -66,6 +70,7 @@ public class PlantTaskController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.UpdateTask)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UpdateTask([FromBody] UpdatePlantTaskCommand command)
@@ -90,6 +95,7 @@ public class PlantTaskController : Controller
 
     [HttpPut()]
     [Route(HarvestRoutes.CompleteTask)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> CompleteTask([FromBody] UpdatePlantTaskCommand command)
