@@ -1,4 +1,6 @@
-﻿using PlantCatalog.IntegrationTest.Fixture;
+﻿using GardenLog.SharedInfrastructure.ApiClients;
+using PlantCatalog.IntegrationTest.Fixture;
+using System.Net.Http.Headers;
 
 namespace ImageCatalog.IntegrationTest.Fixture;
 
@@ -13,9 +15,17 @@ public class ImageCatalogServiceFixture : ImageCatalogApplicationFactory<Program
         _factory= new ImageCatalogApplicationFactory<Program>();
         _factory.ConfigureAwait(true);
 
+        var token = (new Auth0Helper()).GetToken(typeof(Program).Assembly);
+
         FixtureId = Guid.NewGuid().ToString();
-        
+
         var client = _factory.CreateClient();
+
+        client.DefaultRequestHeaders.Add("RequestUser", "auth0|ec329c32-5705-4e42-a18b-4831916a3003");
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (client.BaseAddress == null) throw new ArgumentException("Base address is not set on the http client. Fixture setup aborted", "BaseAddress");
 
         ImageCatalogClient = new ImageCatalogClient(client.BaseAddress, client);
         FileCatalogClient = new FileCatalogClient(client.BaseAddress, client);
