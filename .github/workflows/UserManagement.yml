@@ -36,6 +36,8 @@ jobs:
 
     env:
       mongodb-password: ${{ secrets.mongodb_password }}
+      auth0-clientsecret: ${{ secrets.auth0_clientsecret }}
+      auth0-apiclientsecret: ${{ secrets.auth0_apiclientsecret }}
 
     needs: setup
     steps:
@@ -106,7 +108,7 @@ jobs:
 
           az containerapp registry set --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --server ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io --username ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
 
-          az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} --set-env-vars "mongodb-password=secretref:mongodb-password"
+          az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} --set-env-vars "mongodb-password=secretref:mongodb-password" "auth0-clientsecret=secretref:auth0-clientsecret" "auth0-apiclientsecret=secretref:auth0-apiclientsecret"
     - name: logout
       run: >
         az logout
