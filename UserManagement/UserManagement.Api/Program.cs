@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GardenLog.SharedInfrastructure;
+using GardenLog.SharedInfrastructure.ApiClients;
 using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using PlantHarvest.Infrastructure.Data.Repositories;
 using Serilog;
 using Serilog.Enrichers.Span;
 using System.Text.Json.Serialization;
+using UserManagement.Api.Data.ApiClients;
 using UserManagement.CommandHandlers;
 using UserManagement.QueryHandlers;
 
@@ -33,6 +35,8 @@ try
     builder.Services.AddFluentValidationClientsideAdapters();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateUserProfileCommandValidator>();
 
+    builder.Services.AddMemoryCache();
+
     builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
         options.InvalidModelStateResponseFactory = context =>
@@ -46,13 +50,16 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.RegisterSwaggerForAuth("User Management Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
     builder.Services.AddSingleton<IUserProfileRepository, UserProfileRepository>();
     builder.Services.AddSingleton<IGardenRepository, GardenRepository>();
+
+    builder.Services.AddHttpClient<IAuth0AuthenticationApiClient, Auth0AuthenticationApiClient>();
+    builder.Services.AddHttpClient<IAuth0ManagementApiClient, Auth0ManagementApiClient>();
 
     builder.Services.AddScoped<IUserProfileCommandHandler, UserProfileCommandHandler>();
     builder.Services.AddScoped<IUserProfileQueryHandler, UserProfileQueryHandler>();
@@ -65,6 +72,8 @@ try
         options.AddGlWebPolicy();
     });
 
+    // 1. Add Authentication Services
+    builder.RegisterForAuthentication();
 
     //TODO Add Healthchecks!!!!
 
@@ -73,9 +82,11 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
     }
+
+    // 2. Enable authentication middleware
+    app.UseAuthentication();
 
     app.UseAuthorization();
 

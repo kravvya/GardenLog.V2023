@@ -28,6 +28,12 @@ public static class GlobalConstants
     public const string PLANTHARVEST_API = "PlantHarvest.Api";
     public const string IMAGEPLANTCATALOG_API = "ImageCatalog.Api";
     public const string USERMANAGEMENT_API = "UserManagement.Api";
+    public const string USERMANAGEMENT_CREATEONLY_API = "UserManagement.CreateOnly.Api";
+
+    public const string ROLE_MASTER_GARDENER = "master-gardener";
+    public const string ROLE_WRITE_PLANTS = "write:plants";
+    public const string ROLE_WRITE_PLANT_VARIETIES = "write:plant-varieties";
+    public const string ROLE_WRITE_GROW_INSTRUCTIONS = "write:grow-instructions";
 
     public const string ModalFormColor = "#A0C136";
 }

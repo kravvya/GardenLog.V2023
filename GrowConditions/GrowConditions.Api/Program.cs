@@ -44,13 +44,13 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.RegisterSwaggerForAuth("Grow Conditions Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
 
     builder.Services.AddHttpClient<IOpenWeatherApiClient, OpenWeatherApiClient>();
-    builder.Services.AddHttpClient<IUserManagementApiClient, UserManagementApiClient>();
+    builder.RegisterHttpClient<IUserManagementApiClient, UserManagementApiClient>();
 
     builder.Services.AddSingleton<IWeatherRepository, WeatherRepository>();
 
@@ -62,13 +62,15 @@ try
         options.AddGlWebPolicy();
     });
 
+    // 1. Add Authentication Services
+    builder.RegisterForAuthentication();
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
     }
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.

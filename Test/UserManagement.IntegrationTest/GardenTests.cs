@@ -71,7 +71,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
     {
         var garden = await GetGardenToWorkWith(TEST_GARDEN_NAME);
 
-        garden.Notes = $"{garden.Notes} last pdated: {DateTime.Now.ToString()}";
+        garden.Notes = $"{garden.Notes} last updated: {DateTime.Now.ToString()}";
 
         var response = await _gardenClient.UpdateGarden(garden);
 

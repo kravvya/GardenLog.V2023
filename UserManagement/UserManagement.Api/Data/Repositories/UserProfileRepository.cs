@@ -57,15 +57,21 @@ public class UserProfileRepository : BaseRepository<UserProfile>, IUserProfileRe
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.UserProfileId).SetElementName("_id");
+            //p.MapMember(m => m.UserProfileId).SetElementName("_id");
         });
 
+    }
+
+    public new async Task<UserProfile> GetByIdAsync(string id)
+    {
+        var data = await Collection.FindAsync(Builders<UserProfile>.Filter.Eq("UserProfileId", id));
+        return data.SingleOrDefault();
     }
 
     public async Task<UserProfileViewModel> GetUserProfile(string userProfileId)
     {
         var data = await Collection
-         .Find<UserProfile>(Builders<UserProfile>.Filter.Eq("_id", userProfileId))
+         .Find<UserProfile>(Builders<UserProfile>.Filter.Eq("UserProfileId", userProfileId))
         .As<UserProfileViewModel>()
         .FirstOrDefaultAsync();
 

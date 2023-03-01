@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using GardenLog.SharedInfrastructure.ApiClients;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Formatting.Elasticsearch;
+using System.Security.Claims;
 
 namespace GardenLog.SharedInfrastructure.Extensions
 {
@@ -51,5 +56,92 @@ namespace GardenLog.SharedInfrastructure.Extensions
             builder.Services.AddPolicyRegistry(registry);
         }
 
+        public static void RegisterHttpClient<TInterfaceType, TConcreteType>(this WebApplicationBuilder builder)
+            where TConcreteType : class, TInterfaceType
+            where TInterfaceType : class
+        {
+            builder.Services.AddHttpClient<IAuth0AuthenticationApiClient, Auth0AuthenticationApiClient>();
+            builder.Services.AddHttpClient<TInterfaceType, TConcreteType>().AddHttpMessageHandler(provider =>
+                new Auth0AuthenticationHandler(provider.GetRequiredService<IAuth0AuthenticationApiClient>(), provider.GetRequiredService<IConfigurationService>()));
+        }
+
+        public static void RegisterForAuthentication(this WebApplicationBuilder builder)
+        {
+            var authConfigs = builder.Configuration.GetSection("Auth0").Get<AuthSettings>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+              {
+                  c.Authority = authConfigs!.Authority;
+                  c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                  {
+                      ValidAudience = authConfigs.Audience,
+                      ValidIssuer = authConfigs.Authority,
+                      NameClaimType = ClaimTypes.NameIdentifier,
+                      RoleClaimType = ClaimTypes.Role
+                  };
+              });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("test:fail", policy => policy.RequireClaim("permissions", "test:fail"));
+                options.AddPolicy("admin", policy => policy.RequireClaim("permissions", "read:users"));
+                options.AddPolicy("write:plants", policy => policy.RequireClaim("permissions", "write:plants"));
+                options.AddPolicy("write:plant-varieties", policy => policy.RequireClaim("permissions", "write:plant-varieties"));
+                options.AddPolicy("write:grow-instructions", policy => policy.RequireClaim("permissions", "write:grow-instructions"));
+                options.AddPolicy("admin_or_tester", policy => policy.RequireClaim("permissions", "validate:tester", "admin"));
+            });
+        }
+
+        public static void RegisterSwaggerForAuth(this WebApplicationBuilder builder, string apiTitle)
+        {
+            var authConfigs = builder.Configuration.GetSection("Auth0").Get<AuthSettings>();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    BearerFormat = "JWT",
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri($"{authConfigs!.Authority}authorize?audience={authConfigs.Audience}"),
+                            TokenUrl = new Uri($"{authConfigs.Authority}oauth/token"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "openid", "OpenId" },
+                                { "profile", "Profile" }
+                            }
+                        }
+                    }
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                        }, new string[]{ "openid","profile"}
+                    }
+            });
+            });
+        }
+
+        public static IApplicationBuilder UseSwaggerForAuth(this IApplicationBuilder app, IConfigurationService configurationService)
+        {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(
+                options =>
+                {
+                    //options.OAuthClientSecret(configurationService.GetAuthSettings().ClientSecret);
+                    options.OAuthUsePkce();
+                    options.OAuthClientId(configurationService.GetAuthSettings().SwaggerClientId);
+                });
+
+            return app;
+        }
     }
 }

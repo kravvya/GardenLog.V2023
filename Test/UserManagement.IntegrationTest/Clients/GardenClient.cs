@@ -14,7 +14,6 @@ public class GardenClient
     {
         _baseUrl = baseUrl;
         _httpClient = httpClient;
-        _httpClient.DefaultRequestHeaders.Add("RequestUser", "86377291-980f-4af2-8608-39dbbf7e09e1");
     }
 
     #region Garden
@@ -71,8 +70,8 @@ public class GardenClient
             Name = name,
             City = "Mound",
             StateCode = "MN",
-            Latitude = 44.9366M,
-            Longitude = 93.6661M,
+            Latitude = -1,
+            Longitude = -1,
             Notes = "Integration test garden",
             LastFrostDate = DateTime.Parse("05/15/1900"),
             FirstFrostDate = DateTime.Parse("09/15/1900")

@@ -4,6 +4,7 @@ public interface IGardenRepository :  IRepository<Garden>
 {
     Task<GardenViewModel> GetGarden(string gardenId);
     Task<IReadOnlyCollection<GardenViewModel>> GetGardens(string userProfileId);
+    Task<IReadOnlyCollection<GardenViewModel>> GetAllGardens();
     Task<GardenViewModel> GetGardenByName(string gardenName, string userProfileId);
 
     void AddGardenBed(string gardenBedId, Garden garden);

@@ -10,8 +10,10 @@
     </ModalView>
     <div class="row">
         <div class="d-flex gap-2 flex-nowrap justify-content-md-start">
-            <button type="button" class="btn btn-secondary" title="Edit Variety" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
-            <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+            <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANT_VARIETIES)">
+                <button type="button" class="btn btn-secondary" title="Edit Variety" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
+                <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())"><span class="bi bi-card-image">&nbsp;</span></button>
+            </AuthorizeView>
             <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => OnClose())"><span class="bi bi-x-circle">&nbsp;</span></button>
         </div>
     </div>

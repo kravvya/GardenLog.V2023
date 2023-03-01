@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -8,7 +9,7 @@ namespace GardenLog.SharedInfrastructure.Extensions;
 
 public static class HttpClientExtensions
 {
-    public static readonly JsonSerializerOptions OPTIONS =  new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+    public static readonly JsonSerializerOptions OPTIONS = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
     static HttpClientExtensions()
     {
@@ -19,6 +20,25 @@ public static class HttpClientExtensions
         where TObject : new()
     {
         var result = await httpClient.GetAsync(requestUri);
+
+        return await ProcessHttpResponse<TObject>(result);
+
+    }
+
+    public static async Task<ApiObjectResponse<TObject>> ApiGetAsync<TObject>(this HttpClient httpClient, string requestUri, string bearerToken)
+        where TObject : new()
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(requestUri, UriKind.Relative),
+            Headers = {
+            { HttpRequestHeader.Authorization.ToString(), $"Bearer {bearerToken}" },
+            { HttpRequestHeader.Accept.ToString(), "application/json" }
+            }
+        };
+
+        var result = await httpClient.SendAsync(httpRequestMessage);
 
         return await ProcessHttpResponse<TObject>(result);
 
@@ -42,6 +62,23 @@ public static class HttpClientExtensions
         return await ProcessHttpResponse<TObject>(result);
     }
 
+    public static async Task<ApiObjectResponse<TObject>> ApiPostAsync<TObject>(this HttpClient httpClient, string requestUri, object content, string bearerToken)
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = HttpMethod.Post,
+            RequestUri = new Uri(requestUri, UriKind.Relative),
+            Headers = {
+            { HttpRequestHeader.Authorization.ToString(), $"Bearer {bearerToken}" },
+            { HttpRequestHeader.Accept.ToString(), "application/json" }
+        },
+            Content = GenerateByteContent(content)
+        };
+
+        var result = await httpClient.SendAsync(httpRequestMessage);
+        return await ProcessHttpResponse<TObject>(result);
+    }
+
     public static async Task<ApiResponse> ApiPutAsync(this HttpClient httpClient, string requestUri, object content)
     {
         var result = await httpClient.PutAsync(requestUri, GenerateByteContent(content));
@@ -61,6 +98,42 @@ public static class HttpClientExtensions
         if (response.IsSuccess) response.Response = await result.Content.ReadAsStringAsync();
 
         return response;
+    }
+
+    public static async Task<ApiResponse> ApiDeleteAsync(this HttpClient httpClient, string requestUri, string bearerToken)
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri(requestUri, UriKind.Relative),
+            Headers = {
+            { HttpRequestHeader.Authorization.ToString(), $"Bearer {bearerToken}" },
+            { HttpRequestHeader.Accept.ToString(), "application/json" }
+            }
+        };
+
+        var result = await httpClient.SendAsync(httpRequestMessage);
+
+        var response = await ProcessHttpResponse<string>(result);
+
+        return response;
+    }
+
+    public static async Task<ApiObjectResponse<TObject>> ApiPatchAsync<TObject>(this HttpClient httpClient, string requestUri, object content, string bearerToken)
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = HttpMethod.Patch,
+            RequestUri = new Uri(requestUri, UriKind.Relative),
+            Headers = {
+            { HttpRequestHeader.Authorization.ToString(), $"Bearer {bearerToken}" },
+            { HttpRequestHeader.Accept.ToString(), "application/json" }
+        },
+            Content = GenerateByteContent(content)
+        };
+
+        var result = await httpClient.SendAsync(httpRequestMessage);
+        return await ProcessHttpResponse<TObject>(result);
     }
 
     private static ByteArrayContent GenerateByteContent(object content)

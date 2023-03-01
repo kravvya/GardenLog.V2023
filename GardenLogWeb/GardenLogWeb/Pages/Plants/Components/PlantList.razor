@@ -103,7 +103,11 @@
                                     <th scope="col">Grow Conditions</th>
                                     <th scope="col">Type</th>
                                     <th scope="col">Notes</th>
-                                    <th><div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></th>
+                                    <th>
+                                        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANTS)">
+                                            <div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div>
+                                        </AuthorizeView>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,9 +126,15 @@
                                             </td>
                                             <td class="col-3">
                                                 <button type="button" class="btn btn-info" title="View Plant" @onclick="@(() => ViewPlant(plant))"><span class="bi bi-info-lg">&nbsp;</span></button>
-                                                <button type="button" class="btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
-                                                <button type="button" class="btn btn-secondary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-flower1">&nbsp;</span></button>
-                                                <button type="button" class="btn btn-secondary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-card-checklist">&nbsp;</span></button>
+                                                <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANTS)">
+                                                    <button type="button" class="btn btn-secondary" title="Edit Plant" onclick="@(() => EditPlant(plant))"><span class="bi bi-pencil">&nbsp;</span></button>
+                                                </AuthorizeView>
+                                                <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANT_VARIETIES)">
+                                                    <button type="button" class="btn btn-secondary" title="Add Variety" onclick="@(() => CreatePlantVariety(plant))"><span class="bi bi-flower1">&nbsp;</span></button>
+                                                </AuthorizeView>
+                                                <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_GROW_INSTRUCTIONS)">
+                                                    <button type="button" class="btn btn-secondary" title="Add Growing Instruction" onclick="@(() => CreatePlantGrowInstructions(plant))"><span class="bi bi-card-checklist">&nbsp;</span></button>
+                                                </AuthorizeView>
                                             </td>
                                         </tr>
                                     }
@@ -136,7 +146,11 @@
                                     <td />
                                     <td />
                                     <td />
-                                    <td> <div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></td>
+                                    <td>
+                                        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANTS)">
+                                            <div @onclick=@CreatePlant class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div>
+                                        </AuthorizeView>
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>

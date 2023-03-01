@@ -6,6 +6,7 @@ public class GardenRoutes
     public const string GetGarden = GardenBase + "/{gardenId}";
     public const string GetGardenByName = GardenBase + "/name/{gardenName}";
     public const string GetGardens = GardenBase;
+    public const string GetAllGardens = GardenBase + "/all";
     public const string CreateGarden = GardenBase;
     public const string UpdateGarden = GardenBase + "/{gardenId}";
     public const string DeleteGarden = GardenBase + "/{gardenId}";

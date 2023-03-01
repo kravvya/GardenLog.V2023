@@ -43,12 +43,14 @@
                                         <button type="button" class="btn btn-info" title="View Plant variety" @onclick="@(() => OpenPlantVarietyView(variety))">
                                             <span class="bi bi-info-lg">&nbsp;</span>
                                         </button>
-                                        <button type="button" class="btn btn-secondary" title="Edit Plant variety" @onclick="@(() => EditPlantVariety(variety))">
-                                            <span class="bi bi-pencil">&nbsp;</span>
-                                        </button>
-                                        <button type="button" class="btn btn-warning" title="Add Plant Variety Image" @onclick="@(() => OnAddPlantVarietyImage(variety))">
-                                            <span class="bi bi-card-image">&nbsp;</span>
-                                        </button>
+                                        <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_PLANT_VARIETIES)">
+                                            <button type="button" class="btn btn-secondary" title="Edit Plant variety" @onclick="@(() => EditPlantVariety(variety))">
+                                                <span class="bi bi-pencil">&nbsp;</span>
+                                            </button>
+                                            <button type="button" class="btn btn-warning" title="Add Plant Variety Image" @onclick="@(() => OnAddPlantVarietyImage(variety))">
+                                                <span class="bi bi-card-image">&nbsp;</span>
+                                            </button>
+                                        </AuthorizeView>
                                     </div>
                                 </div>
                             </div>

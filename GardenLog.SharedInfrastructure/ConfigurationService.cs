@@ -7,6 +7,7 @@ namespace GardenLog.SharedInfrastructure
 {
     public interface IConfigurationService
     {
+        AuthSettings GetAuthSettings();
         string GetImageBlobConnectionString();
         MongoSettings GetImageCatalogMongoSettings();
         string GetOpenWeartherApplicationId();
@@ -95,6 +96,22 @@ namespace GardenLog.SharedInfrastructure
             return openWeartherAppId;
         }
 
+        public AuthSettings GetAuthSettings()
+        {
+            var authSettings = _configuration.GetSection(AuthSettings.SECTION).Get<AuthSettings>();
+            authSettings!.ClientSecret = _configuration.GetValue<string>(AuthSettings.CLIENTSECRET_SECRET);
+            authSettings.ApiClientSecret = _configuration.GetValue<string>(AuthSettings.APICLIENTSECRET_SECRET);
+
+            if (string.IsNullOrWhiteSpace(authSettings?.Authority))
+            {
+                _logger.LogCritical("AUTH DOMAIN is not found. Do not expect any good things to happen");
+            }
+            else
+            {
+                _logger.LogInformation("AUTH DOMAIN WAS LOCATED! YEHAA");
+            }
+            return authSettings!;
+        }
 
     }
 }

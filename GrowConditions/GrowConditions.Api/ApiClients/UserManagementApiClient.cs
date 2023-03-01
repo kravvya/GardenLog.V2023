@@ -35,7 +35,7 @@ public class UserManagementApiClient : IUserManagementApiClient
 
         if (!_cache.TryGetValue(GARDEN_CACHE_KEY, out gardens))
         {
-            var response = await _httpClient.ApiGetAsync<List<GardenViewModel>>(GardenRoutes.GetGardens);
+            var response = await _httpClient.ApiGetAsync<List<GardenViewModel>>(GardenRoutes.GetAllGardens);
 
             if (!response.IsSuccess)
             {

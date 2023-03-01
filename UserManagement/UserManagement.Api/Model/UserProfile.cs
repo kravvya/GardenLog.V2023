@@ -2,13 +2,14 @@
 
 namespace UserManagement.Api.Model;
 
-public class UserProfile :   BaseEntity, IAggregateRoot
+public class UserProfile : BaseEntity, IAggregateRoot
 {
     public string UserName { get; private set; }
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public string EmailAddress { get; private set; }
-   
+    public string UserProfileId { get; private set; }
+
     public DateTime UserProfileCreatedDateTimeUtc { get; private set; }
 
     private UserProfile() { }
@@ -31,16 +32,25 @@ public class UserProfile :   BaseEntity, IAggregateRoot
         return user;
     }
 
-    public void Update(string userName, string firstName, string lastName, string emailAddress)
-    {
-        this.Set<string>(() => this.UserName, userName);
+    public void Update(string firstName, string lastName)
+    {        
 
         this.Set<string>(() => this.FirstName, firstName);
 
         this.Set<string>(() => this.LastName, lastName);
 
-        this.Set<string>(() => this.EmailAddress, emailAddress);
+    }
 
+    public void SetUserProfileId(string identityId)
+    {
+        if (string.IsNullOrWhiteSpace(this.UserProfileId))
+        {
+            this.UserProfileId = identityId;
+        }
+        else
+        {
+            throw new ArgumentException("UserProfileId can not be modified", "UserName");
+        }
     }
 
     protected override void AddDomainEvent(string attributeName)

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Reflection.Metadata;
 using UserManagement.CommandHandlers;
 using UserManagement.Contract;
 using UserManagement.QueryHandlers;
@@ -9,6 +9,7 @@ namespace UserManagement.Controllers;
 
 [Route(GardenRoutes.GardenBase)]
 [ApiController]
+[Authorize]
 public class GardenController : Controller
 {
     private readonly IGardenCommandHandler _commadnHandler;
@@ -28,6 +29,7 @@ public class GardenController : Controller
     [ActionName("GetGardens")]
     [Route(GardenRoutes.GetGardens)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGardens()
     {
@@ -41,9 +43,28 @@ public class GardenController : Controller
     }
 
     [HttpGet()]
+    [ActionName("GetAllGardens")]
+    [Authorize(Policy = "admin_or_tester")]
+    [Route(GardenRoutes.GetAllGardens)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<GardenViewModel>> GetAllGardens()
+    {
+
+        var results = await _queryHandler.GetAllGardens();
+
+        if (results == null) return NotFound();
+
+        return Ok(results);
+
+    }
+
+    [HttpGet()]
     [ActionName("GetGarden")]
     [Route(GardenRoutes.GetGarden)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGarden(string gardenId)
     {
@@ -66,6 +87,7 @@ public class GardenController : Controller
     [ActionName("GetGardenByName")]
     [Route(GardenRoutes.GetGardenByName)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGardenByName(string gardenName)
     {
@@ -87,6 +109,7 @@ public class GardenController : Controller
     [HttpPost()]
     [ActionName("CreateGarden")]
     [Route(GardenRoutes.CreateGarden)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> CreateGarden([FromBody] CreateGardenCommand command)
@@ -97,7 +120,8 @@ public class GardenController : Controller
 
             if (!string.IsNullOrWhiteSpace(result))
             {
-                return Ok(result);
+               // return CreatedAtAction(nameof(GetGarden), new { gardenId = result });
+               return Ok(result);
             }
         }
         catch (ArgumentException ex)
@@ -113,6 +137,7 @@ public class GardenController : Controller
     [HttpPut()]
     [ActionName("UpdateGarden")]
     [Route(GardenRoutes.UpdateGarden)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -133,6 +158,7 @@ public class GardenController : Controller
     [HttpDelete()]
     [ActionName("DeleteGarden")]
     [Route(GardenRoutes.DeleteGarden)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -155,6 +181,7 @@ public class GardenController : Controller
     [HttpGet()]
     [ActionName("GetGardenBeds")]
     [Route(GardenRoutes.GetGardenBeds)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGardenBeds(string gardenId)
@@ -176,6 +203,7 @@ public class GardenController : Controller
     [HttpGet()]
     [ActionName("GetGardenBed")]
     [Route(GardenRoutes.GetGardenBed)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(GardenViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> GetGardenBeds(string gardenId, string id)
@@ -198,6 +226,7 @@ public class GardenController : Controller
     [HttpPost()]
     [ActionName("CreateGardenBed")]
     [Route(GardenRoutes.CreateGardenBed)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<GardenViewModel>> CreateGardenBed([FromBody] CreateGardenBedCommand command)
@@ -210,7 +239,7 @@ public class GardenController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName == null?string.Empty: ex.ParamName, ex.Message) ;
             return BadRequest(ModelState);
         }
         catch (Exception ex)
@@ -222,6 +251,7 @@ public class GardenController : Controller
     [HttpPut()]
     [ActionName("UpdateGardenBed")]
     [Route(GardenRoutes.UpdateGardenBed)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -247,6 +277,7 @@ public class GardenController : Controller
     [HttpDelete()]
     [ActionName("DeleteGardenBed")]
     [Route(GardenRoutes.DeleteGardenBed)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]

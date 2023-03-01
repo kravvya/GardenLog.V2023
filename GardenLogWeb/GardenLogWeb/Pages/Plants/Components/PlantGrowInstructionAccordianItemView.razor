@@ -72,14 +72,16 @@
                         <dt class="col-sm-3 grow-facts-term">Harvesting</dt>
                         <dd class="col-sm-9 grow-facts-definition">@GrowInstruction.HarvestInstructions</dd>
                     </div>
-                    <div class="mt-2">
-                        <dt></dt>
-                        <dd class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
-                                <span class="bi bi-pencil" aria-hidden="true"></span>
-                            </button>
-                        </dd>
-                    </div>
+                    <AuthorizeView Roles="@(GlobalConstants.ROLE_MASTER_GARDENER + ", " + GlobalConstants.ROLE_WRITE_GROW_INSTRUCTIONS)">
+                        <div class="mt-2">
+                            <dt></dt>
+                            <dd class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-secondary" title="Edit Grow Instruction" @onclick="@(() => EditPlantGrowInstruction(GrowInstruction))">
+                                    <span class="bi bi-pencil" aria-hidden="true"></span>
+                                </button>
+                            </dd>
+                        </div>
+                    </AuthorizeView>
                 </dl>
             </div>
         </div>
@@ -150,7 +152,7 @@
             sb.Append(grow.StartSeedWeeksAheadOfWeatherCondition.Value.ToString());
             sb.AppendFormat(" {0} ", GetWeeks(grow.StartSeedWeeksAheadOfWeatherCondition.Value));
             sb.Append(_verifyService.GetDescription<WeatherConditionEnum>(grow.StartSeedAheadOfWeatherCondition));
-            if (grow.StartSeedWeeksRange.HasValue && grow.StartSeedWeeksRange.Value!=0)
+            if (grow.StartSeedWeeksRange.HasValue && grow.StartSeedWeeksRange.Value != 0)
             {
                 sb.Append(" for ");
                 sb.Append(grow.StartSeedWeeksRange.Value.ToString());
@@ -171,7 +173,8 @@
         System.Text.StringBuilder sb = new();
         if (grow.TransplantWeeksAheadOfWeatherCondition.HasValue)
         {
-            if (grow.TransplantWeeksAheadOfWeatherCondition.HasValue && grow.TransplantWeeksAheadOfWeatherCondition.Value != 0) {
+            if (grow.TransplantWeeksAheadOfWeatherCondition.HasValue && grow.TransplantWeeksAheadOfWeatherCondition.Value != 0)
+            {
                 sb.Append(grow.TransplantWeeksAheadOfWeatherCondition.Value.ToString());
                 sb.AppendFormat(" {0} ", GetWeeks(grow.TransplantWeeksAheadOfWeatherCondition.Value));
             }

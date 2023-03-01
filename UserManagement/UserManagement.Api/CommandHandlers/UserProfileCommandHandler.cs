@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using GardenLog.SharedInfrastructure.Extensions;
-
+using MediatR;
+using UserManagement.Api.Data.ApiClients;
 
 namespace UserManagement.CommandHandlers
 {
@@ -15,13 +16,15 @@ namespace UserManagement.CommandHandlers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IAuth0ManagementApiClient _managementApiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserProfileCommandHandler> _logger;
 
-        public UserProfileCommandHandler(IUnitOfWork unitOfWork, IUserProfileRepository userProfileRepository, IHttpContextAccessor httpContextAccessor, ILogger<UserProfileCommandHandler> logger)
+        public UserProfileCommandHandler(IUnitOfWork unitOfWork, IUserProfileRepository userProfileRepository, IAuth0ManagementApiClient managementApiClient, IHttpContextAccessor httpContextAccessor, ILogger<UserProfileCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _userProfileRepository = userProfileRepository;
+            _managementApiClient = managementApiClient;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
@@ -39,11 +42,18 @@ namespace UserManagement.CommandHandlers
 
             var user = UserProfile.Create(request.UserName, request.FirstName, request.LastName, request.EmailAddress);
 
+            //first - check if users already has Auth0 profile - test users
+            var id = await _managementApiClient.ReadUserIdByUserNameAndEmail(request.UserName, request.EmailAddress);
+
+            if (string.IsNullOrEmpty(id)) id = await _managementApiClient.CreateUser(request, user.Id);
+
+            user.SetUserProfileId(id);
+
             _userProfileRepository.Add(user);
 
             await _unitOfWork.SaveChangesAsync();
 
-            return user.Id;
+            return user.UserProfileId;
         }
 
         public async Task<int> UpdateUserProfile(UpdateUserProfileCommand request)
@@ -60,7 +70,9 @@ namespace UserManagement.CommandHandlers
             var user = await _userProfileRepository.GetByIdAsync(request.UserProfileId);
             if (user == null) return 0;
 
-            user.Update(request.UserName, request.FirstName, request.LastName, request.EmailAddress);
+            user.Update(request.FirstName, request.LastName);
+
+            await _managementApiClient.UpdateUser(request, user.UserProfileId);
 
             _userProfileRepository.Update(user);
 
@@ -69,7 +81,12 @@ namespace UserManagement.CommandHandlers
 
         public async Task<int> DeleteUserProfile(string id)
         {
-            _userProfileRepository.Delete(id);
+            var user = await _userProfileRepository.GetByIdAsync(id);
+            if (user == null) return 0;
+
+            await _managementApiClient.DeleteUser(user.UserProfileId);
+
+            _userProfileRepository.Delete(user.Id);
 
             return await _unitOfWork.SaveChangesAsync();
         }

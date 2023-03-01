@@ -15,22 +15,26 @@ public static class ClaimsPrincipleExtensions
         return userName ?? "auth0|up1";
     }
 
-    public static string GetUserProfileId(this ClaimsPrincipal principal, IHeaderDictionary headers)
+   public static string GetUserProfileId(this ClaimsPrincipal principal, IHeaderDictionary headers)
     {
         var deafultuser = "";
 
-        if (headers != null)
+        deafultuser = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if ((string.IsNullOrEmpty(deafultuser) || deafultuser .Contains("@clients" )) && headers != null)
         {
             deafultuser = headers.FirstOrDefault(h => h.Key == "RequestUser").Value;
         }
 
         if (string.IsNullOrEmpty(deafultuser)) deafultuser = "auth0|up1";
 
-        if (principal == null) return deafultuser;
+        //to get to gl id, need to strip out autho prefix.
+       return deafultuser;
+
         // throw new ArgumentNullException(nameof(principal));
 
-        var userName = principal.FindFirstValue(ClaimTypes.Sid);
+        //var userName = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        return userName ?? deafultuser;
+        //return userName ?? deafultuser;
     }
 }
