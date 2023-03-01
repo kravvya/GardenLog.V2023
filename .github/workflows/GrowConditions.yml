@@ -89,7 +89,7 @@ jobs:
 
           az containerapp registry set --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --server ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io --username ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
 
-          az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} --set-env-vars "mongodb-password=secretref:mongodb-password" "openweather-appid=secretref:openweather-appid"
+          az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --image ${{ secrets.REGISTRY_LOGIN_SERVER }}.azurecr.io/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} --set-env-vars "mongodb-password=secretref:mongodb-password" "openweather-appid=secretref:openweather-appid" "auth0-clientsecret=secretref:auth0-clientsecret" 
     - name: logout
       run: >
         az logout
