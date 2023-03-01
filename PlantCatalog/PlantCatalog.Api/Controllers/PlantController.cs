@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Runtime.CompilerServices;
 
 namespace PlantCatalog.Api.Controllers;
 
 [Route(Routes.PlantCatalogBase)]
 [ApiController]
+[Authorize]
 public class PlantController : Controller
 {
     private readonly IPlantCommandHandler _handler;
@@ -25,6 +25,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetPlantById")]
     [Route(Routes.GetPlantById)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(PlantViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantViewModel>> GetPlantByIdAsync(string id)
@@ -52,6 +53,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetIdByPlantName")]
     [Route(Routes.GetIdByPlantName)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantViewModel>> GetPlantIdByPlantName(string name)
@@ -71,6 +73,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetAllPlants")]
     [Route(Routes.GetAllPlants)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantViewModel>>> GetAllPlantsAsync()
     {
@@ -81,6 +84,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetAllPlantNames")]
     [Route(Routes.GetAllPlantNames)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantNameOnlyViewModel>>> GetAllPlantNames()
     {
@@ -91,6 +95,8 @@ public class PlantController : Controller
 
     [HttpPost]
     [Route(Routes.CreatePlant)]
+    [Authorize(Policy = "admin:plants")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantAsync([FromBody] CreatePlantCommand command)
@@ -115,6 +121,8 @@ public class PlantController : Controller
 
     [HttpPut()]
     [Route(Routes.UpdatePlant)]
+    [Authorize(Policy = "admin:plants")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantAsync([FromBody] UpdatePlantCommand command)
@@ -139,6 +147,8 @@ public class PlantController : Controller
 
     [HttpDelete()]
     [Route(Routes.DeletePlant)]
+    [Authorize(Policy = "admin_or_tester")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletelantAsync(string id)
@@ -160,6 +170,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetPlantGrowInstructionsByPlantId")]
     [Route(Routes.GetPlantGrowInstructions)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantGrowInstructionViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IReadOnlyCollection<PlantGrowInstructionViewModel>>> GetPlantGrowInstructionsByPlantIdAsync(string plantId)
@@ -170,6 +181,7 @@ public class PlantController : Controller
     [HttpGet()]
     [Route(Routes.GetPlantGrowInstruction)]
     [ActionName("GetPlantGrowInstructionById")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(PlantGrowInstructionViewModel), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantGrowInstruction>> GetPlantGrowInstructionByIdAsync(string plantId, string id)
@@ -188,6 +200,8 @@ public class PlantController : Controller
 
     [HttpPost()]
     [Route(Routes.CreatePlantGrowInstruction)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantGrowInstructionAsync([FromBody] CreatePlantGrowInstructionCommand command)
@@ -213,6 +227,8 @@ public class PlantController : Controller
     // PUT: api/Plants/{id}/GrowInstruction/{plantGrowInstructionId}
     [HttpPut()]
     [Route(Routes.UpdatePlantGrowInstructions)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantGrowInstructionsAsync([FromBody] UpdatePlantGrowInstructionCommand command)
@@ -236,6 +252,8 @@ public class PlantController : Controller
     }
     [HttpDelete()]
     [Route(Routes.DeletePlantGrowInstructions)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletePlantGrowInstructionAsync(string plantId, string id)
@@ -256,6 +274,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetAllPlantVarieties")]
     [Route(Routes.GetAllPlantVarieties)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IList<PlantVarietyViewModel>>> GetAllPlantVarieties()
@@ -266,6 +285,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetPlantVarietiesByPlantId")]
     [Route(Routes.GetPlantVarieties)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<IList<PlantVarietyViewModel>>> GetPlantVarietiesByPlantIdAsync(string plantId)
@@ -276,6 +296,7 @@ public class PlantController : Controller
     [HttpGet()]
     [ActionName("GetPlantVarietyById")]
     [Route(Routes.GetPlantVariety)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<PlantVarietyViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<PlantVarietyViewModel>> GetPlantVarietyByIdAsync(string plantId, string id)
@@ -294,6 +315,8 @@ public class PlantController : Controller
 
     [HttpPost()]
     [Route(Routes.CreatePlantVariety)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PostPlantVarietyAsync([FromBody] CreatePlantVarietyCommand command)
@@ -318,6 +341,8 @@ public class PlantController : Controller
 
     [HttpPut()]
     [Route(Routes.UpdatePlantVariety)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> PutPlantVarietyAsync([FromBody] UpdatePlantVarietyCommand command)
@@ -341,6 +366,8 @@ public class PlantController : Controller
 
     [HttpDelete()]
     [Route(Routes.DeletePlantVariety)]
+    [Authorize(Policy = "admin:grow-instructions")]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> DeletelantAsync(string plantId, string id)

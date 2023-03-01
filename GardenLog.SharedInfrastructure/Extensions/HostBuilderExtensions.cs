@@ -90,6 +90,19 @@ namespace GardenLog.SharedInfrastructure.Extensions
                 options.AddPolicy("write:plant-varieties", policy => policy.RequireClaim("permissions", "write:plant-varieties"));
                 options.AddPolicy("write:grow-instructions", policy => policy.RequireClaim("permissions", "write:grow-instructions"));
                 options.AddPolicy("admin_or_tester", policy => policy.RequireClaim("permissions", "validate:tester", "admin"));
+
+                options.AddPolicy("admin:plants", policy =>
+                            policy.RequireAssertion(context => context.User.HasClaim(c =>
+                                (c.Type == "permissions" && (c.Value == "write:plants" || c.Value == "admin" || c.Value == "validate:tester")
+                                ))));
+                options.AddPolicy("admin:plant-varieties", policy =>
+                            policy.RequireAssertion(context => context.User.HasClaim(c =>
+                                (c.Type == "permissions" && (c.Value == "write:plant-varieties" || c.Value == "admin" || c.Value == "validate:tester")
+                                ))));
+                options.AddPolicy("admin:grow-instructions", policy =>
+                            policy.RequireAssertion(context => context.User.HasClaim(c =>
+                                (c.Type == "permissions" && (c.Value == "write:grow-instructions" || c.Value == "admin" || c.Value == "validate:tester")
+                                ))));
             });
         }
 
