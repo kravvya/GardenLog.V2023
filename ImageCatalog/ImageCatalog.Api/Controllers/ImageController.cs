@@ -1,5 +1,6 @@
 ﻿using ImageCatalog.Api.CommandHandlers;
 using ImageCatalog.Api.QueryHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -7,6 +8,7 @@ namespace ImageCatalog.Api.Controllers;
 
 [Route(ImageRoutes.ImageCatalogBase)]
 [ApiController]
+[Authorize]
 public class ImageController : ControllerBase
 {
     private readonly ILogger<ImageController> _logger;
@@ -23,6 +25,7 @@ public class ImageController : ControllerBase
     [HttpPost()]
     [ActionName("Search")]
     [Route(ImageRoutes.Search)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> SearchAsync([FromBody] GetImagesByRelatedEntity request)
@@ -45,6 +48,7 @@ public class ImageController : ControllerBase
     [HttpPost()]
     [ActionName("SearchBatch")]
     [Route(ImageRoutes.SearchBatch)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ImageViewModel>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> SearchBatchAsync([FromBody] GetImagesByRelatedEntities request)
@@ -67,6 +71,7 @@ public class ImageController : ControllerBase
     [HttpPost]
     [ActionName("CrerateImage")]
     [Route(ImageRoutes.CrerateImage)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> PostImageAsync(CreateImageCommand createCommand)
@@ -86,6 +91,7 @@ public class ImageController : ControllerBase
     [HttpPut]
     [ActionName("UpdateImage")]
     [Route(ImageRoutes.UpdateImage)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> PutImageAsync(UpdateImageCommand updateCommand)
@@ -106,6 +112,7 @@ public class ImageController : ControllerBase
     [HttpDelete]
     [ActionName("DeleteImage")]
     [Route(ImageRoutes.DeleteImage)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
     public async Task<ActionResult> DeleteImageAsync(string imageId)
