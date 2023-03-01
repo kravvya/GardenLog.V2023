@@ -54,7 +54,7 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.RegisterSwaggerForAuth("Plant Catalog Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
@@ -78,6 +78,9 @@ try
                     });
     });
 
+    // 1. Add Authentication Services
+    builder.RegisterForAuthentication();
+
     //TODO Add Healthchecks!!!!
 
     var app = builder.Build();
@@ -85,12 +88,14 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
     }
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
+
+    //// 2. Enable authentication middleware
+    app.UseAuthentication();
 
     app.UseAuthorization();
 
