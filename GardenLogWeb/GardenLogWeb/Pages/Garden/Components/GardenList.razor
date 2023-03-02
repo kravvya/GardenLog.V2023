@@ -2,7 +2,7 @@
 @inject IImageService _imageService;
 @inject NavigationManager _navigationManager;
 
-<ModalView OnCloseModal="CloseGardenFormModal" @ref="_gardenFormModal">
+<ModalView OnCloseModal="CloseGardenFormModal" @ref="_gardenFormModal" ModalSize="modal-lg">
     <Body>
         <GardenForm OnClose=@CloseGardenForm @ref=_gardenForm />
     </Body>

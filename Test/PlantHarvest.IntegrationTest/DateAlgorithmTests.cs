@@ -14,7 +14,8 @@ namespace PlantHarvest.IntegrationTest
         [Fact]
         public void Get_NumberOfMondaysEachMonth_Should()
         {
-            KeyValuePair<DateTime, DateTime> oldDates = new KeyValuePair<DateTime, DateTime>(DateTime.Now.AddMonths(-2), DateTime.Now.AddMonths(-2));
+            DateTime newYear = (new DateTime(DateTime.Now.Year, 1, 1)).AddDays(-1);
+            KeyValuePair<DateTime, DateTime> oldDates = new KeyValuePair<DateTime, DateTime>(newYear, newYear);
 
             for (int month = 1; month < 13; month++)
             {
