@@ -17,7 +17,7 @@
       "FluentValidation.DependencyInjectionExtensions.dll": "sha256-BRcXlmkgMb\/bHgsOOyBvrZXU7t4vm18jccqCbtgTs\/k=",
       "FluentValidation.dll": "sha256-AWdFkmoHUFhLmUvvrvy+I5C1URXsXIhN4NdHfhU6ydY=",
       "GardenLog.SharedKernel.dll": "sha256-XelQPGN4N12V3+p24fsm7p0\/RpLmRLZreqVqSAuXDGY=",
-      "GardenLogWeb.dll": "sha256-HPDfoIyRqdEQZG9IdkvbNwZr4G\/FGB4OwWPkllzxM7A=",
+      "GardenLogWeb.dll": "sha256-SCHCgSHN1cvGg26Q9PIPH8o8SxGlfRvzejj7kPQDosg=",
       "ImageCatalog.Contract.dll": "sha256-A6plEd7H2wDECTyRJNlJNt1BGPKyBWIw6XsCidA4O9Q=",
       "MediatR.Contracts.dll": "sha256-jbWZnge7bolAMw8ppWQLC7bKPAY6DjkJn2ezN9OXafU=",
       "Microsoft.AspNetCore.Authorization.dll": "sha256-7fN0ukwwbbkPKaStbiZQJfJzUsdaV6k2XuM6ajteQkA=",
@@ -90,7 +90,7 @@
       "System.Threading.Thread.dll": "sha256-cCYR98kfXc\/nWzAbKu30hlP43t8RQrLyrZHxxYCn7Es=",
       "System.Web.HttpUtility.dll": "sha256-tYuBeFILzkkCvjQm462+kQDIvBdCALfNuaG9K3hg784=",
       "System.Xml.Linq.dll": "sha256-MjseVjYK\/\/uv2op5cXvx9msSsZ5USzCQlb0c1BnBleg=",
-      "UserManagement.Contract.dll": "sha256-Hlw6sIT3Z\/CQSHTs5xel2JqlG17P+38cJXfsb7l8F9E="
+      "UserManagement.Contract.dll": "sha256-2QHble5qVpOkJ3OnGujL5rKVUCUecrkqBkOhUDao4NE="
     },
     "extensions": null,
     "lazyAssembly": null,
