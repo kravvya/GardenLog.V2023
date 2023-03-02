@@ -98,7 +98,7 @@ public class Garden : BaseEntity, IAggregateRoot
         this.Set<string>(() => this.Notes, notes);
         this.Set<DateTime>(() => this.LastFrostDate, lastFrostDate);
         this.Set<DateTime>(() => this.FirstFrostDate, firstFrostDate);
-        this.Set<DateTime>(() => this.WarmSoilDate, firstFrostDate);
+        this.Set<DateTime>(() => this.WarmSoilDate, warmSoilDate);
         this.Set<double>(() => this.Length, length);
         this.Set<double>(() => this.Width, width);
     }
