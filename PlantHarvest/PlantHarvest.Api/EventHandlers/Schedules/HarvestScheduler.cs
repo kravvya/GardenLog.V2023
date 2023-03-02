@@ -13,9 +13,9 @@ public class HarvestScheduler : SchedulerBase, IScheduler
 
     public CreatePlantScheduleCommand? Schedule(PlantHarvestCycle harvestCycle, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
     {
-        DateTime? transplantDate = GetStartDateBasedOnWeatherCondition(growInstruction.TransplantAheadOfWeatherCondition, 
-                                    growInstruction.TransplantWeeksAheadOfWeatherCondition!.Value,
-                                    garden);
+        int weeksAhead = growInstruction.TransplantWeeksAheadOfWeatherCondition.HasValue ? growInstruction.TransplantWeeksAheadOfWeatherCondition.Value : 0;
+
+        DateTime? transplantDate = GetStartDateBasedOnWeatherCondition(growInstruction.TransplantAheadOfWeatherCondition, weeksAhead, garden);
 
         if (transplantDate.HasValue && daysToMaturityMin.HasValue && daysToMaturityMax.HasValue)
         {

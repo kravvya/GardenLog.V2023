@@ -7,14 +7,14 @@ public class OutdoorSowScheduler : SchedulerBase, IScheduler
 {
     public bool CanSchedule(PlantGrowInstructionViewModel growInstruction)
     {
-        return growInstruction.PlantingMethod == plant.PlantingMethodEnum.DirectSeed && growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue;
+        return growInstruction.PlantingMethod == plant.PlantingMethodEnum.DirectSeed;
     }
 
     public CreatePlantScheduleCommand? Schedule(PlantHarvestCycle plantHarvest, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
     {
-        DateTime? startDate = GetStartDateBasedOnWeatherCondition(growInstruction.StartSeedAheadOfWeatherCondition,
-                                    growInstruction.StartSeedWeeksAheadOfWeatherCondition!.Value,
-                                    garden);
+        int weeksAhead = growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue ? growInstruction.StartSeedWeeksAheadOfWeatherCondition.Value : 0;
+      
+        DateTime? startDate = GetStartDateBasedOnWeatherCondition(growInstruction.StartSeedAheadOfWeatherCondition, weeksAhead, garden);
         DateTime endDate;
 
         if (startDate.HasValue)
