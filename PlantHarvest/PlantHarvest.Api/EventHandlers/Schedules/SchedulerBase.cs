@@ -39,7 +39,7 @@ public abstract class SchedulerBase
                 break;
             case plant.WeatherConditionEnum.WarmSoil:
                 DateTime warmSoil = new DateTime(year, garden.WarmSoilDate.Month, garden.WarmSoilDate.Day);
-                startDate = warmSoil;
+                startDate = warmSoil.AddDays(-7 * weeksAhead);
                 break;
         }
 

@@ -19,6 +19,7 @@ public class ScheduleBuilderShould
     HttpClient _httpUserManagementClient;
     ILogger<PlantCatalogApiClient> _loggerPlantCatalogClient;
     ILogger<UserManagementApiClient> _loggerUserManagementClient;
+    ILogger<ScheduleBuilder> _loggerScheduleBuilder;
 
     IPlantCatalogApiClient _apiClinet;
     IUserManagementApiClient _userManagementApiClient;
@@ -37,6 +38,7 @@ public class ScheduleBuilderShould
         _httpUserManagementClient = HttpClientsHelper.GetUserManagementHttpClientForGarden();
         _loggerPlantCatalogClient = new Mock<ILogger<PlantCatalogApiClient>>().Object;
         _loggerUserManagementClient = new Mock<ILogger<UserManagementApiClient>>().Object;
+        _loggerScheduleBuilder = new Mock<ILogger<ScheduleBuilder>>().Object;
 
         _apiClinet = new PlantCatalogApiClient(_httpPlantCatalogClient, _configuration, _loggerPlantCatalogClient, _memoryCache);
         _userManagementApiClient = new UserManagementApiClient(_httpUserManagementClient, _configuration, _loggerUserManagementClient, _memoryCache);
@@ -45,7 +47,7 @@ public class ScheduleBuilderShould
     [Fact]
     public async Task ScheduleBuilder_Creates_IndoorSow_TransplantOutside_Harvst_SchdulesAsync()
     {
-        var builder = new ScheduleBuilder(_apiClinet, _userManagementApiClient);
+        var builder = new ScheduleBuilder(_apiClinet, _userManagementApiClient, _loggerScheduleBuilder);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));

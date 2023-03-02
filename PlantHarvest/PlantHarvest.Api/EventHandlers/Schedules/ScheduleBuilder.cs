@@ -13,13 +13,14 @@ public class ScheduleBuilder : IScheduleBuilder
 {
     private readonly IPlantCatalogApiClient _plantCatalogApi;
     private readonly IUserManagementApiClient _userManagementApi;
+    private readonly ILogger<ScheduleBuilder> _logger;
     private List<IScheduler> _schedulers;
 
-    public ScheduleBuilder(IPlantCatalogApiClient plantCatalogApi, IUserManagementApiClient userManagementApi)
+    public ScheduleBuilder(IPlantCatalogApiClient plantCatalogApi, IUserManagementApiClient userManagementApi, ILogger<ScheduleBuilder> logger)
     {
         _plantCatalogApi = plantCatalogApi;
         _userManagementApi = userManagementApi;
-
+        _logger = logger;
         LoadSchedulers();
     }
 
@@ -55,13 +56,22 @@ public class ScheduleBuilder : IScheduleBuilder
             daysToMaturityMax = plant.DaysToMaturityMax;
         }
 
+
         _schedulers.Where(s => s.CanSchedule(growInstruction)).ToList().ForEach(s =>
         {
-            var schedule = s.Schedule(plantHarvest, growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
-            if (schedule != null)
+            try
             {
-                plantSchedules.Add(schedule);
+                var schedule = s.Schedule(plantHarvest, growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
+                if (schedule != null)
+                {
+                    plantSchedules.Add(schedule);
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Excountered excetion processing scheduler", ex);
+            }
+           
         });
 
         return plantSchedules.AsReadOnly();
