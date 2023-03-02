@@ -19,6 +19,7 @@
                     <div class="d-flex flex-row text-center justify-content-end">
                         <div class="p-2"><small class="p-2 text-light sow-indoors">Sow Indoors</small></div>
                         <div class="p-2"><small class="p-2 text-light transplant">Transplant</small></div>
+                        <div class="p-2"><small class="p-2 text-light sow-outside">Sow Outside</small></div>
                         <div class="p-2"><small class="p-2 text-light harvest">Harvest</small></div>
                         <div class="p-2"><small class="p-2 text-light bg-danger ">First/Last Frost Dates</small></div>
                         <div class="p-2"><small class="p-2 text-light bg-info">Current Date</small></div>
@@ -174,6 +175,9 @@
                     break;
                 case WorkLogReasonEnum.TransplantOutside:
                     taskClass = "transplant";
+                    break;
+                case WorkLogReasonEnum.SowOutside:
+                    taskClass = "sow-outside";
                     break;
                 case WorkLogReasonEnum.Harvest:
                     taskClass = "harvest";

@@ -20,6 +20,7 @@
                             <th scope="col"><span class="fw-semibold">Plant</span></th>
                             <th scope="col"><span class="fw-semibold">Sow Indors</span></th>
                             <th scope="col"><span class="fw-semibold">Transplant</span></th>
+                            <th scope="col"><span class="fw-semibold">Sow Outside</span></th>
                             <th scope="col"><span class="fw-semibold">Harvest</span></th>
                         </tr>
                     </thead>
@@ -30,6 +31,7 @@
                                 <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><span class="fw-semibold">@plant.GetPlantName()</span></a></td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.SowIndoors)</td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.TransplantOutside)</td>
+                                <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.SowOutside)</td>
                                 <td class="col-1">@GetDateRange(plant, WorkLogReasonEnum.Harvest)</td>
                             </tr>
 
