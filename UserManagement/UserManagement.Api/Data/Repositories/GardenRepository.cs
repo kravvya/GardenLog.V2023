@@ -176,6 +176,7 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
             p.MapProperty(m => m.GardenBeds).SetDefaultValue(new List<GardenBed>());
             p.MapProperty(m => m.LastFrostDate).SetSerializer(dateSerializer);
             p.MapProperty(m => m.FirstFrostDate).SetSerializer(dateSerializer);
+            p.MapProperty(m => m.WarmSoilDate).SetSerializer(dateSerializer).SetDefaultValue(DateTime.MinValue);
             p.MapProperty(m => m.Length).SetDefaultValue(0);
             p.MapProperty(m => m.Width).SetDefaultValue(0);
             var nonPublicCtors = p.ClassType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);

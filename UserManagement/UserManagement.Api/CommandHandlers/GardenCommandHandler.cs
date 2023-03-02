@@ -47,6 +47,7 @@ public class GardenCommandHandler : IGardenCommandHandler
             userProfileId,
             request.LastFrostDate,
             request.FirstFrostDate,
+            request.WarmSoilDate,
             request.Length,
             request.Width);
 
@@ -73,7 +74,7 @@ public class GardenCommandHandler : IGardenCommandHandler
 
         garden.Update(request.Name, request.City, request.StateCode
             , request.Latitude, request.Longitude
-            , request.Notes, request.LastFrostDate, request.FirstFrostDate
+            , request.Notes, request.LastFrostDate, request.FirstFrostDate, request.WarmSoilDate
             , request.Length, request.Width);
 
         _gardenRepository.Update(garden);

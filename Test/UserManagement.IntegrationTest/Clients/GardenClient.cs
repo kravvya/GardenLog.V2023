@@ -74,7 +74,8 @@ public class GardenClient
             Longitude = -1,
             Notes = "Integration test garden",
             LastFrostDate = DateTime.Parse("05/15/1900"),
-            FirstFrostDate = DateTime.Parse("09/15/1900")
+            FirstFrostDate = DateTime.Parse("09/15/1900"),
+            WarmSoilDate = DateTime.Parse("06/01/1900")
         };
     }
     #endregion

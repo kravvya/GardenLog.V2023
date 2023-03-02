@@ -11,6 +11,7 @@ public abstract record GardenBase
     public string UserProfileId { get; set; } = string.Empty;
     public DateTime LastFrostDate { get; set; }
     public DateTime FirstFrostDate { get; set; }
+    public DateTime WarmSoilDate { get; set; }
     public double  Width { get; set; }
     public double Length { get; set; }
 }

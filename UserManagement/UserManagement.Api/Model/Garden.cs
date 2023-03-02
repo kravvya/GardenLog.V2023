@@ -2,15 +2,16 @@
 
 public class Garden : BaseEntity, IAggregateRoot
 {
-    public string Name { get; private set; }
-    public string City { get; private set; }
-    public string StateCode { get; private set; }
+    public string Name { get; private set; }=string.Empty;
+    public string City { get; private set; } = string.Empty;
+    public string StateCode { get; private set; } = string.Empty;
     public decimal Latitude { get; private set; }
     public decimal Longitude { get; private set; }
-    public string Notes { get; private set; }
-    public string UserProfileId { get; private set; }
+    public string Notes { get; private set; } = string.Empty;
+    public string UserProfileId { get; private set; } = string.Empty;
     public DateTime LastFrostDate { get; private set; }
     public DateTime FirstFrostDate { get; private set; }
+    public DateTime WarmSoilDate { get; private set; }
     public double Length { get; private set; }
     public double Width { get; private set; }
 
@@ -19,7 +20,7 @@ public class Garden : BaseEntity, IAggregateRoot
 
     public Garden() { }
 
-    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, DateTime lastFrostDate, DateTime firstFrostDate, double length, double width, List<GardenBed> gardenBeds)
+    private Garden(string name, string city, string stateCode, decimal latitude, decimal longitude, string notes, string userProfileId, DateTime lastFrostDate, DateTime firstFrostDate, DateTime warmSoilDate, double length, double width, List<GardenBed> gardenBeds)
     {
         Name = name;
         City = city;
@@ -31,6 +32,7 @@ public class Garden : BaseEntity, IAggregateRoot
         _gardenBeds = gardenBeds;
         LastFrostDate = lastFrostDate;
         FirstFrostDate = firstFrostDate;
+        WarmSoilDate = warmSoilDate;
         Length = length;
         Width = width;
     }
@@ -45,6 +47,7 @@ public class Garden : BaseEntity, IAggregateRoot
         string userProfileId,
         DateTime lastFrostDate,
         DateTime firstFrostDate,
+        DateTime warmSoilDate,
         double length,
         double width
     )
@@ -61,6 +64,7 @@ public class Garden : BaseEntity, IAggregateRoot
             Notes = notes,
             LastFrostDate= lastFrostDate,
             FirstFrostDate= firstFrostDate,
+            WarmSoilDate   = warmSoilDate,
             Length = length,
             Width = width
         };
@@ -81,6 +85,7 @@ public class Garden : BaseEntity, IAggregateRoot
         string notes,
         DateTime lastFrostDate,
         DateTime firstFrostDate,
+        DateTime warmSoilDate,
         double length,
         double width
         )
@@ -93,6 +98,7 @@ public class Garden : BaseEntity, IAggregateRoot
         this.Set<string>(() => this.Notes, notes);
         this.Set<DateTime>(() => this.LastFrostDate, lastFrostDate);
         this.Set<DateTime>(() => this.FirstFrostDate, firstFrostDate);
+        this.Set<DateTime>(() => this.WarmSoilDate, firstFrostDate);
         this.Set<double>(() => this.Length, length);
         this.Set<double>(() => this.Width, width);
     }
