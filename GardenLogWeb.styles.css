@@ -216,19 +216,19 @@ svg .top-null-resizer[b-reab0licoy] {
     stroke: saddlebrown
 }
 /* /Pages/HarvestGardenLayout/Components/HarvestGardenLayoutView.razor.rz.scp.css */
-dl[b-gybykvzwnm] {
+/*dl {
     display: flex;
     flex-wrap: wrap;
 }
 
-dt[b-gybykvzwnm] {
+dt {
     width: 60%;
 }
 
-dd[b-gybykvzwnm] {
+dd {
     margin-left: auto;
     width: 30%;
-}
+}*/
 
 .body[b-gybykvzwnm] {
     min-height: 300px;
