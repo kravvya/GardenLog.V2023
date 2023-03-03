@@ -42,7 +42,7 @@ public class HarvestScheduler : SchedulerBase, IScheduler
                 return null;
         }
 
-        if (daysToMaturityMin.HasValue && daysToMaturityMax.HasValue)
+        if (daysToMaturityMin.HasValue && daysToMaturityMax.HasValue && daysToMaturityMin.Value > 0 && daysToMaturityMax.Value > 0)
         {
             return new CreatePlantScheduleCommand()
             {
