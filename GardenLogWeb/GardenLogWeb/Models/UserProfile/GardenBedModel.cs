@@ -91,5 +91,9 @@ public record GardenBedModel : GardenBedViewModel, IVisualComponent
         {
             Rotate -= 360;
         }
+        if(Rotate == 360)
+        {
+            Rotate= 0;
+        }
     }
 }
