@@ -109,6 +109,11 @@ public static class NavigationManagerExtensions
         return $"addplant/garden_plan/{harvestId}";
     }
 
+    public static string GetGardenPlanAddPlantUrl(this NavigationManager navigationManager, string harvestId, string plantId, string plantVarietyId)
+    {
+        return $"addplant/garden_plan/{harvestId}/addplant/{plantId}/addvariety/{plantVarietyId}";
+    }
+
     public static string GetGardenPlanEditPlantUrl(this NavigationManager navigationManager, string harvestId, string plantHarvestId)
     {
         return $"editplant/garden_plan/{harvestId}/plant/{plantHarvestId}";
@@ -237,6 +242,11 @@ public static class NavigationManagerExtensions
     public static void NavigateToGardenPlanAddPlant(this NavigationManager navigationManager, string harvestId)
     {
         navigationManager.NavigateTo(navigationManager.GetGardenPlanAddPlantUrl(harvestId));
+    }
+
+    public static void NavigateToGardenPlanAddPlant(this NavigationManager navigationManager, string harvestId, string plantId, string plantHarvestId)
+    {
+        navigationManager.NavigateTo(navigationManager.GetGardenPlanAddPlantUrl(harvestId, plantId, plantHarvestId));
     }
 
     public static void NavigateToGardenPlanEditPlant(this NavigationManager navigationManager, string harvestId, string plantHarvestId)

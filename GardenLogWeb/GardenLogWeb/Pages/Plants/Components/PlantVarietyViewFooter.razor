@@ -1,5 +1,6 @@
 ﻿@inject NavigationManager _navigationManager
 @inject IImageService _imageService
+@inject IHarvestCycleService _harvestService;
 
 @if (PlantVariety != null && !string.IsNullOrWhiteSpace(PlantVariety.PlantVarietyId))
 {
@@ -14,6 +15,10 @@
                 <button type="button" class="btn btn-secondary" title="Edit Variety" @onclick="@(() => OnEdit())"><span class="bi bi-pencil">&nbsp;</span></button>
                 <button type="button" class="btn btn-warning" @onclick="@(() => OnAddPlantVarietyImage())"><span class="bi bi-card-image">&nbsp;</span></button>
             </AuthorizeView>
+            @if (!string.IsNullOrWhiteSpace(_activeHarvestCycle))
+            {
+                <button type="button" class="btn btn-secondary" title="Add Variety to Garden Plan" @onclick="@(() => AddToGardenPlan())"><span class="bi bi-plus">&nbsp;</span></button>
+            }
             <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => OnClose())"><span class="bi bi-x-circle">&nbsp;</span></button>
         </div>
     </div>
@@ -31,6 +36,22 @@
 
     private ModalView ImageFormModal { get; set; }
     private ImageForm ImageForm { get; set; }
+
+    private string? _activeHarvestCycle = null;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        _activeHarvestCycle = await _harvestService.GetActiveHarvestCycleId();
+    }
+
+    private void AddToGardenPlan()
+    {
+        if (Plant != null && PlantVariety != null
+            && !string.IsNullOrWhiteSpace(_activeHarvestCycle) && !string.IsNullOrWhiteSpace(Plant.PlantId) && !string.IsNullOrWhiteSpace(PlantVariety.PlantVarietyId))
+        {
+            _navigationManager.NavigateToGardenPlanAddPlant(_activeHarvestCycle, Plant.PlantId, PlantVariety.PlantVarietyId);
+        }
+    }
 
     private async Task OnAddPlantVarietyImage()
     {

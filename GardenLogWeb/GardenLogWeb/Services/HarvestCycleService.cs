@@ -22,6 +22,7 @@ public interface IHarvestCycleService
     Task<ApiResponse> UpdateGardenBedPlantHarvestCycle(GardenBedPlantHarvestCycleModel gardenBedPlant);
     Task<ApiResponse> DeleteGardenBedPlantHarvestCycle(string harvestId, string plantHarvestId, string id);
     Task<List<RelatedEntity>> BuildRelatedEntities(RelatedEntityTypEnum entityType, string entityId, string harvestCycleId);
+    Task<string?> GetActiveHarvestCycleId();
 }
 
 public class HarvestCycleService : IHarvestCycleService
@@ -47,6 +48,18 @@ public class HarvestCycleService : IHarvestCycleService
     }
 
     #region Public Harvest Cycle Functions
+
+    public async Task<string?> GetActiveHarvestCycleId()
+    {
+        var harvests = await GetHarvestList(false);
+        if(harvests != null && harvests.Count > 0)
+        {
+            var harvest = harvests.OrderByDescending(h => h.StartDate).FirstOrDefault(h => h.EndDate == null);
+            return harvest == null ? null : harvest.HarvestCycleId;
+        }
+
+        return null;
+    }
 
     public async Task<IList<HarvestCycleModel>> GetHarvestList(bool forceRefresh)
     {

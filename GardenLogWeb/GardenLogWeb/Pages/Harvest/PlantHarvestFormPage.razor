@@ -1,5 +1,6 @@
 ﻿@page "/addplant/garden_plan/{HarvestCycleId}"
 @page "/editplant/garden_plan/{HarvestCycleId}/plant/{PlantHarvestCycleId}"
+@page "/addplant/garden_plan/{HarvestCycleId}/addplant/{PlantId}/addvariety/{PlantVarietyId}"
 
 @inject ILogger<PlantHarvestFormPage> _logger;
 @inject NavigationManager _navigationManager;
@@ -224,6 +225,10 @@
     public string PlantHarvestCycleId { get; set; }
     [Parameter]
     public string HarvestCycleId { get; set; }
+    [Parameter]
+    public string? PlantId { get; set; }
+    [Parameter]
+    public string? PlantVarietyId { get; set; }
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
     private string _title = string.Empty;
@@ -270,6 +275,17 @@
         {
             _plantHarvest = new();
             _plantHarvest.HarvestCycleId = HarvestCycleId;
+
+            if(!string.IsNullOrWhiteSpace(PlantId))
+            {
+                _plantHarvest.PlantId = PlantId;
+                await ReloadPlantOptions(new ChangeEventArgs() { Value = PlantId });
+            }
+
+            if (!string.IsNullOrWhiteSpace(PlantVarietyId))
+            {
+                _plantHarvest.PlantVarietyId = PlantVarietyId;
+            }
 
             _title = "Add Plant";
             _description = "";
@@ -340,7 +356,7 @@
 
         if (!string.IsNullOrWhiteSpace(_plantHarvest.PlantVarietyId))
         {
-            _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;          
+            _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;
         }
 
         if (!_isEdit)
