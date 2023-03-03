@@ -43,7 +43,8 @@ public record PlantHarvestCycleModel : PlantHarvestCycleViewModel
 
     public double GetPlantsPerFoot()
     {
-        if (!SpacingInInches.HasValue) return 0;
+        //default to 1in
+        if (!SpacingInInches.HasValue) return 144;
 
         switch (SpacingInInches)
         {

@@ -14,7 +14,8 @@ public record SelectorSide(double OriginalAngle, ComponentChanges Changes)
 public record SelectorSides
 {
     public List<SelectorSide> Sides { get; set; } = new();
-    public bool LessIsMore { get; set; } = false;
+    public bool LessIsMoreX { get; set; } = false;
+    public bool LessIsMoreY { get; set; } = false;
     public bool FlipAxesForMove { get; set; } = false;
     public SelectorSides(double rotate)
     {
@@ -29,7 +30,8 @@ public record SelectorSides
         if (rotate < 0) rotate = 360 + rotate;
 
         FlipAxesForMove = (rotate > 45 && rotate < 135) || (rotate > 225 && rotate < 315);
-        LessIsMore = (rotate > 45 && rotate < 135) || (rotate > 225 && rotate < 315);
+        LessIsMoreX = (rotate > 45 && rotate < 135) || (rotate > 225 && rotate < 315);
+        LessIsMoreY = (rotate > 135 && rotate < 225);
     }
 
     public string GetCssClass(ComponentChanges changes) => Sides.First(s => s.Changes == changes).CssClass;

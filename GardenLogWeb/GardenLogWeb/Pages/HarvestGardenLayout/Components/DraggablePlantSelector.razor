@@ -134,16 +134,24 @@
                 deltaX = _cursorY - e.ClientY;
             }
 
-            if (_sides!=null && _sides.LessIsMore)
+            if (_sides!=null && _sides.LessIsMoreX)
             {
-                deltaX = -1 * deltaX;
+                deltaX = -1 * deltaX;                
+            }
+            if (_sides != null && _sides.LessIsMoreY)
+            {
                 deltaY = -1 * deltaY;
             }
-
             var newX = GardenBed.X + _plant?.X - deltaX;
             var newY = GardenBed.Y + _plant?.Y - deltaY;
 
-            _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");
+           // _logger.LogInformation($"TryToMove: newX:{newX}  GardenBed.X:{GardenBed.X} _plant?.X:{_plant?.X} deltaX:{deltaX}  _cursorX:{_cursorX} e.ClientX: {e.ClientX}");
+
+
+            _logger.LogInformation($"TryToMove: newY: {newY} GardenBed.Y:{GardenBed.Y} _plant?.Y:{_plant?.Y}  deltaY:{deltaY} _cursorY:{_cursorY} e.ClientY: {e.ClientY} _sides.LessIsMoreY:{_sides.LessIsMoreY}");
+
+
+          //  _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");
 
             if (newX >= left && newX <= right && newY >= top && newY <= bottom)
             {
@@ -240,16 +248,16 @@
             switch (direction)
             {
                 case "ArrowDown":
-                    direction = _sides.LessIsMore ? "ArrowRight" : "ArrowLeft";
+                    direction = _sides.LessIsMoreY ? "ArrowRight" : "ArrowLeft";
                     break;
                 case "ArrowUp":
-                    direction = _sides.LessIsMore ? "ArrowLeft" : "ArrowRight";
+                    direction = _sides.LessIsMoreY ? "ArrowLeft" : "ArrowRight";
                     break;
                 case "ArrowRight":
-                    direction = _sides.LessIsMore ? "ArrowUp" : "ArrowDown";
+                    direction = _sides.LessIsMoreX ? "ArrowUp" : "ArrowDown";
                     break;
                 case "ArrowLeft":
-                    direction = _sides.LessIsMore ? "ArrowDown" : "ArrowUp";
+                    direction = _sides.LessIsMoreX ? "ArrowDown" : "ArrowUp";
                     break;
             }
         }
