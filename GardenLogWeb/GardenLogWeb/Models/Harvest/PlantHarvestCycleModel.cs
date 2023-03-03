@@ -35,7 +35,7 @@ public record PlantHarvestCycleModel : PlantHarvestCycleViewModel
     {
         if (PlantCalendar == null) return string.Empty;
 
-        var schedule = PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.Plant || s.TaskType == WorkLogReasonEnum.TransplantOutside);
+        var schedule = PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.Plant || s.TaskType == WorkLogReasonEnum.TransplantOutside || s.TaskType == WorkLogReasonEnum.SowOutside);
         if (schedule == null) return string.Empty;
 
         return schedule.StartDate.ToShortDateString();

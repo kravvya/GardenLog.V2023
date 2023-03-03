@@ -15,7 +15,40 @@
 @if (_garden != null)
 {
     <div class="row ">
-        <div class="col-md-4">
+        <div class="col-md-2">
+            <div class="card border-secondary">
+                <div class="card-header text-bg-secondary">
+                    <h5>
+                        Selected Product
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (_selectedGardenBedPlant != null)
+                    {
+                        <dl class="garden-facts_list row mt-2 mt-lg-0">
+                            <div class="garden-facts-item mt-1">
+                                <dt class="garden-facts_term">Plant</dt>
+                                <dd class="garden-facts_definition col">@_selectedGardenBedPlant.PlantName</dd>
+                            </div>
+                            <div class="garden-facts-item mt-1">
+                                <dt class="garden-facts_term">Variety</dt>
+                                <dd class="garden-facts_definition col">@_selectedGardenBedPlant.PlantVarietyName</dd>
+                            </div>
+                            <div class="garden-facts-item mt-1">
+                                <dt class="garden-facts_term">Plants Per Foot</dt>
+                                <dd class="garden-facts_definition col">@_selectedGardenBedPlant.PlantsPerFoot</dd>
+                            </div>
+                            <div class="garden-facts-item mt-1">
+                                <dt class="garden-facts_term">Number of Plants</dt>
+                                <dd class="garden-facts_definition col">@_selectedGardenBedPlant.NumberOfPlants</dd>
+                            </div>
+                        </dl>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
             <div class="card border-info">
                 <div class="card-header text-bg-info">
                     <h5>
@@ -42,7 +75,7 @@
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="card border-info">
                 <div class="card-header text-bg-info">
                     <div class="d-flex justify-content-between">
@@ -115,7 +148,6 @@
 
             </div>
         </div>
-
     </div>
 }
 
