@@ -1,6 +1,4 @@
-﻿using PlantHarvest.Contract.Enum;
-
-namespace PlantHarvest.Contract.Base;
+﻿namespace PlantHarvest.Contract.Base;
 
 public abstract record PlantHarvestCycleBase
 {
@@ -40,5 +38,6 @@ public abstract record PlantHarvestCycleBase
     public string Notes { get; set; } = string.Empty;
     public int? DesiredNumberOfPlants { get; set; }
     public int? SpacingInInches { get; set; }
+    public double? PlantsPerFoot { get; set; }
 }
 

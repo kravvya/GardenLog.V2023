@@ -2,14 +2,14 @@
 
 public abstract record GardenBedPlantHarvestCycleBase
 {
-    public string HarvestCycleId { get; set; }
-    public string PlantHarvestCycleId { get; set; }
-    public string PlantId { get; set; }
-    public string PlantName { get; set; }
+    public string HarvestCycleId { get; set; }=string.Empty;
+    public string PlantHarvestCycleId { get; set; } = string.Empty;
+    public string PlantId { get; set; } = string.Empty;
+    public string PlantName { get; set; } = string.Empty;
     public string? PlantVarietyId { get; set; }
     public string? PlantVarietyName { get; set; }
-    public string GardenId { get; set; }
-    public string GardenBedId { get; set; }
+    public string GardenId { get; set; } = string.Empty;
+    public string GardenBedId { get; set; } = string.Empty;
     public int NumberOfPlants { get; set; }
     public double PlantsPerFoot { get; set; }
 

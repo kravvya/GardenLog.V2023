@@ -2,18 +2,18 @@
 
 public abstract record PlantGrowInstructionBase
 {
-    public string Name { get; set; }
-    public string PlantId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string PlantId { get; set; } = string.Empty;
     public HarvestSeasonEnum HarvestSeason { get; set; }
     public PlantingMethodEnum PlantingMethod { get; set; }
 
-    public string GrowingInstructions { get; set; }
-    public string HarvestInstructions { get; set; }
+    public string GrowingInstructions { get; set; } = string.Empty;
+    public string HarvestInstructions { get; set; } = string.Empty;
 
     public PlantingDepthEnum PlantingDepthInInches { get; set; }
     public int? SpacingInInches { get; set; }
 
-    public string StartSeedInstructions { get; set; }
+    public string StartSeedInstructions { get; set; } = string.Empty;
     public WeatherConditionEnum StartSeedAheadOfWeatherCondition { get; set; }
     public int? StartSeedWeeksAheadOfWeatherCondition { get; set; }
     public int? StartSeedWeeksRange { get; set; }
@@ -32,4 +32,6 @@ public abstract record PlantGrowInstructionBase
 
     public int? DaysToSproutMin { get; set; }
     public int? DaysToSproutMax { get; set; }
+
+    public double? PlantsPerFoot { get; set; }
 }

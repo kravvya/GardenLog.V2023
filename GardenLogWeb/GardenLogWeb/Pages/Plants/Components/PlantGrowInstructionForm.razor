@@ -5,7 +5,7 @@
 
 <article id="plantGrowInstructionForm">
     <div class="container">
-        @if (isInitialized)
+        @if (isInitialized && growInstruction != null)
         {
             <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
 
@@ -62,30 +62,44 @@
 
 
                 <div class="row mt-3" id="spacing-and-fertilization-container">
-                    <div class="col-10 col-lg-2">
+                    <div class="col-10 col-lg-3">
                         <FormCard Class="border-info" HeaderClass="text-bg-info">
                             <Header>
-                                <label for="SpacingInInches" class="card-subtitle mb-2 text-light">Spacing(in.)</label>
+                                <label for="SpacingInInches" class="card-subtitle mb-2 text-light">Spacing</label>
                             </Header>
                             <Body>
-                                <InputNumber Class="form-control" @bind-Value="@growInstruction.SpacingInInches" id="SpacingInInches" />
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.SpacingInInches)" /></div>
+                                <div class="d-flex justify-content-start align-items-center flex-nowrap">
+                                    <div class="px-2 w-50">
+                                        <label for="SpacingInInches" class="form-label">Spacing(in)</label>
+                                        <InputNumber Class="form-control" @bind-Value="@growInstruction.SpacingInInches" id="SpacingInInches" @bind-Value:after="SetPlantsPerFoot" />
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.SpacingInInches)" /></div>
+                                    </div>
+                                    <div class="px-2 w-50">
+                                        <label for="PlantsPerFoot" class="form-label">Plants per foot</label>
+                                        <InputNumber Class="form-control flex-grow-1" @bind-Value="@growInstruction.PlantsPerFoot" Id="PlantsPerFoot" />
+                                        <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.PlantsPerFoot)" /></div>
+                                    </div>
+                                </div>
                             </Body>
                         </FormCard>
                     </div>
+
                     <div class="col-10 col-lg-2">
                         <FormCard Class="border-info" HeaderClass="text-bg-info">
                             <Header>
-                                <label for="FertilizeAtPlanting" class="card-subtitle mb-2 text-light">Fertilize At Planting</label>
+                                <label for="FertilizeAtPlanting" class="card-subtitle mb-2 text-light">Fertilize</label>
                             </Header>
                             <Body>
-                                <InputSelect class="form-select" @bind-Value="@growInstruction.FertilizerAtPlanting" Name="Fertilizer">
-                                    @foreach (var item in Enum.GetValues<FertilizerEnum>())
-                                    {
-                                        <option Value="@item">@(_verifyService.GetDescription(item))</option>
-                                    }
-                                </InputSelect>
-                                <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.FertilizerAtPlanting)" /></div>
+                                <div class="px-2">
+                                    <label for="FertilizerAtPlanting" class="form-label">At Planting</label>
+                                    <InputSelect class="form-select" @bind-Value="@growInstruction.FertilizerAtPlanting" Id="FertilizerAtPlanting">
+                                        @foreach (var item in Enum.GetValues<FertilizerEnum>())
+                                        {
+                                            <option Value="@item">@(_verifyService.GetDescription(item))</option>
+                                        }
+                                    </InputSelect>
+                                    <div class="invalid-feedback"><ValidationMessage For="@(() => growInstruction.FertilizerAtPlanting)" /></div>
+                                </div>
                             </Body>
                         </FormCard>
                     </div>
@@ -95,7 +109,7 @@
                                 <label for="Fertilizer" class="card-subtitle mb-2 text-light">Fertilization Schedule</label>
                             </Header>
                             <Body>
-                                <div class="d-flex justify-content-start align-items-center flex-wrap">
+                                <div class="d-flex justify-content-start align-items-center flex-nowrap">
                                     <div class="px-2">
                                         <InputSelect class="form-select" @bind-Value="@growInstruction.Fertilizer" Name="Fertilizer">
                                             @foreach (var item in Enum.GetValues<FertilizerEnum>())
@@ -328,15 +342,15 @@
 </article>
 
 @code {
-    [Parameter] public Func<Task> OnClose { get; set; }
+    [Parameter] public Func<Task>? OnClose { get; set; }
 
-    private PlantModel plant { get; set; }
-    private PlantGrowInstructionViewModel growInstruction { get; set; }
+    private PlantModel? plant { get; set; }
+    private PlantGrowInstructionViewModel? growInstruction { get; set; }
 
     private bool isInitialized = false;
     private bool isEdit = false;
-    private CustomValidation customValidation;
-    private EditContext editContext;
+    private CustomValidation? customValidation;
+    private EditContext? editContext;
 
     public void Initialize(PlantGrowInstructionViewModel instruction, PlantModel plant)
     {
@@ -364,12 +378,12 @@
 
     protected bool HideSeedInstructions
     {
-        get { return this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting; }
+        get { return this.growInstruction?.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting; }
     }
 
     protected bool HideTransplantInstructions
     {
-        get { return this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed; }
+        get { return this.growInstruction?.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed; }
     }
 
     protected async Task HandleValidSubmit()
@@ -378,16 +392,16 @@
 
         customValidation?.ClearErrors();
 
-        if (this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting)
+        if (this.growInstruction?.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.Transplanting)
         {
             this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
             this.growInstruction.FertilizerForSeedlings = FertilizerEnum.Unspecified;
             this.growInstruction.StartSeedInstructions = string.Empty;
         }
 
-        if (this.growInstruction.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed)
+        if (this.growInstruction?.PlantingMethod == PlantCatalog.Contract.Enum.PlantingMethodEnum.DirectSeed)
         {
-            this.growInstruction.TransplantInstructions=string.Empty;
+            this.growInstruction.TransplantInstructions = string.Empty;
             this.growInstruction.TransplantAheadOfWeatherCondition = WeatherConditionEnum.Unspecified;
         }
 
@@ -400,7 +414,60 @@
 
         if (response.IsSuccess)
         {
-            await OnClose();
+            await OnClose!();
+        }
+    }
+
+    private void SetPlantsPerFoot()
+    {
+            if (this.growInstruction == null || this.growInstruction.PlantsPerFoot.HasValue) return;
+
+        //default to 1in
+        if (!this.growInstruction.SpacingInInches.HasValue) this.growInstruction.PlantsPerFoot = 144;
+
+        switch (this.growInstruction.SpacingInInches)
+        {
+            case 1:
+                this.growInstruction.PlantsPerFoot = 144;
+                break;
+            case 2:
+                this.growInstruction.PlantsPerFoot = 36;
+                break;
+            case 3:
+                this.growInstruction.PlantsPerFoot = 16;
+                break;
+            case 4:
+                this.growInstruction.PlantsPerFoot = 9;
+                break;
+            case 5:
+            case 6:
+                this.growInstruction.PlantsPerFoot = 4;
+                break;
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+                this.growInstruction.PlantsPerFoot = 1;
+                break;
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+                this.growInstruction.PlantsPerFoot = 0.5;
+                break;
+            default:
+                this.growInstruction.PlantsPerFoot = 0.25;
+                break;
         }
     }
 }
