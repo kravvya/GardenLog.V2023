@@ -114,7 +114,15 @@
 
         if (_gardenBedGridFilter.Equals("available") && _harvestPlants!= null)
         {
-            var usedArea = _harvestPlants.SelectMany(g => g.GardenBedLayout).Where(c => c.GardenBedId == bed.GardenBedId).Sum(g => g.Length * g.Width);
+
+            //var usedArea = _harvestPlants.SelectMany(g => g.GardenBedLayout).Where(c => c.GardenBedId == bed.GardenBedId).Sum(g => g.Length * g.Width);
+            double usedArea = 0;
+            foreach (var plant in _harvestPlants.SelectMany(g => g.GardenBedLayout).Where(c => c.GardenBedId == bed.GardenBedId))
+            {
+                usedArea += plant.Length * plant.Width;
+
+            }
+           
             //bed is in In and plants are in ft
             return bed.Length * bed.Width - usedArea*144 > 144; //only return if at least 1 sq ft is open
         }

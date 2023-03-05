@@ -30,8 +30,8 @@ public record SelectorSides
         if (rotate < 0) rotate = 360 + rotate;
 
         FlipAxesForMove = (rotate > 45 && rotate < 135) || (rotate > 225 && rotate < 315);
-        LessIsMoreX = (rotate > 45 && rotate < 135) || (rotate > 225 && rotate < 315);
-        LessIsMoreY = (rotate > 135 && rotate < 225);
+        LessIsMoreX = (rotate > 225 && rotate < 315) || (rotate > 135 && rotate < 225);
+        LessIsMoreY = (rotate > 45 && rotate < 135) || (rotate > 135 && rotate < 225);
     }
 
     public string GetCssClass(ComponentChanges changes) => Sides.First(s => s.Changes == changes).CssClass;

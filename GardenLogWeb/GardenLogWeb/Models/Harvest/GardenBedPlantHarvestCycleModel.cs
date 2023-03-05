@@ -87,7 +87,17 @@ namespace GardenLogWeb.Models.Harvest
             //PlantsPerFoot * NumberofFeetInPattern * NumberOfPatterns in 1 row
             var numberOfPatternsInRow = Math.Floor((bedWidth / 12) / PatternWidth);
             var plantsPerRow = PlantsPerFoot * PatternWidth * numberOfPatternsInRow;
-
+            if (numberOfPatternsInRow == 0)
+            {
+                numberOfPatternsInRow = 1;
+                plantsPerRow = 1;
+                Width = bedWidth / 12;
+            }
+            else
+            {
+                Width = numberOfPatternsInRow * PatternWidth;
+            }
+          
             //Step2 : Figure out how many rows required for the number of plants
             // numberOfPlants/number of plants in a row
             var numberOfRowsRequired = Math.Ceiling(NumberOfPlants / plantsPerRow);
@@ -100,9 +110,7 @@ namespace GardenLogWeb.Models.Harvest
             //     Width = Max number of pattern in a row
             //     Length = numner of rows required 
 
-
-            Length = numberOfRowsRequired <= numbeOfRowsAvailable ? numberOfRowsRequired : numbeOfRowsAvailable;
-            Width = numberOfPatternsInRow;
+            Length = numberOfRowsRequired <= numbeOfRowsAvailable ? numberOfRowsRequired* PatternLength : numbeOfRowsAvailable* PatternLength;       
            
         }
 
@@ -174,15 +182,26 @@ namespace GardenLogWeb.Models.Harvest
         public void IncreaseLengthByPatternUnits(double patternUnits)
         {
             Length += patternUnits * PatternLength;
-            if (Length <= 0) Length = 1;
-            NumberOfPlants = Convert.ToInt32(PlantsPerFoot * Length * Width);
+            if (Length <= 1) Length = 1;
+
+            CalcualteNumberOfPlants();
         }
 
         public void IncreaseWidthByPatternUnits(double patternUnits)
         {
             Width += patternUnits * PatternWidth;
-            if (Width <= 0) Width = 1;
-            NumberOfPlants = Convert.ToInt32(PlantsPerFoot * Length * Width);
+            if (Width <= 1) Width = 1;
+
+            CalcualteNumberOfPlants();
+        }
+
+        private void CalcualteNumberOfPlants()
+        {
+            var plantsInRow = Width / PatternWidth;
+            if (plantsInRow < 1) { plantsInRow = 1; }
+
+            var plantsPerFoot = PlantsPerFoot > 1 ? PlantsPerFoot : 1;
+            NumberOfPlants = Convert.ToInt32(plantsPerFoot * Length / PatternLength * plantsInRow);
         }
 
         public string GetPlantName()

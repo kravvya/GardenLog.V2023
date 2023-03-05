@@ -80,7 +80,7 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
             _zoom = value;
             ViewBoxX = _viewBoxX + _zoom;
             ViewBoxY = _viewBoxY + _zoom;
-            Console.WriteLine($"ViewBoxX: {ViewBoxX} - _viewBoxX: {_viewBoxX} - _zoom: {_zoom}");
+           // Console.WriteLine($"ViewBoxX: {ViewBoxX} - _viewBoxX: {_viewBoxX} - _zoom: {_zoom}");
         }
     }
 
@@ -101,14 +101,14 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
     }
     public void MoveDown()
     {
-        Console.WriteLine($"MoveDown - startY: {StartY}");
+        //Console.WriteLine($"MoveDown - startY: {StartY}");
         if (StartY < GardenLength * TickFootHeight - 160)
             StartY += 160;
     }
 
     public void MoveUp()
     {
-        Console.WriteLine($"MoveUp - startY: {StartY}");
+        //Console.WriteLine($"MoveUp - startY: {StartY}");
         if (StartY > 160)
             StartY -= 160;
         else if (StartY <= 160)
@@ -117,14 +117,14 @@ public record GardenPlanSettings(double GardenLength, double GardenWidth)
 
     public void MoveRight()
     {
-        Console.WriteLine($"MoveRight - _startX: {StartX}");
+       // Console.WriteLine($"MoveRight - _startX: {StartX}");
         if (StartX < GardenWidth * TickFootWidth)
             StartX += 100;
     }
 
     public void MoveLeft()
     {
-        Console.WriteLine($"MoveLeft - _startX: {StartX}");
+        //Console.WriteLine($"MoveLeft - _startX: {StartX}");
         if (StartX > 100)
             StartX -= 100;
         else if (StartX <= 100)

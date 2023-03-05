@@ -145,18 +145,19 @@
             var newX = GardenBed.X + _plant?.X - deltaX;
             var newY = GardenBed.Y + _plant?.Y - deltaY;
 
-           // _logger.LogInformation($"TryToMove: newX:{newX}  GardenBed.X:{GardenBed.X} _plant?.X:{_plant?.X} deltaX:{deltaX}  _cursorX:{_cursorX} e.ClientX: {e.ClientX}");
+            // _logger.LogInformation($"TryToMove: newX:{newX}  GardenBed.X:{GardenBed.X} _plant?.X:{_plant?.X} deltaX:{deltaX}  _cursorX:{_cursorX} e.ClientX: {e.ClientX}");
 
 
             _logger.LogInformation($"TryToMove: newY: {newY} GardenBed.Y:{GardenBed.Y} _plant?.Y:{_plant?.Y}  deltaY:{deltaY} _cursorY:{_cursorY} e.ClientY: {e.ClientY} _sides.LessIsMoreY:{_sides.LessIsMoreY}");
 
 
-          //  _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");
+            //  _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");
 
             if (newX >= left && newX <= right && newY >= top && newY <= bottom)
             {
                 _plant!.X -= deltaX;
                 _plant.Y -= deltaY;
+                GardenBedPlantChanged(_plant);
             }
         }
         else
@@ -169,16 +170,18 @@
             var moveBy = Math.Floor(Math.Abs(delta) / _plant.GetPatternHeightInPixels());
             if (moveBy == 0) return;
             if ((delta) < 0) moveBy = moveBy * -1;
-            if (lessIsMore) moveBy = moveBy * -1;
+           
 
             switch (_changes)
             {
-                case ComponentChanges.Left:                  
+                case ComponentChanges.Left:
                     /*make sure plants can not get outside of the garden bed
                         We are expanding product to the left (reducing _plant.X). Right side remains as it was. To make sure product still fits within Garden Bed,
                         check if reduced value of the _plant.X is still larger then 0 (plant X is measured from left side. less then ) is outside of GardenBed)
                         to calcualte new left side fo the Plant, subtract moveBy(multiplied by patter and converted to pixels ) from _plant.X
                     */
+                    lessIsMore = lessIsMore || _sides.LessIsMoreX;
+                    if (lessIsMore) moveBy = moveBy * -1;
                     _logger.LogInformation($"Left: _plant.X:{_plant.X} Azis: {axis} LessIsMore: {lessIsMore} moveBy:{moveBy} new left side: {_plant.X - moveBy * _plant.PatternWidth * GardenPlanSettings.TickFootWidth} Allow: {_plant.X - moveBy * _plant.PatternWidth * GardenPlanSettings.TickFootWidth >= 0}");
                     if (_plant.X - moveBy * _plant.PatternWidth * GardenPlanSettings.TickFootWidth >= 0)
                     {
@@ -198,6 +201,8 @@
                       (note we are checking both plant length and where plant starts against the length of the garden bed)
                       to calcualte where new bottom of the Plant will be, add moveBy(multiplied by pattern and converted to pixels ) and current plant length to _plant.Y
                     */
+                    lessIsMore = lessIsMore || _sides.LessIsMoreY;
+                    if (lessIsMore) moveBy = moveBy * -1;
                     _logger.LogInformation($"Bottom: _plant.Y:{_plant.Y} _plant.Length:{_plant.Length} Azis: {axis} LessIsMore: {lessIsMore} moveBy:{moveBy} new bottom: {_plant.Y + (_plant.Length + (-1 * moveBy) * _plant.PatternLength) * GardenPlanSettings.TickFootHeight} GardenBed.HeightInPixels:{GardenBed.GetHeightInPixels()} Allow: {_plant.Y + (_plant.Length + (-1 * moveBy) * _plant.PatternLength) * GardenPlanSettings.TickFootHeight <= GardenBed.GetHeightInPixels()}");
                     if (_plant.Y + (_plant.Length + (-1 * moveBy) * _plant.PatternLength) * GardenPlanSettings.TickFootHeight <= GardenBed.GetHeightInPixels())
                     {
@@ -213,6 +218,8 @@
                        (note we are checking both plant width and where plant starts against the width of the garden bed)
                        to calcualte new location of the right side of the Plant, add moveBy(multiplied by pattern and converted to pixels ) and current plant width to the _plant.X
                     */
+                    lessIsMore = lessIsMore || _sides.LessIsMoreX;
+                    if (lessIsMore) moveBy = moveBy * -1;
                     _logger.LogInformation($"Right: _plant.X:{_plant.X} _plant.Width:{_plant.Width} Azis: {axis} LessIsMore: {lessIsMore} moveBy:{moveBy} new right:{_plant.X + (_plant.Width + (-1 * moveBy) * _plant.PatternWidth) * GardenPlanSettings.TickFootWidth} GardenBed.GetWidthInPixels: {GardenBed.GetWidthInPixels()} Allow: {_plant.X + (_plant.Width + (-1 * moveBy) * _plant.PatternWidth) * GardenPlanSettings.TickFootWidth <= GardenBed.GetWidthInPixels()}");
                     if (_plant.X + (_plant.Width + (-1 * moveBy) * _plant.PatternWidth) * GardenPlanSettings.TickFootWidth <= GardenBed.GetWidthInPixels())
                     {
@@ -222,7 +229,8 @@
                     break;
                 case ComponentChanges.Upper:
 
-
+                    lessIsMore = lessIsMore || _sides.LessIsMoreY;
+                    if (lessIsMore) moveBy = moveBy * -1;
                     if (_plant.Y - moveBy * _plant.PatternLength * GardenPlanSettings.TickFootHeight >= 0)
                     {
                         _plant.Y -= moveBy * _plant.GetPatternWidthInPixels();

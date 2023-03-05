@@ -243,28 +243,49 @@ public class HarvestCycleService : IHarvestCycleService
 
             var harvestPlantsTask = GetPlantHarvestCycles(harvestCycleId);
             var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
-            await Task.WhenAll(harvestPlantsTask, imagesTask);
+            var imagesVarietyTask = _imageService.GetImages(RelatedEntityTypEnum.PlantVariety, false);
+            await Task.WhenAll(harvestPlantsTask, imagesTask, imagesVarietyTask);
 
             plants = harvestPlantsTask.Result;
             var images = imagesTask.Result;
+            var imagesVariety = imagesVarietyTask.Result;
 
             if (plants.Count > 0)
             {
                 foreach (var plant in plants)
                 {
-                    plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
-
-                    var image = plant.Images.FirstOrDefault();
-                    if (image != null)
+                    if(!string.IsNullOrEmpty(plant.PlantVarietyId))
                     {
-                        plant.ImageFileName = image.FileName;
-                        plant.ImageLabel = image.Label;
+                        //if variety is selected - get that image.
+                        plant.Images = imagesVariety.Where(i => i.RelatedEntityId == plant.PlantVarietyId).ToList();
+                        var image = plant.Images.FirstOrDefault();
+                        if (image != null)
+                        {
+                            plant.ImageFileName = image.FileName;
+                            plant.ImageLabel = image.Label;
+                        }
                     }
-                    else
+
+                    //if image is not found (may be variety was not found or variety has no image)
+                    if (string.IsNullOrWhiteSpace(plant.ImageFileName))
+                    {
+                        plant.Images = images.Where(i => i.RelatedEntityId == plant.PlantId).ToList();
+
+                        var image = plant.Images.FirstOrDefault();
+                        if (image != null)
+                        {
+                            plant.ImageFileName = image.FileName;
+                            plant.ImageLabel = image.Label;
+                        }
+                    }
+
+                    //if plant image is still not found - dafault
+                    if (string.IsNullOrWhiteSpace(plant.ImageFileName))
                     {
                         plant.ImageFileName = ImageService.NO_IMAGE;
                         plant.ImageLabel = "Add image";
                     }
+
                     plant.GardenBedLayout.ForEach(g =>
                     {
                         g.ImageFileName = plant.ImageFileName;
