@@ -159,7 +159,8 @@ namespace PlantCatalog.IntegrationTest.Clients
                 StartSeedWeeksRange = 4,
                 TransplantAheadOfWeatherCondition = Contract.Enum.WeatherConditionEnum.AfterDangerOfFrost,
                 TransplantWeeksAheadOfWeatherCondition = 0,
-                TransplantWeeksRange = 4
+                TransplantWeeksRange = 4,
+                PlantsPerFoot = 0.5
             };
         }
 

@@ -4,7 +4,7 @@ namespace PlantCatalog.Domain.PlantAggregate;
 
 public class PlantGrowInstruction : BaseEntity
 {
-    public string Name { get; private set; }
+    public string Name { get; private set; }=string.Empty;
 
     public PlantingDepthEnum PlantingDepthInInches { get; private set; }
 
@@ -22,15 +22,15 @@ public class PlantGrowInstruction : BaseEntity
 
     public WeatherConditionEnum TransplantAheadOfWeatherCondition { get; private set; }
 
-    public string StartSeedInstructions { get; private set; }
+    public string StartSeedInstructions { get; private set; } = string.Empty;
 
-    public string GrowingInstructions { get; private set; }
+    public string GrowingInstructions { get; private set; } = string.Empty;
 
     public int? StartSeedWeeksRange { get; private set; }
 
     public int? TransplantWeeksRange { get; private set; }
 
-    public string HarvestInstructions { get; private set; }
+    public string HarvestInstructions { get; private set; } = string.Empty;
 
     public FertilizerEnum FertilizerAtPlanting { get; private set; }
     public FertilizerEnum FertilizerForSeedlings { get; private set; }
@@ -42,7 +42,8 @@ public class PlantGrowInstruction : BaseEntity
     public int? DaysToSproutMin { get; private set; }
     public int? DaysToSproutMax { get; private set; }
 
-    public string TransplantInstructions { get; private set; }
+    public string TransplantInstructions { get; private set; } = string.Empty;
+    public double? PlantsPerFoot { get; set; }
 
     private PlantGrowInstruction() { }
 
@@ -66,13 +67,14 @@ public class PlantGrowInstruction : BaseEntity
             GrowingInstructions = command.GrowingInstructions,
             HarvestInstructions = command.HarvestInstructions,
             FertilizerAtPlanting = command.FertilizerAtPlanting,
-            FertilizerForSeedlings= command.FertilizerForSeedlings,
-            Fertilizer= command.Fertilizer,
-            FertilizerFrequencyForSeedlingsInWeeks= command.FertilizeFrequencyForSeedlingsInWeeks,
-            FertilizeFrequencyInWeeks= command.FertilizeFrequencyInWeeks,
-            DaysToSproutMin= command.DaysToSproutMin,
-            DaysToSproutMax= command.DaysToSproutMax,
-            TransplantInstructions= command.TransplantInstructions
+            FertilizerForSeedlings = command.FertilizerForSeedlings,
+            Fertilizer = command.Fertilizer,
+            FertilizerFrequencyForSeedlingsInWeeks = command.FertilizeFrequencyForSeedlingsInWeeks,
+            FertilizeFrequencyInWeeks = command.FertilizeFrequencyInWeeks,
+            DaysToSproutMin = command.DaysToSproutMin,
+            DaysToSproutMax = command.DaysToSproutMax,
+            TransplantInstructions = string.IsNullOrWhiteSpace(command.TransplantInstructions) ? string.Empty : command.TransplantInstructions,
+            PlantsPerFoot = command.PlantsPerFoot
         };
 
     }
@@ -103,7 +105,8 @@ public class PlantGrowInstruction : BaseEntity
         Set<int?>(() => this.FertilizeFrequencyInWeeks, command.FertilizeFrequencyInWeeks);
         Set<int?>(() => this.DaysToSproutMin, command.DaysToSproutMin);
         Set<int?>(() => this.DaysToSproutMax, command.DaysToSproutMax);
-        Set<string>(() => this.TransplantInstructions, command.TransplantInstructions);
+        Set<string>(() => this.TransplantInstructions, string.IsNullOrWhiteSpace(command.TransplantInstructions) ? string.Empty : command.TransplantInstructions);
+        Set<double?>(() => this.PlantsPerFoot, command.PlantsPerFoot);
 
         if (this.DomainEvents != null && this.DomainEvents.Count > 0)
         {
