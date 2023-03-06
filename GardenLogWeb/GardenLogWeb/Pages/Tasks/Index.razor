@@ -6,7 +6,7 @@
 
 <Page Title="Tasks" Description="Review, Edit and Create Tasks" BreadcrumbLinks="@_breadcrumbLinks">
     <PageContent>
-        <PlantTaskList @ref=_taskList />
+        <PlantTaskGrid @ref=_taskList />
     </PageContent>
 </Page>
 
@@ -14,10 +14,10 @@
 
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
-    private PlantTaskList _taskList;
+    private PlantTaskGrid? _taskList;
 
-    private string _title;
-    private string _description;
+    private string _title=string.Empty;
+    private string _description=string.Empty;
 
     protected override void OnInitialized()
     {
