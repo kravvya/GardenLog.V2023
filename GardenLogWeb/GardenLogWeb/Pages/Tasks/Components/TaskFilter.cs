@@ -4,6 +4,9 @@ public class TaskFilter
 {
     private bool _showCompletedTasks = false;
     private Func<bool, Task> _onShowCompletedTasks;
+    public string PlantName { get; set; } = string.Empty;
+    public bool IsPastDue { get; set; } = false;
+    public bool IsDueSoon { get; set; } = false;
 
     public List<CheckableEnum> WorkLogReasonEnum { get; set; } = new();
     public bool ShowCompletedTasks

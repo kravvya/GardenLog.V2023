@@ -27,6 +27,29 @@
         <EditForm Model=@_filter>
             <div class="d-flex flex-wrap">
 
+                <div id="plantname-filter" class="my-3 mx-1">
+                    <h5 class="text-uppercase text-primary">Plant</h5>
+                    <InputText class="form-control" @bind-Value=_filter!.PlantName />
+                    <a id="clear-name" role='button' onclick=@(() => ClearName())>Clear</a>
+                </div>
+
+                <div id="status-filter" class="my-3 mx-1">
+                    <h5 class="text-uppercase text-primary">Status</h5>
+                    <div class="form-check">
+                        <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="_filter.IsPastDue" id="pastDue"/>
+                        <label class="form-check-label" for="pastDue">
+                            Is Past Due
+                        </label>
+                    </div>
+                     <div class="form-check">
+                        <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="_filter.IsDueSoon" id="dueSoon"/>
+                        <label class="form-check-label" for="dueSoon">
+                            Due in couple days
+                        </label>
+                    </div>
+                    <a id="clear-name" role='button' onclick=@(() => ClearStatus())>Clear</a>
+                </div>
+
                 <div id="type-filter" class="my-3 mx-1">
                     <h5 class="text-uppercase text-primary">Type</h5>
                     @foreach (var type in _filter.WorkLogReasonEnum)
@@ -63,10 +86,10 @@
     <div id="tasks" class="col-md-9">
         <section>
             <article id="taskList">
-                @if (_tasks == null || _tasks.Count == 0)
+                @if (FilteredTasks == null)
                 {
                     <p><em>Empty</em></p>
-                    <div><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></div>
+                    <div class="my-2"><div @onclick="(() => AddTask())" class="btn d-inline-block  btn-secondary"><span class="bi bi-plus-lg">Add</span></div></div>
                 }
                 else
                 {
@@ -78,76 +101,30 @@
                                     <th scope="col"></th>
                                     <th scope="col">Reason</th>
                                     <th scope="col">Plant</th>
-                                    <th scope="col">Target Date</th>
-                                    <th scope="col">Title</th>
+                                    <th scope="col">Start</th>
+                                    <th scope="col">End</th>
                                     <th scope="col">Note</th>
                                     <th scope="col">Completed</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
+                                @foreach (var task in FilteredTasks.OrderBy(c => c.TargetDateStart))
                                 {
-                                    if (IsVisible(task))
-                                    {
-                                        <tr>
-                                            <td class="@GetTableClass(task.Type)">&nbsp;&nbsp;</td>
-                                            <td>
-                                                @(
-                                                    _verifyService.GetDescription<WorkLogReasonEnum>(task.Type)
-                                                    )
-                                            </td>
-                                            <td><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></td>
-                                            <td>@task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</td>
-                                            <td>@task.Title</td>
-                                            <td colspan="1">@task.Notes</td>
-                                            <td class="align-middle">
-                                                @if (task.CompletedDateTime.HasValue)
-                                                {
-                                                    @task.CompletedDateTime.Value.ToShortDateString()
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn btn-info" type="button" role="navigation" @onclick=@(() => ResolveTask(task))>
-                                                        <span class="bi bi-check-lg">&nbsp;</span>
-                                                    </button>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="row d-block d-sm-none">
-                        @foreach (var task in _tasks.OrderByDescending(c => c.TargetDateStart))
-                        {
-                            if (IsVisible(task))
-                            {
-                                <div class="col-sm-6">
-                                    <div class="card mb-2 @GetCardClass(task.Type)">
-                                        <div class="card-header">
-                                            @task.Title
-                                        </div>
-                                        <div class="card-body row task-facts_list ">
-                                            <dl class="col">
-                                                <dt class="task-facts_term">Plant:</dt>
-                                                <dd class="task-facts-item"><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></dd>
-                                                <dt class="task-facts_term">Task Due:</dt>
-                                                <dd class="task-facts-item"> @task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</dd>
-                                                <dt class="task-facts_term">Notes:</dt>
-                                                <dd class="task-facts-item">@task.Notes</dd>
-                                            </dl>
-                                        </div>
-                                        <div class="card-footer">
+                                    <tr class="@GetTableClass(task, "row")">
+                                        <td class="@GetTableClass(task, "column")">&nbsp;&nbsp;</td>
+                                        <td>
+                                            @(
+                                                _verifyService.GetDescription<WorkLogReasonEnum>(task.Type)
+                                                )
+                                        </td>
+                                        <td><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></td>
+                                        <td>@task.TargetDateStart.ToString("MM/dd")</td>
+                                        <td>@task.TargetDateEnd.ToString("MM/dd")</td>
+                                        <td colspan="1">@task.Notes</td>
+                                        <td class="align-middle">
                                             @if (task.CompletedDateTime.HasValue)
                                             {
-                                                <div class="card-body row task-facts_list ">
-                                                    <dl class="col">
-                                                        <dt class="task-facts_term">Completed On:</dt>
-                                                        <dd class="task-facts-item">@task.CompletedDateTime.Value.ToShortDateString()</dd>
-                                                    </dl>
-                                                </div>
+                                                @task.CompletedDateTime.Value.ToShortDateString()
                                             }
                                             else
                                             {
@@ -155,10 +132,50 @@
                                                     <span class="bi bi-check-lg">&nbsp;</span>
                                                 </button>
                                             }
-                                        </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row d-block d-sm-none">
+                        @foreach (var task in FilteredTasks.OrderBy(c => c.TargetDateStart))
+                        {
+                            <div class="col-sm-6">
+                                <div class="card mb-2 @GetCardClass(task)">
+                                    <div class="card-header">
+                                        @task.Title
+                                    </div>
+                                    <div class="card-body row task-facts_list ">
+                                        <dl class="col">
+                                            <dt class="task-facts_term">Plant:</dt>
+                                            <dd class="task-facts-item"><a @onclick=@(() => ViewPlantHarvestCycle(task)) class="text-dark" role='button'><span class="fw-semibold">@task.PlantName</span></a></dd>
+                                            <dt class="task-facts_term">Task Due:</dt>
+                                            <dd class="task-facts-item"> @task.TargetDateStart.ToShortDateString() - @task.TargetDateEnd.ToShortDateString()</dd>
+                                            <dt class="task-facts_term">Notes:</dt>
+                                            <dd class="task-facts-item">@task.Notes</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="card-footer">
+                                        @if (task.CompletedDateTime.HasValue)
+                                        {
+                                            <div class="card-body row task-facts_list ">
+                                                <dl class="col">
+                                                    <dt class="task-facts_term">Completed On:</dt>
+                                                    <dd class="task-facts-item">@task.CompletedDateTime.Value.ToShortDateString()</dd>
+                                                </dl>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-info" type="button" role="navigation" @onclick=@(() => ResolveTask(task))>
+                                                <span class="bi bi-check-lg">&nbsp;</span>
+                                            </button>
+                                        }
                                     </div>
                                 </div>
-                            }
+                            </div>
                         }
                         <div class="d-flex justify-content-end">
                             <button @onclick="(() => AddTask())" class="btn btn-secondary"><span class="bi bi-plus-lg">Add</span></button>
@@ -180,6 +197,7 @@
     private ModalView? _workLogFormModal;
     private WorkLogForm? _workLogForm;
     private TaskFilter? _filter;
+    private DateTime _now = DateTime.Now;
 
     private List<PlantTaskModel> _tasks { get; set; } = new();
 
@@ -196,13 +214,48 @@
         StateHasChanged();
     }
 
-    public bool IsVisible(PlantTaskModel task)
+    private IQueryable<PlantTaskModel>? FilteredTasks
     {
-        if (_filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected) && !_filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(task.Type.ToString())))
-            return false;
+        get
+        {
+            var result = _tasks.AsEnumerable();
 
-        return true;
+            if (_filter == null) return result.AsQueryable();
+
+            if (_filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected))
+            {
+                result = _tasks?.Where(t => _filter.WorkLogReasonEnum.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(t.Type.ToString())));
+            }
+
+
+            if (!string.IsNullOrEmpty(_filter.PlantName))
+            {
+                result = result?.Where(t => t.PlantName.Contains(_filter.PlantName, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+
+            if (_filter.IsDueSoon || _filter.IsPastDue)
+            {
+                result = result?.Where(t => _filter.IsPastDue && t.TargetDateStart < _now || _filter.IsDueSoon &&  t.TargetDateStart > _now && t.TargetDateStart < _now.AddDays(2));
+            }
+
+            return result?.AsQueryable();
+        }
     }
+
+    public void ClearName()
+    {
+        if (_filter == null) return;
+        _filter.PlantName = string.Empty;
+    }
+
+    private void ClearStatus()
+    {
+        if (_filter == null) return;
+        _filter.IsDueSoon = false;
+        _filter.IsPastDue = false;
+    }
+
     public void Clear(List<CheckableEnum> options)
     {
         options.ForEach(o => o.IsSelected = false);
@@ -221,22 +274,26 @@
 
     private async Task AddTask()
     {
+        if (_plantTaskForm == null || _plantTaskFormModal == null) return;
+
         _plantTaskForm.Initialize();
-        await _plantTaskFormModal?.OpenModal("Add new task", GlobalConstants.ModalFormColor);
+        await _plantTaskFormModal.OpenModal("Add new task", GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 
     private async Task ResolveTask(PlantTaskViewModel task)
     {
+        if (_workLogForm == null || _workLogFormModal == null || _plantHarvestMiniForm == null || _plantHarvestMiniFormModal == null) return;
+
         switch (task.Type)
         {
             case WorkLogReasonEnum.FertilizeIndoors:
-                _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
-                await _workLogFormModal?.OpenModal("Add new note", GlobalConstants.ModalFormColor);
+                await _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
+                await _workLogFormModal.OpenModal("Add new note", GlobalConstants.ModalFormColor);
                 break;
             default:
                 _plantHarvestMiniForm.Initialize(task.HarvestCycleId, task.PlantHarvestCycleId, task.Type);
-                await _plantHarvestMiniFormModal?.OpenModal("Resolve task", GlobalConstants.ModalFormColor);
+                await _plantHarvestMiniFormModal.OpenModal("Resolve task", GlobalConstants.ModalFormColor);
                 break;
         }
 
@@ -245,14 +302,17 @@
 
     private async Task ClosePlantTaskFormModal()
     {
-        await _plantTaskFormModal?.CloseModal();
+        if (_plantTaskFormModal == null) return;
+        await _plantTaskFormModal.CloseModal();
         StateHasChanged();
     }
 
     private async Task ClosePlantTaskForm(PlantTaskModel task)
     {
-        await _plantTaskFormModal?.CloseModal();
+        if (_plantTaskFormModal == null) return;
+        await _plantTaskFormModal.CloseModal();
 
+        if (_filter == null) return;
 
         if (_filter.ShowCompletedTasks)
             _tasks = await _taskService.GetPlantTasks(false);
@@ -265,14 +325,19 @@
 
     private async Task ClosePlantHarvestMiniFormModal()
     {
-        await _plantHarvestMiniFormModal?.CloseModal();
+        if (_plantHarvestMiniFormModal == null) return;
+
+        await _plantHarvestMiniFormModal.CloseModal();
         StateHasChanged();
     }
 
     private async Task ClosePlantHarvestCycleMiniForm(PlantHarvestCycleModel task)
     {
-        await _plantHarvestMiniFormModal?.CloseModal();
+        if (_plantHarvestMiniFormModal == null) return;
 
+        await _plantHarvestMiniFormModal.CloseModal();
+
+        if (_filter == null) return;
 
         if (_filter.ShowCompletedTasks)
             _tasks = await _taskService.GetPlantTasks(false);
@@ -283,26 +348,39 @@
         StateHasChanged();
     }
 
-    private string GetTableClass(WorkLogReasonEnum reason)
+    private string GetTableClass(PlantTaskModel task, string level)
     {
-
-        switch (reason)
+        if (level.Equals("row"))
         {
-            case WorkLogReasonEnum.Harvest:
-                return "table-success";
-            case WorkLogReasonEnum.Issue:
-                return "table-danger";
-            case WorkLogReasonEnum.IssueResolution:
-                return "table-warning";
-            default:
-                return "";
+            //we are past due - red alert
+            if (task.TargetDateStart < _now) return "table-danger";
+
+            if (task.TargetDateStart < _now.AddDays(2)) return "table-warning";
         }
+        else
+        {
+            switch (task.Type)
+            {
+                case WorkLogReasonEnum.Harvest:
+                    return "table-success";
+                case WorkLogReasonEnum.Issue:
+                    return "table-danger";
+                case WorkLogReasonEnum.IssueResolution:
+                    return "table-warning";
+            }
+        }
+
+        return "";
     }
 
-    private string GetCardClass(WorkLogReasonEnum reason)
+    private string GetCardClass(PlantTaskModel task)
     {
+        //we are past due - red alert
+        if (task.TargetDateStart < _now) return "text-bg-danger";
 
-        switch (reason)
+        if (task.TargetDateStart < _now.AddDays(2)) return "text-bg-warning";
+
+        switch (task.Type)
         {
             case WorkLogReasonEnum.Harvest:
                 return "text-bg-success";
@@ -317,13 +395,16 @@
 
     private async Task CloseWorkLogFormModal()
     {
-        await _workLogFormModal?.CloseModal();
+        if (_workLogFormModal == null) return;
+
+        await _workLogFormModal.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseWorkLogForm(WorkLogModel workLog)
     {
-        await _workLogFormModal?.CloseModal();
+        if (_workLogFormModal == null) return;
+        await _workLogFormModal.CloseModal();
 
         StateHasChanged();
     }
