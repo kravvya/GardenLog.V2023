@@ -25,10 +25,10 @@ internal class AdminPlantHarvestProcessor
 
         ILogger<AdminPlantHarvestProcessor> logger = loggerFactory.CreateLogger<AdminPlantHarvestProcessor>();
 
-		try
-		{
+        try
+        {
             logger.LogInformation("Going to get all plants");
-            var plants =  plantRepository.GetAllPlants().GetAwaiter().GetResult();
+            var plants = plantRepository.GetAllPlants().GetAwaiter().GetResult();
             logger.LogInformation($"Found {plants.Count} plants");
 
             logger.LogInformation("Going to get all harvests");
@@ -37,28 +37,83 @@ internal class AdminPlantHarvestProcessor
 
 
             PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("SpacingInInches");
-         
+
 
             foreach (var harvest in harvests)
             {
-                foreach(var plant in harvest.Plants)
+                foreach (var plant in harvest.Plants)
                 {
-                    var grow = plants.FirstOrDefault(p => p.Id== plant.PlantId)?.GrowInstructions?.FirstOrDefault(g => g.Id == plant.PlantGrowthInstructionId);
+                    var grow = plants.FirstOrDefault(p => p.Id == plant.PlantId)?.GrowInstructions?.FirstOrDefault(g => g.Id == plant.PlantGrowthInstructionId);
                     if (grow != null)
                     {
-                        propertyInfo.SetValue(plant, grow.SpacingInInches, null); 
+                        propertyInfo.SetValue(plant, grow.SpacingInInches, null);
                         logger.LogInformation($"Set value of {plant.PlantName} to {plant.SpacingInInches}");
                     }
                 }
                 harvestRepository.Update(harvest);
             }
 
-            var response =  unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
+            var response = unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
 
             return response;
         }
-		catch (Exception ex)
-		{
+        catch (Exception ex)
+        {
+            logger.LogCritical($"Exception processing - {ex.Message}", ex);
+            throw;
+        }
+    }
+
+    internal int UpdateAllPlantHarvestWithPlantsPerFoot(IConfiguration config, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
+    {
+        IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
+
+        IUnitOfWork unitOfWork = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
+
+        AdminPlantRepository plantRepository = new AdminPlantRepository(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
+        AdminHarvestRepository harvestRepository = new AdminHarvestRepository(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
+
+        ILogger<AdminPlantHarvestProcessor> logger = loggerFactory.CreateLogger<AdminPlantHarvestProcessor>();
+
+        try
+        {
+            logger.LogInformation("Going to get all plants");
+            var plants = plantRepository.GetAllPlants().GetAwaiter().GetResult();
+            logger.LogInformation($"Found {plants.Count} plants");
+
+            logger.LogInformation("Going to get all harvests");
+            var harvests = harvestRepository.GetAllHarvests().GetAwaiter().GetResult();
+            logger.LogInformation($"Found {harvests.Count} harvests");
+
+
+            PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("PlantsPerFoot");
+            PropertyInfo propertyInfoForGardenLayout = typeof(GardenBedPlantHarvestCycle).GetProperty("PlantsPerFoot");
+
+            foreach (var harvest in harvests)
+            {
+                foreach (var plant in harvest.Plants)
+                {
+                    var grow = plants.FirstOrDefault(p => p.Id == plant.PlantId)?.GrowInstructions?.FirstOrDefault(g => g.Id == plant.PlantGrowthInstructionId);
+                    if (grow != null && grow.PlantsPerFoot.HasValue)
+                    {
+                        propertyInfo.SetValue(plant, grow.PlantsPerFoot, null);
+                        foreach (var plantGarden in plant.GardenBedLayout)
+                        {
+                            propertyInfoForGardenLayout.SetValue(plantGarden, grow.PlantsPerFoot, null);
+                            logger.LogInformation($"Set value of garden layout {plant.PlantName} to {plant.PlantsPerFoot}");
+                        }
+                        logger.LogInformation($"Set value of {plant.PlantName} to {plant.PlantsPerFoot}");
+                    }
+                }
+                harvestRepository.Update(harvest);
+            }
+
+            var response = unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
+
+            return response;
+        }
+        catch (Exception ex)
+        {
             logger.LogCritical($"Exception processing - {ex.Message}", ex);
             throw;
         }

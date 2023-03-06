@@ -36,6 +36,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     public string Notes { get; private set; }
     public int? DesiredNumberOfPlants { get; private set; }
     public int? SpacingInInches { get; private set; }
+    public double? PlantsPerFoot { get; private set; }
 
     private readonly List<PlantSchedule> _plantCalendar = new();
     public IReadOnlyCollection<PlantSchedule> PlantCalendar => _plantCalendar.AsReadOnly();
@@ -55,7 +56,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         , DateTime? germinationDate, decimal? germinationRate
         , int? numberOfTransplants, DateTime? transplantDate
         , DateTime? firstHarvestDate, DateTime? lastHarvestDate, decimal? totalWeightInPounds, int? totalItems
-        , string Notes, int? desiredNumberOfPlants, int? spacingInInches, List<PlantSchedule> plantCalendar, List<GardenBedPlantHarvestCycle> gardenBedLayout)
+        , string Notes, int? desiredNumberOfPlants, int? spacingInInches, double? plantsPerFoot, List<PlantSchedule> plantCalendar, List<GardenBedPlantHarvestCycle> gardenBedLayout)
     {
         this.PlantId = plantId;
         this.PlantName = plantName;
@@ -78,9 +79,10 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.TotalItems = totalItems;
         this.Notes = Notes;
         this.DesiredNumberOfPlants = desiredNumberOfPlants;
-        this.SpacingInInches= spacingInInches == 0? null: spacingInInches;
+        this.SpacingInInches = spacingInInches == 0 ? null : spacingInInches;
+        this.PlantsPerFoot = plantsPerFoot == 0 ? null : plantsPerFoot;
         this._plantCalendar = plantCalendar;
-        this._gardenBedLayout= gardenBedLayout;
+        this._gardenBedLayout = gardenBedLayout;
     }
 
 
@@ -109,7 +111,8 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             TotalItems = plant.TotalItems,
             Notes = plant.Notes,
             DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
-            SpacingInInches= plant.SpacingInInches,
+            SpacingInInches = plant.SpacingInInches,
+            PlantsPerFoot = plant.PlantsPerFoot,
             PlantingMethod = plant.PlantingMethod,
         };
 
@@ -135,6 +138,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this.Set<string>(() => this.Notes, command.Notes);
         this.Set<int?>(() => this.DesiredNumberOfPlants, command.DesiredNumberOfPlants);
         this.Set<int?>(() => this.SpacingInInches, command.SpacingInInches);
+        this.Set<double?>(() => this.PlantsPerFoot, command.PlantsPerFoot);
         foreach (var evt in DomainEvents)
         {
             addHarvestEvent(((HarvestChildEvent)evt).Trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id));
@@ -148,16 +152,16 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         switch (attributeName)
         {
             case "SeedingDate":
-                if(this.SeedingDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleSeeded, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                if (this.SeedingDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleSeeded, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             case "GerminationDate":
-                if(this.GerminationDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleGerminated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                if (this.GerminationDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleGerminated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             case "TransplantDate":
                 if (this.TransplantDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleTransplanted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             case "FirstHarvestDate":
-                if(FirstHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleHarvested, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
+                if (FirstHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleHarvested, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             case "LastHarvestDate":
                 if (LastHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleCompleted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
@@ -218,6 +222,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         this._gardenBedLayout.RemoveAll(s => s.Id == pGardenBedPlantHarvestCycleId);
     }
 
- 
+
     #endregion
 }
