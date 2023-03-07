@@ -5,10 +5,10 @@ on:
     branches: 
       - main
     paths:
-      - "GardenLogWeb/GardenLogWeb/**"
+      - "GardenLogWeb/**"
   pull_request:
     paths:
-      - 'GardenLogWeb/GardenLogWeb/**'
+      - 'GardenLogWeb/**'
   workflow_dispatch:
 jobs:
   setup:
@@ -34,7 +34,7 @@ jobs:
         dotnet-version: "7.0.x"
     
     - name: Publish .NET Core Project
-      run: dotnet publish GardenLogWeb/GardenLogWeb/GardenLogWeb.csproj -c Release -o release
+      run: dotnet publish GardenLogWeb/GardenLogWeb.csproj -c Release -o release
      
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
