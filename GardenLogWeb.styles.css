@@ -277,108 +277,14 @@ dd {
     margin: 5px;
 }
 /* /Pages/Index.razor.rz.scp.css */
-
-
-
-#garden-layout-container[b-8fnu6zxx74] {
-    float: left;
-    overflow: visible;
-    width: 545px
+.variety-facts-list .variety-facts-term[b-8fnu6zxx74] {
+    color: #709a41;
+    text-transform: uppercase;
 }
 
-@media (min-width: 992px) {
-    #garden-layout-container[b-8fnu6zxx74] {
-        width: 735px
-    }
+.variety-facts-list .variety-facts-item[b-8fnu6zxx74] {
+    border-bottom: 2px solid #c5c5c5;
 }
-
-
-#garden-plan[b-8fnu6zxx74] {
-    display: flex
-}
-
-.vertical-ruler[b-8fnu6zxx74] {
-    margin-right: -11px;
-    margin-top: 21px
-}
-
-.label-no-0[b-8fnu6zxx74] {
-    font-size: 11px
-}
-
-.hasSVG svg:nth-child(1)[b-8fnu6zxx74] {
-    padding-bottom: 5px
-}
-
-/*.hasSVG svg:nth-child(2) {
-    margin-top: -5px
-}
-*/
-
-svg .selectable[b-8fnu6zxx74] {
-    pointer-events: inherit
-}
-
-svg .shade.visible[b-8fnu6zxx74],
-svg .shape.visible[b-8fnu6zxx74],
-svg .area.visible[b-8fnu6zxx74],
-svg .plant.visible[b-8fnu6zxx74] {
-    display: inherit
-}
-
-svg .bbox-outline[b-8fnu6zxx74],
-svg .lasso[b-8fnu6zxx74] {
-    stroke: rgba(66, 166, 211, 0.75);
-    stroke-dasharray: 9, 5;
-    stroke-width: 3px;
-    fill: none
-}
-
-svg .bbox-handle[b-8fnu6zxx74] {
-    fill: rgba(66, 166, 211, 0.75)
-}
-
-#zoom-navigator[b-8fnu6zxx74] {
-/*    display: none;*/
-    float: left
-}
-#mapnav[b-8fnu6zxx74] {
-    float: left;
-    background: url(images/mapcontrols.png) no-repeat left top;
-    height: 58px;
-    width: 58px;
-    position: relative
-}
-    #mapnav a[b-8fnu6zxx74] {
-        position: absolute;
-        background-repeat: no-repeat;
-        height: 16px;
-        width: 20px
-    }
-
-        #mapnav a:hover[b-8fnu6zxx74] {
-            text-decoration: none
-        }
-
-    #mapnav #nav-up[b-8fnu6zxx74] {
-        top: 4px;
-        left: 20px
-    }
-
-    #mapnav #nav-down[b-8fnu6zxx74] {
-        bottom: 4px;
-        left: 20px
-    }
-
-    #mapnav #nav-left[b-8fnu6zxx74] {
-        left: 4px;
-        top: 20px
-    }
-
-    #mapnav #nav-right[b-8fnu6zxx74] {
-        right: 4px;
-        top: 20px
-    }
 /* /Pages/Plants/Components/PlantGrowInstructionAccordianItemView.razor.rz.scp.css */
 .grow-facts-list .grow-facts-term[b-4wz1582hvm] {
     color: #709a41;
