@@ -120,23 +120,27 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
 
             await _taskCommandHandler.CreatePlantTask(command);
 
-            command = new CreatePlantTaskCommand()
+            //only create Harden Off task if plats were grown from seeds inside
+            if (plant.PlantingMethod == PlantingMethodEnum.SeedIndoors)
             {
-                CreatedDateTime = DateTime.UtcNow,
-                HarvestCycleId = harvestEvent.HarvestId,
-                IsSystemGenerated = true,
-                PlantHarvestCycleId = plant.Id,
-                PlantName = string.IsNullOrEmpty(plant.PlantVarietyName) ? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}",
-                PlantScheduleId = schedule.Id,
-                TargetDateStart = schedule.StartDate.AddDays(-1 * GlobalConstants.DEFAULT_HardenOffPeriodInDays),
-                TargetDateEnd = schedule.StartDate,
-                Type = WorkLogReasonEnum.Harden,
-                Title = "Harded Off",
-                Notes = "Bringing the seedlings outdoors for several periods of time. Start with just a couple of hours and gradually increase every day"
-            };
 
-            await _taskCommandHandler.CreatePlantTask(command);
+                command = new CreatePlantTaskCommand()
+                {
+                    CreatedDateTime = DateTime.UtcNow,
+                    HarvestCycleId = harvestEvent.HarvestId,
+                    IsSystemGenerated = true,
+                    PlantHarvestCycleId = plant.Id,
+                    PlantName = string.IsNullOrEmpty(plant.PlantVarietyName) ? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}",
+                    PlantScheduleId = schedule.Id,
+                    TargetDateStart = schedule.StartDate.AddDays(-1 * GlobalConstants.DEFAULT_HardenOffPeriodInDays),
+                    TargetDateEnd = schedule.StartDate,
+                    Type = WorkLogReasonEnum.Harden,
+                    Title = "Harded Off",
+                    Notes = "Bringing the seedlings outdoors for several periods of time. Start with just a couple of hours and gradually increase every day"
+                };
 
+                await _taskCommandHandler.CreatePlantTask(command);
+            }
         }
 
     }

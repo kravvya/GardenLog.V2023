@@ -1,9 +1,0 @@
-﻿https://medium.com/codex/blazor-webassembly-svg-drag-and-drop-e680769ac682 - Draggable
-
-Inspiration:
-https://www.smartgardener.com/gardens/510999-maggies-garden/new_plan?empty=true
-
-
-Html ideas:
-https://colorlib.com/wp/css3-table-templates/ - tables
-https://www.w3docs.com/learn-html/html-form-templates.html - forms

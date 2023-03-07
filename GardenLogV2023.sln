@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlantCatalog.Contract", "Pl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GardenLogWeb", "GardenLogWeb", "{95DF7381-9900-4209-9115-6F40FAA6B9DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GardenLogWeb", "GardenLogWeb\GardenLogWeb\GardenLogWeb.csproj", "{906AC2EA-7A73-46D2-B402-1244A651BB14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GardenLogWeb", "GardenLogWeb\GardenLogWeb.csproj", "{906AC2EA-7A73-46D2-B402-1244A651BB14}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{ED1FCD09-2B7B-46E8-82B0-0CECA7827DDF}"
 EndProject

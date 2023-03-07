@@ -1,0 +1,18 @@
+<div class="chart-container" style="position: relative; height:200; width:200">
+    <Chart Id="growMethodsPie" Type="Chart.ChartType.Pie" Labels="@_labels" Data="@_data" BackgroundColor="@_colors"   />
+</div>
+
+@code{
+    private int[] _data;
+    private string[] _labels;
+    private string[] _colors;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _data = new[] { 10, 20, 30 };
+        _labels = new[] { "Start Seed Indoors", "Direct Seed Outside", "Transplant" };
+        _colors = new[] { "#e35d6a", "#479f76", "#fd9843"};
+     
+    }
+}

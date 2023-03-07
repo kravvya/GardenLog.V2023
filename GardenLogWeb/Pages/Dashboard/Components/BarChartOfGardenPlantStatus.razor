@@ -1,0 +1,16 @@
+<div class="chart-container" style="position: relative; height:300px;">
+    <Chart Id="plantStatusBar" Type="Chart.ChartType.HorizontalBar" Labels="@_labels" Data="@_data" BackgroundColor="@_colors"   />
+</div>
+
+@code{
+    private int[] _data;
+    private string[] _labels;
+    private string[] _colors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _data = new[] { 95, 20, 30, 50, 12, 35 };
+        _labels = new[] { "Selected", "Seeded Inside", "Seeded Outside", "Transplanted", "Harvesting", "Harvest Completed" };
+        _colors = new[] { "#ced4da", "#e35d6a", "#479f76", "#fd9843", "#de5c9d", "#495057" };
+    }
+}
