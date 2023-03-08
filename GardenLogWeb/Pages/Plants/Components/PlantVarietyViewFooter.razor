@@ -41,7 +41,11 @@
 
     protected async override Task OnParametersSetAsync()
     {
-        _activeHarvestCycle = await _harvestService.GetActiveHarvestCycleId();
+        var harvest = await _harvestService.GetActiveHarvestCycle();
+        if (harvest != null)
+        {
+            _activeHarvestCycle = harvest.HarvestCycleId;
+        }
     }
 
     private void AddToGardenPlan()

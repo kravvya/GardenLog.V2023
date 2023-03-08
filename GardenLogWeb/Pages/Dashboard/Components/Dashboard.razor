@@ -76,12 +76,12 @@
                             <dt class="variety-facts-term">Selected Varieties:</dt>
                             <dd class="variety-facts-item">@_numberOfPlantVarieties</dd>
                             <dt class="variety-facts-term">Start Date:</dt>
-                            <dd class="variety-facts-item">@harvest?.StartDate.ToShortDateString()</dd>
+                            <dd class="variety-facts-item">@_harvest?.StartDate.ToShortDateString()</dd>
                             <dt class="variety-facts-term">End Date:</dt>
                             <dd class="variety-facts-item">
-                                @if (harvest != null && harvest.EndDate.HasValue)
+                                @if (_harvest != null && _harvest.EndDate.HasValue)
                                 {
-                                    @harvest?.EndDate.Value.ToShortDateString()
+                                    @_harvest?.EndDate.Value.ToShortDateString()
                                 }
                             </dd>
                         </dl>
@@ -119,7 +119,10 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <BarChartOfGardenPlantStatus></BarChartOfGardenPlantStatus>
+                    @if (_harvestPlants != null)
+                    {
+                        <BarChartOfGardenPlantStatus HarvestPlants="@_harvestPlants"></BarChartOfGardenPlantStatus>
+                    }
                 </div>
             </div>
         </div>
@@ -170,7 +173,8 @@
 
 @code {
     private DateTime _now = DateTime.Now;
-    private HarvestCycleModel? harvest;
+    private HarvestCycleModel? _harvest;
+    private List<PlantHarvestCycleModel>? _harvestPlants;
     private long _numberOfCompletedTasks;
     private int _numberOfActiveTasks;
     private int _numberOfDueSoonTasks;
@@ -185,29 +189,29 @@
 
     protected async override Task OnInitializedAsync()
     {
-        harvest = await _harvestService.GetActiveHarvestCycle();
-        if (harvest != null)
+        _harvest = await _harvestService.GetActiveHarvestCycle();
+        if (_harvest != null)
         {
-            var completedTask = _taskService.GetNumberOfCompletedTasks(harvest.HarvestCycleId);
+            var completedTask = _taskService.GetNumberOfCompletedTasks(_harvest.HarvestCycleId);
             var tasksTask = _taskService.GetActivePlantTasks(false);
-            var harvestPlantTask = _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false);
+            var harvestPlantTask = _harvestService.GetPlantHarvests(_harvest.HarvestCycleId, false);
 
             Task.WaitAll(completedTask, tasksTask, harvestPlantTask);
 
             _numberOfCompletedTasks = completedTask.Result;
             var tasks = tasksTask.Result;
-            var harvestPlants = harvestPlantTask.Result;
+            _harvestPlants = harvestPlantTask.Result;
 
             _numberOfActiveTasks = tasks.Count;
             _numberOfDueSoonTasks = tasks.Where(t => t.TargetDateStart < _now.AddDays(2)).Count();
             _numberOfPastDueTasks = tasks.Where(t => t.TargetDateStart < _now).Count();
-            _numberOfPlants = harvestPlants.Select(p => p.PlantId).Distinct().Count();
-            _numberOfPlantVarieties = harvestPlants.Select(p => p.PlantVarietyId).Distinct().Count();
+            _numberOfPlants = _harvestPlants.Select(p => p.PlantId).Distinct().Count();
+            _numberOfPlantVarieties = _harvestPlants.Select(p => p.PlantVarietyId).Distinct().Count();
 
-            if (!string.IsNullOrWhiteSpace(harvest.GardenId))
+            if (!string.IsNullOrWhiteSpace(_harvest.GardenId))
             {
-                var gardenTask = _gardenService.GetGarden(harvest.GardenId, true);
-                var gardenBedsTask = _gardenService.GetGardenBeds(harvest.GardenId, true);
+                var gardenTask = _gardenService.GetGarden(_harvest.GardenId, true);
+                var gardenBedsTask = _gardenService.GetGardenBeds(_harvest.GardenId, true);
                 Task.WaitAll(gardenTask, gardenBedsTask);
 
                 var garden = gardenTask.Result;
@@ -218,15 +222,15 @@
                     _totalGrowArea = (gardenBeds.Sum(g => g.Length * g.Width) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
 
 
-                    var usedArea = harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length * 12 * p.Width * 12);
+                    var usedArea = _harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length * 12 * p.Width * 12);
                     var totalArea = gardenBeds.Sum(g => g.Length * g.Width);
                     _freeGrowArea = ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
                     _freeGrowArea = ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
                     _numberOfGardenBeds = gardenBeds.Count();
 
-                    if (harvestPlants != null)
+                    if (_harvestPlants != null)
                     {
-                        var numberOfBedsInUse = harvestPlants.SelectMany(h => h.GardenBedLayout)
+                        var numberOfBedsInUse = _harvestPlants.SelectMany(h => h.GardenBedLayout)
                         .Select(p => p.GardenBedId)
                         .Distinct()
                         .Count();
