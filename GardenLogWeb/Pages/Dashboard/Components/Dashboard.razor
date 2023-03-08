@@ -236,7 +236,7 @@
             _images = imageTask.Result;
 
             _numberOfActiveTasks = tasks.Count;
-            _numberOfDueSoonTasks = tasks.Where(t => t.TargetDateStart < _now.AddDays(2)).Count();
+            _numberOfDueSoonTasks = tasks.Where(t => t.TargetDateStart < _now.AddDays(2) && t.TargetDateStart > _now).Count();
             _numberOfPastDueTasks = tasks.Where(t => t.TargetDateStart < _now).Count();
             _numberOfPlants = _harvestPlants.Select(p => p.PlantId).Distinct().Count();
             _numberOfPlantVarieties = _harvestPlants.Select(p => p.PlantVarietyId).Distinct().Count();
