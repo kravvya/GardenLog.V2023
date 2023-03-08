@@ -8,6 +8,7 @@ public interface IPlantTaskQueryHandler
     Task<IReadOnlyCollection<PlantTaskViewModel>> GetPlantTasks();
     Task<IReadOnlyCollection<PlantTaskViewModel>> GetActivePlantTasks();
     Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasks(PlantTaskSearch search);
+    Task<long> GetCompletedTaskCount(string harvestCycleId);
 }
 
 
@@ -44,5 +45,15 @@ public class PlantTaskQueryHandler : IPlantTaskQueryHandler
         _logger.LogInformation($"Received request to search for tasks {search}");
         string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
         return await _taskRepository.SearchPlantTasksForUser(search, userProfileId);
+    }
+
+    public async Task<long> GetCompletedTaskCount(string harvestCycleId)
+    {
+        _logger.LogInformation("Received request to get count of completed tasks");
+
+        if (_httpContextAccessor.HttpContext == null || _httpContextAccessor.HttpContext?.User == null) return 0;
+        string userProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+
+        return await _taskRepository.GetNumberOfCompletedTasksForUser(userProfileId, harvestCycleId);
     }
 }

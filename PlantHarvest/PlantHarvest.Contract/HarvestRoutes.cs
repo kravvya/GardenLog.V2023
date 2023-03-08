@@ -36,6 +36,7 @@ public static class HarvestRoutes
     public const string CreateTask = PlantTaskBase;
     public const string UpdateTask = PlantTaskBase + "/{id}";
     public const string CompleteTask  = PlantTaskBase + "/{id}/Complete";
+    public const string GetCompleteTaskCount = PlantTaskBase + "/Harvest/{harvestId}/Complete/Count";
 
     public const string SearchTasks = PlantTaskBase + "/search";
     public const string GetTasks = PlantTaskBase;

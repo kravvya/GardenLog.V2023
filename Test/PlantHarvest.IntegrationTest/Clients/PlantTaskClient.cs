@@ -2,6 +2,7 @@
 using PlantHarvest.Contract;
 using PlantHarvest.Contract.Commands;
 using PlantHarvest.Contract.ViewModels;
+using System.Threading.Tasks;
 
 namespace PlantHarvest.IntegrationTest.Clients
 {
@@ -58,6 +59,12 @@ namespace PlantHarvest.IntegrationTest.Clients
         {
             var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetTasks}/";
             return await this._httpClient.GetAsync(url);
+        }
+
+        public async Task<HttpResponseMessage> GetCompleteTaskCount(string harvestCycleId)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetCompleteTaskCount}/";
+            return await this._httpClient.GetAsync(url.Replace("{harvetId}", harvestCycleId));
         }
 
         private static CreatePlantTaskCommand PopulateCreatePlantTaskCommand(string harvestCycleId, string plantHarvestCycelId)

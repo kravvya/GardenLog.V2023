@@ -7,6 +7,7 @@ public interface IPlantTaskService
     Task<ApiResponse> CompletePlantTask(PlantTaskModel task);
     Task<ApiObjectResponse<string>> CreatePlantTask(PlantTaskModel task);
     Task<List<PlantTaskModel>> GetActivePlantTasks(bool forceRefresh);
+    Task<long> GetNumberOfCompletedTasks(string harvestCycleId);
     Task<List<PlantTaskModel>> GetPlantTasks(bool forceRefresh);
     Task<ApiResponse> UpdatePlantTask(PlantTaskModel task);
 }
@@ -148,6 +149,21 @@ public class PlantTaskService : IPlantTaskService
         }
 
         return response;
+    }
+
+    public async Task<long> GetNumberOfCompletedTasks(string harvestCycleId)
+    {
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
+
+        var response = await httpClient.ApiGetAsync<long>(HarvestRoutes.GetCompleteTaskCount.Replace("{harvestId}", harvestCycleId));
+
+        if (!response.IsSuccess)
+        {
+            _toastService.ShowToast("Unable to get Completed Tasks", GardenLogToastLevel.Error);
+            return 0;
+        }
+
+        return response.Response;
     }
     #endregion
 

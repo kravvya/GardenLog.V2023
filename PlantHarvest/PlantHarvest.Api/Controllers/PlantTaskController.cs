@@ -111,5 +111,15 @@ public class PlantTaskController : Controller
 
         return BadRequest();
     }
+
+    [HttpGet()]
+    [ActionName("GetCompleteTaskCount")]
+    [Route(HarvestRoutes.GetCompleteTaskCount)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantTaskViewModel>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<IReadOnlyCollection<PlantTaskViewModel>>> GetCompleteTaskCount(string harvestId)
+    {
+        return Ok(await _queryHandler.GetCompletedTaskCount(harvestId));
+    }
     #endregion
 }

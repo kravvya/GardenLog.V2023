@@ -1,0 +1,245 @@
+﻿@inject IHarvestCycleService _harvestService;
+@inject IPlantTaskService _taskService;
+@inject IGardenService _gardenService;
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Garden Plan Progress</h1>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title">Completed Tasks</div>
+                    <button type="button" class="btn btn-primary " title="View Details">
+                        <span class="bi bi-info-lg text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body text-center fs-1">@_numberOfCompletedTasks</div>
+
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title"># of Scheduled Tasks</div>
+                    <button type="button" class="btn btn-primary " title="View Details">
+                        <span class="bi bi-info-lg text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body text-center fs-1">@_numberOfActiveTasks</div>
+
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title"># of Due Soon Tasks</div>
+                    <button type="button" class="btn btn-secondary " title="View Details">
+                        <span class="bi bi-info-lg text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body text-center fs-1">@_numberOfDueSoonTasks</div>
+
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title"># of Past Due Tasks</div>
+                    <button type="button" class="btn btn-danger " title="View Details">
+                        <span class="bi bi-info-lg text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body text-center fs-1">@_numberOfPastDueTasks</div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4 border border-1" style="border-color: #A0C136 !important;">
+                <div class="card-header d-flex justify-content-between text-white  bg-info">
+                    <div>
+                        <i class="bi bi-clipboard me-1"></i>
+                        Garden Plan Summary
+                    </div>
+                    <button type="button" class="btn btn-info " title="View Details">
+                        <span class="bi bi-info-lg  text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body d-flex justify-content-between">
+                    <div class="variety-facts-list">
+                        <h4>Garden Plan Name</h4>
+                        <dl>
+                            <dt class="variety-facts-term">Selected Plants:</dt>
+                            <dd class="variety-facts-item">@_numberOfPlants</dd>
+                            <dt class="variety-facts-term">Selected Varieties:</dt>
+                            <dd class="variety-facts-item">@_numberOfPlantVarieties</dd>
+                            <dt class="variety-facts-term">Start Date:</dt>
+                            <dd class="variety-facts-item">@harvest?.StartDate.ToShortDateString()</dd>
+                            <dt class="variety-facts-term">End Date:</dt>
+                            <dd class="variety-facts-item">
+                                @if (harvest != null && harvest.EndDate.HasValue)
+                                {
+                                    @harvest?.EndDate.Value.ToShortDateString()
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <PieChartOfGrowMethods></PieChartOfGrowMethods>
+                    </div>
+                    <div class="vr"></div>
+                    <div class="variety-facts-list">
+                        <h4>Garden Name</h4>
+                        <dl>
+                            <dt class="variety-facts-term">Grow Area:</dt>
+                            <dd class="variety-facts-item">@_totalGrowArea</dd>
+                            <dt class="variety-facts-term">Free Grow Area:</dt>
+                            <dd class="variety-facts-item">@_freeGrowArea</dd>
+                            <dt class="variety-facts-term">Number of beds:</dt>
+                            <dd class="variety-facts-item">@_numberOfGardenBeds</dd>
+                            <dt class="variety-facts-term">Number of free beds:</dt>
+                            <dd class="variety-facts-item">@_numberOfFreeBeds</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card mb-4 border border-1" style="border-color: #A0C136 !important;">
+                <div class="card-header d-flex justify-content-between text-white  bg-info">
+                    <div>
+                        <i class="bi bi-calendar-event me-1"></i>
+                        Plants
+                    </div>
+                    <button type="button" class="btn btn-info " title="Upload new photo">
+                        <span class="bi bi bi-info-lg text-white "></span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <BarChartOfGardenPlantStatus></BarChartOfGardenPlantStatus>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 " data-bs-theme="dark">
+            <div id="carouselExampleIndicators" class="carousel carousel-dark  slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="./images/noimage.png" class="d-block w-100" alt="Image 1">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>First slide label</h5>
+                            <p>Some representative placeholder content for the first slide.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./images/noimage.png" class="d-block w-100" alt="Image 2">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Second slide label</h5>
+                            <p>Some representative placeholder content for the first slide.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./images/noimage.png" class="d-block w-100" alt="Image 3">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Third slide label</h5>
+                            <p>Some representative placeholder content for the first slide.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DateTime _now = DateTime.Now;
+    private HarvestCycleModel? harvest;
+    private long _numberOfCompletedTasks;
+    private int _numberOfActiveTasks;
+    private int _numberOfDueSoonTasks;
+    private int _numberOfPastDueTasks;
+    private int _numberOfPlants;
+    private int _numberOfPlantVarieties;
+    private string _totalGrowArea = "0";
+    private string _freeGrowArea = "0";
+    private int _numberOfGardenBeds;
+    private int _numberOfFreeBeds;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        harvest = await _harvestService.GetActiveHarvestCycle();
+        if (harvest != null)
+        {
+            var completedTask = _taskService.GetNumberOfCompletedTasks(harvest.HarvestCycleId);
+            var tasksTask = _taskService.GetActivePlantTasks(false);
+            var harvestPlantTask = _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false);
+
+            Task.WaitAll(completedTask, tasksTask, harvestPlantTask);
+
+            _numberOfCompletedTasks = completedTask.Result;
+            var tasks = tasksTask.Result;
+            var harvestPlants = harvestPlantTask.Result;
+
+            _numberOfActiveTasks = tasks.Count;
+            _numberOfDueSoonTasks = tasks.Where(t => t.TargetDateStart < _now.AddDays(2)).Count();
+            _numberOfPastDueTasks = tasks.Where(t => t.TargetDateStart < _now).Count();
+            _numberOfPlants = harvestPlants.Select(p => p.PlantId).Distinct().Count();
+            _numberOfPlantVarieties = harvestPlants.Select(p => p.PlantVarietyId).Distinct().Count();
+
+            if (!string.IsNullOrWhiteSpace(harvest.GardenId))
+            {
+                var gardenTask = _gardenService.GetGarden(harvest.GardenId, true);
+                var gardenBedsTask = _gardenService.GetGardenBeds(harvest.GardenId, true);
+                Task.WaitAll(gardenTask, gardenBedsTask);
+
+                var garden = gardenTask.Result;
+                var gardenBeds = gardenBedsTask.Result;
+
+                if (gardenBeds != null)
+                {
+                    _totalGrowArea = (gardenBeds.Sum(g => g.Length * g.Width) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+
+
+                    var usedArea = harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length * 12 * p.Width * 12);
+                    var totalArea = gardenBeds.Sum(g => g.Length * g.Width);
+                    _freeGrowArea = ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
+                    _freeGrowArea = ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
+                    _numberOfGardenBeds = gardenBeds.Count();
+
+                    if (harvestPlants != null)
+                    {
+                        var numberOfBedsInUse = harvestPlants.SelectMany(h => h.GardenBedLayout)
+                        .Select(p => p.GardenBedId)
+                        .Distinct()
+                        .Count();
+
+                        _numberOfFreeBeds = _numberOfGardenBeds - numberOfBedsInUse;
+                    }
+
+                }
+
+            }
+
+
+        }
+    }
+
+}

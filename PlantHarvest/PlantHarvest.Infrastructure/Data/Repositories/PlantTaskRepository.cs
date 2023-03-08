@@ -45,6 +45,20 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
         return data;
     }
 
+    public async Task<long> GetNumberOfCompletedTasksForUser(string userProfileId, string harvestCycelId)
+    {
+        List<FilterDefinition<PlantTask>> filters = new();
+        filters.Add(Builders<PlantTask>.Filter.Ne("CompletedDateTime", BsonNull.Value));
+        filters.Add(Builders<PlantTask>.Filter.Eq("HarvestCycleId", harvestCycelId));
+        filters.Add(Builders<PlantTask>.Filter.Eq("UserProfileId", userProfileId));
+
+        var documentCount = await Collection
+       .Find<PlantTask>(Builders<PlantTask>.Filter.And(filters))
+       .CountDocumentsAsync();
+
+        return documentCount;
+    }
+
     public async Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasksForUser(PlantTaskSearch search, string userProfileId)
     {
         List<FilterDefinition<PlantTask>> filters = new();

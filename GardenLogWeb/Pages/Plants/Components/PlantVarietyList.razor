@@ -87,7 +87,7 @@
         PlantVarietyInView = null;
         PlantVarieties = await _plantService.GetPlantVarieties(Plant.PlantId, true);
 
-        _activeHarvestCycle = await _harvestService.GetActiveHarvestCycleId();
+        _activeHarvestCycle = (await _harvestService.GetActiveHarvestCycle())?.HarvestCycleId;
 
         StateHasChanged();
     }

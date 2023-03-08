@@ -130,6 +130,22 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
         Assert.True(tasks.Count > 0);
     }
 
+    [Fact]
+    public async Task Get_PlantTask_Completed_Count()
+    {
+        var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
+        
+        var response = await _plantTaskClient.GetCompleteTaskCount(harvestId);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+
+        _output.WriteLine($"Service to get count of compelted tasks {response.StatusCode} code and {returnString} message");
+
+        Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+        Assert.NotEmpty(returnString);
+        Assert.True(long.TryParse(returnString, out var counter));
+
+    }
 
     #endregion
 
