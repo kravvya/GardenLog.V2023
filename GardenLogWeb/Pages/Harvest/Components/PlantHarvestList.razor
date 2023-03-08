@@ -1,6 +1,8 @@
 ﻿@using System.Text;
 @inject IPlantService _plantService;
 @inject IHarvestCycleService _harvestService;
+@inject IGardenService _gardenService;
+
 @inject NavigationManager _navigationManager;
 
 <div>
@@ -93,7 +95,7 @@
                                 <th class="col-xs-1 fw-semibold">Seeding Date</th>
                                 <th class="col-xs-1 fw-semibold">Transplant Date</th>
                                 <th class="col-xs-1 fw-semibold">Qty</th>
-                                <th class="col-xs-3 fw-semibold">Location</th>
+                                <th class="col-xs-3 fw-semibold">Row #</th>
                                 <th class="col-xs-1"><button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button></th>
                             </tr>
                         </thead>
@@ -106,10 +108,10 @@
                                             <span class="fw-semibold">@GetPlantName(plant)</span>
                                         </a>
                                     </td>
-                                    <td class="col-xs-1">@GetDateValue(plant.SeedingDate)</td>
-                                    <td class="col-xs-1">@GetDateValue(plant.TransplantDate)</td>
+                                    <td class="col-xl-1">@GetDateValue(plant.SeedingDate)</td>
+                                    <td class="col-xl-1">@GetDateValue(plant.TransplantDate)</td>
                                     <td class="col-xs-1">@plant.DesiredNumberOfPlants</td>
-                                    <td class="col-xs-4">tbd</td>
+                                    <td class="col-xs-3">@GetPlantGardenBedLocation(plant)</td>
                                     <td class="col-xs-1">
 
                                         <button type="button" class="btn btn-secondary" title="Edit" @onclick="@(() => EditPlantHarvest(plant))">
@@ -144,6 +146,7 @@
 @code {
     private HarvestCycleModel? _harvest;
     private IList<PlantHarvestCycleModel>? _harvestPlants;
+    private IList<GardenBedModel>? _gardenBeds;
 
     private ModalView? _imageFormModal;
     private ImageForm? _imageForm;
@@ -156,7 +159,7 @@
     private PlantView? _plantView;
 
     private List<PlantNameModel> _plants = new();
-    private IList<PlantHarvestCycleModel> _filteredHarvestPLants  = new List<PlantHarvestCycleModel>();
+    private IList<PlantHarvestCycleModel> _filteredHarvestPLants = new List<PlantHarvestCycleModel>();
 
     private bool _collapseNavMenu = true;
     private string _filterCssClass = "d-none d-md-block";
@@ -181,8 +184,8 @@
         List<RelatedEntity> relatedEntities = new();
         relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, harvestPlant.GetPlantName()));
         relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, harvestPlant.PlantId, harvestPlant.PlantName));
-        if(!string.IsNullOrWhiteSpace(harvestPlant.PlantVarietyId)) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, harvestPlant.PlantVarietyId, harvestPlant.PlantVarietyName));
-       
+        if (!string.IsNullOrWhiteSpace(harvestPlant.PlantVarietyId)) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, harvestPlant.PlantVarietyId, harvestPlant.PlantVarietyName));
+
         _imageForm.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, relatedEntities);
         await _imageFormModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
         StateHasChanged();
@@ -217,6 +220,11 @@
 
         _harvestPlants = (await _harvestService.GetPlantHarvests(harvest.HarvestCycleId, false));
         _plants = await _plantService.GetPlantNames(false);
+
+        if (!string.IsNullOrWhiteSpace(harvest.GardenId))
+        {
+            _gardenBeds = await _gardenService.GetGardenBeds(harvest.GardenId, true);
+        }
 
         _plants.ForEach(p => p.NumberOfPlants = _harvestPlants.Where(h => h.PlantId == p.PlantId).Count());
         _filteredHarvestPLants = _harvestPlants;
@@ -329,7 +337,26 @@
         base.StateHasChanged();
     }
 
-     private void ViewPlantHarvestLogs(PlantHarvestCycleViewModel harvest)
+    private string GetPlantGardenBedLocation(PlantHarvestCycleModel harvestPlant)
+    {
+        if (_gardenBeds == null) return string.Empty;
+
+        StringBuilder sb = new();
+        foreach(var bed in harvestPlant.GardenBedLayout)
+        {
+            var location = _gardenBeds.FirstOrDefault(b => b.GardenBedId == bed.GardenBedId);
+            if(location!=null)
+            {
+                if (sb.Length > 0) sb.Append(",");
+
+                sb.AppendLine(location.RowNumber?.ToString());
+            }            
+        }
+
+        return sb.ToString();
+    }
+
+    private void ViewPlantHarvestLogs(PlantHarvestCycleModel harvest)
     {
         _navigationManager.NavigateToGardenPlanWorkLogsForPlant(harvest.HarvestCycleId, harvest.PlantHarvestCycleId);
     }
@@ -338,7 +365,7 @@
     {
         _filter.ModelChanged -= FilterChanged;
     }
-   
+
 }
 
 

@@ -9,15 +9,8 @@
     [Parameter] public List<PlantHarvestCycleModel>? HarvestPlants { get; set; }
 
     private int[]? _data;
-    private string[]? _labels;
-    private string[]? _colors;
-
-    protected override void OnInitialized()
-    {
-        // _data = new[] { 95, 20, 30, 50, 12, 35 };
-        _labels = new[] { "Selected", "Seeded Inside", "Seeded Outside", "Transplanted", "Harvesting", "Harvest Completed" };
-        _colors = new[] { "#ced4da", "#e35d6a", "#479f76", "#fd9843", "#de5c9d", "#495057" };
-    }
+    private string[] _labels = new[] { "Selected", "Seeded Inside", "Seeded Outside", "Transplanted", "Harvesting", "Harvest Completed" };
+    private string[] _colors = new[] { "#ced4da", "#e35d6a", "#479f76", "#fd9843", "#de5c9d", "#495057" };
 
     protected override void OnParametersSet()
     {

@@ -1,18 +1,26 @@
-<div class="chart-container" style="position: relative; height:200; width:200">
-    <Chart Id="growMethodsPie" Type="Chart.ChartType.Pie" Labels="@_labels" Data="@_data" BackgroundColor="@_colors"   />
+<div class="chart-container" style="position: relative; height:300px;">
+    @if (_data != null)
+    {
+        <Chart Id="growMethodsPie" Type="Chart.ChartType.Pie" Labels="@_labels" Data="@_data" BackgroundColor="@_colors" />
+    }
 </div>
 
-@code{
-    private int[] _data;
-    private string[] _labels;
-    private string[] _colors;
+@code {
+    [Parameter] public List<PlantHarvestCycleModel>? HarvestPlants { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private int[]? _data;
+    private string[] _labels = new[] { "Start Seed Indoors", "Direct Seed Outside", "Transplant" };
+    private string[] _colors = new[] { "#e35d6a", "#479f76", "#fd9843" };
+
+    protected override void OnParametersSet()
     {
+        if (HarvestPlants == null) return;
 
-        _data = new[] { 10, 20, 30 };
-        _labels = new[] { "Start Seed Indoors", "Direct Seed Outside", "Transplant" };
-        _colors = new[] { "#e35d6a", "#479f76", "#fd9843"};
-     
+        int seededInside = HarvestPlants.Where(p => p.PlantingMethod == PlantingMethodEnum.SeedIndoors).Count();
+        int seededOutside = HarvestPlants.Where(p => p.PlantingMethod == PlantingMethodEnum.DirectSeed).Count();
+        int tranplanting = HarvestPlants.Where(p => p.PlantingMethod == PlantingMethodEnum.Transplanting).Count();
+
+        _data = new[] { seededInside, seededOutside, tranplanting };
+        StateHasChanged();
     }
 }
