@@ -23,7 +23,7 @@ namespace GardenLogWeb.Services
 
         public async Task<ApiResponse> SendEmail(SendEmailCommand email)
         {
-            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
+            var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_NO_AUTH);
 
             var response = await httpClient.ApiPostAsync(UserProfileRoutes.SendEmail, email);
 

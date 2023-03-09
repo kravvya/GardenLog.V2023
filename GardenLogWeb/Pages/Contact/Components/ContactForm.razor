@@ -4,7 +4,7 @@
 @inject NavigationManager _navigationManager;
 
 <article id="contactForm">
-    <div class="container">
+    <div class="container-md">
         @if (_isInitialized && _email != null)
         {
             <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmitAsync" OnInvalidSubmit="@HandleInValidSubmit">

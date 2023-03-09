@@ -50,7 +50,7 @@ public class UserProfileService : IUserProfileService
 
     public async Task<ApiObjectResponse<string>> CreateUserProfile(UserProfileModel user)
     {
-        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_CREATEONLY_API);
+        var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_NO_AUTH);
 
         var response = await httpClient.ApiPostAsync(UserProfileRoutes.CreateUserProfile, user);
 

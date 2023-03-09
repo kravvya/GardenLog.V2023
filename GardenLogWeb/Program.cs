@@ -88,7 +88,7 @@ builder.Services.AddHttpClient(GlobalConstants.PLANTHARVEST_API, client => clien
 builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_API, client => client.BaseAddress = new Uri(userServiceUrl))
                                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
                                 .ConfigureHandler(authorizedUrls: new[] { userServiceUrl }));
-builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_CREATEONLY_API, client => client.BaseAddress = new Uri(userServiceUrl));
+builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_NO_AUTH, client => client.BaseAddress = new Uri(userServiceUrl));
 
 builder.Services.AddValidatorsFromAssemblyContaining<PlantViewModelValidator>();
 

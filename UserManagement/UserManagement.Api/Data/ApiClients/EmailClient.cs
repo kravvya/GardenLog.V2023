@@ -39,7 +39,7 @@ namespace UserManagement.Api.Data.ApiClients
                     newMail.IsBodyHtml = true;
 
                     StringBuilder sb = new();
-                    sb.AppendLine($"From: {request.Name} <br/>");
+                    sb.AppendLine($" from: {request.Name} <br/>");
                     sb.AppendLine($" at: {request.EmailAddress} <br/>");
                     sb.AppendLine($" sent message: {request.Message}");
 
