@@ -30,7 +30,7 @@
                         <ValidationMessage For="@(() => _garden.StateCode)" />
                     </div>
                 </div>
-               
+
                 <div class="row">
                     <div class="col-md-4">
                         <label for="LastFrostDate">Last Spring Frost Date</label>
@@ -95,7 +95,7 @@
                                 <span class="bi bi-file-earmark-post">&nbsp;</span> Add
                             </button>
                         }
-                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClose(_garden))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                     </div>
                 </div>
             </EditForm>
@@ -104,15 +104,15 @@
 </article>
 
 @code {
-    [Parameter] public Func<GardenModel, Task> OnClose { get; set; }
+    [Parameter] public Func<GardenModel, Task>? OnClose { get; set; }
 
     private bool _isInitialized = false;
-    private GardenModel _garden = null;
-    private EditContext _editContext;
+    private GardenModel? _garden = null;
+    private EditContext? _editContext;
     private bool _isEdit = false;
-    private CustomValidation customValidation;
+    private CustomValidation? customValidation;
 
-    public async void Initialize(GardenModel? garden)
+    public void Initialize(GardenModel? garden)
     {
         _garden = garden;
 
@@ -133,7 +133,7 @@
         _logger.Log(LogLevel.Information, "Garden Form passed validations");
         customValidation?.ClearErrors();
 
-        ApiResponse response = (_isEdit) ? await _gardenService.UpdateGarden(_garden) : await _gardenService.CreateGarden(_garden);
+        ApiResponse response = (_isEdit) ? await _gardenService.UpdateGarden(_garden!) : await _gardenService.CreateGarden(_garden!);
 
         if (response.ValidationProblems != null)
         {
@@ -142,12 +142,18 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(_garden);
+            if (OnClose != null) await OnClose(_garden!);
         }
     }
 
     protected void HandleInValidSubmit()
     {
         _toastService.ShowToast("Garden can not be save. Please correct validation errors.", GardenLogToastLevel.Error);
+    }
+
+    protected void OnCancel()
+    {
+        if (OnClose != null && _garden != null)
+            OnClose(_garden);
     }
 }

@@ -2,6 +2,6 @@
 
 public class ApiObjectResponse<T> : ApiResponse
 {
-	public T Response { get; internal set; }
+	public T? Response { get; internal set; }
 
 }

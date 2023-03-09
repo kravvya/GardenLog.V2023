@@ -5,6 +5,7 @@
 @inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
 @inject IJSRuntime JsRuntime;
+@inject ILogger<Index> _logger;
 
 <Page Title="@_title" Description="@_description" BreadcrumbLinks="@_breadcrumbLinks">
     <PageContent>
@@ -43,20 +44,19 @@
 
 
 @code {
+    [Parameter]
+    public string RelatedEntity { get; set; } = string.Empty;
 
     [Parameter]
-    public string RelatedEntity { get; set; }
-
-    [Parameter]
-    public string RelatedEntityId { get; set; }
+    public string RelatedEntityId { get; set; } = string.Empty;
 
     private List<ImageViewModel> _images { get; set; } = new();
     private List<BreadcrumbLink> _breadcrumbLinks = new();
 
     //private bool _firstRender = true;
     private bool _firstImage = false;
-    private string _title;
-    private string _description;
+    private string _title = string.Empty;
+    private string _description = string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -109,23 +109,26 @@
                 var harvest = await _harvestService.GetHarvest(relatedEntitytId, true);
                 if (!string.IsNullOrEmpty(harvest.GardenName))
                 {
-                    _title= $"{harvest.HarvestCycleName} at {harvest.GardenName}";
+                    _title = $"{harvest.HarvestCycleName} at {harvest.GardenName}";
                 }
-                _title= harvest.HarvestCycleName;
+                _title = harvest.HarvestCycleName;
 
                 _breadcrumbLinks.Add(new BreadcrumbLink("Garden Plans", _navigationManager.GetGardenPlansUrl(), false));
                 _breadcrumbLinks.Add(new BreadcrumbLink(harvest.HarvestCycleName, _navigationManager.GetGardenPlanUrl(relatedEntitytId), false));
-                _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenPlanImagesUrl (relatedEntitytId), true));
+                _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenPlanImagesUrl(relatedEntitytId), true));
                 break;
             case RelatedEntityTypEnum.Garden:
                 var garden = await _gardenService.GetGarden(relatedEntitytId, true);
-                _title = garden.Name;
+                if (garden != null)
+                {
+                    _title = garden.Name;
 
-                _breadcrumbLinks.Add(new BreadcrumbLink("Gardens", _navigationManager.GetGardensUrl(), false));
-                _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenImagesUrl(relatedEntitytId), true));
+                    _breadcrumbLinks.Add(new BreadcrumbLink("Gardens", _navigationManager.GetGardensUrl(), false));
+                    _breadcrumbLinks.Add(new BreadcrumbLink("Gallery", _navigationManager.GetGardenImagesUrl(relatedEntitytId), true));
+                }
                 break;
         }
-       
+
     }
     //TODO - We can simplify this code. As long as we add plantId to the list of RelatedEntities for PlantHarvest images, this additional lookup is not needed.
     protected async Task LoadPlantImagesWithHarvest(string plantId)
@@ -143,13 +146,13 @@
             var images = await _imageService.GetImagesInBulk(entities);
             if (images != null)
             {
-                Console.WriteLine($"Number of images before the bulk {_images.Count}");
+                _logger.LogDebug($"Number of images before the bulk {_images.Count}");
                 _images.AddRange(images);
-                Console.WriteLine($"NUmber of images after the bulk {_images.Count}");
+                _logger.LogDebug($"NUmber of images after the bulk {_images.Count}");
                 StateHasChanged();
             }
         }
     }
 
-   
+
 }

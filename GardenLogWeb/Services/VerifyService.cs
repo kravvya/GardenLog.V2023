@@ -44,27 +44,28 @@ public class VerifyService : IVerifyService
 
     public IReadOnlyCollection<Color> GetPlantVarietyColors()
     {
-        List<Color> colors = null;
-        if (!_cacheService.TryGetValue<List<Color>>(COLOR_KEY, out colors))
+        if (!_cacheService.TryGetValue<List<Color>>(COLOR_KEY, out List<Color>? colors))
         {
-            colors = new List<Color>();
-            colors.Add(new Color("Black", "#000000", "#f8f9fa"));
-            colors.Add(new Color("Brown", "#A0522D", "#f8f9fa"));
-            colors.Add(new Color("Blue-Green", "#0d98ba", "#f8f9fa"));
-            colors.Add(new Color("Green", "#008000", "#f8f9fa"));
-            colors.Add(new Color("White", "#f8f9fa", "#212529"));
-            colors.Add(new Color("Purple", "#800080", "#f8f9fa"));
-            colors.Add(new Color("Red", "#FF0000", "#f8f9fa"));
-            colors.Add(new Color("Orange", "#fca130", "#f8f9fa;"));
-            colors.Add(new Color("Speckled", "#e8d7c1", "#f8f9fa"));
-            colors.Add(new Color("Yellow", "#FFFF00", "#212529"));
-            colors.Add(new Color("Multi", "#808000", "#f8f9fa"));
+            colors = new List<Color>
+            {
+                new Color("Black", "#000000", "#f8f9fa"),
+                new Color("Brown", "#A0522D", "#f8f9fa"),
+                new Color("Blue-Green", "#0d98ba", "#f8f9fa"),
+                new Color("Green", "#008000", "#f8f9fa"),
+                new Color("White", "#f8f9fa", "#212529"),
+                new Color("Purple", "#800080", "#f8f9fa"),
+                new Color("Red", "#FF0000", "#f8f9fa"),
+                new Color("Orange", "#fca130", "#f8f9fa;"),
+                new Color("Speckled", "#e8d7c1", "#212529"),
+                new Color("Yellow", "#FFFF00", "#212529"),
+                new Color("Multi", "#808000", "#f8f9fa")
+            };
 
             // Save data in cache.
             _cacheService.Set(COLOR_KEY, colors, DateTime.Now.AddMinutes(10));
         }
 
-        return colors;
+        return colors!;
     }
 
     private IReadOnlyCollection<KeyValuePair<string, string>> GetEnumList(Type genericEnumType)
@@ -76,22 +77,22 @@ public class VerifyService : IVerifyService
     {
         string key = string.Format(KEY_TEMPLATE, genericEnumType.Name);
 
-        if (!_cacheService.TryGetValue<List<KeyValuePair<string, string>>>(key, out List<KeyValuePair<string, string>> value))
+        if (!_cacheService.TryGetValue<List<KeyValuePair<string, string>>>(key, out List<KeyValuePair<string, string>>? value))
         {
             value = new List<KeyValuePair<string, string>>();
 
             foreach (var item in Enum.GetValues(genericEnumType))
             {
-                var verify = new KeyValuePair<string, string>(Enum.GetName(genericEnumType, item), GetDescription(((Enum)item)));
+                var verify = new KeyValuePair<string, string>(Enum.GetName(genericEnumType, item)!, GetDescription(((Enum)item)));
                 value.Add(verify);
             }
 
             _cacheService.Set<IReadOnlyCollection<KeyValuePair<string, string>>>(key, value);
         }
 
-        if (!excludeDefault) return value;
+        if (!excludeDefault) return value!;
 
-        return value.Where(v => !v.Key.Equals("Unspecified")).ToList();
+        return value!.Where(v => !v.Key.Equals("Unspecified")).ToList();
     }
 
 
@@ -102,7 +103,7 @@ public class VerifyService : IVerifyService
         if ((memberInfo != null && memberInfo.Length > 0))
         {
             var _Attribs = memberInfo[0].GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-            if ((_Attribs != null && _Attribs.Count() > 0))
+            if ((_Attribs != null && _Attribs.Length > 0))
             {
                 return ((System.ComponentModel.DescriptionAttribute)_Attribs.ElementAt(0)).Description;
             }

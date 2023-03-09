@@ -5,7 +5,7 @@
 
 <article id="taskForm">
     <div class="container">
-        @if (IsInitialized)
+        @if (IsInitialized && _task != null && _harvests != null && _plants != null)
         {
             <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
                 <FluentValidationValidator />
@@ -77,7 +77,7 @@
                     <div class="modal-footer">
                         <span>
                             <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() =>OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
@@ -86,15 +86,15 @@
     </div>
 </article>
 @code {
-    [Parameter] public Func<PlantTaskModel, Task> OnClose { get; set; }
+    [Parameter] public Func<PlantTaskModel?, Task>? OnClose { get; set; }
 
-    private PlantTaskModel _task;
-    private CustomValidation _customValidation;
-    private EditContext _editContext;
+    private PlantTaskModel? _task;
+    private CustomValidation? _customValidation;
+    private EditContext? _editContext;
 
     private bool IsInitialized = false;
-    IList<HarvestCycleModel> _harvests;
-    IList<PlantHarvestCycleModel> _plants = new List<PlantHarvestCycleModel>();
+    IList<HarvestCycleModel>? _harvests;
+    IList<PlantHarvestCycleModel>? _plants = new List<PlantHarvestCycleModel>();
 
     public async void Initialize()
     {
@@ -125,7 +125,7 @@
 
         _customValidation?.ClearErrors();
 
-        ApiResponse response = await _taskService.CreatePlantTask(_task);
+        ApiResponse response = await _taskService.CreatePlantTask(_task!);
 
         if (response.ValidationProblems != null)
         {
@@ -134,12 +134,14 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(_task);
+            if (OnClose != null) await OnClose(_task!);
         }
     }
 
     protected async Task ReloadHarvestOptions(ChangeEventArgs e)
     {
+        if (e == null || e.Value == null) return;
+
         _plants = null;
 
         string? harvestId = (e != null ? (string)e.Value : _task?.HarvestCycleId);
@@ -157,7 +159,9 @@
 
     private void SetPlantName(ChangeEventArgs e)
     {
-        string plantHarvestId = (e != null ? (string)e.Value : _task?.PlantHarvestCycleId);
+        if (e == null || e.Value == null || _task == null || _plants == null) return;
+
+        string plantHarvestId = (e != null ? (string)e.Value : _task.PlantHarvestCycleId);
         if (!string.IsNullOrWhiteSpace(plantHarvestId))
         {
             _task.PlantName = _plants.First(p => p.PlantHarvestCycleId == plantHarvestId).GetPlantName();
@@ -167,11 +171,19 @@
 
     private void AdjustEndDate(ChangeEventArgs e)
     {
+        if (e == null || e.Value == null || _task == null) return;
+
         if (DateTime.TryParse(e.Value.ToString(), out var startDate))
         {
             if (_task.TargetDateEnd < startDate)
                 _task.TargetDateEnd = startDate.AddDays(6);
 
         }
+    }
+
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose(null);
     }
 }

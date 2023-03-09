@@ -7,7 +7,7 @@ namespace GardenLogWeb.Services
     public interface IGardenService
     {
         Task<List<GardenModel>> GetGardens(bool forceRefresh);
-        Task<GardenModel> GetGarden(string gardenId, bool useCache);
+        Task<GardenModel?> GetGarden(string gardenId, bool useCache);
         Task<ApiObjectResponse<string>> CreateGarden(GardenModel garden);
         Task<ApiResponse> UpdateGarden(GardenModel garden);
         Task<ApiResponse> DeleteGarden(string gardenId);
@@ -42,11 +42,11 @@ namespace GardenLogWeb.Services
 
         public async Task<List<GardenModel>> GetGardens(bool forceRefresh)
         {
-            List<GardenModel> gardens = null;
+            List<GardenModel>? gardens;
 
             if (forceRefresh || !_cacheService.TryGetValue<List<GardenModel>>(GARDENS_KEY, out gardens))
             {
-                _logger.LogInformation("Gardens not in cache or forceRefresh");
+                _logger.LogDebug("Gardens not in cache or forceRefresh");
 
                 var gardenTast = GetAllGardens();
                 var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
@@ -83,15 +83,15 @@ namespace GardenLogWeb.Services
             }
             else
             {
-                _logger.LogInformation($"Gardens are in cache. Found {gardens.Count()}");
+                _logger.LogDebug($"Gardens are in cache. Found {gardens!.Count}");
             }
 
             return gardens;
         }
 
-        public async Task<GardenModel> GetGarden(string gardenId, bool useCache)
+        public async Task<GardenModel?> GetGarden(string gardenId, bool useCache)
         {
-            GardenModel garden = null;
+            GardenModel? garden = null;
 
             var plants = (await GetGardens(false));
 
@@ -114,7 +114,7 @@ namespace GardenLogWeb.Services
 
                 garden = response.Response;
 
-                await AddOrUpdateToGardenList(garden);
+                if (garden != null) await AddOrUpdateToGardenList(garden);
             }
 
             return garden;
@@ -136,7 +136,7 @@ namespace GardenLogWeb.Services
             }
             else
             {
-                garden.GardenId = response.Response;
+                garden.GardenId = response.Response!;
                 garden.Images = new();
                 garden.ImageFileName = ImageService.NO_IMAGE;
                 garden.ImageLabel = string.Empty;
@@ -202,7 +202,7 @@ namespace GardenLogWeb.Services
         #region Garden Bed Functions
         public async Task<List<GardenBedModel>> GetGardenBeds(string gardenId, bool useCache)
         {
-            List<GardenBedModel> gardenBedList = null;
+            List<GardenBedModel>? gardenBedList=null;
 
             if (useCache)
             {
@@ -238,8 +238,8 @@ namespace GardenLogWeb.Services
             }
             else
             {
-                gardenBed.GardenBedId = response.Response;
-                        
+                gardenBed.GardenBedId = response.Response!;
+
 
                 AddOrUpdateToGardenBedList(gardenBed);
 
@@ -335,6 +335,8 @@ namespace GardenLogWeb.Services
                 return new List<GardenModel>();
             }
 
+            if (response.Response == null) return new List<GardenModel>();
+
             return response.Response;
         }
 
@@ -342,11 +344,11 @@ namespace GardenLogWeb.Services
 
         private async Task AddOrUpdateToGardenList(GardenModel garden)
         {
-            List<GardenModel> gardens = null;
+            List<GardenModel>? gardens;
 
             if (_cacheService.TryGetValue<List<GardenModel>>(GARDENS_KEY, out gardens))
             {
-                var index = gardens.FindIndex(p => p.GardenId == garden.GardenId);
+                var index = gardens!.FindIndex(p => p.GardenId == garden.GardenId);
                 if (index > -1)
                 {
                     gardens[index] = garden;
@@ -364,12 +366,12 @@ namespace GardenLogWeb.Services
 
         private void RemoveFromGardenList(string gardenId)
         {
-            List<GardenModel> gardens = null;
+            List<GardenModel>? gardens;
 
             if (!_cacheService.TryGetValue<List<GardenModel>>(GARDENS_KEY, out gardens))
             {
 
-                var index = gardens.FindIndex(p => p.GardenId == gardenId);
+                var index = gardens!.FindIndex(p => p.GardenId == gardenId);
                 if (index > -1)
                 {
                     gardens.RemoveAt(index);
@@ -381,11 +383,11 @@ namespace GardenLogWeb.Services
 
 
         #region Private Garden Bed
-        private List<GardenBedModel> GetGardenBedsFromCache(string gardenId)
+        private List<GardenBedModel>? GetGardenBedsFromCache(string gardenId)
         {
             string cacheKey = string.Format(GARDEN_BED_KEY, gardenId);
 
-            List<GardenBedModel> gardenBedList = null;
+            List<GardenBedModel>? gardenBedList;
 
             _cacheService.TryGetValue<List<GardenBedModel>>(cacheKey, out gardenBedList);
 
@@ -401,10 +403,10 @@ namespace GardenLogWeb.Services
             if (!response.IsSuccess)
             {
                 _toastService.ShowToast("Unable to get Garden Beds", GardenLogToastLevel.Error);
-                return null;
+                return new List<GardenBedModel>();
             }
 
-            return response.Response;
+            return response.Response!;
 
             //List<GardenBedModel> gardenBeds = new();
             //gardenBeds.Add(new GardenBedModel()
@@ -444,7 +446,7 @@ namespace GardenLogWeb.Services
 
             if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out beds))
             {
-                var index = beds.FindIndex(p => p.GardenBedId == gardenBed.GardenBedId);
+                var index = beds!.FindIndex(p => p.GardenBedId == gardenBed.GardenBedId);
                 if (index > -1)
                 {
                     beds[index] = gardenBed;
@@ -460,7 +462,7 @@ namespace GardenLogWeb.Services
             string key = string.Format(GARDEN_BED_KEY, gardenId);
             if (_cacheService.TryGetValue<List<GardenBedModel>>(key, out var beds))
             {
-                var index = beds.FindIndex(p => p.GardenBedId == id);
+                var index = beds!.FindIndex(p => p.GardenBedId == id);
                 if (index > -1)
                 {
                     beds.RemoveAt(index);

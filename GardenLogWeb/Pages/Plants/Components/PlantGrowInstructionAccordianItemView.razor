@@ -90,7 +90,7 @@
 }
 
 @code {
-    [Parameter] public PlantGrowInstructionViewModel GrowInstruction { get; set; }
+    [Parameter] public PlantGrowInstructionViewModel? GrowInstruction { get; set; }
     [Parameter] public bool IsOpen { get; set; }
 
     private string GetHarvestDetail(PlantGrowInstructionViewModel grow)
@@ -105,10 +105,12 @@
     private string GetFertilizeDetail(PlantGrowInstructionViewModel grow)
     {
         System.Text.StringBuilder sb = new();
-        sb.Append($"{_verifyService.GetDescription(grow.Fertilizer)} every ");
-        sb.Append(grow.FertilizeFrequencyInWeeks.Value.ToString());
-        sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizeFrequencyInWeeks.Value));
-
+        sb.Append($"{_verifyService.GetDescription(grow.Fertilizer)}");
+        if (grow.FertilizeFrequencyInWeeks.HasValue)
+        {
+            sb.Append($" every {grow.FertilizeFrequencyInWeeks.Value.ToString()} ");
+            sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizeFrequencyInWeeks.Value));
+        }
         return sb.ToString();
     }
 

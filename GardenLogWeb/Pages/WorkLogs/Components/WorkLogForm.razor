@@ -1,12 +1,11 @@
-﻿
-@inject ILogger<WorkLogForm> _logger;
+﻿@inject ILogger<WorkLogForm> _logger;
 @inject IHarvestCycleService _harvestService;
 @inject IWorkLogService _workLogService;
 @inject IVerifyService _verifyService;
 
 <article id="workLogForm">
     <div class="container">
-        @if (IsInitialized)
+        @if (_isInitialized && _workLog != null)
         {
             <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
                 <FluentValidationValidator />
@@ -41,7 +40,7 @@
                     <div class="modal-footer">
                         <span>
                             <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
@@ -50,15 +49,15 @@
     </div>
 </article>
 @code {
-    [Parameter] public Func<WorkLogModel, Task> OnClose { get; set; }
+    [Parameter] public Func<WorkLogModel?, Task>? OnClose { get; set; }
 
-    private WorkLogModel _workLog;
-    private CustomValidation _customValidation;
-    private EditContext _editContext;
+    private WorkLogModel? _workLog;
+    private CustomValidation? _customValidation;
+    private EditContext? _editContext;
 
-    private bool IsInitialized = false;
+    private bool _isInitialized = false;
 
-    public async Task InitializeAsync(List<RelatedEntity> relatedEntities, WorkLogReasonEnum? reason = null)
+    public void Initialize(List<RelatedEntity> relatedEntities, WorkLogReasonEnum? reason = null)
     {
         _workLog = new WorkLogModel();
         _workLog.RelatedEntities = relatedEntities;
@@ -69,17 +68,17 @@
 
         _editContext = new(_workLog);
         _editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
-        IsInitialized = true;
+        _isInitialized = true;
         StateHasChanged();
     }
 
     private async Task HandleValidSubmit()
     {
-        _logger.Log(LogLevel.Information, "Work Log Form passed valdiate");
+        _logger.LogInformation("Work Log Form passed valdiate");
 
         _customValidation?.ClearErrors();
 
-        ApiResponse response = await _workLogService.CreateWorkLog(_workLog);
+        ApiResponse response = await _workLogService.CreateWorkLog(_workLog!);
 
         if (response.ValidationProblems != null)
         {
@@ -88,9 +87,14 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(_workLog);
+            if (OnClose != null) await OnClose(_workLog);
         }
     }
 
-   
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose(null);
+    }
+
 }

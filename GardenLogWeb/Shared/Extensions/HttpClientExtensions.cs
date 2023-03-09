@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace GardenLogWeb.Shared.Extensions;
@@ -81,7 +79,7 @@ public static class HttpClientExtensions
         response.StatusCode = result.StatusCode;
 
         if (result.IsSuccessStatusCode && !typeof(TObject).ToString().Equals("System.String"))
-        {
+        {            
             response.Response = await result.Content.ReadFromJsonAsync<TObject>(OPTIONS);
         }
         else if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)

@@ -221,7 +221,10 @@
             _gardenBeds = gardenBedsTask.Result;
             _harvestPlants = plantsTask.Result;
 
-            _settings = new GardenPlanSettings(_garden.Length, _garden.Width);
+            if (_garden != null)
+            {
+                _settings = new GardenPlanSettings(_garden.Length, _garden.Width);
+            }
             StateHasChanged();
         }
     }
@@ -323,9 +326,9 @@
 
     private string GetFreeGrowArea()
     {
-        if (_gardenBeds != null)
+        if (_gardenBeds != null && _harvestPlants != null)
         {
-            var usedArea = _harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length*12 * p.Width*12);
+            var usedArea = _harvestPlants.SelectMany(h => h.GardenBedLayout).Sum(p => p.Length * 12 * p.Width * 12);
             var totalArea = _gardenBeds.Sum(g => g.Length * g.Width);
             return ((totalArea - usedArea) / 12).ToString("N0", System.Globalization.CultureInfo.InvariantCulture); ;
         }

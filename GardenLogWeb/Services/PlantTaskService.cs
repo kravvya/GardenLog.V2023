@@ -34,9 +34,8 @@ public class PlantTaskService : IPlantTaskService
 
     public async Task<List<PlantTaskModel>> GetPlantTasks(bool forceRefresh)
     {
-        List<PlantTaskModel> tasks;
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_TASK_KEY, out tasks))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_TASK_KEY, out List<PlantTaskModel>? tasks))
         {
             _logger.LogInformation("Tasks not in cache or forceRefresh");
 
@@ -48,7 +47,7 @@ public class PlantTaskService : IPlantTaskService
 
         else
         {
-            _logger.LogInformation($"Tasks are in cache. Found {tasks.Count()}");
+            _logger.LogInformation($"Tasks are in cache. Found {tasks!.Count}");
         }
 
         return tasks;
@@ -56,9 +55,8 @@ public class PlantTaskService : IPlantTaskService
 
     public async Task<List<PlantTaskModel>> GetActivePlantTasks(bool forceRefresh)
     {
-        List<PlantTaskModel> tasks;
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_ACTIVE_TASK_KEY, out tasks))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_ACTIVE_TASK_KEY, out List<PlantTaskModel>? tasks))
         {
             _logger.LogInformation("Active tasks not in cache or forceRefresh");
 
@@ -70,7 +68,7 @@ public class PlantTaskService : IPlantTaskService
 
         else
         {
-            _logger.LogInformation($"Active tasks are in cache. Found {tasks.Count()}");
+            _logger.LogInformation($"Active tasks are in cache. Found {tasks!.Count}");
         }
 
         return tasks;
@@ -92,7 +90,7 @@ public class PlantTaskService : IPlantTaskService
         }
         else
         {
-            task.PlantTaskId = response.Response;
+            task.PlantTaskId = response.Response!;
 
             AddOrUpdateToPlantTaskLists(task);
 
@@ -181,7 +179,7 @@ public class PlantTaskService : IPlantTaskService
             return new List<PlantTaskModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
 
     private async Task<List<PlantTaskModel>> GetActivePlantTasks()
@@ -196,17 +194,16 @@ public class PlantTaskService : IPlantTaskService
             return new List<PlantTaskModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
 
     private void AddOrUpdateToPlantTaskLists(PlantTaskModel task)
     {
 
-        List<PlantTaskModel>? tasks = null;
 
-        if (_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_TASK_KEY, out tasks))
+        if (_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_TASK_KEY, out List<PlantTaskModel>? tasks))
         {
-            var index = tasks.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
+            var index = tasks!.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
             if (index > -1)
             {
                 tasks[index] = task;
@@ -214,14 +211,14 @@ public class PlantTaskService : IPlantTaskService
             }
             tasks.Add(task);
         }
-       
+
         if (!task.CompletedDateTime.HasValue)
         {
             tasks = null;
 
             if (_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_ACTIVE_TASK_KEY, out tasks))
             {
-                var index = tasks.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
+                var index = tasks!.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
                 if (index > -1)
                 {
                     tasks[index] = task;
@@ -237,7 +234,7 @@ public class PlantTaskService : IPlantTaskService
     {
         if (_cacheService.TryGetValue<List<PlantTaskModel>>(PLANT_ACTIVE_TASK_KEY, out var tasks))
         {
-            var index = tasks.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
+            var index = tasks!.FindIndex(p => p.PlantTaskId == task.PlantTaskId);
             if (index > -1)
             {
                 tasks.RemoveAt(index);

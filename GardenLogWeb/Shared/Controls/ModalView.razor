@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header" style="background-color: @HeaderColor;">
                 <h5 class="modal-title" id="modalViewHeader">@Title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@(() => OnCloseModal())"/>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@(() => OnCancel())" />
             </div>
             <div class="modal-body">
                 @Body
@@ -23,15 +23,15 @@
 
 
 @code {
-    [Parameter] public string HeaderColor { get; set; }
+    [Parameter] public string HeaderColor { get; set; } = string.Empty;
 
-    [Parameter] public string Title { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
 
-    [Parameter] public RenderFragment Body { get; set; }
+    [Parameter] public RenderFragment? Body { get; set; }
 
-    [Parameter] public RenderFragment Footer { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
 
-    [Parameter] public Func<Task> OnCloseModal { get; set; }
+    [Parameter] public Func<Task>? OnCloseModal { get; set; }
 
     [Parameter] public string ModalSize { get; set; } = string.Empty;
 
@@ -65,4 +65,9 @@
         StateHasChanged();
     }
 
+    private void OnCancel()
+    {
+        if (OnCloseModal != null)
+            OnCloseModal();
+    }
 }

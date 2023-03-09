@@ -12,7 +12,7 @@
     <PageContent>
         <article id="plantHarvestForm">
             <div class="container">
-                @if (isInitialized)
+                @if (isInitialized && _plantHarvest != null)
                 {
                     <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
                         <FluentValidationValidator />
@@ -35,9 +35,12 @@
                                             <div class="col-md-2">
                                                 <label for="Plant" class="form-label">Plant</label>
                                                 <InputSelect class="form-select" @bind-Value="_plantHarvest.PlantId" id="Plant" @oninput="@ReloadPlantOptions" disabled="@_isEdit">
-                                                    @foreach (var item in _plants)
+                                                    @if (_plants != null)
                                                     {
-                                                        <option Value="@item.PlantId">@item.Name</option>
+                                                        @foreach (var item in _plants)
+                                                        {
+                                                            <option Value="@item.PlantId">@item.Name</option>
+                                                        }
                                                     }
                                                 </InputSelect>
                                                 <div class="invalid-feedback"><ValidationMessage For="@(() => _plantHarvest.PlantName)" /></div>
@@ -222,13 +225,13 @@
 
 @code {
     [Parameter]
-    public string PlantHarvestCycleId { get; set; }
+    public string PlantHarvestCycleId { get; set; } = string.Empty;
     [Parameter]
-    public string HarvestCycleId { get; set; }
+    public string HarvestCycleId { get; set; } = string.Empty;
     [Parameter]
-    public string? PlantId { get; set; }
+    public string? PlantId { get; set; } = string.Empty;
     [Parameter]
-    public string? PlantVarietyId { get; set; }
+    public string? PlantVarietyId { get; set; } = string.Empty;
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
     private string _title = string.Empty;
@@ -239,11 +242,11 @@
     private bool _hideTransplantDetails = true;
 
     private CustomValidation? customValidation;
-    private EditContext editContext;
+    private EditContext? editContext;
 
     private PlantHarvestCycleModel? _plantHarvest;
-    private List<PlantGrowInstructionViewModel> _growInstructions;
-    private HarvestCycleModel _harvest;
+    private List<PlantGrowInstructionViewModel>? _growInstructions;
+    private HarvestCycleModel? _harvest;
 
     private List<PlantModel>? _plants;
     private List<PlantVarietyModel>? _varieties = null;
@@ -276,7 +279,7 @@
             _plantHarvest = new();
             _plantHarvest.HarvestCycleId = HarvestCycleId;
 
-            if(!string.IsNullOrWhiteSpace(PlantId))
+            if (!string.IsNullOrWhiteSpace(PlantId))
             {
                 _plantHarvest.PlantId = PlantId;
                 await ReloadPlantOptions(new ChangeEventArgs() { Value = PlantId });
@@ -300,12 +303,12 @@
         StateHasChanged();
     }
 
-    protected async Task ReloadPlantOptions(ChangeEventArgs e)
+    protected async Task ReloadPlantOptions(ChangeEventArgs? e)
     {
         _varieties = null;
         _growInstructions = null;
 
-        string? plantId = (e != null ? (string)e.Value : _plantHarvest?.PlantId);
+        string? plantId = (e != null && e.Value != null ? (string)e.Value : _plantHarvest?.PlantId);
 
         if (!string.IsNullOrWhiteSpace(plantId))
         {
@@ -317,7 +320,7 @@
             _growInstructions = getGrowInstructions.Result;
             _varieties = getVarieties.Result;
 
-            if (_growInstructions?.Count > 0)
+            if (_plantHarvest != null && _growInstructions?.Count > 0)
             {
                 var growIntructionId = _growInstructions.First().PlantGrowInstructionId;
                 _plantHarvest.PlantGrowthInstructionId = growIntructionId;
@@ -329,8 +332,10 @@
 
     protected void ReloadGrowOptions(ChangeEventArgs e)
     {
+        if (e == null || e.Value == null) return;
         string growId = (string)e.Value;
-        if (!string.IsNullOrEmpty(growId))
+
+        if (_growInstructions != null && !string.IsNullOrEmpty(growId))
         {
             var grow = _growInstructions.First(g => g.PlantGrowInstructionId == growId);
 
@@ -354,18 +359,18 @@
         customValidation?.ClearErrors();
 
 
-        if (!string.IsNullOrWhiteSpace(_plantHarvest.PlantVarietyId))
+        if (!string.IsNullOrWhiteSpace(_plantHarvest!.PlantVarietyId) && _varieties != null)
         {
             _plantHarvest.PlantVarietyName = _varieties.First(p => p.PlantVarietyId == _plantHarvest.PlantVarietyId).Name;
         }
 
         if (!_isEdit)
         {
-            _plantHarvest.PlantName = _plants.First(p => p.PlantId == _plantHarvest.PlantId).Name;
-            _plantHarvest.PlantGrowthInstructionName = _growInstructions.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).Name;
-            _plantHarvest.SpacingInInches = _growInstructions.First(g => g.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).SpacingInInches;
-            _plantHarvest.PlantsPerFoot = _growInstructions.First(g => g.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).PlantsPerFoot;
-            _plantHarvest.PlantingMethod = (PlantHarvest.Contract.Enum.PlantingMethodEnum)Enum.ToObject(typeof(PlantHarvest.Contract.Enum.PlantingMethodEnum), (int)_growInstructions.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).PlantingMethod);
+            _plantHarvest.PlantName = _plants!.First(p => p.PlantId == _plantHarvest.PlantId).Name;
+            _plantHarvest.PlantGrowthInstructionName = _growInstructions!.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).Name;
+            _plantHarvest.SpacingInInches = _growInstructions!.First(g => g.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).SpacingInInches;
+            _plantHarvest.PlantsPerFoot = _growInstructions!.First(g => g.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).PlantsPerFoot;
+            _plantHarvest.PlantingMethod = (PlantHarvest.Contract.Enum.PlantingMethodEnum)Enum.ToObject(typeof(PlantHarvest.Contract.Enum.PlantingMethodEnum), (int)_growInstructions!.First(p => p.PlantGrowInstructionId == _plantHarvest.PlantGrowthInstructionId).PlantingMethod);
         }
 
         ApiResponse response = (_isEdit) ? await _harvestService.UpdatePlantHarvest(_plantHarvest) : await _harvestService.CreatePlantHarvest(_plantHarvest);

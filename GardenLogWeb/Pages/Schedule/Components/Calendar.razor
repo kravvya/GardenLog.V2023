@@ -2,6 +2,7 @@
 @inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
+@inject ILogger<Calendar> _logger;
 
 <div>
     @if (IsInitialized)
@@ -94,6 +95,8 @@
 
         _garden = await _gardenService.GetGarden(_harvest.GardenId, true);
 
+        if (_garden == null) return;
+
         _lastFrostDate = new DateTime(DateTime.Now.Year, _garden.LastFrostDate.Month, _garden.LastFrostDate.Day);
         _firstFrostDate = new DateTime(DateTime.Now.Year, _garden.FirstFrostDate.Month, _garden.FirstFrostDate.Day);
 
@@ -124,7 +127,7 @@
             }
 
             _mondaysPerMonth.Add(month, numberOfMondays);
-            Console.WriteLine($"There is {numberOfMondays} Mondays in {month}");
+            _logger.LogDebug($"There is {numberOfMondays} Mondays in {month}");
         }
         return numberOfMondays;
     }
@@ -133,7 +136,7 @@
     {
         string taskClass = "nowork";
         string key = $"{month}-{week}";
-        DateRange dateRange;
+        DateRange? dateRange;
 
         DateTime now = DateTime.Now;
 
@@ -167,7 +170,7 @@
 
         if (schedule != null)
         {
-            Console.WriteLine($"Found match - {schedule}");
+            _logger.LogDebug($"Found match - {schedule}");
             switch (schedule.TaskType)
             {
                 case WorkLogReasonEnum.SowIndoors:
@@ -184,19 +187,19 @@
                     break;
             }
         }
-        Console.WriteLine($"Considering date - {dateRange.StartDate} to {dateRange.EndDate}");
+        _logger.LogDebug($"Considering date - {dateRange.StartDate} to {dateRange.EndDate}");
 
 
         if ((dateRange.StartDate <= _lastFrostDate && _lastFrostDate <= dateRange.EndDate)
            || (dateRange.StartDate <= _firstFrostDate && _firstFrostDate <= dateRange.EndDate))
         {
-            Console.WriteLine($"Found frost date");
+            _logger.LogDebug($"Found frost date");
             return taskClass + " border-end border-danger border-5";
         }
 
         if (dateRange.StartDate <= now && now <= dateRange.EndDate)
         {
-            Console.WriteLine($"Found now");
+            _logger.LogDebug($"Found now");
             return taskClass + " border-start border-info border-5";
         }
 

@@ -14,7 +14,7 @@ namespace GardenLogAdminConsole.Plants
         {
         }
 
-        internal async Task<List<Plant>> GetAllPlants()
+        internal new async Task<List<Plant>> GetAllPlants()
         {
             return await Collection.Find(new BsonDocument()).ToListAsync();
         }

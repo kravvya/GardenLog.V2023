@@ -76,11 +76,11 @@
 
 @code {
 
-    public IList<HarvestCycleModel> _harvests { get; set; }
-    private ModalView _imageFormModal { get; set; }
-    private ImageForm _imageForm { get; set; }
-    private ModalView _harvestFormModal { get; set; }
-    private HarvestForm _harvestForm { get; set; }
+    public IList<HarvestCycleModel>? _harvests { get; set; }
+    private ModalView? _imageFormModal { get; set; }
+    private ImageForm? _imageForm { get; set; }
+    private ModalView? _harvestFormModal { get; set; }
+    private HarvestForm? _harvestForm { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,51 +102,60 @@
 
     private async Task onAddHarvestImage(HarvestCycleViewModel harvest)
     {
-        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName) };
+        if (_imageForm != null && _imageFormModal!=null)
+        {
+            List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName) };
 
-        _imageForm.Initialize(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, relatedEntities);
-        await _imageFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+            _imageForm.Initialize(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, relatedEntities);
+            await _imageFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
+
 
     private async Task onEditHarvest(HarvestCycleModel harvest)
     {
-        _harvestForm.Initialize(harvest);
-        await _harvestFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_harvestForm != null && _harvestFormModal != null)
+        {
+            _harvestForm.Initialize(harvest);
+            await _harvestFormModal.OpenModal(harvest.HarvestCycleName, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task onCreateHarvest()
     {
-
-        _harvestForm.Initialize(null);
-        await _harvestFormModal.OpenModal("Create Garden Plan", GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_harvestForm != null && _harvestFormModal != null)
+        {
+            _harvestForm.Initialize(null);
+            await _harvestFormModal.OpenModal("Create Garden Plan", GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
 
     private async Task CloseHarvestFormModal()
     {
-        await _harvestFormModal.CloseModal();
+        await _harvestFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseHarvestFormModal(HarvestCycleModel harvest)
     {
-        await _harvestFormModal.CloseModal();
+        await _harvestFormModal!.CloseModal();
         _harvests = await _harvestService.GetHarvestList(false);
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal()
     {
-        await _imageFormModal.CloseModal();
+        await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal(ImageViewModel image)
     {
-        await _imageFormModal.CloseModal();
+        await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
 

@@ -14,19 +14,19 @@
 
 @code {
     [Parameter]
-    public string RelatedEntity { get; set; }
+    public string RelatedEntity { get; set; } = string.Empty;
 
     [Parameter]
-    public string RelatedEntityId { get; set; }
+    public string RelatedEntityId { get; set; } = string.Empty;
 
     [Parameter]
-    public string PlantHarvestCycleId { get; set; }
+    public string PlantHarvestCycleId { get; set; } = string.Empty;
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
-    private WorkLogList _workLogList;
+    private WorkLogList? _workLogList;
 
-    private string _title;
-    private string _description;
+    private string _title = string.Empty;
+    private string _description = string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -38,15 +38,13 @@
             if (Enum.TryParse<RelatedEntityTypEnum>(relatedEntityType, out type))
             {
                 await SetupPage(type, RelatedEntityId);
-
             }
         }
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-
-        if (firstRender)
+        if (firstRender && _workLogList != null)
         {
             if (!string.IsNullOrEmpty(PlantHarvestCycleId))
             {
@@ -76,6 +74,11 @@
                 if (!string.IsNullOrEmpty(PlantHarvestCycleId))
                 {
                     var plantHarvest = await _harvestService.GetPlantHarvest(harvest.HarvestCycleId, PlantHarvestCycleId, false);
+                    if(plantHarvest==null)
+                    {
+                        _navigationManager.NavigateToGardenPlans();
+                        break;
+                    }
                     _title = plantHarvest.GetPlantName();
                 }
                 else

@@ -35,7 +35,7 @@
                                         <div class="px-2">
 
                                             <label for="SeedVendor" class="form-label">Seed Vendor</label>
-                                            <InputSelect class="form-select" @bind-Value="_plantHarvest.SeedVendorId" id="SeedVendor">
+                                            <InputSelect class="form-select" @bind-Value="_plantHarvestMini.SeedVendorId" id="SeedVendor">
                                                 @foreach (var item in _seedVendors)
                                                 {
                                                     <option Value="@item.SeedVendorId">@item.Name</option>
@@ -143,7 +143,7 @@
                     <div class="modal-footer justify-content-between">
                         <span>
                             <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
@@ -153,14 +153,14 @@
 </article>
 
 @code {
-    [Parameter] public Func<PlantHarvestCycleModel, Task> OnClose { get; set; }
+    [Parameter] public Func<PlantHarvestCycleModel?, Task>? OnClose { get; set; }
 
     private bool _isInitialized = false;
 
-    private PlantHarvestCycleModel _plantHarvest = null;
-    private PlantHarvestCycleMiniModel _plantHarvestMini = null;
+    private PlantHarvestCycleModel? _plantHarvest = null;
+    private PlantHarvestCycleMiniModel? _plantHarvestMini = null;
 
-    private EditContext _editContext;
+    private EditContext? _editContext;
     private CustomValidation? customValidation;
     private List<SeedVendorModel>? _seedVendors = null;
 
@@ -187,13 +187,18 @@
 
     protected async Task HandleValidSubmitAsync()
     {
-        _logger.Log(LogLevel.Information, "Plant Harvest Mini Form passed validations");
+        _logger.LogInformation( "Plant Harvest Mini Form passed validations");
         customValidation?.ClearErrors();
-        _plantHarvest = await _harvestService.GetPlantHarvest(_plantHarvestMini.HarvestCycleId, _plantHarvestMini.PlantHarvestCycleId, true);
+        _plantHarvest = await _harvestService.GetPlantHarvest(_plantHarvestMini!.HarvestCycleId, _plantHarvestMini!.PlantHarvestCycleId, true);
+        if (_plantHarvest== null)
+        {
+            _toastService.ShowToast(ToastLevel.Error, "Oops. We enciuntered an error processing your request. Please try again later.");
+            return;    
+        }
 
         if (!_hideSeedDetails)
         {
-            _plantHarvest.SeedingDate = _plantHarvestMini.SeedingDate;
+            _plantHarvest!.SeedingDate = _plantHarvestMini.SeedingDate;
             _plantHarvest.NumberOfSeeds = _plantHarvestMini.NumberOfSeeds;
             if(_seedVendors != null)
             {
@@ -241,7 +246,7 @@
             }
         }
 
-       var response = await _harvestService.UpdatePlantHarvest(_plantHarvest);
+        var response = await _harvestService.UpdatePlantHarvest(_plantHarvest);
 
         if (response.ValidationProblems != null)
         {
@@ -251,7 +256,8 @@
         if (response.IsSuccess)
         {
             _plantHarvestMini = null;
-            OnClose(_plantHarvest);
+            if (OnClose != null) 
+                await OnClose(_plantHarvest);
 
         }
 
@@ -260,6 +266,12 @@
     protected void HandleInValidSubmit()
     {
         _toastService.ShowToast(ToastLevel.Error, "Oops. We enciuntered ane rros processing your request. Please correct validation errors.");
+    }
+
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose(null);
     }
 }
 

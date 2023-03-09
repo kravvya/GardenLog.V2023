@@ -14,14 +14,14 @@ namespace GardenLogAdminConsole.Harvest;
 
 internal class AdminPlantHarvestProcessor
 {
-    internal int UpdateAllPlantHarvestWithSpacingInInches(IConfiguration config, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
+    internal static int UpdateAllPlantHarvestWithSpacingInInches(IConfiguration config, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
     {
         IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
 
         IUnitOfWork unitOfWork = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
 
-        AdminPlantRepository plantRepository = new AdminPlantRepository(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
-        AdminHarvestRepository harvestRepository = new AdminHarvestRepository(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
+        AdminPlantRepository plantRepository = new(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
+        AdminHarvestRepository harvestRepository = new(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
 
         ILogger<AdminPlantHarvestProcessor> logger = loggerFactory.CreateLogger<AdminPlantHarvestProcessor>();
 
@@ -36,7 +36,7 @@ internal class AdminPlantHarvestProcessor
             logger.LogInformation($"Found {harvests.Count} harvests");
 
 
-            PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("SpacingInInches");
+            PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("SpacingInInches")!;
 
 
             foreach (var harvest in harvests)
@@ -64,14 +64,14 @@ internal class AdminPlantHarvestProcessor
         }
     }
 
-    internal int UpdateAllPlantHarvestWithPlantsPerFoot(IConfiguration config, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
+    internal static int UpdateAllPlantHarvestWithPlantsPerFoot(IConfiguration config, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
     {
         IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
 
         IUnitOfWork unitOfWork = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
 
-        AdminPlantRepository plantRepository = new AdminPlantRepository(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
-        AdminHarvestRepository harvestRepository = new AdminHarvestRepository(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
+        AdminPlantRepository plantRepository = new(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
+        AdminHarvestRepository harvestRepository = new(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
 
         ILogger<AdminPlantHarvestProcessor> logger = loggerFactory.CreateLogger<AdminPlantHarvestProcessor>();
 
@@ -86,8 +86,8 @@ internal class AdminPlantHarvestProcessor
             logger.LogInformation($"Found {harvests.Count} harvests");
 
 
-            PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("PlantsPerFoot");
-            PropertyInfo propertyInfoForGardenLayout = typeof(GardenBedPlantHarvestCycle).GetProperty("PlantsPerFoot");
+            PropertyInfo propertyInfo = typeof(PlantHarvestCycle).GetProperty("PlantsPerFoot")!;
+            PropertyInfo propertyInfoForGardenLayout = typeof(GardenBedPlantHarvestCycle).GetProperty("PlantsPerFoot")!;
 
             foreach (var harvest in harvests)
             {

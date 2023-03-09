@@ -69,10 +69,10 @@
 </div>
 
 @code {
-    private ModalView _imageFormModal { get; set; }
-    private ImageForm _imageForm { get; set; }
-    private ModalView _harvestFormModal { get; set; }
-    private HarvestForm _harvestForm { get; set; }
+    private ModalView? _imageFormModal { get; set; }
+    private ImageForm? _imageForm { get; set; }
+    private ModalView? _harvestFormModal { get; set; }
+    private HarvestForm? _harvestForm { get; set; }
     private ModalView? _gardenFormModal;
     private GardenForm? _gardenForm;
 
@@ -86,20 +86,26 @@
 
     private async Task AddGarden()
     {
+        if (_gardenForm == null || _gardenFormModal == null) return;
+
         _gardenForm.Initialize(null);
-        await _gardenFormModal?.OpenModal("Add new garden", GlobalConstants.ModalFormColor);
+        await _gardenFormModal.OpenModal("Add new garden", GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 
     private async Task EditGarden(GardenModel garden)
     {
+        if (_gardenForm == null || _gardenFormModal == null) return;
+
         _gardenForm.Initialize(garden);
-        await _gardenFormModal?.OpenModal(garden.Name, GlobalConstants.ModalFormColor);
+        await _gardenFormModal.OpenModal(garden.Name, GlobalConstants.ModalFormColor);
         StateHasChanged();
     }
 
     private async Task AddGardenImage(GardenModel garden)
     {
+        if (_imageForm == null || _imageFormModal == null) return;
+
         List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Garden, garden.GardenId, garden.Name) };
         _imageForm.Initialize(RelatedEntityTypEnum.Garden, garden.GardenId, relatedEntities);
         await _imageFormModal.OpenModal(garden.Name, GlobalConstants.ModalFormColor);
@@ -108,13 +114,17 @@
 
     private async Task CloseGardenFormModal()
     {
-        await _gardenFormModal?.CloseModal();
+        if (_gardenFormModal!= null) 
+            await _gardenFormModal.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseGardenForm(GardenModel workLog)
     {
-        await _gardenFormModal?.CloseModal();
+        if (_gardenFormModal != null)
+        {
+            await _gardenFormModal.CloseModal();
+        }
 
         _gardens = await _gardenService.GetGardens(false);
 
@@ -124,7 +134,9 @@
 
     private async Task CloseImageFormModal()
     {
-        await _imageFormModal.CloseModal();
+        if (_imageFormModal != null)
+
+            await _imageFormModal.CloseModal();
         StateHasChanged();
     }
 
@@ -140,9 +152,12 @@
                     garden.ImageFileName = image.FileName;
                     garden.ImageLabel = image.Label;
                 }
+                if (garden.Images == null) garden.Images = new();
                 garden.Images.Add(image);
             }
         }
+
+        if (_imageFormModal != null)
 
         await _imageFormModal.CloseModal();
         StateHasChanged();

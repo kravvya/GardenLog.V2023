@@ -7,62 +7,68 @@
 <div class="row">
     <div id="plant-filter" class="col-md-2 d-md-block collapse">
         <h3 class="text-uppercase text-primary d-none d-md-block">Filters</h3>
-        <EditForm Model=@_filter>
-            <div class="d-flex flex-wrap">
-                <div id="lifecycle-filter" class="my-3 mx-1">
-                    <h5 class="text-uppercase text-primary">Lifecylce</h5>
-                    @foreach (var life in _filter.PlantLifecycleEnums)
-                    {
-                        <div class="form-check">
-                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="life.IsSelected" id="@life.EnumItem.Key" />
-                            <label class="form-check-label" for="@life.EnumItem.Key">
-                                @life.EnumItem.Value
-                            </label>
-                        </div>
-                    }
-                    <a id="clear-lifecycle" role='button' onclick=@(() => Clear(_filter.PlantLifecycleEnums))>Clear</a>
+        @if (_filter != null)
+        {
+            <EditForm Model=@_filter>
+                <div class="d-flex flex-wrap">
+                    <div id="lifecycle-filter" class="my-3 mx-1">
+                        <h5 class="text-uppercase text-primary">Lifecylce</h5>
+
+                        @foreach (var life in _filter.PlantLifecycleEnums)
+                        {
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="life.IsSelected" id="@life.EnumItem.Key" />
+                                <label class="form-check-label" for="@life.EnumItem.Key">
+                                    @life.EnumItem.Value
+                                </label>
+                            </div>
+                        }
+
+                        <a id="clear-lifecycle" role='button' onclick=@(() => Clear(_filter.PlantLifecycleEnums))>Clear</a>
+
+                    </div>
+                    <div id="type-filter" class="my-3 mx-1">
+                        <h5 class="text-uppercase text-primary">Type</h5>
+                        @foreach (var type in _filter.PlantTypeEnums)
+                        {
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="type.IsSelected" id="@type.EnumItem.Key" />
+                                <label class="form-check-label" for="@type.EnumItem.Key">
+                                    @type.EnumItem.Value
+                                </label>
+                            </div>
+                        }
+                        <a id="clear-type" role='button' onclick=@(() => Clear(_filter.PlantTypeEnums))>Clear</a>
+                    </div>
+                    <div id="light-filter" class="my-3 mx-1">
+                        <h5 class="text-uppercase text-primary">Conditions</h5>
+                        @foreach (var grow in _filter.LightRequirementEnums)
+                        {
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="grow.IsSelected" id="@grow.EnumItem.Key" />
+                                <label class="form-check-label" for="@grow.EnumItem.Key">
+                                    @grow.EnumItem.Value
+                                </label>
+                            </div>
+                        }
+                        <a id="clear-light" role='button' onclick=@(() => Clear(_filter.LightRequirementEnums))>Clear</a>
+                    </div>
+                    <div id="light-filter" class="my-3 mx-1">
+                        <h5 class="text-uppercase text-primary">Watering</h5>
+                        @foreach (var water in _filter.MoistureRequirementEnums)
+                        {
+                            <div class="form-check">
+                                <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="water.IsSelected" id="@water.EnumItem.Key" />
+                                <label class="form-check-label" for="@water.EnumItem.Key">
+                                    @water.EnumItem.Value
+                                </label>
+                            </div>
+                        }
+                        <a id="clear-moisture" role='button' onclick=@(() => Clear(_filter.MoistureRequirementEnums))>Clear</a>
+                    </div>
                 </div>
-                <div id="type-filter" class="my-3 mx-1">
-                    <h5 class="text-uppercase text-primary">Type</h5>
-                    @foreach (var type in _filter.PlantTypeEnums)
-                    {
-                        <div class="form-check">
-                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="type.IsSelected" id="@type.EnumItem.Key" />
-                            <label class="form-check-label" for="@type.EnumItem.Key">
-                                @type.EnumItem.Value
-                            </label>
-                        </div>
-                    }
-                    <a id="clear-type" role='button' onclick=@(() => Clear(_filter.PlantTypeEnums))>Clear</a>
-                </div>
-                <div id="light-filter" class="my-3 mx-1">
-                    <h5 class="text-uppercase text-primary">Conditions</h5>
-                    @foreach (var grow in _filter.LightRequirementEnums)
-                    {
-                        <div class="form-check">
-                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="grow.IsSelected" id="@grow.EnumItem.Key" />
-                            <label class="form-check-label" for="@grow.EnumItem.Key">
-                                @grow.EnumItem.Value
-                            </label>
-                        </div>
-                    }
-                    <a id="clear-light" role='button' onclick=@(() => Clear(_filter.LightRequirementEnums))>Clear</a>
-                </div>
-                <div id="light-filter" class="my-3 mx-1">
-                    <h5 class="text-uppercase text-primary">Watering</h5>
-                    @foreach (var water in _filter.MoistureRequirementEnums)
-                    {
-                        <div class="form-check">
-                            <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="water.IsSelected" id="@water.EnumItem.Key" />
-                            <label class="form-check-label" for="@water.EnumItem.Key">
-                                @water.EnumItem.Value
-                            </label>
-                        </div>
-                    }
-                    <a id="clear-moisture" role='button' onclick=@(() => Clear(_filter.MoistureRequirementEnums))>Clear</a>
-                </div>
-            </div>
-        </EditForm>
+            </EditForm>
+        }
     </div>
 
     <div id="plants" class="col-md-9">
@@ -113,16 +119,14 @@
                             <tbody>
                                 @foreach (var plant in _plants.OrderBy(p => p.Name))
                                 {
-                                    if (IsVisible(plant))
+                                    if (IsVisible(plant) && _filter!= null)
                                     {
                                         <tr style="border-width: 2px; border-color: @(plant.Color);" @key="plant.PlantId">
                                             <td class="col-2 text-start "><a @onclick=@(() => ViewPlant(plant)) class="text-dark" role="button"><span class="lead fw-bold">@plant.Name</span></a></td>
                                             <td class="col-1"><img src="./images/@(plant.LightRequirement).png" alt="@plant.LightRequirement" title="@plant.LightRequirement" class="img-fluid" /></td>
                                             <td class="col-1"><img src="./images/@(plant.Type).png" alt="@plant.Type" title="@plant.Type" class="img-fluid" /><img src="./images/@(plant.Lifecycle).png" alt="@plant.Lifecycle" title="@plant.Lifecycle" class="img-fluid"></td>
                                             <td class="col-2 text-start">
-                                                <span class="fw-bold">Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />
-                                                @* <span class="fw-bold">Varieties:</span>@DoNotDisplayZero(plant.VarietyCount)<br />
-                                    <span class="fw-bold">Instructions: </span>@DoNotDisplayZero(plant.GrowInstructionsCount)*@
+                                                <span class="fw-bold">Moisture:</span> <br /> @GetDescription(_filter.MoistureRequirementEnums, plant.MoistureRequirement.ToString()) <br />                                             
                                             </td>
                                             <td class="col-3">
                                                 <button type="button" class="btn btn-info" title="View Plant" @onclick="@(() => ViewPlant(plant))"><span class="bi bi-info-lg">&nbsp;</span></button>
@@ -158,7 +162,7 @@
                     <div class="row d-block d-sm-none">
                         @foreach (var plant in _plants.OrderBy(p => p.Name))
                         {
-                            if (IsVisible(plant))
+                            if (IsVisible(plant) && _filter != null)
                             {
                                 <div class="col-sm-6">
                                     <div class="card bg-light mb-2" style="border-color:  @(plant.Color);">
@@ -196,9 +200,8 @@
     </div>
 </div>
 @code {
-
-    public IList<PlantModel> _plants { get; set; }
-    public PlantFilter _filter { get; set; }
+    public IList<PlantModel>? _plants;
+    public PlantFilter? _filter;
 
     protected override async Task OnInitializedAsync()
     {
@@ -211,6 +214,8 @@
 
     public bool IsVisible(PlantModel plant)
     {
+        if (_filter == null) return true;
+
         if (_filter.LightRequirementEnums.Exists(cb => cb.IsSelected) && !_filter.LightRequirementEnums.Exists(cb => cb.IsSelected && cb.EnumItem.Key.Equals(plant.LightRequirement.ToString())))
             return false;
 
@@ -228,7 +233,9 @@
 
     public string GetDescription(List<CheckableEnum> list, string code)
     {
-        return list.FirstOrDefault(c => c.EnumItem.Key.Equals(code))?.EnumItem.Value;
+        if (list == null) return string.Empty;
+        var en = list.FirstOrDefault(c => c.EnumItem.Key.Equals(code));
+        return en == null ? string.Empty : en.EnumItem.Value;
     }
 
     public string DoNotDisplayZero(int count)

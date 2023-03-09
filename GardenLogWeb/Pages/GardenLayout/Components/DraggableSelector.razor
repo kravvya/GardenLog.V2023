@@ -32,11 +32,10 @@
     public GardenPlanSettings? _settings;
     double _cursorX;
     double _cursorY;
-    bool _isMoving;
     ComponentChanges _changes = ComponentChanges.Unspecified;
 
 
-    public void Intitialize(IVisualComponent component, GardenPlanSettings settings, MouseEventArgs e)
+    public void Intitialize(IVisualComponent? component, GardenPlanSettings settings, MouseEventArgs? e)
     {
 
         _settings = settings;
@@ -90,7 +89,7 @@
     {
         Console.WriteLine($"DraggableSelector - OnMove - {_changes}");
 
-        if (_changes == ComponentChanges.Unspecified)
+        if (_changes == ComponentChanges.Unspecified || Component == null)
             return;
 
 
@@ -159,6 +158,9 @@
 
     void OnKeyDown(object? _, KeyboardEventArgs e)
     {
+         if (Component == null)
+            return;
+
         switch (e.Key)
         {
             case "ArrowDown":

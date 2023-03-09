@@ -14,15 +14,15 @@
 
 @code {
     [Parameter]
-    public RenderFragment PageContent { get; set; }
+    public RenderFragment? PageContent { get; set; }
 
     [Parameter]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     [Parameter]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     [Parameter]
-    public List<BreadcrumbLink> BreadcrumbLinks { get; set; }
+    public List<BreadcrumbLink>? BreadcrumbLinks { get; set; }
 
 }

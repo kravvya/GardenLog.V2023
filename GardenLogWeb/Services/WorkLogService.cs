@@ -34,10 +34,9 @@ public class WorkLogService : IWorkLogService
 
     public async Task<List<WorkLogModel>> GetWorkLogs(RelatedEntityTypEnum entityType, string entityId, bool forceRefresh)
     {
-        List<WorkLogModel> workLogs;
         string key = string.Format(WORK_LOG_KEY, entityType, entityId);
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<WorkLogModel>>(key, out workLogs))
+        if (forceRefresh || !_cacheService.TryGetValue<List<WorkLogModel>>(key, out List<WorkLogModel>? workLogs))
         {
             _logger.LogInformation("Work logs not in cache or forceRefresh");
 
@@ -49,7 +48,7 @@ public class WorkLogService : IWorkLogService
 
         else
         {
-            _logger.LogInformation($"Harvests are in cache. Found {workLogs.Count()}");
+            _logger.LogInformation($"Harvests are in cache. Found {workLogs!.Count}");
         }
 
         return workLogs;
@@ -71,7 +70,7 @@ public class WorkLogService : IWorkLogService
         }
         else
         {
-            workLog.WorkLogId = response.Response;
+            workLog.WorkLogId = response.Response!;
 
             AddOrUpdateToWorkLogList(workLog);
 
@@ -147,7 +146,7 @@ public class WorkLogService : IWorkLogService
             return new List<WorkLogModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
 
     private void AddOrUpdateToWorkLogList(WorkLogModel workLog)
@@ -155,11 +154,10 @@ public class WorkLogService : IWorkLogService
         foreach (var relatedEntity in workLog.RelatedEntities)
         {
             string key = string.Format(WORK_LOG_KEY, relatedEntity.EntityType, relatedEntity.EntityId);
-            List<WorkLogModel>? workLogs = null;
 
-            if (_cacheService.TryGetValue<List<WorkLogModel>>(key, out workLogs))
+            if (_cacheService.TryGetValue<List<WorkLogModel>>(key, out List<WorkLogModel>? workLogs))
             {
-                var index = workLogs.FindIndex(p => p.WorkLogId == workLog.WorkLogId);
+                var index = workLogs!.FindIndex(p => p.WorkLogId == workLog.WorkLogId);
                 if (index > -1)
                 {
                     workLogs[index] = workLog;
@@ -182,7 +180,7 @@ public class WorkLogService : IWorkLogService
             string key = string.Format(WORK_LOG_KEY, relatedEntity.EntityType, relatedEntity.EntityId);
             if (_cacheService.TryGetValue<List<WorkLogModel>>(WORK_LOG_KEY, out var workLogs))
             {
-                var index = workLogs.FindIndex(p => p.WorkLogId == workLogId);
+                var index = workLogs!.FindIndex(p => p.WorkLogId == workLogId);
                 if (index > -1)
                 {
                     workLogs.RemoveAt(index);

@@ -28,7 +28,7 @@ Console.WriteLine("Hello, World!");
 AdminPlantHarvestProcessor processor = new();
 //var changes = processor.UpdateAllPlantHarvestWithSpacingInInches(config, loggerFactory);
 
-var changes = processor.UpdateAllPlantHarvestWithPlantsPerFoot(config, loggerFactory);
+var changes = AdminPlantHarvestProcessor.UpdateAllPlantHarvestWithPlantsPerFoot(config, loggerFactory);
 
 Console.WriteLine($"Performed {changes} changes");
 

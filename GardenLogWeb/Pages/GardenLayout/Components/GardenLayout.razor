@@ -1,9 +1,11 @@
 ﻿@inject IMouseService _mouseService;
 @inject IKeyService _keyService;
 @inject IGardenService _gardenService;
+@inject ILogger<GardenLayout> _logger;
+
 @implements IDisposable;
 
-@if (GardenBeds != null)
+@if (GardenBeds != null && Settings!= null)
 {
     <svg width="@Settings.SvgWidth" height="@Settings.SvgHeight" viewBox="@Settings.StartX @Settings.StartY @Settings.ViewBoxX @Settings.ViewBoxY"
      @onkeydown=@(e => _keyService.KeyDown(this, e))
@@ -38,17 +40,17 @@
 }
 
 @code {
-    [Parameter] public GardenModel? Garden { get; set; }
+    [Parameter, EditorRequired] public GardenModel? Garden { get; set; }
 
-    [Parameter] public GardenPlanSettings? Settings { get; set; }
+    [Parameter, EditorRequired] public GardenPlanSettings? Settings { get; set; }
 
-    [Parameter] public Func<GardenBedModel, bool, Task> GardenBedSelected { get; set; }
+    [Parameter, EditorRequired] public Func<GardenBedModel?, bool, Task>? GardenBedSelected { get; set; }
 
-    [Parameter] public Func<string, Task> GardenBedDeleted { get; set; }
+    [Parameter, EditorRequired] public Func<string, Task>? GardenBedDeleted { get; set; }
 
-    [Parameter] public List<GardenBedModel> GardenBeds { get; set; }
+    [Parameter, EditorRequired] public List<GardenBedModel>? GardenBeds { get; set; }
 
-    DraggableSelector _draggableComponent;
+    DraggableSelector? _draggableComponent;
     IVisualComponent? _selected;
 
     protected override void OnInitialized()
@@ -58,27 +60,36 @@
 
     public void SelectCompoenent(GardenBedModel gardenBed)
     {
-        Console.WriteLine("GardenLayout - SelectCompoenent");
-        _selected = gardenBed;
-        _draggableComponent.Intitialize(_selected, Settings, null);
-        GardenBedSelected(gardenBed, false);
+        if (_draggableComponent != null && Settings != null && GardenBedSelected!= null)
+        {
+            _logger.LogDebug("GardenLayout - SelectCompoenent");
+            _selected = gardenBed;
+            _draggableComponent.Intitialize(_selected, Settings, null);
+            GardenBedSelected(gardenBed, false);
+        }
     }
 
     protected void ComponentSelected(IVisualComponent selected, MouseEventArgs e)
     {
-        Console.WriteLine("GardenLayout - ComponentSelected");
-        _selected = selected;
-        _draggableComponent.Intitialize(_selected, Settings, e);
-        GardenBedSelected((GardenBedModel)selected, false);
+        if (_draggableComponent != null && Settings != null && GardenBedSelected != null)
+        {
+            _logger.LogDebug("GardenLayout - ComponentSelected");
+            _selected = selected;
+            _draggableComponent.Intitialize(_selected, Settings, e);
+            GardenBedSelected((GardenBedModel)selected, false);
+        }
     }
 
     protected async Task ComponentNotSelected(bool skipUpdate)
     {
-        Console.WriteLine("GardenLayout - ComponentNotSelected");
-        _draggableComponent.Intitialize(null, Settings, null);
-        _selected = null;
+        if (_draggableComponent != null && Settings != null && GardenBedSelected != null)
+        {
+            _logger.LogDebug("GardenLayout - ComponentNotSelected");
+            _draggableComponent.Intitialize(null, Settings, null);
+            _selected = null;
 
-        GardenBedSelected(null, skipUpdate);
+            await GardenBedSelected(null, skipUpdate);
+        }
     }
 
     void OnKeyDown(object? _, KeyboardEventArgs e)
@@ -86,9 +97,9 @@
         switch (e.Key)
         {
             case "Delete":
-                if (_selected != null)
+                if (_selected != null && GardenBedDeleted != null)
                 {
-                    Console.WriteLine("Delete bed - GardenLayout");
+                    _logger.LogDebug("Delete bed - GardenLayout");
                     string _gardenBedId = _selected.Id;
                     _selected = null;
                     ComponentNotSelected(true).GetAwaiter();

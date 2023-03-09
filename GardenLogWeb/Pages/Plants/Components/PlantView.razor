@@ -12,9 +12,12 @@
                         <img class="d-block img-fluid" src="@_imageService.GetRawImageUrl(Plant.ImageFileName)" alt="@Plant.ImageLabel" />
                     </div>
                     <div class="plant-image-thumbnail">
-                        @foreach (var image in Plant.Images)
+                        @if (Plant.Images != null)
                         {
-                            <img class="img-fluid img-thumbnail" @key="image.ImageId" src="@_imageService.GetThumbnailImageUrl(image.FileName)" alt="@image.Label" @onclick="@(() => ReplaceImage(image))" />
+                            @foreach (var image in Plant.Images)
+                            {
+                                <img class="img-fluid img-thumbnail" @key="image.ImageId" src="@_imageService.GetThumbnailImageUrl(image.FileName)" alt="@image.Label" @onclick="@(() => ReplaceImage(image))" />
+                            }
                         }
                     </div>
                 </div>
@@ -85,9 +88,12 @@
                         <img class="d-block img-fluid" src="@_imageService.GetRawImageUrl(Plant.ImageFileName)" alt="@Plant.ImageLabel" />
                     </div>
                     <div class="plant-image-thumbnail">
-                        @foreach (var image in Plant.Images)
+                        @if (Plant.Images != null)
                         {
-                            <img class="img-fluid img-thumbnail" @key="image.ImageId" src="@_imageService.GetThumbnailImageUrl(image.FileName)" alt="@image.Label" @onclick="@(() => ReplaceImage(image))" />
+                            @foreach (var image in Plant.Images)
+                            {
+                                <img class="img-fluid img-thumbnail" @key="image.ImageId" src="@_imageService.GetThumbnailImageUrl(image.FileName)" alt="@image.Label" @onclick="@(() => ReplaceImage(image))" />
+                            }
                         }
                     </div>
                 </div>
@@ -153,7 +159,7 @@
 
 @code {
     [Parameter]
-    public PlantModel Plant { get; set; }
+    public PlantModel? Plant { get; set; }
 
     [Parameter]
     public bool IsInsideModal { get; set; } = false;
@@ -166,21 +172,27 @@
 
     private void ReplaceImage(ImageViewModel newImage)
     {
-        Plant.ImageFileName = newImage.FileName;
-        Plant.ImageLabel = newImage.Label;
-        StateHasChanged();
+        if (Plant != null)
+        {
+            Plant.ImageFileName = newImage.FileName;
+            Plant.ImageLabel = newImage.Label;
+            StateHasChanged();
+        }
     }
 
     private string GetHarvestSeasons()
     {
         System.Text.StringBuilder sb = new();
 
-        foreach (HarvestSeasonEnum harvest in Enum.GetValues(typeof(HarvestSeasonEnum)))
+        if (Plant != null)
         {
-            if (Plant.HarvestSeason.HasFlag(harvest) && harvest != HarvestSeasonEnum.Unspecified)
+            foreach (HarvestSeasonEnum harvest in Enum.GetValues(typeof(HarvestSeasonEnum)))
             {
-                if (sb.Length > 0) { sb.Append(", "); }
-                sb.Append(_verifyService.GetDescription<HarvestSeasonEnum>(harvest.ToString()));
+                if (Plant.HarvestSeason.HasFlag(harvest) && harvest != HarvestSeasonEnum.Unspecified)
+                {
+                    if (sb.Length > 0) { sb.Append(", "); }
+                    sb.Append(_verifyService.GetDescription<HarvestSeasonEnum>(harvest.ToString()));
+                }
             }
         }
         return sb.ToString();

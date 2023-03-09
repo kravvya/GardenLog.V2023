@@ -79,7 +79,7 @@
 
     void OnResizerDown(MouseEventArgs e, ComponentChanges changes)
     {
-        _logger.LogDebug($"DraggableSelector - OnResizerDown - {changes}");
+        _logger.LogDebug($"DraggablePlantSelector - OnResizerDown - {changes}");
         _changes = changes;
 
         _cursorX = e.ClientX;
@@ -89,13 +89,13 @@
     void OnUp(object? _, MouseEventArgs e)
     {
         _changes = ComponentChanges.Unspecified;
-        _logger.LogDebug("DraggableSelector - OnUp");
+        _logger.LogDebug("DraggablePlantSelector - OnUp");
     }
 
     void OnMove(object? _, MouseEventArgs e)
     {
 
-        if (_changes == ComponentChanges.Unspecified)
+        if (_changes == ComponentChanges.Unspecified || _sides == null)
             return;
 
         if (GardenBed == null || _plant == null) return;
@@ -148,7 +148,7 @@
             // _logger.LogInformation($"TryToMove: newX:{newX}  GardenBed.X:{GardenBed.X} _plant?.X:{_plant?.X} deltaX:{deltaX}  _cursorX:{_cursorX} e.ClientX: {e.ClientX}");
 
 
-            _logger.LogInformation($"TryToMove: newY: {newY} GardenBed.Y:{GardenBed.Y} _plant?.Y:{_plant?.Y}  deltaY:{deltaY} _cursorY:{_cursorY} e.ClientY: {e.ClientY} _sides.LessIsMoreY:{_sides.LessIsMoreY}");
+            _logger.LogInformation($"TryToMove: newY: {newY} GardenBed.Y:{GardenBed.Y} _plant?.Y:{_plant?.Y}  deltaY:{deltaY} _cursorY:{_cursorY} e.ClientY: {e.ClientY} _sides.LessIsMoreY:{_sides!.LessIsMoreY}");
 
 
             //  _logger.LogInformation($"Move: FlipAxesForMove: {_sides?.FlipAxesForMove} LessIsMore : {_sides?.LessIsMore}  top:{top} bottom: {bottom} left: {left} right:{right} oldX: {_plant?.X} oldY: {_plant?.Y} newX: {newX} newY: {newY}");

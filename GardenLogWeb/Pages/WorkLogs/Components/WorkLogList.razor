@@ -56,8 +56,8 @@
     private WorkLogForm? _workLogForm;
 
     private RelatedEntityTypEnum _relatedEntityType;
-    private string _relatedEntitytId;
-    private string _harvestCycleId;
+    private string _relatedEntitytId = string.Empty;
+    private string _harvestCycleId=string.Empty;
 
     private List<WorkLogModel> _workLogs { get; set; } = new();
 
@@ -72,20 +72,23 @@
 
     private async Task AddWorkLog()
     {
-        _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(_relatedEntityType, _relatedEntitytId, _harvestCycleId));
-        await _workLogFormModal?.OpenModal("Add new note", GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_workLogForm != null && _workLogFormModal != null)
+        {
+            _workLogForm.Initialize(await _harvestService.BuildRelatedEntities(_relatedEntityType, _relatedEntitytId, _harvestCycleId));
+            await _workLogFormModal.OpenModal("Add new note", GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task CloseWorkLogFormModal()
     {
-        await _workLogFormModal?.CloseModal();
+        await _workLogFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseWorkLogForm(WorkLogModel workLog)
     {
-        await _workLogFormModal?.CloseModal();
+        await _workLogFormModal!.CloseModal();
 
         StateHasChanged();
     }

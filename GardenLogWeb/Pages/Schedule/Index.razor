@@ -22,12 +22,12 @@
     public string HarvestCycleId { get; set; } = string.Empty;
 
     private List<BreadcrumbLink> _breadcrumbLinks = new();
-    private Calendar _calendar;
-    private CalendarTable _calendarTable;
+    private Calendar? _calendar;
+    private CalendarTable? _calendarTable;
 
     private bool _isViewGraph = true;
-    private string _title;
-    private string _description;
+    private string _title=string.Empty;
+    private string _description=string.Empty;
 
     private HarvestCycleModel? _harvest;
 
@@ -38,7 +38,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (_harvest != null && !_calendar.IsInitialized && _isViewGraph)
+        if (_harvest != null && _calendar != null && !_calendar.IsInitialized && _isViewGraph)
             _calendar.Initialize(_harvest);
     }
 
@@ -98,10 +98,10 @@
     {
         if (_isViewGraph) return;
 
-        if (_harvest != null && !_calendar.IsInitialized)
+        if (_harvest != null && _calendar!= null && !_calendar.IsInitialized)
             _calendar.Initialize(_harvest);
 
-        _calendarTable.Hide();
+        if (_calendarTable!=null) _calendarTable.Hide();
         _isViewGraph = true;
         StateHasChanged();
     }
@@ -110,10 +110,10 @@
     {
         if (!_isViewGraph) return;
 
-        if (_harvest != null && !_calendarTable.IsInitialized)
+        if (_harvest != null && _calendarTable!= null && !_calendarTable.IsInitialized)
             _calendarTable.Initialize(_harvest);
 
-        _calendar.Hide();
+        if (_calendar != null) _calendar.Hide();
         _isViewGraph = false;
         StateHasChanged();
     }

@@ -5,7 +5,7 @@ namespace GardenLogWeb.Services;
 public interface IPlantService
 {
     Task<List<PlantModel>> GetPlants(bool forceRefresh);
-    Task<PlantModel> GetPlant(string plantId, bool useCache);
+    Task<PlantModel?> GetPlant(string plantId, bool useCache);
     Task<ApiObjectResponse<string>> CreatePlant(PlantModel plant);
     Task<ApiResponse> UpdatePlant(PlantModel plant);
     Task<ApiResponse> DeletePlant(string id);
@@ -13,13 +13,13 @@ public interface IPlantService
 
     Task<List<PlantVarietyModel>> GetAllPlantVarieties(bool useCache);
     Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId, bool useCache);
-    Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVarietyId);
+    Task<PlantVarietyModel?> GetPlantVariety(string plantId, string plantVarietyId);
     Task<ApiObjectResponse<string>> CreatePlantVariety(PlantVarietyModel variety);
     Task<ApiResponse> UpdatePlantVariety(PlantVarietyModel variety);
     Task<ApiResponse> DeletePlantVariety(string plantId, string id);
 
     Task<List<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId, bool useCache);
-    Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId);
+    Task<PlantGrowInstructionViewModel?> GetPlantGrowInstruction(string plantId, string growInstructionId);
     Task<ApiObjectResponse<string>> CreatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction);
     Task<ApiResponse> UpdatePlantGrowInstruction(PlantGrowInstructionViewModel plantGrowInstruction);
     Task<ApiResponse> DeletePlantGrowInstruction(string plantId, string id);
@@ -36,7 +36,7 @@ public class PlantService : IPlantService
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
 
-    private Random _random = new Random();
+    private readonly Random _random = new();
     private const string PLANTS_KEY = "Plants";
     private const string PLANT_NAMES_KEY = "PlantNames";
     private const string PLANT_VARIETY_KEY = "Plant_{0}_Variety";
@@ -56,14 +56,13 @@ public class PlantService : IPlantService
     public string GetRandomPlantColor()
     {
         var color = System.Drawing.Color.FromArgb(_random.Next(256), _random.Next(256), _random.Next(256));
-        return $"#{color.R.ToString("X2")}{color.G.ToString("X2")}{color.B.ToString("X2")}";
-    }
+        return $"#{color.R:X2}{color.G:X2)}{color.B:X2)}";
+    }  
 
     public async Task<List<PlantModel>> GetPlants(bool forceRefresh)
     {
-        List<PlantModel> plants = null;
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out List<PlantModel>? plants))
         {
             _logger.LogInformation("Plants not in cache or forceRefresh");
 
@@ -75,6 +74,8 @@ public class PlantService : IPlantService
 
             plants = plantsTask.Result;
             var images = imagesTask.Result;
+
+            plants ??= new List<PlantModel>();
 
             if (plants.Count > 0)
             {
@@ -103,7 +104,7 @@ public class PlantService : IPlantService
 
         else
         {
-            _logger.LogInformation($"Plants are in cache. Found {plants.Count()}");
+            _logger.LogInformation($"Plants are in cache. Found {plants!.Count}");
         }
 
         return plants;
@@ -111,9 +112,8 @@ public class PlantService : IPlantService
 
     public async Task<List<PlantNameModel>> GetPlantNames(bool forceRefresh)
     {
-        List<PlantNameModel> plantNames = null;
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out List<PlantNameModel>? plantNames))
         {
             _logger.LogInformation("Plant names are not in cache or forceRefresh");
 
@@ -124,15 +124,15 @@ public class PlantService : IPlantService
         }
         else
         {
-            _logger.LogInformation($"Plant names are in cache. Found {plantNames.Count()}");
+            _logger.LogInformation($"Plant names are in cache. Found {plantNames!.Count}");
         }
 
         return plantNames;
     }
 
-    public async Task<PlantModel> GetPlant(string plantId, bool useCache)
+    public async Task<PlantModel?> GetPlant(string plantId, bool useCache)
     {
-        PlantModel plant = null;
+        PlantModel? plant = null;
 
         var plants = (await GetPlants(false));
 
@@ -155,7 +155,7 @@ public class PlantService : IPlantService
 
             plant = response.Response;
 
-            AddOrUpdateToPlantList(plant);
+            if (plant != null) AddOrUpdateToPlantList(plant);
         }
 
         return plant;
@@ -178,7 +178,7 @@ public class PlantService : IPlantService
         }
         else
         {
-            plant.PlantId = response.Response;
+            plant.PlantId = response.Response!;
             plant.Images = new();
             plant.ImageFileName = ImageService.NO_IMAGE;
             plant.ImageLabel = string.Empty;
@@ -242,7 +242,7 @@ public class PlantService : IPlantService
     #region Public Plant Variety Functions
     public async Task<List<PlantVarietyModel>> GetAllPlantVarieties(bool useCache)
     {
-        List<PlantVarietyModel> plantVarietyList = null;
+        List<PlantVarietyModel>? plantVarietyList = null;
 
         if (useCache)
         {
@@ -288,7 +288,7 @@ public class PlantService : IPlantService
 
     public async Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId, bool useCache)
     {
-        List<PlantVarietyModel> plantVarietyList = null;
+        List<PlantVarietyModel>? plantVarietyList = null;
 
         if (useCache)
         {
@@ -298,6 +298,8 @@ public class PlantService : IPlantService
         if (plantVarietyList == null)
         {
             plantVarietyList = await GetPlantVarieties(plantId);
+
+            plantVarietyList ??= new List<PlantVarietyModel>();
 
             if (plantVarietyList.Count > 0)
             {
@@ -332,9 +334,9 @@ public class PlantService : IPlantService
         return plantVarietyList;
     }
 
-    public async Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVerietyId)
+    public async Task<PlantVarietyModel?> GetPlantVariety(string plantId, string plantVerietyId)
     {
-        PlantVarietyModel plantVariety = null;
+        PlantVarietyModel? plantVariety;
 
         var plantVarietyTask = GetPlantVarietyFromServer(plantId, plantVerietyId);
         var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.PlantVariety, plantVerietyId, false);
@@ -343,6 +345,8 @@ public class PlantService : IPlantService
 
         plantVariety = plantVarietyTask.Result;
         var images = imagesTask.Result;
+
+        if (plantVariety == null) return plantVariety;
 
         plantVariety.Images = images;
         var image = plantVariety.Images.FirstOrDefault();
@@ -379,7 +383,7 @@ public class PlantService : IPlantService
         }
         else
         {
-            variety.PlantVarietyId = response.Response;
+            variety.PlantVarietyId = response.Response!;
             AddOrUpdateToPlantVarietyList(variety);
             IncrementVarietyCountInCache(variety.PlantId);
             _toastService.ShowToast($"Plant Variety created. Plant Variety id is {variety.PlantVarietyId}", GardenLogToastLevel.Success);
@@ -444,7 +448,7 @@ public class PlantService : IPlantService
 
     public async Task<List<PlantGrowInstructionViewModel>> GetPlantGrowInstructions(string plantId, bool useCache)
     {
-        List<PlantGrowInstructionViewModel> plantGrowInstructionsList = null;
+        List<PlantGrowInstructionViewModel>? plantGrowInstructionsList = null;
 
         string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
@@ -463,20 +467,27 @@ public class PlantService : IPlantService
             if (!response.IsSuccess)
             {
                 _toastService.ShowToast("Unable to get Plant Grow Instructions", GardenLogToastLevel.Error);
-                return null;
+                return new List<PlantGrowInstructionViewModel>();
             }
 
             plantGrowInstructionsList = response.Response;
 
-            AddPlanGrowInstructionsToCache(plantId, plantGrowInstructionsList);
+            if (plantGrowInstructionsList != null)
+            {
+                AddPlanGrowInstructionsToCache(plantId, plantGrowInstructionsList);
+            }
+            else
+            {
+                plantGrowInstructionsList = new List<PlantGrowInstructionViewModel>();
+            }
         }
 
         return plantGrowInstructionsList;
     }
 
-    public async Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId)
+    public async Task<PlantGrowInstructionViewModel?> GetPlantGrowInstruction(string plantId, string growInstructionId)
     {
-        PlantGrowInstructionViewModel growInstruction = null;
+        PlantGrowInstructionViewModel? growInstruction;
 
         string route = Routes.GetPlantGrowInstruction.Replace("{plantId}", plantId).Replace("{id}", growInstructionId);
 
@@ -492,7 +503,7 @@ public class PlantService : IPlantService
 
         growInstruction = response.Response;
 
-        await AddOrUpdateToPlantGrowInstructionList(growInstruction);
+        if (growInstruction!= null) await AddOrUpdateToPlantGrowInstructionList(growInstruction);
 
         return growInstruction;
     }
@@ -515,7 +526,8 @@ public class PlantService : IPlantService
         }
         else
         {
-            plantGrowInstruction.PlantGrowInstructionId = response.Response;
+            plantGrowInstruction.PlantGrowInstructionId = response.Response!;
+
             await AddOrUpdateToPlantGrowInstructionList(plantGrowInstruction);
             _toastService.ShowToast($"Grow Instructions added. Instruction id is {plantGrowInstruction.PlantGrowInstructionId}", GardenLogToastLevel.Success);
         }
@@ -576,7 +588,7 @@ public class PlantService : IPlantService
     #endregion
 
     #region Private Plant Functions
-    private async Task<List<PlantModel>> GetAllPlants()
+    private async Task<List<PlantModel>?> GetAllPlants()
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
@@ -600,21 +612,19 @@ public class PlantService : IPlantService
         if (!response.IsSuccess)
         {
             _toastService.ShowToast("Unable to get Plant Names", GardenLogToastLevel.Error);
-            return null;
+            return new List<PlantNameModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
 
 
     private void AddOrUpdateToPlantList(PlantModel plant)
     {
-        List<PlantModel> plants = null;
-        List<PlantNameModel> plantNames = null;
 
-        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out List<PlantModel>? plants))
         {
-            var index = plants.FindIndex(p => p.PlantId == plant.PlantId);
+            var index = plants!.FindIndex(p => p.PlantId == plant.PlantId);
             if (index > -1)
             {
                 plant.Images = plants[index].Images;
@@ -628,9 +638,9 @@ public class PlantService : IPlantService
             }
         }
 
-        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
+        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out List<PlantNameModel>? plantNames))
         {
-            var index = plantNames.FindIndex(p => p.PlantId == plant.PlantId);
+            var index = plantNames!.FindIndex(p => p.PlantId == plant.PlantId);
             if (index > -1)
             {
                 plantNames[index].Name = plant.Name;
@@ -638,28 +648,26 @@ public class PlantService : IPlantService
             }
             else
             {
-                plantNames.Add(new PlantNameModel() {PlantId=plant.PlantId, Name=plant.Name, Color=plant.Color });
+                plantNames.Add(new PlantNameModel() { PlantId = plant.PlantId, Name = plant.Name, Color = plant.Color });
             }
         }
     }
 
     private void RemoveFromPlantList(string plantId)
     {
-        List<PlantModel> plants = null;
-        List<PlantNameModel> plantNames = null;
 
-        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out List<PlantModel>? plants))
         {
-            var index = plants.FindIndex(p => p.PlantId == plantId);
+            var index = plants!.FindIndex(p => p.PlantId == plantId);
             if (index > -1)
             {
                 plants.RemoveAt(index);
             }
         }
 
-        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out plantNames))
+        if (_cacheService.TryGetValue<List<PlantNameModel>>(PLANT_NAMES_KEY, out List<PlantNameModel>? plantNames))
         {
-            var index = plantNames.FindIndex(p => p.PlantId == plantId);
+            var index = plantNames!.FindIndex(p => p.PlantId == plantId);
             if (index > -1)
             {
                 plantNames.RemoveAt(index);
@@ -669,22 +677,20 @@ public class PlantService : IPlantService
 
     private void IncrementVarietyCountInCache(string plantId)
     {
-        List<PlantModel> plants = null;
 
-        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out List<PlantModel>? plants))
         {
-            var plant = plants.Where(p => p.PlantId == plantId).FirstOrDefault();
+            var plant = plants!.Where(p => p.PlantId == plantId).FirstOrDefault();
             if (plant != null) plant.VarietyCount++;
         }
     }
 
     private void IncrementGrowCountInCache(string plantId)
     {
-        List<PlantModel> plants = null;
 
-        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out plants))
+        if (_cacheService.TryGetValue<List<PlantModel>>(PLANTS_KEY, out List<PlantModel>? plants))
         {
-            var plant = plants.Where(p => p.PlantId == plantId).FirstOrDefault();
+            var plant = plants!.Where(p => p.PlantId == plantId).FirstOrDefault();
             if (plant != null) plant.GrowInstructionsCount++;
         }
     }
@@ -700,13 +706,15 @@ public class PlantService : IPlantService
         if (!response.IsSuccess)
         {
             _toastService.ShowToast("Unable to get Plant Varieties", GardenLogToastLevel.Error);
-            return null;
+            return new List<PlantVarietyModel>();
         }
+
+        if (response.Response == null) return new List<PlantVarietyModel>();
 
         return response.Response;
     }
 
-    private async Task<List<PlantVarietyModel>> GetPlantVarieties(string plantId)
+    private async Task<List<PlantVarietyModel>?> GetPlantVarieties(string plantId)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
@@ -721,7 +729,7 @@ public class PlantService : IPlantService
         return response.Response;
     }
 
-    private async Task<PlantVarietyModel> GetPlantVarietyFromServer(string plantId, string plantVerietyId)
+    private async Task<PlantVarietyModel?> GetPlantVarietyFromServer(string plantId, string plantVerietyId)
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
@@ -754,13 +762,11 @@ public class PlantService : IPlantService
         }
     }
 
-    private List<PlantVarietyModel> GetPlantVarietiesFromCache(string plantId)
+    private List<PlantVarietyModel>? GetPlantVarietiesFromCache(string plantId)
     {
         string cacheKey = string.Format(PLANT_VARIETY_KEY, plantId);
 
-        List<PlantVarietyModel> plantVarietyList = null;
-
-        _cacheService.TryGetValue<List<PlantVarietyModel>>(cacheKey, out plantVarietyList);
+        _cacheService.TryGetValue<List<PlantVarietyModel>>(cacheKey, out List<PlantVarietyModel>? plantVarietyList);
 
         return plantVarietyList;
     }
@@ -775,6 +781,8 @@ public class PlantService : IPlantService
     private void RemoveFromPlantVarietyList(string plantId, string plantVarietyId)
     {
         var plantVarieties = GetPlantVarietiesFromCache(plantId);
+
+        if (plantVarieties == null) return;
 
         var index = plantVarieties.FindIndex(p => p.PlantVarietyId == plantVarietyId);
         if (index > -1)
@@ -803,13 +811,11 @@ public class PlantService : IPlantService
         }
     }
 
-    private List<PlantGrowInstructionViewModel> GetPlantGrowInstructionsFromCache(string plantId)
+    private List<PlantGrowInstructionViewModel>? GetPlantGrowInstructionsFromCache(string plantId)
     {
         string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
-        List<PlantGrowInstructionViewModel> plantGrowInstructions = null;
-
-        _cacheService.TryGetValue<List<PlantGrowInstructionViewModel>>(cacheKey, out plantGrowInstructions);
+        _cacheService.TryGetValue<List<PlantGrowInstructionViewModel>>(cacheKey, out List<PlantGrowInstructionViewModel>? plantGrowInstructions);
 
         return plantGrowInstructions;
     }
@@ -824,6 +830,8 @@ public class PlantService : IPlantService
     private void RemoveFromPlanGrowInstructionList(string plantId, string plantGrowInstructionId)
     {
         var growInstructions = GetPlantGrowInstructionsFromCache(plantId);
+
+        if (growInstructions == null) return;
 
         var index = growInstructions.FindIndex(p => p.GrowingInstructions == plantGrowInstructionId);
         if (index > -1)

@@ -28,7 +28,7 @@ public class UserProfileService : IUserProfileService
 
     public async Task<UserProfileModel> GetUserProfile(bool forceRefresh)
     {
-        UserProfileModel user;
+        UserProfileModel? user;
 
         if (forceRefresh || !_cacheService.TryGetValue<UserProfileModel>(USER_KEY, out user))
         {
@@ -39,13 +39,12 @@ public class UserProfileService : IUserProfileService
             // Save data in cache.
             _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(CACHE_DURATION));
         }
-
         else
         {
             _logger.LogInformation($"UserProfile in cache.");
         }
 
-        return user;
+        return user!;
     }
 
     public async Task<ApiObjectResponse<string>> CreateUserProfile(UserProfileModel user)
@@ -64,7 +63,7 @@ public class UserProfileService : IUserProfileService
         }
         else
         {
-            user.UserProfileId = response.Response;
+            user.UserProfileId = response.Response!;
 
             _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(CACHE_DURATION));
 
@@ -116,7 +115,7 @@ public class UserProfileService : IUserProfileService
             return new UserProfileModel();
         }
 
-        return response.Response;
+        return response.Response!;
     }
     #endregion
 }

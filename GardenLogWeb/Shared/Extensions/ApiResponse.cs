@@ -10,7 +10,7 @@ public class ApiResponse
     {
         get { return StatusCode == HttpStatusCode.OK || StatusCode == HttpStatusCode.Accepted; }
     }
-    public string ErrorMessage { get; internal set; }
+    public string? ErrorMessage { get; internal set; }
 
-    public Dictionary<string, string[]> ValidationProblems { get; set; }
+    public Dictionary<string, string[]>? ValidationProblems { get; set; }
 }

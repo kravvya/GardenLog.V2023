@@ -12,16 +12,16 @@
 
 @code {
     [Parameter] 
-    public RenderFragment Header { get; set; }
+    public RenderFragment? Header { get; set; }
 
     [Parameter]
-    public RenderFragment Body { get; set; }
+    public RenderFragment? Body { get; set; }
 
     [Parameter]
-    public string Class { get; set; }
+    public string Class { get; set; } = string.Empty;
 
     [Parameter]
-    public string HeaderClass { get; set; }
+    public string HeaderClass { get; set; } = string.Empty;
 
     [Parameter]
     public bool HideHeader { get; set; } = false;

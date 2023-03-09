@@ -4,7 +4,7 @@
 @inject NavigationManager _navigationManager;
 
 <div>
-    @if(IsInitialized)
+    @if (IsInitialized)
     {
         @if (_plants == null || _plants.Count == 0)
         {
@@ -59,10 +59,13 @@
 
         _garden = await _gardenService.GetGarden(_harvest.GardenId, true);
 
-        _lastFrostDate = new DateTime(DateTime.Now.Year, _garden.LastFrostDate.Month, _garden.LastFrostDate.Day);
-        _firstFrostDate = new DateTime(DateTime.Now.Year, _garden.FirstFrostDate.Month, _garden.FirstFrostDate.Day);
-
+        if (_garden != null)
+        {
+            _lastFrostDate = new DateTime(DateTime.Now.Year, _garden.LastFrostDate.Month, _garden.LastFrostDate.Day);
+            _firstFrostDate = new DateTime(DateTime.Now.Year, _garden.FirstFrostDate.Month, _garden.FirstFrostDate.Day);
+        }
         IsInitialized = true;
+
         StateHasChanged();
     }
 

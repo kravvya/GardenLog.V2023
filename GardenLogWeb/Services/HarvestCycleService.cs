@@ -52,10 +52,10 @@ public class HarvestCycleService : IHarvestCycleService
     public async Task<HarvestCycleModel?> GetActiveHarvestCycle()
     {
         var harvests = await GetHarvestList(false);
-        if(harvests != null && harvests.Count > 0)
+        if (harvests != null && harvests.Count > 0)
         {
             var harvest = harvests.OrderByDescending(h => h.StartDate).FirstOrDefault(h => h.EndDate == null);
-            return harvest == null ? null : harvest;
+            return harvest ?? null;
         }
 
         return null;
@@ -63,9 +63,8 @@ public class HarvestCycleService : IHarvestCycleService
 
     public async Task<IList<HarvestCycleModel>> GetHarvestList(bool forceRefresh)
     {
-        IList<HarvestCycleModel> harvests;
 
-        if (forceRefresh || !_cacheService.TryGetValue<IList<HarvestCycleModel>>(HARVESTS_KEY, out harvests))
+        if (forceRefresh || !_cacheService.TryGetValue<IList<HarvestCycleModel>>(HARVESTS_KEY, out IList<HarvestCycleModel>? harvests))
         {
             _logger.LogInformation("Harvests not in cache or forceRefresh");
 
@@ -94,7 +93,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            _logger.LogInformation($"Harvests are in cache. Found {harvests.Count()}");
+            _logger.LogInformation($"Harvests are in cache. Found {harvests!.Count}");
         }
 
         return harvests;
@@ -126,7 +125,7 @@ public class HarvestCycleService : IHarvestCycleService
             }
 
             harvest = response.Response;
-            harvest.GardenName = (await _gardenService.GetGarden(harvest.GardenId, true))?.Name;
+            harvest!.GardenName = (await _gardenService.GetGarden(harvest.GardenId, true))?.Name;
 
             AddOrUpdateToHarvestCycleList(harvest);
         }
@@ -150,7 +149,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            harvest.HarvestCycleId = response.Response;
+            harvest.HarvestCycleId = response.Response!;
 
             AddOrUpdateToHarvestCycleList(harvest);
 
@@ -222,9 +221,8 @@ public class HarvestCycleService : IHarvestCycleService
                 harvest = await GetHarvest(harvestCycleId, true);
 
                 relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.HarvestCycle, harvest.HarvestCycleId, harvest.HarvestCycleName));
-                relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.PlantHarvestCycleId, plantHarvest.GetPlantName()));
+                if (plantHarvest != null) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, plantHarvest.PlantHarvestCycleId, plantHarvest.GetPlantName()));
                 break;
-
         }
 
         return relatedEntities;
@@ -234,12 +232,11 @@ public class HarvestCycleService : IHarvestCycleService
     #region Public Plant Harvest Cycle Functions
     public async Task<List<PlantHarvestCycleModel>> GetPlantHarvests(string harvestCycleId, bool forceRefresh)
     {
-        List<PlantHarvestCycleModel> plants;
         string key = string.Format(PLANT_HARVESTS_KEY, harvestCycleId);
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out plants))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out List<PlantHarvestCycleModel>? plants))
         {
-            System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} not in cache or forceRefresh");
+            _logger.LogDebug($"PlantHarvestCycles for {harvestCycleId} not in cache or forceRefresh");
 
             var harvestPlantsTask = GetPlantHarvestCycles(harvestCycleId);
             var imagesTask = _imageService.GetImages(RelatedEntityTypEnum.Plant, false);
@@ -254,7 +251,7 @@ public class HarvestCycleService : IHarvestCycleService
             {
                 foreach (var plant in plants)
                 {
-                    if(!string.IsNullOrEmpty(plant.PlantVarietyId))
+                    if (!string.IsNullOrEmpty(plant.PlantVarietyId))
                     {
                         //if variety is selected - get that image.
                         plant.Images = imagesVariety.Where(i => i.RelatedEntityId == plant.PlantVarietyId).ToList();
@@ -298,7 +295,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} are in cache. Found {plants.Count()}");
+            _logger.LogDebug($"PlantHarvestCycles for {harvestCycleId} are in cache. Found {plants!.Count}");
         }
 
         return plants;
@@ -318,7 +315,7 @@ public class HarvestCycleService : IHarvestCycleService
             return new List<PlantHarvestCycleIdentityOnlyViewModel>();
         }
 
-        plants = response.Response;
+        plants = response.Response!;
 
         return plants;
     }
@@ -326,11 +323,10 @@ public class HarvestCycleService : IHarvestCycleService
     public async Task<PlantHarvestCycleModel?> GetPlantHarvest(string harvestCycleId, string plantHarvestCycleId, bool forceRefresh)
     {
         PlantHarvestCycleModel plantHarvest;
-        List<PlantHarvestCycleModel> plantHarvests = null;
 
         string key = string.Format(PLANT_HARVESTS_KEY, harvestCycleId);
 
-        if (forceRefresh || !_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out plantHarvests))
+        if (forceRefresh || !_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out List<PlantHarvestCycleModel>? plantHarvests))
         {
             System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} not in cache or forceRefresh");
 
@@ -344,7 +340,7 @@ public class HarvestCycleService : IHarvestCycleService
                 return null;
             }
 
-            plantHarvest = response.Response;
+            plantHarvest = response.Response!;
 
             if (plantHarvest != null)
             {
@@ -353,7 +349,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            System.Console.WriteLine($"PlantHarvestCycles for {harvestCycleId} are in cache. Found {plantHarvests.Count()}");
+            _logger.LogDebug($"PlantHarvestCycles for {harvestCycleId} are in cache. Found {plantHarvests!.Count}");
             plantHarvest = plantHarvests.First(p => p.PlantHarvestCycleId == plantHarvestCycleId);
         }
 
@@ -376,7 +372,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            plant.PlantHarvestCycleId = response.Response;
+            plant.PlantHarvestCycleId = response.Response!;
 
             //forse refresh to get plant schedule into cache
             await GetPlantHarvest(plant.HarvestCycleId, plant.PlantHarvestCycleId, true);
@@ -453,16 +449,15 @@ public class HarvestCycleService : IHarvestCycleService
             return new List<HarvestCycleModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
 
     private void AddOrUpdateToHarvestCycleList(HarvestCycleModel harvest)
     {
-        List<HarvestCycleModel>? harvests = null;
 
-        if (_cacheService.TryGetValue<List<HarvestCycleModel>>(HARVESTS_KEY, out harvests))
+        if (_cacheService.TryGetValue<List<HarvestCycleModel>>(HARVESTS_KEY, out List<HarvestCycleModel>? harvests))
         {
-            var index = harvests.FindIndex(p => p.HarvestCycleId == harvest.HarvestCycleId);
+            var index = harvests!.FindIndex(p => p.HarvestCycleId == harvest.HarvestCycleId);
             if (index > -1)
             {
                 harvests[index] = harvest;
@@ -482,7 +477,7 @@ public class HarvestCycleService : IHarvestCycleService
     {
         if (_cacheService.TryGetValue<List<HarvestCycleModel>>(HARVESTS_KEY, out var harvests))
         {
-            var index = harvests.FindIndex(p => p.HarvestCycleId == harvestId);
+            var index = harvests!.FindIndex(p => p.HarvestCycleId == harvestId);
             if (index > -1)
             {
                 harvests.RemoveAt(index);
@@ -509,7 +504,7 @@ public class HarvestCycleService : IHarvestCycleService
         }
         else
         {
-            gardenBedPlant.GardenBedPlantHarvestCycleId = response.Response;
+            gardenBedPlant.GardenBedPlantHarvestCycleId = response.Response!;
 
             var harvestPlant = await GetPlantHarvest(gardenBedPlant.HarvestCycleId, gardenBedPlant.PlantHarvestCycleId, false);
             if (harvestPlant != null)
@@ -585,16 +580,15 @@ public class HarvestCycleService : IHarvestCycleService
             return new List<PlantHarvestCycleModel>();
         }
 
-        return response.Response;
+        return response.Response!;
     }
     private void AddOrUpdateToPlantHarvestCycleList(PlantHarvestCycleModel plant)
     {
-        List<PlantHarvestCycleModel>? plants = null;
         string key = string.Format(PLANT_HARVESTS_KEY, plant.HarvestCycleId);
 
-        if (_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out plants))
+        if (_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out List<PlantHarvestCycleModel>? plants))
         {
-            var index = plants.FindIndex(p => p.PlantHarvestCycleId == plant.PlantHarvestCycleId);
+            var index = plants!.FindIndex(p => p.PlantHarvestCycleId == plant.PlantHarvestCycleId);
             if (index > -1)
             {
                 plants[index] = plant;
@@ -615,7 +609,7 @@ public class HarvestCycleService : IHarvestCycleService
         string key = string.Format(PLANT_HARVESTS_KEY, harvestId);
         if (_cacheService.TryGetValue<List<PlantHarvestCycleModel>>(key, out var plants))
         {
-            var index = plants.FindIndex(p => p.PlantHarvestCycleId == id);
+            var index = plants!.FindIndex(p => p.PlantHarvestCycleId == id);
             if (index > -1)
             {
                 plants.RemoveAt(index);

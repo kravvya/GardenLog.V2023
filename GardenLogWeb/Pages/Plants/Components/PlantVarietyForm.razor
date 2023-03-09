@@ -6,30 +6,30 @@
 
 <article id="plantVarietyForm">
 
-    @if (isInitialized)
+    @if (_isInitialized && _plantVariety!=null)
     {
-        <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmitAsync" class="row g-3">
+        <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmitAsync" class="row g-3">
             <FluentValidationValidator />
-            <CustomValidation @ref="customValidation" />
+            <CustomValidation @ref="_customValidation" />
             @*<ValidationSummary />*@
             <div class="row">
                 <div class="col-md-2">
                     <label for="heirloom">Is Heirloom?</label>
                     <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" id="heirloom" @bind-Value="@plantVariety.IsHeirloom" />
+                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" id="heirloom" @bind-Value="@_plantVariety.IsHeirloom" />
                     </div>
-                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.IsHeirloom)" /></div>
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => _plantVariety.IsHeirloom)" /></div>
                 </div>
                 <div class="col-md-5">
                     <label for="varietytname" class="form-label">Name</label>
-                    <InputText Class="form-control" @bind-Value="@plantVariety.Name" Id="varietytname" />
-                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Name)" /></div>
+                    <InputText Class="form-control" @bind-Value="@_plantVariety.Name" Id="varietytname" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => _plantVariety.Name)" /></div>
                 </div>
 
                 <div class="col-md-5">
                     <label for="title" class="form-label">Title</label>
-                    <InputText Class="form-control" @bind-Value="@plantVariety.Title" Id="title" />
-                    <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Title)" /></div>
+                    <InputText Class="form-control" @bind-Value="@_plantVariety.Title" Id="title" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => _plantVariety.Title)" /></div>
                 </div>
             </div>
 
@@ -40,8 +40,8 @@
                             <label for="Description" class="card-subtitle mb-2 text-light">Description</label>
                         </Header>
                         <Body>
-                            <InputTextArea Class="form-control" Id="description" @bind-Value="@plantVariety.Description" rows="3" />
-                            <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.Description)" /></div>
+                            <InputTextArea Class="form-control" Id="description" @bind-Value="@_plantVariety.Description" rows="3" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => _plantVariety.Description)" /></div>
                         </Body>
                     </FormCard>
                 </div>
@@ -57,11 +57,11 @@
                             <div class="d-flex justify-content-start flex-nowrap">
                                 <div class="px-2"> <span>From</span> </div>
                                 <div class="px-2">
-                                    <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMin" id="DaysToSproutMin" />
+                                    <InputNumber Class="form-control" @bind-Value="@_plantVariety.DaysToMaturityMin" id="DaysToSproutMin" />
                                 </div>
                                 <div class="px-2"> <span>to</span> </div>
                                 <div class="px-2">
-                                    <InputNumber Class="form-control" @bind-Value="@plantVariety.DaysToMaturityMax" id="DaysToSproutMax" />
+                                    <InputNumber Class="form-control" @bind-Value="@_plantVariety.DaysToMaturityMax" id="DaysToSproutMax" />
                                 </div>
                             </div>
                         </Body>
@@ -75,8 +75,8 @@
                             <label for="height" class="card-subtitle mb-2 text-light">Height(in.)</label>
                         </Header>
                         <Body>
-                            <InputNumber Class="form-control" @bind-Value="@plantVariety.HeightInInches" id="height" />
-                            <div class="invalid-feedback"><ValidationMessage For="@(() => plantVariety.HeightInInches)" /></div>
+                            <InputNumber Class="form-control" @bind-Value="@_plantVariety.HeightInInches" id="height" />
+                            <div class="invalid-feedback"><ValidationMessage For="@(() => _plantVariety.HeightInInches)" /></div>
                         </Body>
                     </FormCard>
                 </div>
@@ -90,20 +90,23 @@
                         <Body>
                             <div class="tags" role="group" aria-label=">Variety Colors">
                                 <ul Id="plant-characteristics-tags">
-                                    @foreach (var color in varietyColors)
+                                    @if (_varietyColors != null)
                                     {
-                                        <li style="background-color:@color.BackgroundColor">
-                                            <label class="px-1" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
-                                            <input type="checkbox" class="form-check-input" checked="@plantVariety.Colors.Contains(color.Name)" onclick=@(() => ToggleVarietyColor(color)) id="@color.Name">
+                                        @foreach (var color in _varietyColors)
+                                        {
+                                            <li style="background-color:@color.BackgroundColor">
+                                                <label class="px-1" for="@color.Name" style="@GetStyleBasedOnColor(color)">@color.Name</label>
+                                                <input type="checkbox" class="form-check-input" checked="@_plantVariety.Colors.Contains(color.Name)" onclick=@(() => ToggleVarietyColor(color)) id="@color.Name">
 
-                                        </li>
+                                            </li>
+                                        }
                                     }
                                 </ul>
                             </div>
                         </Body>
                     </FormCard>
                 </div>
-                @if (plant.Tags?.Count > 0)
+                @if (_plant!= null && _plant.Tags?.Count > 0)
                 {
                     <div class="col">
                         <FormCard Class="border-info" HeaderClass="text-bg-info">
@@ -113,11 +116,11 @@
                             <Body>
                                 <div class="tags" role="group" aria-label="Plant Characteristics">
                                     <ul Id="plant-characteristics-tags">
-                                        @foreach (var tag in plant.Tags)
+                                        @foreach (var tag in _plant.Tags)
                                         {
-                                            <li style="background-color:@plant.Color">
+                                            <li style="background-color:@_plant.Color">
                                                 <label class="px-1">@tag</label>
-                                                <input type="checkbox" class="form-check-input" checked="@plantVariety.Tags.Contains(tag)" onclick=@(() => ToggleTags(tag)) id="@tag" />
+                                                <input type="checkbox" class="form-check-input" checked="@_plantVariety.Tags.Contains(tag)" onclick=@(() => ToggleTags(tag)) id="@tag" />
                                             </li>
                                         }
                                     </ul>
@@ -134,7 +137,7 @@
                             <label for="Tolerances" class="card-subtitle mb-2 text-light">Tolerances</label>
                         </Header>
                         <Body>
-                            @foreach (var tolerance in growToleranceEnums)
+                            @foreach (var tolerance in _growToleranceEnums)
                             {
                                 <div class="form-check">
                                     <InputCheckbox class="form-check-input" type="checkbox" @bind-Value="tolerance.IsSelected" id="@tolerance.EnumItem.Key" />
@@ -152,7 +155,7 @@
                             <label for="MoistureRequirement" class="card-subtitle mb-2 text-light">Watering Requirements</label>
                         </Header>
                         <Body>
-                            <InputRadioGroup @bind-Value="@plantVariety.MoistureRequirement" Name="MoistureRequirement">
+                            <InputRadioGroup @bind-Value="@_plantVariety.MoistureRequirement" Name="MoistureRequirement">
                                 @foreach (var item in Enum.GetValues<MoistureRequirementEnum>().Where(p => p != MoistureRequirementEnum.Unspecified))
                                 {
                                     <div class="form-check form-check-inline">
@@ -160,7 +163,7 @@
                                         <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                     </div>
                                 }
-                                <ValidationMessage For="@(() => plantVariety.MoistureRequirement)" />
+                                <ValidationMessage For="@(() => _plantVariety.MoistureRequirement)" />
                             </InputRadioGroup>
                         </Body>
                     </FormCard>
@@ -171,7 +174,7 @@
                             <label for="LightRequirement" class="card-subtitle mb-2 text-light">Light Requirements</label>
                         </Header>
                         <Body>
-                            <InputRadioGroup @bind-Value="@plantVariety.LightRequirement" Name="LightRequirement">
+                            <InputRadioGroup @bind-Value="@_plantVariety.LightRequirement" Name="LightRequirement">
                                 @foreach (var item in Enum.GetValues<LightRequirementEnum>().Where(p => p != LightRequirementEnum.Unspecified))
                                 {
                                     <div class="form-check form-check-inline">
@@ -179,7 +182,7 @@
                                         <label class="form-check-label" for="@item">@(_verifyService.GetDescription(item))</label>
                                     </div>
                                 }
-                                <ValidationMessage For="@(() => plantVariety.LightRequirement)" />
+                                <ValidationMessage For="@(() => _plantVariety.LightRequirement)" />
                             </InputRadioGroup>
                         </Body>
                     </FormCard>
@@ -195,10 +198,10 @@
                         <div class="sources" role="group" aria-label="source">
                            @* <input class="form-control" type="text" @bind:get="newSource" @bind:set="OnSourceInput" @ref="inputSource" />*@
                             
-                           <input class="form-control" type="text" @bind="NewSource"   @ref="inputSource" />
+                           <input class="form-control" type="text" @bind="NewSource"   @ref="_inputSource" />
 
                             <ul Id="sources">
-                                @foreach (var source in plantVariety.Sources)
+                                @foreach (var source in _plantVariety.Sources)
                                 {
                                     <li>@RenderSource(source)<a href="@source" target="_blank" hidden="@RenderSourceAsHyperlink(source)">@source</a><a role='button' onclick=@(() => RemoveSource(source))>×</a></li>
                                 }
@@ -214,7 +217,7 @@
                     @* <button type="button" class="btn btn-default text-danger disabled">Delete</button>*@
                     <span>
                         <button type="submit" class="btn btn-primary" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                        <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                     </span>
                 </div>
             </div>
@@ -224,62 +227,62 @@
 </article>
 
 @code {
-    [Parameter] public Func<Task> OnClose { get; set; }
+    [Parameter] public Func<Task>? OnClose { get; set; }
 
-    private PlantModel plant { get; set; }
-    private PlantVarietyModel plantVariety { get; set; }
-    private ElementReference inputSource;
-    private string newSource= string.Empty;
+    private PlantModel? _plant { get; set; }
+    private PlantVarietyModel? _plantVariety { get; set; }
+    private ElementReference? _inputSource;
+    private string _newSource= string.Empty;
 
     private string NewSource
     {
-        get => newSource;
+        get => _newSource;
         set
         {
             OnSourceInput(value);
         }
     }
 
-    private bool isInitialized = false;
-    private bool isEdit = false;
-    private CustomValidation customValidation;
-    private EditContext editContext;
+    private bool _isInitialized = false;
+    private bool _isEdit = false;
+    private CustomValidation? _customValidation;
+    private EditContext? _editContext;
 
-    protected IEnumerable<Color> varietyColors { get; set; }
-    public List<CheckableEnum> growToleranceEnums { get; set; } = new();
+    protected IEnumerable<Color>? _varietyColors { get; set; }
+    public List<CheckableEnum> _growToleranceEnums { get; set; } = new();
 
-    public void Initialize(PlantVarietyModel plantVariety, PlantModel plant)
+    public void Initialize(PlantVarietyModel? plantVariety, PlantModel plant)
     {
-        varietyColors = _verifyService.GetPlantVarietyColors().Where(c => plant.VarietyColors.Any(p => p == c.Name));
+        _varietyColors = _verifyService.GetPlantVarietyColors().Where(c => plant.VarietyColors.Any(p => p == c.Name));
         foreach (var code in _verifyService.GetCodeList<GrowToleranceEnum>(true))
         {
-            growToleranceEnums.Add(new CheckableEnum(code));
+            _growToleranceEnums.Add(new CheckableEnum(code));
         }
 
-        this.plant = plant;
+        this._plant = plant;
         if (plantVariety == null)
         {
-            this.plantVariety = new PlantVarietyModel();
-            this.plantVariety.PlantId = this.plant.PlantId;
-            this.plantVariety.LightRequirement = this.plant.LightRequirement;
-            this.plantVariety.MoistureRequirement = this.plant.MoistureRequirement;
-            this.plantVariety.GrowTolerance = this.plant.GrowTolerance;
-            this.plantVariety.DaysToMaturityMin = this.plant.DaysToMaturityMin;
-            this.plantVariety.DaysToMaturityMax = this.plant.DaysToMaturityMax;
-            this.plantVariety.Colors = new();
-            this.plantVariety.Tags = new();
-            isEdit = false;
+            this._plantVariety = new PlantVarietyModel();
+            this._plantVariety.PlantId = this._plant.PlantId;
+            this._plantVariety.LightRequirement = this._plant.LightRequirement;
+            this._plantVariety.MoistureRequirement = this._plant.MoistureRequirement;
+            this._plantVariety.GrowTolerance = this._plant.GrowTolerance;
+            this._plantVariety.DaysToMaturityMin = this._plant.DaysToMaturityMin;
+            this._plantVariety.DaysToMaturityMax = this._plant.DaysToMaturityMax;
+            this._plantVariety.Colors = new();
+            this._plantVariety.Tags = new();
+            _isEdit = false;
         }
         else
         {
-            this.plantVariety = plantVariety;
-            isEdit = true;
+            this._plantVariety = plantVariety;
+            _isEdit = true;
 
         }
-        growToleranceEnums.ForEach(item => item.IsSelected = this.plantVariety.GrowTolerance.HasFlag(Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key)));
-        editContext = new(this.plantVariety);
-        editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
-        isInitialized = true;
+        _growToleranceEnums.ForEach(item => item.IsSelected = this._plantVariety.GrowTolerance.HasFlag(Enum.Parse<GrowToleranceEnum>(item.EnumItem.Key)));
+        _editContext = new(this._plantVariety);
+        _editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
+        _isInitialized = true;
         StateHasChanged();
     }
 
@@ -288,24 +291,24 @@
     {
         _logger.Log(LogLevel.Information, "Plant Variety Form passed valdiate");
 
-        customValidation?.ClearErrors();
+        _customValidation?.ClearErrors();
 
-        ApiResponse response = (isEdit) ? await _plantService.UpdatePlantVariety(plantVariety) : await _plantService.CreatePlantVariety(plantVariety);
+        ApiResponse response = (_isEdit) ? await _plantService.UpdatePlantVariety(_plantVariety!) : await _plantService.CreatePlantVariety(_plantVariety!);
 
         if (response.ValidationProblems != null)
         {
-            customValidation?.DisplayErrors(response.ValidationProblems);
+            _customValidation?.DisplayErrors(response.ValidationProblems);
         }
 
         if (response.IsSuccess)
         {
-            await OnClose();
+            if (OnClose!= null) await OnClose();
         }
     }
 
     private string GetStyleBasedOnColor(Color color)
     {
-        if (plantVariety.Colors.Contains(color.Name))
+        if (_plantVariety != null && _plantVariety.Colors.Contains(color.Name))
         {
             return $"color:{color.FontColor}; background-color:{color.BackgroundColor}";
         }
@@ -314,39 +317,46 @@
 
     private void ToggleVarietyColor(Color color)
     {
-        if (plantVariety.Colors.Contains(color.Name))
+        if (_plantVariety == null) return;
+
+        if (_plantVariety.Colors.Contains(color.Name))
         {
-            plantVariety.Colors.Remove(color.Name);
+            _plantVariety.Colors.Remove(color.Name);
         }
         else
         {
-            plantVariety.Colors.Add(color.Name);
+            _plantVariety.Colors.Add(color.Name);
         }
         StateHasChanged();
     }
 
     private void ToggleTags(string tag)
     {
-        if (plantVariety.Tags.Contains(tag))
+        if (_plantVariety == null) return;
+
+        if (_plantVariety.Tags.Contains(tag))
         {
-            plantVariety.Tags.Remove(tag);
+            _plantVariety.Tags.Remove(tag);
         }
         else
         {
-            plantVariety.Tags.Add(tag);
+            _plantVariety.Tags.Add(tag);
         }
         StateHasChanged();
     }
 
     private void OnSourceInput(string value)
     {
-        plantVariety.Sources.Add(value.Trim());
-        newSource = string.Empty;
-        inputSource.FocusAsync();
+        if (_plantVariety == null) return;
+
+        _plantVariety.Sources.Add(value.Trim());
+        _newSource = string.Empty;
+        if (_inputSource.HasValue) _inputSource.Value.FocusAsync();
     }
     private void RemoveSource(string source)
     {
-        plantVariety.Sources.RemoveAll(t => t == source);
+        if (_plantVariety == null) return;
+        _plantVariety.Sources.RemoveAll(t => t == source);
         StateHasChanged();
     }
 
@@ -367,4 +377,11 @@
         return !(!string.IsNullOrEmpty(source) && source.StartsWith("http"));
     }
 
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose();
+        else
+            _navigationManager.NavigateToPlants();
+    }
 }

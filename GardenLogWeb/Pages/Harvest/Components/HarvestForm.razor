@@ -21,9 +21,12 @@
                 <div class="col-md-10">
                     <label for="name">Garden</label>
                     <InputSelect class="form-select" @bind-Value="@_harvest.GardenId" Name="Garden">
-                        @foreach (var item in _gardens)
+                        @if (_gardens != null)
                         {
-                            <option Value="@item.GardenId">@item.Name</option>
+                            @foreach (var item in _gardens)
+                            {
+                                <option Value="@item.GardenId">@item.Name</option>
+                            }
                         }
                     </InputSelect>
                     <ValidationMessage For="@(() => _harvest.GardenId)" />
@@ -61,7 +64,7 @@
                                 <span class="bi bi-file-earmark-post">&nbsp;</span> Add
                             </button>
                         }
-                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClose(_harvest))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                     </div>
                 </div>
 
@@ -72,14 +75,14 @@
 
 @code {
 
-    [Parameter] public Func<HarvestCycleModel, Task> OnClose { get; set; }
+    [Parameter] public Func<HarvestCycleModel, Task>? OnClose { get; set; }
 
     private bool _isInitialized = false;
-    private HarvestCycleModel _harvest = null;
-    private EditContext _editContext;
+    private HarvestCycleModel? _harvest;
+    private EditContext? _editContext;
     private bool _isEdit = false;
-    private CustomValidation customValidation;
-    private List<GardenModel> _gardens = null;
+    private CustomValidation? customValidation;
+    private List<GardenModel>? _gardens;
 
 
     public async void Initialize(HarvestCycleModel? harvest)
@@ -105,10 +108,10 @@
 
     protected async Task HandleValidSubmitAsync()
     {
-        _logger.Log(LogLevel.Information, "Harvest Form passed validations");
+        _logger.LogDebug("Harvest Form passed validations");
         customValidation?.ClearErrors();
 
-        ApiResponse response = (_isEdit) ? await _harvestService.UpdateHarvest(_harvest) : await _harvestService.CreateHarvest(_harvest);
+        ApiResponse response = (_isEdit) ? await _harvestService.UpdateHarvest(_harvest!) : await _harvestService.CreateHarvest(_harvest!);
 
         if (response.ValidationProblems != null)
         {
@@ -117,12 +120,18 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(_harvest);
+            if(OnClose!= null) await OnClose(_harvest!);
         }
     }
 
     protected void HandleInValidSubmit()
     {
         _toastService.ShowToast("Garden Plan can not be save. Please correct validation errors.", GardenLogToastLevel.Error);
+    }
+
+    private void OnCancel()
+    {
+        if (OnClose != null && _harvest!= null)
+            OnClose(_harvest);
     }
 }

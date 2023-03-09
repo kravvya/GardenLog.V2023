@@ -12,12 +12,8 @@
 
 @code {
 
-
     private List<BreadcrumbLink> _breadcrumbLinks = new();
-    private PlantTaskList _taskList;
-
-    private string _title;
-    private string _description;
+    private PlantTaskList? _taskList;
 
     protected override void OnInitialized()
     {
@@ -27,21 +23,15 @@
   
     protected override void OnAfterRender(bool firstRender)
     {
-
         if (firstRender)
         {
-            _taskList.Initialize();            
+            _taskList!.Initialize();            
         }
     }
 
-    private async Task SetupPage()
+    private void SetupPage()
     {
-        _description = string.Empty;
-
-        _title = "Tasks";
-
         _breadcrumbLinks.Add(new BreadcrumbLink("Tasks", _navigationManager.GetPlantTasksUrl(), true));
-
     }
 }
 

@@ -5,53 +5,53 @@
 @inject IPlantService _plantService
 @inject NavigationManager _navigationManager
 
-<Page Title="@title" Description="@description" BreadcrumbLinks="@breacrumbLinks">
+<Page Title="@_title" Description="@_description" BreadcrumbLinks="@_breacrumbLinks">
     <PageContent>
-        <PlantGrowInstructionForm OnClose=@ClosePage @ref="plantGrowInstructionForm" />
+        <PlantGrowInstructionForm OnClose=@ClosePage @ref="_plantGrowInstructionForm" />
     </PageContent>
 </Page>
 
 @code {
-    [Parameter] public string PlantId { get; set; }
-    [Parameter] public string PlantGrowInstructionId { get; set; }
+    [Parameter] public string PlantId { get; set; } = string.Empty;
+    [Parameter] public string PlantGrowInstructionId { get; set; } = string.Empty;
 
-    private List<BreadcrumbLink> breacrumbLinks = new();
+    private List<BreadcrumbLink> _breacrumbLinks = new();
 
-    private PlantModel plant { get; set; }
-    private PlantGrowInstructionViewModel plantGrowInstruction { get; set; }
-    private PlantGrowInstructionForm plantGrowInstructionForm { get; set; }
+    private PlantModel? _plant { get; set; }
+    private PlantGrowInstructionViewModel? _plantGrowInstruction { get; set; }
+    private PlantGrowInstructionForm? _plantGrowInstructionForm { get; set; }
 
-    private string title { get; set; }
-    private string description { get; set; }
+    private string _title = string.Empty;
+    private string _description = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
-        plant = await GetPlant(PlantId);
+        _plant = await GetPlant(PlantId);
 
-        if (plant == null)
+        if (_plant == null)
         {
             NavigateToPlants();
             return;
         }
 
-        breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
-        breacrumbLinks.Add(new BreadcrumbLink(plant.Name, _navigationManager.GetViewPlantUrl(PlantId), false));
+        _breacrumbLinks.Add(new BreadcrumbLink("Plants", _navigationManager.GetPlantsUrl(), false));
+        _breacrumbLinks.Add(new BreadcrumbLink(_plant.Name, _navigationManager.GetViewPlantUrl(PlantId), false));
 
         if (string.IsNullOrWhiteSpace(PlantGrowInstructionId))
         {
-            breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.Name} Grow Instruction", _navigationManager.GetCreatePlantGrowInstructionUrl(PlantId), true));
-            title = $"Add {plant.Name} Grow Instruction";
-            description = "";// $"Add {plant.Name} Variety";
-            plantGrowInstructionForm.Initialize(null, plant);
+            _breacrumbLinks.Add(new BreadcrumbLink($"Add {_plant.Name} Grow Instruction", _navigationManager.GetCreatePlantGrowInstructionUrl(PlantId), true));
+            _title = $"Add {_plant.Name} Grow Instruction";
+            _description = "";// $"Add {plant.Name} Variety";
+            if (_plantGrowInstructionForm!= null) _plantGrowInstructionForm.Initialize(null, _plant);
         }
         else
         {
-            plantGrowInstruction = await GetPlantGrowInstruction(PlantId, PlantGrowInstructionId);
-            breacrumbLinks.Add(new BreadcrumbLink($"Edit {plantGrowInstruction.Name}", _navigationManager.GetEditPlantGrowInstructionUrl(PlantId, PlantGrowInstructionId), true));
-            title = $"Edit {plantGrowInstruction.Name}";
-            description = "";// $"Add {plant.Name} Variety";
-            plantGrowInstructionForm.Initialize(plantGrowInstruction, plant);
+            _plantGrowInstruction = await GetPlantGrowInstruction(PlantId, PlantGrowInstructionId);
+            _breacrumbLinks.Add(new BreadcrumbLink($"Edit {_plantGrowInstruction.Name}", _navigationManager.GetEditPlantGrowInstructionUrl(PlantId, PlantGrowInstructionId), true));
+            _title = $"Edit {_plantGrowInstruction.Name}";
+            _description = "";// $"Add {plant.Name} Variety";
+            if (_plantGrowInstructionForm != null) _plantGrowInstructionForm.Initialize(_plantGrowInstruction, _plant);
         }
 
         StateHasChanged();
@@ -59,22 +59,27 @@
 
     private async Task<PlantModel> GetPlant(string plantId)
     {
-        PlantModel plant = null;
+        PlantModel? plant = null;
 
         if (!string.IsNullOrWhiteSpace(plantId))
         {
             plant = await _plantService.GetPlant(plantId, false);
         }
-        return plant;
+
+        if (plant == null) _navigationManager.NavigateToPlants();
+
+        return plant ?? new PlantModel();
     }
 
     private async Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string plantGrowInstructionId)
     {
-        PlantGrowInstructionViewModel growInstruction = null;
+        PlantGrowInstructionViewModel? growInstruction = null;
 
         growInstruction = await _plantService.GetPlantGrowInstruction(plantId, plantGrowInstructionId);
 
-        return growInstruction;
+        if (growInstruction == null) _navigationManager.NavigateToPlants();
+
+        return growInstruction ?? new PlantGrowInstructionViewModel();
     }
 
     protected async Task ClosePage()

@@ -65,8 +65,6 @@
 
     [Parameter] public Action<GardenBedPlantHarvestCycleModel> GardenBedPlantChanged { get; set; } = null!;
 
-    private DraggablePlantSelector? _draggableComponent;
-
     private GardenBedPlantHarvestCycleModel? _selectedPlant;
 
     protected override void OnInitialized()

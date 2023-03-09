@@ -46,7 +46,6 @@
     private string auth = "";
     private string role = "";
     private string role2 = "";
-    private string policy = "";
     private string userId = "";
 
     private async Task DoSomething()
@@ -74,7 +73,10 @@
                     role2 = "write:grow-instructions";
                 }
 
-                userId = user.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+                if (user.Claims != null)
+                {
+                    userId = user.Claims.FirstOrDefault(c => c.Type == "sub")!.Value;
+                }
             }
         }
 

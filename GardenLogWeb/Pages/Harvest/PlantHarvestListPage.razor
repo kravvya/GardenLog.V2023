@@ -10,14 +10,14 @@
 
 @code {
     [Parameter]
-    public string HarvestCycleId { get; set; }
+    public string HarvestCycleId { get; set; } = string.Empty;
 
-    private PlantHarvestList _plantHarvestList;
+    private PlantHarvestList? _plantHarvestList;
 
     private List<BreadcrumbLink> breadcrumbLinks = new();
-    private HarvestCycleModel _harvest = null;
-    private string _title { get; set; } = string.Empty;
-    private string _description { get; set; } = string.Empty;
+    private HarvestCycleModel? _harvest = null;
+    private string _title = string.Empty;
+    private string _description  = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
@@ -42,7 +42,8 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-       if (firstRender) _plantHarvestList.Initialize(_harvest);
+        if (firstRender && _plantHarvestList!= null && _harvest!=null) 
+            _plantHarvestList.Initialize(_harvest);
     }
 
 }

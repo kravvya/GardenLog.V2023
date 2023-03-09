@@ -26,7 +26,7 @@
         <div class="col-12">
             <div class="modal-footer">
                 <span>
-                    <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose())">Close <span class="bi bi-x-circle">&nbsp;</span></button>
+                    <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnCancel())">Close <span class="bi bi-x-circle">&nbsp;</span></button>
                 </span>
             </div>
         </div>
@@ -34,9 +34,9 @@
 </article>
 
 @code {
-  
+
     [Parameter]
-    public Func<Task> OnClose { get; set; }
+    public Func<Task>? OnClose { get; set; }
 
     List<ImageViewModel> _images { get; set; } = new List<ImageViewModel>();
     ImageViewModel? _image { get; set; }
@@ -89,4 +89,9 @@
         StateHasChanged();
     }
 
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose();
+    }
 }

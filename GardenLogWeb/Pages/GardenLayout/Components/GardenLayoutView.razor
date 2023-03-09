@@ -1,6 +1,7 @@
 ﻿@inject IGardenService _gardenService;
 @inject NavigationManager _navigationManager;
 @inject IVerifyService _verifyService;
+@inject ILogger<GardenLayoutView> _logger;
 
 <ModalView OnCloseModal="CloseGardenFormModal" @ref="_gardenFormModal">
     <Body>
@@ -106,7 +107,7 @@
                             <dt class="garden-facts_term">Grow Area</dt>
                             <dd class="garden-facts_definition col">@(GetTotalGrowArea()) sq. ft</dd>
                             <dt class="garden-facts_term">Number of Beds</dt>
-                            <dd class="garden-facts_definition col">@_gardenBeds.Count()</dd>
+                            <dd class="garden-facts_definition col">@_gardenBeds?.Count()</dd>
                         </div>
                     </dl>
                 </div>
@@ -150,26 +151,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var bed in _gardenBeds)
+                                @if (_gardenBeds != null)
                                 {
-                                    <tr>
-                                        <td>@bed.RowNumber</td>
-                                        <td>@bed.Name</td>
-                                        <td>@(_verifyService.GetDescription<GardenBedTypeEnum>(bed.Type))</td>
-                                        <td>@bed.GetLengthDisplay()</td>
-                                        <td>@bed.GetWidthDisplay()</td>
-                                        <td>@bed.Notes</td>
-                                        <td>
-                                            <div class="d-flex gap-2 flex-nowrap">
-                                                <button type="button" class="btn btn-secondary" title="Edit GardenBed" @onclick="@(() => EditGardenBed(bed))">
-                                                    <span class="bi bi-pencil">&nbsp;</span>
-                                                </button>
-                                                <button type="button" class="btn btn-info" title="Select GardenBed" @onclick="@(() => SelectGardenBed(bed))">
-                                                    <span class="bi bi-info-square">&nbsp;</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @foreach (var bed in _gardenBeds)
+                                    {
+                                        <tr>
+                                            <td>@bed.RowNumber</td>
+                                            <td>@bed.Name</td>
+                                            <td>
+                                                @(
+                                                    _verifyService.GetDescription<GardenBedTypeEnum>(bed.Type)
+                                                    )
+                                            </td>
+                                            <td>@bed.GetLengthDisplay()</td>
+                                            <td>@bed.GetWidthDisplay()</td>
+                                            <td>@bed.Notes</td>
+                                            <td>
+                                                <div class="d-flex gap-2 flex-nowrap">
+                                                    <button type="button" class="btn btn-secondary" title="Edit GardenBed" @onclick="@(() => EditGardenBed(bed))">
+                                                        <span class="bi bi-pencil">&nbsp;</span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-info" title="Select GardenBed" @onclick="@(() => SelectGardenBed(bed))">
+                                                        <span class="bi bi-info-square">&nbsp;</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             </tbody>
                         </table>
@@ -226,16 +234,16 @@
 
 
 @code {
-    [Parameter]
-    public GardenModel Garden { get; set; }
-    List<GardenBedModel> _gardenBeds = new();
-    private GardenPlanSettings _settings = null;
+    [Parameter] public GardenModel? Garden { get; set; }
 
-    private GardenBedModel _selected = null;
+    List<GardenBedModel>? _gardenBeds = new();
+    private GardenPlanSettings? _settings;
 
-    private GardenLayout _gardenLayout;
-    private ModalView _imageFormModal { get; set; }
-    private ImageForm _imageForm { get; set; }
+    private GardenBedModel? _selected;
+
+    private GardenLayout? _gardenLayout;
+    private ModalView? _imageFormModal { get; set; }
+    private ImageForm? _imageForm { get; set; }
     private ModalView? _gardenFormModal;
     private GardenForm? _gardenForm;
     private ModalView? _gardenBedFormModal;
@@ -254,7 +262,7 @@
 
     private async Task GardenBedSelected(GardenBedModel selected, bool skipUpdate)
     {
-        Console.WriteLine("GardenLayoutView - SelectedGardenBed");
+        _logger.LogDebug("GardenLayoutView - SelectedGardenBed");
         if (!skipUpdate && _selected != null) await _gardenService.UpdateGardenBed((GardenBedModel)_selected);
         _selected = selected;
         StateHasChanged();
@@ -262,42 +270,51 @@
 
     private async Task GardenBedDeleted(String gardenId)
     {
-        _selected = null;
-        await _gardenService.DeleteGardenBed(Garden.GardenId, gardenId);
-        _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
-        StateHasChanged();
+        if (Garden != null)
+        {
+            _selected = null;
+            await _gardenService.DeleteGardenBed(Garden.GardenId, gardenId);
+            _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+            StateHasChanged();
+        }
     }
 
     private void SelectGardenBed(GardenBedModel gardenBed)
     {
-        Console.WriteLine("GardenLayoutView - SelectGardenBed");
-        _gardenLayout.SelectCompoenent(gardenBed);
+        _logger.LogDebug("GardenLayoutView - SelectGardenBed");
+        if (_gardenLayout != null) _gardenLayout.SelectCompoenent(gardenBed);
     }
 
     private async Task EditGarden()
     {
-        _gardenForm.Initialize(Garden);
-        await _gardenFormModal?.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_gardenForm != null && _gardenFormModal != null && Garden != null)
+        {
+            _gardenForm.Initialize(Garden);
+            await _gardenFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task AddGardenImage()
     {
-        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Garden, Garden.GardenId, Garden.Name) };
-        _imageForm.Initialize(RelatedEntityTypEnum.Garden, Garden.GardenId, relatedEntities);
-        await _imageFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_imageForm != null && _imageFormModal != null && Garden != null)
+        {
+            List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Garden, Garden.GardenId, Garden.Name) };
+            _imageForm.Initialize(RelatedEntityTypEnum.Garden, Garden.GardenId, relatedEntities);
+            await _imageFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task CloseGardenFormModal()
     {
-        await _gardenFormModal?.CloseModal();
+        await _gardenFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseGardenForm(GardenModel garden)
     {
-        await _gardenFormModal?.CloseModal();
+        await _gardenFormModal!.CloseModal();
 
         Garden = garden;
 
@@ -306,36 +323,44 @@
 
     private async Task AddGardenBed()
     {
-        _gardenBedForm.Initialize(null, Garden, _settings.StartX, _settings.StartY);
-        await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_gardenBedForm != null && _gardenBedFormModal != null && Garden != null && _settings != null)
+        {
+            _gardenBedForm.Initialize(null, Garden, _settings.StartX, _settings.StartY);
+            await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task EditGardenBed(GardenBedModel gardenBed)
     {
-        _gardenBedForm.Initialize(gardenBed, Garden, _settings.StartX, _settings.StartY);
-        await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
-        StateHasChanged();
+        if (_gardenBedForm != null && _gardenBedFormModal != null && Garden != null && _settings != null)
+        {
+            _gardenBedForm.Initialize(gardenBed, Garden, _settings.StartX, _settings.StartY);
+            await _gardenBedFormModal.OpenModal(Garden.Name, GlobalConstants.ModalFormColor);
+            StateHasChanged();
+        }
     }
 
     private async Task CloseGardenBedFormModal()
     {
-        await _gardenBedFormModal?.CloseModal();
+        await _gardenBedFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseGardenBedForm(GardenBedModel gardenBed)
     {
-        await _gardenBedFormModal?.CloseModal();
-
-        _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+        await _gardenBedFormModal!.CloseModal();
+        if (Garden != null)
+        {
+            _gardenBeds = await _gardenService.GetGardenBeds(Garden.GardenId, true);
+        }
         StateHasChanged();
     }
 
 
     private async Task CloseImageFormModal()
     {
-        await _imageFormModal.CloseModal();
+        await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
 
@@ -350,11 +375,12 @@
                     Garden.ImageFileName = image.FileName;
                     Garden.ImageLabel = image.Label;
                 }
+                if (Garden.Images == null) Garden.Images = new();
                 Garden.Images.Add(image);
             }
         }
 
-        await _imageFormModal.CloseModal();
+        await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
 
@@ -369,6 +395,7 @@
 
     private void ViewGardenImage()
     {
-        _navigationManager.NavigateToGardenImages(Garden.GardenId);
+        if (Garden != null)
+            _navigationManager.NavigateToGardenImages(Garden.GardenId);
     }
 }

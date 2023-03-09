@@ -288,7 +288,7 @@
         switch (task.Type)
         {
             case WorkLogReasonEnum.FertilizeIndoors:
-                await _workLogForm.InitializeAsync(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
+                _workLogForm.Initialize(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
                 await _workLogFormModal.OpenModal("Add new note", GlobalConstants.ModalFormColor);
                 break;
             default:
@@ -350,7 +350,7 @@
 
     private string GetTableClass(PlantTaskModel task, string level)
     {
-        if (level.Equals("row"))
+        if (level.Equals("row")&& !task.CompletedDateTime.HasValue)
         {
             //we are past due - red alert
             if (task.TargetDateStart < _now) return "table-danger";
@@ -375,10 +375,13 @@
 
     private string GetCardClass(PlantTaskModel task)
     {
-        //we are past due - red alert
-        if (task.TargetDateStart < _now) return "text-bg-danger";
+        if (!task.CompletedDateTime.HasValue)
+        {
+            //we are past due - red alert
+            if (task.TargetDateStart < _now) return "text-bg-danger";
 
-        if (task.TargetDateStart < _now.AddDays(2)) return "text-bg-warning";
+            if (task.TargetDateStart < _now.AddDays(2)) return "text-bg-warning";
+        }
 
         switch (task.Type)
         {

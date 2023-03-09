@@ -83,11 +83,11 @@
 @code {
     public bool IsInitialized = false;
     private bool _isNewRegistration = false;
-    private UserProfileModel _userProfile = null;
-    private CustomValidation customValidation;
-    private EditContext _editContext;
+    private UserProfileModel? _userProfile;
+    private CustomValidation? customValidation;
+    private EditContext? _editContext;
 
-    public void Initialize(UserProfileModel userProfile)
+    public void Initialize(UserProfileModel? userProfile)
     {
         _isNewRegistration = userProfile == null || string.IsNullOrWhiteSpace(userProfile.UserProfileId);
         _userProfile = userProfile == null ? new UserProfileModel() : userProfile;
@@ -103,7 +103,7 @@
         _logger.Log(LogLevel.Information, "User Registration passed validations");
         customValidation?.ClearErrors();
 
-        ApiResponse response = (_isNewRegistration) ? await _userService.CreateUserProfile(_userProfile) : await _userService.UpdateUserProfile(_userProfile);
+        ApiResponse response = (_isNewRegistration) ? await _userService.CreateUserProfile(_userProfile!) : await _userService.UpdateUserProfile(_userProfile!);
 
         if (response.ValidationProblems != null)
         {

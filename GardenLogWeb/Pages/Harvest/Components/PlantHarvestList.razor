@@ -2,6 +2,7 @@
 @inject IPlantService _plantService;
 @inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
+@inject ILogger<PlantHarvestList> _logger;
 
 @inject NavigationManager _navigationManager;
 
@@ -83,7 +84,7 @@
                     <div class="plant-search-filter">
                         <div class="row">
                             <div class="col-md-12">
-                                <strong>@_filteredHarvestPLants?.Count Results on @DateTime.Now.ToShortDateString() @_filterDescription</strong>
+                                <strong>@_filteredHarvestPlants.Count Results on @DateTime.Now.ToShortDateString() @_filterDescription</strong>
                             </div>
                         </div>
                     </div>
@@ -100,7 +101,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var plant in _filteredHarvestPLants)
+                            @foreach (var plant in _filteredHarvestPlants)
                             {
                                 <tr style="border-bottom: 5px solid @GetColor(plant);">
                                     <td class="col-xs-5" style="border-left: 5px solid @GetColor(plant);">
@@ -145,7 +146,7 @@
 
 @code {
     private HarvestCycleModel? _harvest;
-    private IList<PlantHarvestCycleModel>? _harvestPlants;
+    private List<PlantHarvestCycleModel> _harvestPlants = new();
     private IList<GardenBedModel>? _gardenBeds;
 
     private ModalView? _imageFormModal;
@@ -156,18 +157,17 @@
 
     private PlantModel? _plantInView;
     private ModalView? _plantViewModal;
-    private PlantView? _plantView;
 
     private List<PlantNameModel> _plants = new();
-    private IList<PlantHarvestCycleModel> _filteredHarvestPLants = new List<PlantHarvestCycleModel>();
+    private IList<PlantHarvestCycleModel> _filteredHarvestPlants = new List<PlantHarvestCycleModel>();
 
     private bool _collapseNavMenu = true;
     private string _filterCssClass = "d-none d-md-block";
     private string _filterTtile = "Show Filters";
 
 
-    protected PlantHarvestFilter _filter { get; set; }
-    protected string _filterDescription { get; set; }
+    protected PlantHarvestFilter _filter { get; set; } = new();
+    protected string _filterDescription { get; set; } = string.Empty;
 
 
 
@@ -181,27 +181,31 @@
 
     private async Task AddPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
+        if (_imageForm == null || _imageFormModal == null) return;
+
         List<RelatedEntity> relatedEntities = new();
         relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, harvestPlant.GetPlantName()));
         relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.Plant, harvestPlant.PlantId, harvestPlant.PlantName));
-        if (!string.IsNullOrWhiteSpace(harvestPlant.PlantVarietyId)) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, harvestPlant.PlantVarietyId, harvestPlant.PlantVarietyName));
+        if (!string.IsNullOrWhiteSpace(harvestPlant.PlantVarietyId)) relatedEntities.Add(new RelatedEntity(RelatedEntityTypEnum.PlantVariety, harvestPlant.PlantVarietyId, harvestPlant.PlantVarietyName!));
 
         _imageForm.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId, relatedEntities);
-        await _imageFormModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
+        await _imageFormModal.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
         StateHasChanged();
     }
 
     private async Task ViewPlantHarvestImage(PlantHarvestCycleModel harvestPlant)
     {
-        _imageList.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
-        await _imageListModal?.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
+        if (_imageList == null || _imageListModal == null) return;
+
+        await _imageList.Initialize(RelatedEntityTypEnum.PlantHarvestCycle, harvestPlant.PlantHarvestCycleId);
+        await _imageListModal.OpenModal(GetPlantName(harvestPlant), GetColor(harvestPlant));
 
         StateHasChanged();
     }
 
     protected string GetDateValue(DateTime? dateValue)
     {
-        return dateValue.HasValue ? dateValue.Value.ToShortDateString() : "";
+        return dateValue.HasValue ? dateValue.Value.ToShortDateString() : string.Empty;
     }
 
     private string GetPlantName(PlantHarvestCycleModel plant)
@@ -227,25 +231,25 @@
         }
 
         _plants.ForEach(p => p.NumberOfPlants = _harvestPlants.Where(h => h.PlantId == p.PlantId).Count());
-        _filteredHarvestPLants = _harvestPlants;
+        _filteredHarvestPlants = _harvestPlants;
 
-        _filter = new PlantHarvestFilter();
+        //_filter = new PlantHarvestFilter();
 
-        _filter.ModelChanged += FilterChanged;
+        _filter.ModelChanged += FilterChanged!;
 
         _harvest = harvest;
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal()
-    {
-        await _imageFormModal?.CloseModal();
+    {        
+        await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal(ImageViewModel image)
     {
-        await _imageFormModal?.CloseModal();
+        await _imageFormModal!.CloseModal();
 
         if (image != null)
         {
@@ -262,20 +266,25 @@
 
     private async Task CloseImageListModal()
     {
-        await _imageListModal?.CloseModal();
+        await _imageListModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task ViewPlant(PlantHarvestCycleModel plant)
     {
         _plantInView = await _plantService.GetPlant(plant.PlantId, true);
-        _plantViewModal?.OpenModal(_plantInView.Name, _plantInView.Color);
+
+
+        if (_plantViewModal == null || _plantInView == null) return;
+
+        await _plantViewModal.OpenModal(_plantInView.Name, _plantInView.Color);
+
         StateHasChanged();
     }
 
     private async Task ClosePlantViewModal()
     {
-        await _plantViewModal?.CloseModal();
+        await _plantViewModal!.CloseModal();
         _plantInView = null;
         StateHasChanged();
     }
@@ -292,12 +301,13 @@
 
     private void AddPlantToHarvest()
     {
-        _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
+        if (_harvest!=null)
+            _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
     }
 
     private void FilterChanged(object sender, EventArgs e)
     {
-        Console.WriteLine("Inside FilterChanged");
+        _logger.LogDebug("Inside FilterChanged");
         StringBuilder description = new StringBuilder();
 
         IList<PlantHarvestCycleModel> harvestPlants = _harvestPlants;
@@ -333,7 +343,7 @@
         }
 
         _filterDescription = description.ToString();
-        _filteredHarvestPLants = harvestPlants;
+        _filteredHarvestPlants = harvestPlants;
         base.StateHasChanged();
     }
 
@@ -366,7 +376,7 @@
 
     public void Dispose()
     {
-        _filter.ModelChanged -= FilterChanged;
+         _filter.ModelChanged -= FilterChanged!;
     }
 
 }

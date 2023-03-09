@@ -28,81 +28,96 @@
             <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => OnAddPlantImage())"><span class="bi bi-card-image">&nbsp;</span></button>
         </AuthorizeView>
         <button type="button" class="btn btn-info" title="Gallery" @onclick="@(() => onViewGallery())">&nbsp;<span class="bi bi-images" aria-hidden="true"></span></button>
-        <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => Close())"><span class="bi bi-x-circle">&nbsp;</span></button>
+        <button type="button" class="btn btn-danger" title="Close" @onclick="@(() => OnClose())"><span class="bi bi-x-circle">&nbsp;</span></button>
     </div>
 
 }
 @code {
     [Parameter]
-    public PlantModel Plant { get; set; }
+    public PlantModel? Plant { get; set; }
 
     [Parameter]
-    public Action Close { get; set; }
+    public Action? Close { get; set; }
 
-    private ModalView ImageFormModal { get; set; }
-    private ImageForm ImageForm { get; set; }
+    private ModalView? ImageFormModal { get; set; }
+    private ImageForm? ImageForm { get; set; }
 
     private ModalView? _imageListModal;
     private ImageList? _imageList;
 
     private async Task OnAddPlantImage()
     {
-        List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Plant, Plant.PlantId, Plant.Name) };
-        ImageForm.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId, relatedEntities);
-        await ImageFormModal?.OpenModal(Plant.Name, Plant.Color);
-        StateHasChanged();
+        if (Plant != null && ImageForm != null && ImageFormModal != null)
+        {
+            List<RelatedEntity> relatedEntities = new() { new RelatedEntity(RelatedEntityTypEnum.Plant, Plant.PlantId, Plant.Name) };
+            ImageForm.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId, relatedEntities);
+            await ImageFormModal.OpenModal(Plant.Name, Plant.Color);
+            StateHasChanged();
+        }
     }
 
     private async Task onViewGallery()
     {
-        _imageList.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId);
-        await _imageListModal?.OpenModal(Plant.Name, Plant.Color);
+        if (Plant != null && _imageList != null && _imageListModal != null)
+        {
+            await _imageList.Initialize(RelatedEntityTypEnum.Plant, Plant.PlantId);
+            await _imageListModal.OpenModal(Plant.Name, Plant.Color);
 
-        StateHasChanged();
+            StateHasChanged();
+        }
     }
 
     private void OnAddVariety()
     {
-        _navigationManager.NavigateToCreatePlantVariety(Plant.PlantId);
+        if (Plant != null) _navigationManager.NavigateToCreatePlantVariety(Plant.PlantId);
     }
 
 
     private void OnAddGrowInstruction()
     {
-        _navigationManager.NavigateToCreatePlantGrowInstruction(Plant.PlantId);
+        if (Plant != null) _navigationManager.NavigateToCreatePlantGrowInstruction(Plant.PlantId);
     }
 
     private void OnEdit()
     {
-        _navigationManager.NavigateToEditPlant(Plant.PlantId);
+        if (Plant != null) _navigationManager.NavigateToEditPlant(Plant.PlantId);
     }
 
     private async Task CloseImageFormModal()
     {
-        await ImageFormModal?.CloseModal();
+        await ImageFormModal!.CloseModal();
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal(ImageViewModel image)
     {
-        await ImageFormModal?.CloseModal();
+        await ImageFormModal!.CloseModal();
 
-        if (Plant.ImageFileName == ImageService.NO_IMAGE)
+        if (Plant != null)
         {
-            Plant.ImageFileName = image.FileName;
-            Plant.ImageLabel = image.Label;
+            if (Plant.Images == null) Plant.Images = new();
+
+            if (Plant.ImageFileName == ImageService.NO_IMAGE)
+            {
+                Plant.ImageFileName = image.FileName;
+                Plant.ImageLabel = image.Label;
+                Plant.Images.Add(image);
+            }           
             Plant.Images.Add(image);
         }
-        Plant.Images.Add(image);
-
-
         StateHasChanged();
     }
 
     private async Task CloseImageListModal()
     {
-        await _imageListModal?.CloseModal();
+        await _imageListModal!.CloseModal();
         StateHasChanged();
+    }
+
+    private void OnClose()
+    {
+        if (Close != null)
+            Close();
     }
 
 }

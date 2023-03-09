@@ -7,22 +7,22 @@ namespace GardenLogWeb.Shared.Controls;
 
 public class BS5ValidationMessage<TValue> : ComponentBase, IDisposable
 {
-    private EditContext _previousEditContext;
-    private Expression<Func<TValue>> _previousFieldAccessor;
-    private readonly EventHandler<ValidationStateChangedEventArgs> _validationStateChangedHandler;
-    private FieldIdentifier _fieldIdentifier;
+    private EditContext? _previousEditContext;
+    private Expression<Func<TValue>>? _previousFieldAccessor;
+    private readonly EventHandler<ValidationStateChangedEventArgs>? _validationStateChangedHandler;
+    private FieldIdentifier? _fieldIdentifier;
 
     /// <summary>
     /// Gets or sets a collection of additional attributes that will be applied to the created <c>div</c> element.
     /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    [CascadingParameter] EditContext CurrentEditContext { get; set; }
+    [CascadingParameter] EditContext? CurrentEditContext { get; set; }
 
     /// <summary>
     /// Specifies the field for which validation messages should be displayed.
     /// </summary>
-    [Parameter] public Expression<Func<TValue>> For { get; set; }
+    [Parameter] public Expression<Func<TValue>>? For { get; set; }
 
     /// <summary>`
     /// Constructs an instance of <see cref="ValidationMessage{TValue}"/>.
@@ -64,7 +64,9 @@ public class BS5ValidationMessage<TValue> : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        foreach (var message in CurrentEditContext.GetValidationMessages(_fieldIdentifier))
+        if (CurrentEditContext == null || !_fieldIdentifier.HasValue) return;
+
+        foreach (var message in CurrentEditContext.GetValidationMessages(_fieldIdentifier.Value))
         {
             //this is a root div. 
             builder.OpenElement(0, "div");

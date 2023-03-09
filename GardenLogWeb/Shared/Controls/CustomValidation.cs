@@ -5,10 +5,10 @@ namespace GardenLogWeb.Shared.Controls;
 
 public class CustomValidation : ComponentBase
 {
-    private ValidationMessageStore _messageStore;
+    private ValidationMessageStore? _messageStore;
 
     [CascadingParameter]
-    private EditContext CurrentEditContext { get; set; }
+    private EditContext? CurrentEditContext { get; set; }
 
     protected override void OnInitialized()
     {
@@ -37,16 +37,16 @@ public class CustomValidation : ComponentBase
     {
         foreach (var err in errors)
         {
-            _messageStore.Add(CurrentEditContext.Field(err.Key), err.Value);
+            _messageStore!.Add(CurrentEditContext!.Field(err.Key), err.Value);
         }
 
-        CurrentEditContext.NotifyValidationStateChanged();
+        CurrentEditContext!.NotifyValidationStateChanged();
     }
 
     public void ClearErrors()
     {
-        _messageStore.Clear();
+        _messageStore!.Clear();
 
-        CurrentEditContext.NotifyValidationStateChanged();
+        CurrentEditContext!.NotifyValidationStateChanged();
     }
 }

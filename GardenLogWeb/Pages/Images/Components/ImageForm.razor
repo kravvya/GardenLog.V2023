@@ -1,10 +1,9 @@
-﻿
-@inject ILogger<ImageForm> _logger
+﻿@inject ILogger<ImageForm> _logger
 @inject IImageService _imageService
 
 <article id="imageForm">
     <div class="container">
-        @if (IsInitialized)
+        @if (_isInitialized && _image != null)
         {
             <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit" class="row g-3">
                 <FluentValidationValidator />
@@ -13,22 +12,22 @@
 
                 <div class="col-10">
                     <label for="fileUpload" class="form-label">File</label>
-                    <InputFile OnChange="@OnInputFileChange" accept="image/*" id="fileUpload" disabled=@(IsDisabled) />
+                    <InputFile OnChange="@OnInputFileChange" accept="image/*" id="fileUpload" disabled=@(_isDisabled) />
                 </div>
-                <div class="progress" style="display:@ProgressDisplay">
-                    <div class="progress-bar bg-success" role="progressbar" style="@($"width: {Progress}%")" aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">@Progress</div>
+                <div class="progress" style="display:@_progressDisplay">
+                    <div class="progress-bar bg-success" role="progressbar" style="@($"width: {_progress}%")" aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="100">@_progress</div>
                 </div>
                 <div class="col-md-5">
                     <label for="title" class="form-label">Label</label>
-                    <InputText Class="form-control" @bind-Value="@Image.Label" Id="title" />
-                    <div class="invalid-feedback"><ValidationMessage For="@(() => Image.Label)" /></div>
+                    <InputText Class="form-control" @bind-Value="@_image.Label" Id="title" />
+                    <div class="invalid-feedback"><ValidationMessage For="@(() => _image.Label)" /></div>
                 </div>
 
                 <div class="col-12">
                     <div class="modal-footer">
                         <span>
-                            <button type="submit" class="btn btn-primary" disabled="@(!IsDisabled)" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
-                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnClose(null))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                            <button type="submit" class="btn btn-primary" disabled="@(!_isDisabled)" title="Save Changes">Save <span class="bi bi-file-earmark-post">&nbsp;</span></button>
+                            <button type="button" class="btn btn-danger" title="Cancel" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                         </span>
                     </div>
                 </div>
@@ -37,30 +36,30 @@
     </div>
 </article>
 @code {
-    [Parameter] public Func<ImageViewModel, Task> OnClose { get; set; }
+    [Parameter] public Func<ImageViewModel?, Task>? OnClose { get; set; }
 
-    private string Progress;
-    private long FileSize;
-    private string ProgressDisplay = "none;";
-    private ImageViewModel Image { get; set; }
-    private bool IsInitialized = false;
-    private bool IsDisabled = false;
+    private string _progress = string.Empty;
+    private long _fileSize;
+    private string _progressDisplay = "none;";
+    private ImageViewModel? _image { get; set; }
+    private bool _isInitialized = false;
+    private bool _isDisabled = false;
 
-    private CustomValidation customValidation;
-    private EditContext editContext;
+    private CustomValidation? customValidation;
+    private EditContext? editContext;
 
     public void Initialize(RelatedEntityTypEnum relatedEntityType, string relatedEntityId, List<RelatedEntity> relatedEntities)
     {
-        Image = new ImageViewModel();
-        Image.RelatedEntityType = relatedEntityType;
-        Image.RelatedEntityId = relatedEntityId;
-        Image.RelatedEntities = relatedEntities;
+        _image = new ImageViewModel();
+        _image.RelatedEntityType = relatedEntityType;
+        _image.RelatedEntityId = relatedEntityId;
+        _image.RelatedEntities = relatedEntities;
 
         //Image.FileName = $"{image.RelatedEntityType}_{image.RelatedEntityId}_{DateTime.Now}{Path.GetExtension(image.FileName)}";
 
-        editContext = new(Image);
+        editContext = new(_image);
         editContext.SetFieldCssClassProvider(new BootstrapValidationFieldClassProvider());
-        IsInitialized = true;
+        _isInitialized = true;
         StateHasChanged();
     }
 
@@ -71,7 +70,7 @@
 
         customValidation?.ClearErrors();
 
-        ApiResponse response = await _imageService.CreateImage(Image);
+        ApiResponse response = await _imageService.CreateImage(_image!);
 
         if (response.ValidationProblems != null)
         {
@@ -80,23 +79,23 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(Image);
+            if (OnClose != null) await OnClose(_image!);
         }
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         var file = e.GetMultipleFiles().FirstOrDefault();
-        if (file != null)
+        if (file != null && _image!= null)
         {
-            FileSize = e.File.Size;
-            ProgressDisplay = "";
-            Image.ImageName = $"{Image.RelatedEntityType}_{Image.RelatedEntityId}_{DateTime.Now.Ticks}";
-            Image.FileName = $"{Image.ImageName}{Path.GetExtension(e.File.Name)}";
-            Image.FileType = e.File.ContentType;            
-            await _imageService.UploadFile(file, UpdateProgress, Image.FileName);
-            IsDisabled = true;
-            ProgressDisplay = "none;";
+            _fileSize = e.File.Size;
+            _progressDisplay = "";
+            _image.ImageName = $"{_image.RelatedEntityType}_{_image.RelatedEntityId}_{DateTime.Now.Ticks}";
+            _image.FileName = $"{_image.ImageName}{Path.GetExtension(e.File.Name)}";
+            _image.FileType = e.File.ContentType;
+            await _imageService.UploadFile(file, UpdateProgress, _image.FileName);
+            _isDisabled = true;
+            _progressDisplay = "none;";
             StateHasChanged();
 
         }
@@ -104,8 +103,14 @@
 
     private void UpdateProgress(long progress)
     {
-        Progress = (100.0 * progress / FileSize).ToString("0");
+        _progress = (100.0 * progress / _fileSize).ToString("0");
         StateHasChanged();
+    }
+
+    private void OnCancel()
+    {
+        if (OnClose != null)
+            OnClose(null);
     }
 
 

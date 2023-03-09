@@ -69,7 +69,7 @@
                                 <span class="bi bi-file-earmark-post">&nbsp;</span> Add
                             </button>
                         }
-                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClose(_gardenBed))">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnCancel())">Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
                     </div>
                 </div>
             </EditForm>
@@ -79,16 +79,16 @@
 
 @code {
 
-    [Parameter] public Func<GardenBedModel, Task> OnClose { get; set; }
+    [Parameter] public Func<GardenBedModel, Task>? OnClose { get; set; }
 
     private bool _isInitialized = false;
-    private GardenBedModel _gardenBed = null;
-    private GardenModel _garden = null;
-    private EditContext _editContext;
+    private GardenBedModel? _gardenBed = null;
+    private GardenModel? _garden = null;
+    private EditContext? _editContext;
     private bool _isEdit = false;
-    private CustomValidation customValidation;
+    private CustomValidation? customValidation;
 
-    public async void Initialize(GardenBedModel? gardenBed, GardenModel garden, double x, double y)
+    public void Initialize(GardenBedModel? gardenBed, GardenModel garden, double x, double y)
     {
         _gardenBed = gardenBed;
         _garden = garden;
@@ -115,7 +115,7 @@
         _logger.Log(LogLevel.Information, "Garden Bed Form passed validations");
         customValidation?.ClearErrors();
 
-        ApiResponse response = (_isEdit) ? await _gardenService.UpdateGardenBed(_gardenBed) : await _gardenService.CreateGardenBed(_gardenBed);
+        ApiResponse response = (_isEdit) ? await _gardenService.UpdateGardenBed(_gardenBed!) : await _gardenService.CreateGardenBed(_gardenBed!);
 
         if (response.ValidationProblems != null)
         {
@@ -124,12 +124,17 @@
 
         if (response.IsSuccess)
         {
-            await OnClose(_gardenBed);
+            if (OnClose!= null && _gardenBed!=null) await OnClose(_gardenBed);
         }
     }
 
     protected void HandleInValidSubmit()
     {
         _toastService.ShowToast("Garden Bed can not be save. Please correct validation errors.", GardenLogToastLevel.Error);
+    }
+
+    private async Task OnCancel()
+    {
+        if (OnClose != null && _gardenBed != null) await OnClose(_gardenBed);
     }
 }

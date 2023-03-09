@@ -12,17 +12,17 @@
 </Page>
 
 @code {
-    [Parameter] public string PlantId { get; set; }
-    [Parameter] public string PlantVarietyId { get; set; }
+    [Parameter] public string PlantId { get; set; }=string.Empty;
+    [Parameter] public string PlantVarietyId { get; set; } = string.Empty;
 
     private List<BreadcrumbLink> breacrumbLinks = new();
 
-    private PlantModel plant { get; set; }
-    private PlantVarietyModel plantVariety { get; set; }
-    private PlantVarietyForm plantVarietyForm { get; set; }
+    private PlantModel? plant { get; set; }
+    private PlantVarietyModel? plantVariety { get; set; }
+    private PlantVarietyForm? plantVarietyForm { get; set; }
 
-    private string title { get; set; }
-    private string description { get; set; }
+    private string title { get; set; } = string.Empty;
+    private string description { get; set; } = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
@@ -43,7 +43,7 @@
             breacrumbLinks.Add(new BreadcrumbLink($"Add {plant.Name} Variety", _navigationManager.GetCreatePlantVarietyUrl(PlantId), true));
             title = $"Add {plant.Name} Variety";
             description = "";// $"Add {plant.Name} Variety";
-            plantVarietyForm.Initialize(null, plant);
+            if (plantVarietyForm!= null) plantVarietyForm.Initialize(null, plant);
         }
         else
         {
@@ -51,7 +51,7 @@
             breacrumbLinks.Add(new BreadcrumbLink($"Edit {plantVariety.Name}", _navigationManager.GetEditPlantVarietyUrl(PlantId, PlantVarietyId), true));
             title = $"Edit {plantVariety.Name}";
             description = "";// $"Add {plant.Name} Variety";
-            plantVarietyForm.Initialize(plantVariety, plant);
+            if (plantVarietyForm != null) plantVarietyForm.Initialize(plantVariety, plant);
         }
 
         StateHasChanged();
@@ -59,22 +59,27 @@
 
     private async Task<PlantModel> GetPlant(string plantId)
     {
-        PlantModel plant = null;
+        PlantModel? plant = null;
 
         if (!string.IsNullOrWhiteSpace(plantId))
         {
             plant = await _plantService.GetPlant(plantId, false);
         }
-        return plant;
+
+        if (plant == null) _navigationManager.NavigateToPlants();
+
+        return plant?? new PlantModel();
     }
 
     private async Task<PlantVarietyModel> GetPlantVariety(string plantId, string plantVarietyId)
     {
-        PlantVarietyModel plantVariety = null;
+        PlantVarietyModel? plantVariety = null;
 
         plantVariety = await _plantService.GetPlantVariety(plantId, plantVarietyId);
 
-        return plantVariety;
+        if (plantVariety == null) _navigationManager.NavigateToPlants();
+
+        return plantVariety?? new PlantVarietyModel();
     }
 
     protected async Task ClosePage()
