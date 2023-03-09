@@ -402,6 +402,29 @@ dd {
             padding: 0.5em;
         }
 
+.colors[b-5kga8drz7q] {
+    border: none;
+    box-sizing: border-box;
+    padding: 0em 0.5em;
+    display: -webkit-box;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: inherit;
+}
+
+    .colors > ul[b-5kga8drz7q] {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .colors ul li[b-5kga8drz7q] {
+        margin: 0.5em 0.2em;
+        color: white;
+    }
+
 .sources[b-5kga8drz7q] {
     box-sizing: border-box;
     padding: 0em 0.5em;
