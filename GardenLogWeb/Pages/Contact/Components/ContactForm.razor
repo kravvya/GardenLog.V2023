@@ -4,53 +4,55 @@
 @inject NavigationManager _navigationManager;
 
 <article id="contactForm">
-    <div class="container-md">
-        @if (_isInitialized && _email != null)
-        {
-            <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmitAsync" OnInvalidSubmit="@HandleInValidSubmit">
+    <div class="container">
+        <div class="w-75">
+            @if (_isInitialized && _email != null)
+            {
+                <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmitAsync" OnInvalidSubmit="@HandleInValidSubmit">
 
-                <FluentValidationValidator />
-                <CustomValidation @ref="customValidation" />
+                    <FluentValidationValidator />
+                    <CustomValidation @ref="customValidation" />
 
-                <div class="row">
-                    <div class="col-md-10">
-                        <label for="name">Name</label>
-                        <InputText class="form-control" id="name" @bind-Value="@_email.Name" />
-                        <ValidationMessage For="@(() => _email.Name)" />
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="name">Name</label>
+                            <InputText class="form-control" id="name" @bind-Value="@_email.Name" />
+                            <ValidationMessage For="@(() => _email.Name)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-10">
-                        <label for="Email">Email address</label>
-                        <InputText class="form-control" id="City" @bind-Value="@_email.EmailAddress" />
-                        <ValidationMessage For="@(() => _email.EmailAddress)" />
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="Email">Email address</label>
+                            <InputText class="form-control" id="City" @bind-Value="@_email.EmailAddress" />
+                            <ValidationMessage For="@(() => _email.EmailAddress)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-10">
-                        <label for="Subject">Subject</label>
-                        <InputText class="form-control" id="Subject" @bind-Value="@_email.Subject" />
-                        <ValidationMessage For="@(() => _email.Subject)" />
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="Subject">Subject</label>
+                            <InputText class="form-control" id="Subject" @bind-Value="@_email.Subject" />
+                            <ValidationMessage For="@(() => _email.Subject)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-10">
-                        <label for="Message">Message</label>
-                        <InputTextArea Class="form-control" Id="description" @bind-Value="@_email.Message" rows="5" />
-                        <ValidationMessage For="@(() => _email.Message)" />
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="Message">Message</label>
+                            <InputTextArea Class="form-control" Id="description" @bind-Value="@_email.Message" rows="5" />
+                            <ValidationMessage For="@(() => _email.Message)" />
+                        </div>
                     </div>
-                </div>
 
-                 <div class="row my-2">
-                    <div class="col-10">
-                        <button type="submit" class="btn btn-primary" title="Send Email"><span class="bi bi-envelop">&nbsp;</span> Send Email</button>
-                        &nbsp;
-                        <button type="button" class="btn btn-danger" onclick="@(() => _navigationManager.NavigateToHome())"> Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
-                     </div>
-                </div>
+                    <div class="row my-2">
+                        <div class="col-10">
+                            <button type="submit" class="btn btn-primary" title="Send Email"><span class="bi bi-envelop">&nbsp;</span> Send Email</button>
+                            &nbsp;
+                            <button type="button" class="btn btn-danger" onclick="@(() => _navigationManager.NavigateToHome())"> Cancel <span class="bi bi-x-circle">&nbsp;</span></button>
+                        </div>
+                    </div>
 
-            </EditForm>
-        }
+                </EditForm>
+            }
+        </div>
     </div>
 </article>
 @code {
