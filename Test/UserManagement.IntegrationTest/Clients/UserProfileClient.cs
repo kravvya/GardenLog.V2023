@@ -62,6 +62,27 @@ public class UserProfileClient
 
     }
 
+    public async Task<HttpResponseMessage> SendEmail()
+    {
+        var url = $"{this._baseUrl.OriginalString}{UserProfileRoutes.SendEmail}";
+
+        using var requestContent = CreateEmailCommand().ToJsonStringContent();
+
+        return await this._httpClient.PostAsync(url, requestContent);
+
+    }
+
+    private static SendEmailCommand CreateEmailCommand()
+    {
+        return new SendEmailCommand()
+        {
+            EmailAddress = "kravvya@chrobinson.com",
+            Name = "AAT Tester",
+            Subject = "Test from AAT",
+            Message = $"This is only a test @ {DateTime.Now.ToLongTimeString()}"
+        };
+    }
+
     private static CreateUserProfileCommand PopulateCreateUserProfileCommand(string userName)
     {
         return new CreateUserProfileCommand()

@@ -9,4 +9,6 @@ public class UserProfileRoutes
     public const string CreateUserProfile = UserProfileBase;
     public const string UpdateUserProfile = UserProfileBase + "/{userProfileId}";
     public const string DeleteUserProfile = UserProfileBase + "/{userProfileId}";
+
+    public const string SendEmail = UserProfileBase + "/email";
 }

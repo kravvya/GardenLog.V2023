@@ -95,7 +95,7 @@
                                 <th class="col-xs-1 fw-semibold">Seeding Date</th>
                                 <th class="col-xs-1 fw-semibold">Transplant Date</th>
                                 <th class="col-xs-1 fw-semibold">Qty</th>
-                                <th class="col-xs-3 fw-semibold">Row #</th>
+                                <th class="col-xs-3 fw-semibold">Location</th>
                                 <th class="col-xs-1"><button type="button" class="btn d-inline-block  btn-secondary" title="Add Plant" data-dismiss="modal" @onclick="@(() => AddPlantToHarvest())"><span class="bi bi-plus-lg">Add</span></button></th>
                             </tr>
                         </thead>
@@ -342,6 +342,9 @@
         if (_gardenBeds == null) return string.Empty;
 
         StringBuilder sb = new();
+
+        if (harvestPlant.GardenBedLayout.Count > 2) return "Multiple locations";
+
         foreach(var bed in harvestPlant.GardenBedLayout)
         {
             var location = _gardenBeds.FirstOrDefault(b => b.GardenBedId == bed.GardenBedId);
@@ -349,7 +352,7 @@
             {
                 if (sb.Length > 0) sb.Append(",");
 
-                sb.AppendLine(location.RowNumber?.ToString());
+                sb.AppendLine(location.Name);
             }            
         }
 

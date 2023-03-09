@@ -4,6 +4,11 @@ namespace GardenLogWeb.Shared.Extensions;
 
 public static class NavigationManagerExtensions
 {
+    public static string GetHomeUrl(this NavigationManager navigationManager)
+    {
+        return "home";
+    }
+
     public static string GetPlantsUrl(this NavigationManager navigationManager)
     {
         return "plants";
@@ -137,6 +142,11 @@ public static class NavigationManagerExtensions
     public static string GetGardenLayoutUrl(this NavigationManager navigationManager, string gardenId)
     {
         return $"gardens/{gardenId}/layout";
+    }
+
+    public static void NavigateToHome(this NavigationManager navigationManager)
+    {
+        navigationManager.NavigateTo(navigationManager.GetHomeUrl());
     }
 
     public static void NavigateToPlants(this NavigationManager navigationManager)

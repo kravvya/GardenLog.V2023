@@ -8,6 +8,7 @@ namespace GardenLog.SharedInfrastructure
     public interface IConfigurationService
     {
         AuthSettings GetAuthSettings();
+        string GetEmailPassword();
         string GetImageBlobConnectionString();
         MongoSettings GetImageCatalogMongoSettings();
         string GetOpenWeartherApplicationId();
@@ -111,6 +112,22 @@ namespace GardenLog.SharedInfrastructure
                 _logger.LogInformation("AUTH DOMAIN WAS LOCATED! YEHAA");
             }
             return authSettings!;
+        }
+
+        public string GetEmailPassword()
+        {
+            var password = _configuration.GetValue<string>("email-password");
+            
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                _logger.LogCritical("EMAIL PASSWORD is not found. Do not expect any good things to happen");
+            }
+            else
+            {
+                _logger.LogInformation("EMAIL PASSWORD WAS LOCATED! YEHAA");
+            }
+            return password!;
         }
 
     }

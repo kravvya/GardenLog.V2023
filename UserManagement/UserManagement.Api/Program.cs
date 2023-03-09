@@ -61,6 +61,9 @@ try
     builder.Services.AddHttpClient<IAuth0AuthenticationApiClient, Auth0AuthenticationApiClient>();
     builder.Services.AddHttpClient<IAuth0ManagementApiClient, Auth0ManagementApiClient>();
 
+    builder.Services.AddScoped<IEmailClient, EmailClient>();
+    builder.Services.AddScoped<IContactCommandHandler, ContactCommandHandler>();
+
     builder.Services.AddScoped<IUserProfileCommandHandler, UserProfileCommandHandler>();
     builder.Services.AddScoped<IUserProfileQueryHandler, UserProfileQueryHandler>();
 
