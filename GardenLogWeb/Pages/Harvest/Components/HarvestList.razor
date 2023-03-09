@@ -1,6 +1,7 @@
 ﻿@inject IHarvestCycleService _harvestService;
 @inject NavigationManager _navigationManager
 @inject IGardenService _gardenService;
+@inject IReportService _reportService;
 
 <ModalView OnCloseModal="CloseImageFormModal" @ref="_imageFormModal">
     <Body>
@@ -46,6 +47,10 @@
                             {
                                 <button type="button" class="btn btn-warning" title="Garden Plant Layout" @onclick="@(() => EditGardenPlantLayout(harvest))">
                                     <span class="bi bi-grid-1x2-fill">&nbsp;</span>
+                                </button>
+
+                                <button type="button" class="btn btn-warning" title="Download Garden Plant Layout" @onclick="@(() => DownloadHarvestPlantInGardenReport(harvest))">
+                                    <span class="bi bi-download">&nbsp;</span>
                                 </button>
                             }
                             <button type="button" class="btn btn-warning" title="Add Image" @onclick="@(() => onAddHarvestImage(harvest))">
@@ -158,6 +163,11 @@
     private void EditGardenPlantLayout(HarvestCycleModel harvest)
     {
         _navigationManager.NavigateToGardenPlanLayout(harvest.HarvestCycleId);
+    }
+
+    private void DownloadHarvestPlantInGardenReport(HarvestCycleModel harvest)
+    {
+        _reportService.DownloadHarvestPlantInGardenReport(harvest.HarvestCycleId);
     }
 
 }
