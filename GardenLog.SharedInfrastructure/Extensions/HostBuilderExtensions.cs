@@ -12,6 +12,7 @@ using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Formatting.Elasticsearch;
 using System.Security.Claims;
+using SendGrid.Extensions.DependencyInjection;
 
 namespace GardenLog.SharedInfrastructure.Extensions
 {
@@ -63,6 +64,15 @@ namespace GardenLog.SharedInfrastructure.Extensions
             builder.Services.AddHttpClient<IAuth0AuthenticationApiClient, Auth0AuthenticationApiClient>();
             builder.Services.AddHttpClient<TInterfaceType, TConcreteType>().AddHttpMessageHandler(provider =>
                 new Auth0AuthenticationHandler(provider.GetRequiredService<IAuth0AuthenticationApiClient>(), provider.GetRequiredService<IConfigurationService>()));
+        }
+
+        public static void RegisterEmail(this WebApplicationBuilder builder)
+        {
+            var password = builder.Configuration.GetValue<string>("email-password");
+            builder.Services.AddSendGrid(options =>
+            {
+                options.ApiKey = password;
+            });
         }
 
         public static void RegisterForAuthentication(this WebApplicationBuilder builder)

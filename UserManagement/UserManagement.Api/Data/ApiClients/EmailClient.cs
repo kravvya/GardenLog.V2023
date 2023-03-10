@@ -12,14 +12,14 @@ namespace UserManagement.Api.Data.ApiClients
 
     public class EmailClient : IEmailClient
     {
+        private readonly ISendGridClient _sendGridClient;
         private readonly ILogger<EmailClient> _logger;
-        private readonly string _email_password;
 
-        public EmailClient(IConfigurationService configurationService, ILogger<EmailClient> logger)
+
+        public EmailClient(ISendGridClient sendGridClient, ILogger<EmailClient> logger)
         {
+            _sendGridClient = sendGridClient;
             _logger = logger;
-            _email_password = configurationService.GetEmailPassword();
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls;
         }
 
         public async Task<bool> SendEmail(SendEmailCommand request)
@@ -27,20 +27,21 @@ namespace UserManagement.Api.Data.ApiClients
 
             try
             {
-
-                var client = new SendGridClient(_email_password);
-                var from = new EmailAddress("contact@slavgl.com", "GardenLog Contact");
-                var to = new EmailAddress("stevchik@yahoo.com", "GardenLog Admin");
-
                 StringBuilder sb = new();
                 sb.AppendLine($" from: {request.Name} <br/>");
                 sb.AppendLine($" at: {request.EmailAddress} <br/>");
                 sb.AppendLine($" sent message: {request.Message}");
 
+                var message = new SendGridMessage()
+                {
+                    From = new EmailAddress("contact@slavgl.com", "GardenLog Contact"),
+                    Subject = request.Subject
+                };
 
-                var msg = MailHelper.CreateSingleEmail(from, to, request.Subject, sb.ToString(), sb.ToString());
+                message.AddContent(MimeType.Html, sb.ToString());
+                message.AddTo(new EmailAddress("stevchik@yahoo.com", "GardenLog Admin"));
 
-                var response = await client.SendEmailAsync(msg);
+                var response = await _sendGridClient.SendEmailAsync(message);
 
                 if (response != null)
                 {

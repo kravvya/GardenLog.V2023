@@ -75,6 +75,8 @@ try
         options.AddGlWebPolicy();
     });
 
+    builder.RegisterEmail();
+
     // 1. Add Authentication Services
     builder.RegisterForAuthentication();
 
