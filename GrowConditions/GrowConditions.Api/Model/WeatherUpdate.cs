@@ -5,5 +5,5 @@ namespace GrowConditions.Api.Model;
 
 public record WeatherUpdate: WeatherUpdateBase, IEntity
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 }

@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using UserManagement.Contract;
-using UserManagement.Contract.ViewModels;
 
 namespace GrowConditions.ApiClients;
 
 public interface IUserManagementApiClient
 {
-    Task<List<GardenViewModel>> GetAllGardens();
+    Task<List<GardenViewModel>?> GetAllGardens();
 }
 
 public class UserManagementApiClient : IUserManagementApiClient
@@ -24,16 +23,21 @@ public class UserManagementApiClient : IUserManagementApiClient
         _logger = logger;
         _cache = cache;
         var userManagementUrl = confguration["Services:UserManagement.Api"];
+        
+        if(userManagementUrl == null )
+        {
+            _logger.LogCritical("Did not get user management api. This is a show stopper.");
+            throw new ArgumentNullException("Services:UserManagement.Api");
+        }
         _logger.LogInformation($"User Mgmt URL @ {userManagementUrl}");
 
         _httpClient.BaseAddress = new Uri(userManagementUrl);
     }
 
-    public async Task<List<GardenViewModel>> GetAllGardens()
+    public async Task<List<GardenViewModel>?> GetAllGardens()
     {
-        List<GardenViewModel> gardens = null;
 
-        if (!_cache.TryGetValue(GARDEN_CACHE_KEY, out gardens))
+        if (!_cache.TryGetValue(GARDEN_CACHE_KEY, out List<GardenViewModel>? gardens))
         {
             var response = await _httpClient.ApiGetAsync<List<GardenViewModel>>(GardenRoutes.GetAllGardens);
 

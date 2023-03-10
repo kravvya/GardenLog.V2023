@@ -6,7 +6,7 @@ namespace GardenLog.SharedInfrastructure.Extensions
 {
     public static class ObjectExtensions
     {
-        public static StringContent ToJsonStringContent<T>(this T @object, JsonSerializerOptions options = default)
+        public static StringContent ToJsonStringContent<T>(this T @object, JsonSerializerOptions? options = default)
         {
             return new StringContent(
                 JsonSerializer.Serialize(@object, options),

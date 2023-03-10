@@ -4,7 +4,7 @@ namespace GrowConditions.Api.ApiClients;
 
 public interface IOpenWeatherApiClient
 {
-    Task<WeatherUpdate> GetWeatherUpdate(GardenViewModel garden);
+    Task<WeatherUpdate?> GetWeatherUpdate(GardenViewModel garden);
 }
 
 public class OpenWeatherApiClient : IOpenWeatherApiClient
@@ -13,9 +13,7 @@ public class OpenWeatherApiClient : IOpenWeatherApiClient
     private readonly ILogger<OpenWeatherApiClient> _logger;
     private readonly IMapper _mapper;
     private readonly IConfigurationService _configurationService;
-    private const string GARDEN_CACHE_KEY = "Gardens";
-    private const int CACHE_DURATION = 1440;
-
+   
     public OpenWeatherApiClient(HttpClient httpClient, IConfiguration confguration, ILogger<OpenWeatherApiClient> logger, IMapper mapper, IConfigurationService configurationService)
     {
         _httpClient = httpClient;
@@ -24,12 +22,19 @@ public class OpenWeatherApiClient : IOpenWeatherApiClient
         _configurationService = configurationService;
 
         var openWeatherUrl = confguration["Services:OpenWeather.Api"];
-        _logger.LogInformation($"Open Weather URL @ {openWeatherUrl}");
+
+        if (openWeatherUrl == null)
+        {
+            _logger.LogCritical("Did not get open weather api. This is a show stopper.");
+            throw new ArgumentNullException(nameof(confguration));
+        }
+
+        _logger.LogInformation("Open Weather URL @ {openWeatherUrl}", openWeatherUrl);
         _httpClient.BaseAddress = new Uri(openWeatherUrl);
 
     }
 
-    public async Task<WeatherUpdate> GetWeatherUpdate(GardenViewModel garden)
+    public async Task<WeatherUpdate?> GetWeatherUpdate(GardenViewModel garden)
     {
         string appId = _configurationService.GetOpenWeartherApplicationId();
 
@@ -39,6 +44,12 @@ public class OpenWeatherApiClient : IOpenWeatherApiClient
         var jsonString = await response.Content.ReadAsStringAsync();
         //continue to use Newtonsoft for OpenWeather service. 
         var openWeather = Newtonsoft.Json.JsonConvert.DeserializeObject<OpenWeather>(jsonString);
+
+        if(openWeather == null || openWeather.Sys == null || openWeather.Main == null)
+        {
+            _logger.LogCritical("Did not get Open Weather update message");
+            return null;
+        }
 
         _logger.LogInformation("Fetch weather got weather: {temp}F", openWeather.Main.Temp);
 

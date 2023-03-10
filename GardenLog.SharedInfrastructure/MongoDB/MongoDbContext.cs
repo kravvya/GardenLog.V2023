@@ -12,18 +12,23 @@ public class MongoDbContext : IUnitOfWork
 {
     private readonly ILogger<MongoDbContext> _logger;
 
-    protected MongoClient _mongoClient { get; set; }
-    protected IMongoDatabase _database { get; set; }
-    protected MongoSettings _settings { get; set; }
-    protected IClientSessionHandle Session { get; set; }
+    protected MongoClient? MongoClient { get; set; }
+    protected IMongoDatabase? Database { get; set; }
+    protected MongoSettings? Settings { get; set; }
+    protected IClientSessionHandle? Session { get; set; }
 
     private readonly List<Func<Task>> _commands;
 
     public MongoDbContext(IConfigurationService configurationService, ILogger<MongoDbContext> logger)
     {
         _logger = logger;
-        _settings = configurationService.GetPlantCatalogMongoSettings();
+        Settings = configurationService.GetPlantCatalogMongoSettings();
 
+        if(Settings == null || Settings.Server == null || Settings.DatabaseName == null || Settings.UserName==null)
+        {
+            _logger.LogCritical("Did not get MOngoDB connection setting. ");
+            throw new ArgumentNullException(nameof(configurationService));
+        }
         // Every command will be stored and it'll be processed at SaveChanges
         _commands = new List<Func<Task>>();
 
@@ -32,14 +37,14 @@ public class MongoDbContext : IUnitOfWork
 
     public void OnConfiguring()
     {
-        _logger.LogInformation("Got connection string. Start with {server}", _settings.Server);
+        _logger.LogInformation("Got connection string. Start with {server}", Settings!.Server);
 
-        MongoUrlBuilder bldr = new MongoUrlBuilder();
+        MongoUrlBuilder bldr = new();
         bldr.Scheme = ConnectionStringScheme.MongoDBPlusSrv;
         bldr.UseTls = true;
-        bldr.Server = new MongoServerAddress(_settings.Server);
-        bldr.Username = _settings.UserName;
-        bldr.Password = _settings.Password;
+        bldr.Server = new MongoServerAddress(Settings!.Server);
+        bldr.Username = Settings.UserName;
+        bldr.Password = Settings.Password;
 
         var settings = MongoClientSettings.FromUrl(bldr.ToMongoUrl());
         settings.RetryWrites = true;
@@ -47,18 +52,20 @@ public class MongoDbContext : IUnitOfWork
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
         settings.LinqProvider = LinqProvider.V3;
 
-        _mongoClient = new MongoClient(settings);
+        MongoClient = new MongoClient(settings);
         _logger.LogInformation("Mongo Client is set up");
 
-        _database = _mongoClient.GetDatabase(_settings.DatabaseName);
-        _logger.LogInformation("Mongo database is set up {db}", _settings.DatabaseName);
+        Database = MongoClient.GetDatabase(Settings.DatabaseName);
+        _logger.LogInformation("Mongo database is set up {db}", Settings.DatabaseName);
 
+#pragma warning disable CS0618 // Type or member is obsolete
         BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     public T GetCollection<T, Y>(string collectionName)
     {
-        return (T)_database.GetCollection<Y>(collectionName);
+        return (T)Database!.GetCollection<Y>(collectionName);
     }
 
     public async Task<int> SaveChangesAsync()
@@ -76,7 +83,7 @@ public class MongoDbContext : IUnitOfWork
     private async Task<int> ApplyChangesAsync(List<Func<Task>> commands)
     {
 
-        using (Session = await _mongoClient.StartSessionAsync())
+        using (Session = await MongoClient!.StartSessionAsync())
         {
             Session.StartTransaction();
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -157,11 +156,11 @@ public static class HttpClientExtensions
         {
             response.Response = await result.Content.ReadFromJsonAsync<TObject>(OPTIONS);
         }
-        else if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        else if (result.StatusCode == HttpStatusCode.BadRequest)
         {
             response.ValidationProblems = await result.Content.ReadFromJsonAsync<Dictionary<string, string[]>>();
         }
-        else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
+        else if (result.StatusCode == HttpStatusCode.NotFound)
         {
             response.ErrorMessage = "Requested resource is not found";
         }

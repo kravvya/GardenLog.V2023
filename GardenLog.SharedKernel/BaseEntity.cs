@@ -6,7 +6,7 @@ namespace GardenLog.SharedKernel
     // This can be modified to BaseEntity<TId> to support multiple key types (e.g. Guid)
     public abstract class BaseEntity
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         public List<BaseDomainEvent> DomainEvents = new();
 
@@ -23,7 +23,7 @@ namespace GardenLog.SharedKernel
 
             if ((currentValue == null && value != null)
                 || (currentValue != null && value == null)
-                || !currentValue.Equals(value))
+                || currentValue != null &&!currentValue.Equals(value))
             {
                 mem.SetValue(this, value);
                 AddDomainEvent(mem.Name);

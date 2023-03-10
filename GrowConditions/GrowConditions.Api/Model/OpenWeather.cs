@@ -6,24 +6,24 @@ namespace GrowConditions.Api.Model;
 
 public class OpenWeather
 {
-    public Coordinate Coord { get; set; }
+    public Coordinate? Coord { get; set; }
 
     [JsonProperty("weather")]
-    public List<OpenWeatherCondition> WeatherConditions { get; set; }
+    public List<OpenWeatherCondition>? WeatherConditions { get; set; }
 
-    public MainCondition Main { get; set; }
+    public MainCondition? Main { get; set; }
 
     public decimal Visibility { get; set; }
 
-    public OpenWeatherWind Wind { get; set; }
+    public OpenWeatherWind? Wind { get; set; }
 
-    public OpenWeatherClouds Clouds { get; set; }
+    public OpenWeatherClouds? Clouds { get; set; }
 
 
     [Newtonsoft.Json.JsonConverter(typeof(UnixDateTimeConverter))]
     public DateTime Dt { get; set; }
 
-    public OpenWeatherSystem Sys { get; set; }
+    public OpenWeatherSystem? Sys { get; set; }
 
     [JsonProperty("timezone")]
     public int SecondsFromUtc { get; set; }
@@ -32,10 +32,10 @@ public class OpenWeather
     [JsonProperty("id")]
     public int CityId { get; set; }
     [JsonProperty("name")]
-    public string CityName { get; set; }
+    public string CityName { get; set; } = string.Empty;
 
-    public OpenWeatherRain Rain { get; set; }
-    public OpenWeatherSnow Snow { get; set; }
+    public OpenWeatherRain? Rain { get; set; }
+    public OpenWeatherSnow? Snow { get; set; }
 }
 
 
@@ -83,7 +83,7 @@ public class OpenWeatherSystem
 {
     public int Type { get; set; }
     public int Id { get; set; }
-    public string Country { get; set; }
+    public string Country { get; set; } = string.Empty;
      [Newtonsoft.Json.JsonConverter(typeof(UnixDateTimeConverter))]
     public DateTime Sunrise { get; set; }
     [Newtonsoft.Json.JsonConverter(typeof(UnixDateTimeConverter))]

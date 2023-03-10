@@ -2,7 +2,7 @@
 
 public record UpdateGardenBedCommand: GardenBedBase
 {
-    public string GardenBedId { get; init; }
+    public string GardenBedId { get; init; } = string.Empty;
 }
 
 public class UpdateGardenBedCommandValidator : GardenBedValidator<UpdateGardenBedCommand>

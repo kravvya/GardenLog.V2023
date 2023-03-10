@@ -13,7 +13,7 @@ namespace GardenLog.SharedInfrastructure.Extensions
             return context;
         }
 
-        public static ILogger GetLogger(this Context context)
+        public static ILogger? GetLogger(this Context context)
         {
             if (context.TryGetValue(LoggerKey, out object logger))
             {

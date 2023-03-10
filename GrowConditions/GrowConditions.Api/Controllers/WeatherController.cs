@@ -54,7 +54,7 @@ public class WeatherController : ControllerBase
 
     [HttpGet(WeatherRoutes.Run)]
     [ProducesResponseType((int)HttpStatusCode.Accepted)]
-    public async Task<ActionResult> RunAsync()
+    public ActionResult Run()
     {
         try
         {

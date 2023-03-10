@@ -2,7 +2,7 @@
 
 public abstract record GardenBedBase
 {
-    public string GardenId { get; set; }
+    public string GardenId { get; set; }=string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Notes { get; set; }= string.Empty;
     public int? RowNumber { get; set; }

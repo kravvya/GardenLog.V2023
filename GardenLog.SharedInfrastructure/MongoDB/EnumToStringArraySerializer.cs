@@ -65,7 +65,7 @@ public class EnumToStringArraySerializer<TEnum> : StructSerializerBase<TEnum>, I
             {
                sb.Append($"{bsonReader.ReadString()},");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 context.Reader.ReadEndArray();
                 break;
@@ -79,7 +79,7 @@ public class EnumToStringArraySerializer<TEnum> : StructSerializerBase<TEnum>, I
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return
             obj is EnumSerializer<TEnum> other &&
