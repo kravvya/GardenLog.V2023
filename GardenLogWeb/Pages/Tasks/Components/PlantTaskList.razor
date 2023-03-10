@@ -340,9 +340,9 @@
         if (_filter == null) return;
 
         if (_filter.ShowCompletedTasks)
-            _tasks = await _taskService.GetPlantTasks(false);
+            _tasks = await _taskService.GetPlantTasks(true);
         else
-            _tasks = await _taskService.GetActivePlantTasks(false);
+            _tasks = await _taskService.GetActivePlantTasks(true);
 
 
         StateHasChanged();
@@ -408,6 +408,13 @@
     {
         if (_workLogFormModal == null) return;
         await _workLogFormModal.CloseModal();
+
+        if (_filter == null) return;
+
+        if (_filter.ShowCompletedTasks)
+            _tasks = await _taskService.GetPlantTasks(true);
+        else
+            _tasks = await _taskService.GetActivePlantTasks(true);
 
         StateHasChanged();
     }
