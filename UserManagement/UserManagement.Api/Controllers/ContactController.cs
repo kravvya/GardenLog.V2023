@@ -26,7 +26,7 @@ public class Contactontroller : Controller
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult> SendEmail([FromBody] SendEmailCommand command)
     {
-        var result = await _commadnHandler.SendEmail(command);
+        var result =  await _commadnHandler.SendEmail(command);
         if (!result) return BadRequest();
 
        return Ok();

@@ -1,4 +1,4 @@
-﻿using p = PlantCatalog.Contract.Enum;
+﻿using PE = PlantCatalog.Contract.Enum;
 
 
 
@@ -17,9 +17,9 @@ public class HarvestScheduler : SchedulerBase, IScheduler
 
         switch (growInstruction.PlantingMethod)
         {
-            case p.PlantingMethodEnum.SeedIndoors:
-            case p.PlantingMethodEnum.Transplanting:
-                if (growInstruction.TransplantAheadOfWeatherCondition == p.WeatherConditionEnum.Unspecified) return null;
+            case PE.PlantingMethodEnum.SeedIndoors:
+            case PE.PlantingMethodEnum.Transplanting:
+                if (growInstruction.TransplantAheadOfWeatherCondition == PE.WeatherConditionEnum.Unspecified) return null;
 
                 int weeksAhead = growInstruction.TransplantWeeksAheadOfWeatherCondition.HasValue ? growInstruction.TransplantWeeksAheadOfWeatherCondition.Value : 0;
 
@@ -28,8 +28,8 @@ public class HarvestScheduler : SchedulerBase, IScheduler
                 if (transplantDate.HasValue) { originDate = transplantDate.Value; } else return null;
 
                 break;
-            case p.PlantingMethodEnum.DirectSeed:
-                if (growInstruction.StartSeedAheadOfWeatherCondition == p.WeatherConditionEnum.Unspecified) return null;
+            case PE.PlantingMethodEnum.DirectSeed:
+                if (growInstruction.StartSeedAheadOfWeatherCondition == PE.WeatherConditionEnum.Unspecified) return null;
 
                 weeksAhead = growInstruction.StartSeedWeeksAheadOfWeatherCondition.HasValue ? growInstruction.StartSeedWeeksAheadOfWeatherCondition.Value : 0;
 

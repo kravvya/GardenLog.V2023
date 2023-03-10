@@ -16,8 +16,7 @@ public class GardenQueryHandler : IGardenQueryHandler
 {
     private readonly IGardenRepository _gardenRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IUnitOfWork _unitOfWork;
-
+    
     public GardenQueryHandler(IGardenRepository plantLocationRepository, IHttpContextAccessor httpContextAccessor)
     {
         _gardenRepository = plantLocationRepository;

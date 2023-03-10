@@ -11,7 +11,7 @@ global using PlantHarvest.Contract;
 global using PlantCatalog.Contract.ViewModels;
 global using PlantHarvest.Contract.Enum;
 global using UserManagement.Contract.ViewModels;
-global using plant = PlantCatalog.Contract.Enum;
+global using Plant = PlantCatalog.Contract.Enum;
 global using PlantHarvest.Domain.HarvestAggregate.Events.Meta;
 
 global using MediatR;

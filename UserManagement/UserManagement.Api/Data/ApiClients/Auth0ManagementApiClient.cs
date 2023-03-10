@@ -20,9 +20,8 @@ public class Auth0ManagementApiClient : IAuth0ManagementApiClient
     private readonly IAuth0AuthenticationApiClient _authClient;
     private readonly ILogger<Auth0ManagementApiClient> _logger;
     private readonly string _audienceAuth0ManagementApi;
-    private readonly string _clientAith0ManagementApi;
 
-    public Auth0ManagementApiClient(HttpClient httpClient, IConfigurationService configurationService, IAuth0AuthenticationApiClient authClient, ILogger<Auth0ManagementApiClient> logger, IMemoryCache cache)
+    public Auth0ManagementApiClient(HttpClient httpClient, IConfigurationService configurationService, IAuth0AuthenticationApiClient authClient, ILogger<Auth0ManagementApiClient> logger)
     {
         _httpClient = httpClient;
         _authClient = authClient;
@@ -65,7 +64,7 @@ public class Auth0ManagementApiClient : IAuth0ManagementApiClient
             throw new ArgumentException(response.ErrorMessage, "UserName");
         }
 
-        return response.Response.UserId;
+        return response.Response!.UserId;
     }
 
     public async Task<bool> UpdateUser(UpdateUserProfileCommand request, string iserProfileId)

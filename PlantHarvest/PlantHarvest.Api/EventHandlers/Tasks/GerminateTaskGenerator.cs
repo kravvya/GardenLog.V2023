@@ -80,6 +80,11 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
             return;
         }
 
+        if(plantHarvest.PlantGrowthInstructionId == null)
+        {
+            return;
+        }
+
         var growInstruction = await _plantCatalogApi.GetPlantGrowInstruction(plantHarvest.PlantId, plantHarvest.PlantGrowthInstructionId);
 
         if (growInstruction == null || growInstruction.FertilizerForSeedlings == PlantCatalog.Contract.Enum.FertilizerEnum.Unspecified)

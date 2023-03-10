@@ -22,6 +22,6 @@ public class ContactCommandHandler : IContactCommandHandler
     {
         if (_emailClient == null) return false;
 
-        return await _emailClient.SendEmailAsync(request);
+        return await _emailClient.SendEmail(request);
     }
 }

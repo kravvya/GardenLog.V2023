@@ -124,12 +124,12 @@ public partial class GardenTests // : IClassFixture<UserManagementServiceFixture
 
         _output.WriteLine($"Service to get user responded with {response.StatusCode} code and {returnString} message");
 
-        UserProfileViewModel userProfile = null;
+        UserProfileViewModel? userProfile = null;
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             userProfile = await response.Content.ReadFromJsonAsync<UserProfileViewModel>(options);
         }
 
-        return userProfile;
+        return userProfile!;
     }
 }
