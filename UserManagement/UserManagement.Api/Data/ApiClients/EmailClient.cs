@@ -44,7 +44,7 @@ namespace UserManagement.Api.Data.ApiClients
 
                 if (response != null)
                 {
-                    return response.StatusCode == System.Net.HttpStatusCode.OK;
+                    return response.StatusCode == System.Net.HttpStatusCode.Accepted;
                 }
 
             }
