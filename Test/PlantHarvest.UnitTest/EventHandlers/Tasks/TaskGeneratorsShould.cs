@@ -207,7 +207,7 @@ public class TaskGeneratorsShould
 
         var workLog = HarvestHelper.GetWorkLog(HarvestHelper.HARVEST_CYCLE_ID, "Test Harvest", HarvestHelper.PLANT_HARVEST_CYCLE_ID, "Test Plant", WorkLogReasonEnum.FertilizeIndoors);
 
-        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work.Reason == WorkLogReasonEnum.FertilizeIndoors);
+        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work!.Reason == WorkLogReasonEnum.FertilizeIndoors);
 
         await IndoorFetilizeTaskGenerator.Handle((WorkLogEvent)evt, new CancellationToken());
 
@@ -228,7 +228,7 @@ public class TaskGeneratorsShould
 
         var workLog = HarvestHelper.GetWorkLog(HarvestHelper.HARVEST_CYCLE_ID, "Test Harvest", HarvestHelper.PLANT_HARVEST_CYCLE_ID, "Test Plant", WorkLogReasonEnum.FertilizeIndoors);
 
-        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work.Reason == WorkLogReasonEnum.FertilizeIndoors);
+        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work!.Reason == WorkLogReasonEnum.FertilizeIndoors);
 
         await IndoorFetilizeTaskGenerator.Handle((WorkLogEvent)evt, new CancellationToken());
 
@@ -375,7 +375,7 @@ public class TaskGeneratorsShould
 
         var workLog = HarvestHelper.GetWorkLog(HarvestHelper.HARVEST_CYCLE_ID, "Test Harvest", HarvestHelper.PLANT_HARVEST_CYCLE_ID, "Test Plant", WorkLogReasonEnum.FertilizeOutside);
 
-        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work.Reason == WorkLogReasonEnum.FertilizeOutside);
+        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work!.Reason == WorkLogReasonEnum.FertilizeOutside);
 
         await outdoorSawTaskGenerator.Handle((WorkLogEvent)evt, new CancellationToken());
 
@@ -396,7 +396,7 @@ public class TaskGeneratorsShould
 
         var workLog = HarvestHelper.GetWorkLog(HarvestHelper.HARVEST_CYCLE_ID, "Test Harvest", HarvestHelper.PLANT_HARVEST_CYCLE_ID, "Test Plant", WorkLogReasonEnum.FertilizeOutside);
 
-        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work.Reason == WorkLogReasonEnum.FertilizeOutside);
+        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work!.Reason == WorkLogReasonEnum.FertilizeOutside);
 
         await outdoorSawTaskGenerator.Handle((WorkLogEvent)evt, new CancellationToken());
 
@@ -515,7 +515,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Removed()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient,  new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
@@ -530,7 +530,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Transplanted()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
@@ -546,7 +546,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Harvested()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
@@ -562,7 +562,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Deletes_Germinate_Task_When_PlantHarvest_Complete()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
@@ -578,7 +578,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Completes_Germinate_Task_When_PlantHarvest_Germinated()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
         var harvest = HarvestHelper.GetHarvestCycle();
         var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.DirectSeed));
