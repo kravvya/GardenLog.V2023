@@ -31,7 +31,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var plantId));
+            Assert.True(Guid.TryParse(returnString, out _));
         }
         else
         {
@@ -224,7 +224,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var plantGrowInstructionId));
+            Assert.True(Guid.TryParse(returnString, out _));
         }
         else
         {
@@ -546,7 +546,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var plantVarietyId));
+            Assert.True(Guid.TryParse(returnString, out _));
         }
         else
         {

@@ -42,7 +42,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
 
     private async Task CompleteIndoorSowTasks(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(p => p.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.SowIndoors });
         if (tasks != null && tasks.Any())
         {
@@ -62,7 +62,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
 
     private async Task DeleteIndoorSowTask(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.SowIndoors });
         if (tasks != null && tasks.Any())
         {
@@ -75,7 +75,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
 
     private async Task CreateIndoorSowTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors) return;
 
         var schedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.SowIndoors);

@@ -36,7 +36,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
     public async Task<string> CreatePlantTask(CreatePlantTaskCommand request)
     {
-        _logger.LogInformation("Received request to create a new task {0}", request);
+        _logger.LogInformation("Received request to create a new task {request}", request);
 
         string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
 
@@ -56,7 +56,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
     public async Task<string> UpdatePlantTask(UpdatePlantTaskCommand request)
     {
-        _logger.LogInformation("Received request to update task {0}", request);
+        _logger.LogInformation("Received request to update task {request}", request);
 
          var task = await _taskRepository.GetByIdAsync(request.PlantTaskId);
 
@@ -73,7 +73,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
     public async Task<string> DeletePlantTask(string id)
     {
-        _logger.LogInformation("Received request to delete task {0}", id);
+        _logger.LogInformation("Received request to delete task {id}", id);
 
         var task = await _taskRepository.GetByIdAsync(id);
 

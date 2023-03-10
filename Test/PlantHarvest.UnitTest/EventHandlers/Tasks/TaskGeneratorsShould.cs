@@ -496,7 +496,7 @@ public class TaskGeneratorsShould
     [Fact]
     public async Task TaskGenerator_Creates_Germinate_Task_When_PlantHarvest_Seeded()
     {
-        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, _harvestQueryHandlerMock.Object, new Mock<ILogger<GerminateTaskGenerator>>().Object);
+        var germinateTaskGenerator = new GerminateTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _plantCatalogApiClient, new Mock<ILogger<GerminateTaskGenerator>>().Object);
 
 
         var harvest = HarvestHelper.GetHarvestCycle();

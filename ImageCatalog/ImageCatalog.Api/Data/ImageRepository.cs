@@ -37,7 +37,7 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
         if (request == null) throw new ArgumentNullException(nameof(request));
 
         List<ImageViewModel> images = new List<ImageViewModel>();
-        foreach (var entity in request.Requests)
+        foreach (var entity in request.Requests!)
         {
             images.AddRange(await GetImagesByRelatedEntityAsync(entity, userProfileId));
         }

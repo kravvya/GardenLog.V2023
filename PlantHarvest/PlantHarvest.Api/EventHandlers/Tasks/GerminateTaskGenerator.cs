@@ -44,7 +44,7 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
 
     private async Task CompleteGerminateTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
 
         if (plantHarvest != null && plantHarvest.GerminationDate.HasValue)
         {
@@ -66,13 +66,13 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
         }
         else
         {
-            _logger.LogError("Unable to complete task for recording when seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant is not found", harvestEvent.TriggerEntity.EntityId);
+            _logger.LogError("Unable to complete task for recording when seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant is not found", harvestEvent.TriggerEntity!.EntityId);
         }
     }
 
     private async Task CreateGerminateTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         if (plantHarvest.PlantingMethod == PlantingMethodEnum.Transplanting || !plantHarvest.SeedingDate.HasValue || plantHarvest.GerminationDate.HasValue)
         {
             return;
@@ -117,7 +117,7 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
     }
     private async Task DeleteGerminateTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.Information, IncludeResolvedTasks=false });
         if (tasks != null && tasks.Any())
         {

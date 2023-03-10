@@ -37,10 +37,9 @@ public class UserManagementApiClient : IUserManagementApiClient
 
     public async Task<GardenViewModel?> GetGarden(string gardenId)
     {
-        GardenViewModel? garden;
         string key = string.Format(GARDEN_CACHE_KEY, gardenId);
 
-        if (!_cache.TryGetValue(key, out garden))
+        if (!_cache.TryGetValue(key, out GardenViewModel? garden))
         {
             string route = GardenRoutes.GetGarden.Replace("{gardenId}", gardenId);
 

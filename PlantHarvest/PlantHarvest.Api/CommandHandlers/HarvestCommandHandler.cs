@@ -375,7 +375,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
     #endregion
 
-    private void ApplyPlantSchedules(ReadOnlyCollection<CreatePlantScheduleCommand> schedules, HarvestCycle harvest, string plantHarvestCycleId)
+    private void ApplyPlantSchedules(ReadOnlyCollection<CreatePlantScheduleCommand>? schedules, HarvestCycle harvest, string plantHarvestCycleId)
     {
         if (schedules == null || schedules.Count == 0) { return; }
 
