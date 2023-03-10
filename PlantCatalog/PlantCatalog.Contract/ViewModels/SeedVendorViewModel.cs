@@ -2,5 +2,5 @@
 
 public record SeedVendorViewModel: SeedVendorBase
 {
-    public string SeedVendorId { get; set; }
+    public string SeedVendorId { get; set; } = string.Empty;
 }

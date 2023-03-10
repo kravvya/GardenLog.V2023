@@ -2,11 +2,11 @@
 
 public record WorkLogEvent : BaseDomainEvent
 {
-    public WorkLog Work { get; init; }
+    public WorkLog? Work { get; init; }
     public WorkLogEventTriggerEnum Trigger { get; init; }
-    public GardenLog.SharedKernel.RelatedEntity TriggerEntity { get; init; }
-    public string WorkLogId { get { return Work.Id; } init { } }
-    public string UserProfileId { get { return Work.UserProfileId; } init { } }
+    public RelatedEntity? TriggerEntity { get; init; }
+    public string WorkLogId { get { return Work!.Id; } init { } }
+    public string UserProfileId { get { return Work!.UserProfileId; } init { } }
 
     private WorkLogEvent() { }
 

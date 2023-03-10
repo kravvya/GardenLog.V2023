@@ -167,7 +167,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         var tasks = await response.Content.ReadFromJsonAsync<List<PlantTaskViewModel>>(options);
 
-        return tasks;
+        return tasks!;
     }
 
     private async Task<List<PlantTaskViewModel>> GetActivePlantTasksToWorkWith()
@@ -188,6 +188,6 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         var tasks = await response.Content.ReadFromJsonAsync<List<PlantTaskViewModel>>(options);
 
-        return tasks;
+        return tasks!;
     }
 }

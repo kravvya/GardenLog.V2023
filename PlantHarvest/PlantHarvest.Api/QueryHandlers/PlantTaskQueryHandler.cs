@@ -29,21 +29,21 @@ public class PlantTaskQueryHandler : IPlantTaskQueryHandler
     public async Task<IReadOnlyCollection<PlantTaskViewModel>> GetPlantTasks()
     {
         _logger.LogInformation("Received request to get all tasks");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
         return await _taskRepository.GetPlantTasksForUser(userProfileId);
     }
 
     public async Task<IReadOnlyCollection<PlantTaskViewModel>> GetActivePlantTasks()
     {
         _logger.LogInformation("Received request to get all tasks");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
         return await _taskRepository.GetActivePlantTasksForUser(userProfileId);
     }
 
     public async Task<IReadOnlyCollection<PlantTaskViewModel>> SearchPlantTasks(PlantTaskSearch search)
     {
-        _logger.LogInformation($"Received request to search for tasks {search}");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        _logger.LogInformation("Received request to search for tasks {search}", search);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
         return await _taskRepository.SearchPlantTasksForUser(search, userProfileId);
     }
 
@@ -52,7 +52,7 @@ public class PlantTaskQueryHandler : IPlantTaskQueryHandler
         _logger.LogInformation("Received request to get count of completed tasks");
 
         if (_httpContextAccessor.HttpContext == null || _httpContextAccessor.HttpContext?.User == null) return 0;
-        string userProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        string userProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
 
         return await _taskRepository.GetNumberOfCompletedTasksForUser(userProfileId, harvestCycleId);
     }

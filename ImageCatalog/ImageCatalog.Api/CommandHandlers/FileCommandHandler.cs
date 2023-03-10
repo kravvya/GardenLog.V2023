@@ -8,7 +8,7 @@ using SixLabors.ImageSharp.Formats.Tga;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using System.Text.RegularExpressions;
-using sharp = SixLabors.ImageSharp;
+using Sharp = SixLabors.ImageSharp;
 
 namespace ImageCatalog.Api.Services;
 
@@ -54,7 +54,7 @@ public class FileCommandHandler : IFileCommandHandler
                 _logger.LogInformation("Processed image Name:{fileName} Size:{contentLength} Bytes", details.FileName, details.ContentLength);
 
                 using var output = new MemoryStream();
-                using sharp.Image originalImage = sharp.Image.Load(await _fileRepository.DownloadImageFromStorage(details.FileName));
+                using Sharp.Image originalImage = Sharp.Image.Load(await _fileRepository.DownloadImageFromStorage(details.FileName));
 
                 var divisor = originalImage.Width / _thumbnailWidth;
                 var height = Convert.ToInt32(Math.Round((decimal)(originalImage.Height / divisor)));
@@ -76,9 +76,9 @@ public class FileCommandHandler : IFileCommandHandler
         }
     }
 
-    public static IImageEncoder GetEncoder(string extension)
+    public static IImageEncoder? GetEncoder(string extension)
     {
-        IImageEncoder encoder = null;
+        IImageEncoder? encoder = null;
 
         extension = extension.Replace(".", "");
 

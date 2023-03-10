@@ -82,7 +82,7 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
         if (data != null)
         {
             if (data.TryGetValue("_id", out var id))
-                return id.ToString();
+                return id.ToString()!;
         }
         return string.Empty;
     }
@@ -106,7 +106,7 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
         AddCommand(() => Collection.UpdateOneAsync(gardenFilter, update));
     }
 
-    public async Task<GardenBedViewModel> GetGardenBed(string gardenId, string id)
+    public async Task<GardenBedViewModel?> GetGardenBed(string gardenId, string id)
     {
         var data = await Collection
            .Find<Garden>(Builders<Garden>.Filter.Eq("_id", gardenId))
@@ -116,10 +116,12 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
 
         if (data != null)
         {
-            data.GardenBeds.ForEach(g => g.GardenId= gardenId);
-        }
+            data.GardenBeds.ForEach(g => g.GardenId = gardenId);
 
-        return data.GardenBeds.FirstOrDefault(b => b.GardenBedId == id);
+
+            return data.GardenBeds.FirstOrDefault(b => b.GardenBedId == id);
+        }
+        return null;
     }
 
     public async Task<IReadOnlyCollection<GardenBedViewModel>> GetGardenBeds(string gardenId)
@@ -129,13 +131,17 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
            .Project(Builders<Garden>.Projection.Include(g => g.GardenBeds))
            .As<GardenBedViewModelProjection>()
            .FirstOrDefaultAsync();
-        
+
         if (data != null)
         {
             data.GardenBeds.ForEach(g => g.GardenId = gardenId);
-        }
 
-        return data.GardenBeds;
+            return data.GardenBeds;
+        }
+        else
+        {
+            return new List<GardenBedViewModel>();
+        }
     }
 
     public void UpdateGardenBed(string gardenBedId, Garden garden)

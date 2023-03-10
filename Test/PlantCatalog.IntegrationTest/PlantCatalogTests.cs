@@ -15,7 +15,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
     {
         _plantCatalogClient = fixture.PlantCatalogClient;
         _output = output;
-        _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
+        _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now:F}");
     }
 
     #region Plant
@@ -88,7 +88,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         };
         var plant = await response.Content.ReadFromJsonAsync<PlantViewModel>(options);
 
-        plant.SeedViableForYears += 1;
+        plant!.SeedViableForYears += 1;
 
         response = await _plantCatalogClient.UpdatePlant(plant);
 
@@ -206,7 +206,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         var plant = await response.Content.ReadFromJsonAsync<PlantViewModel>(options);
 
         Assert.NotNull(plant);
-        Assert.Equal(plant.Name, TEST_PLANT_NAME);
+        Assert.Equal(TEST_PLANT_NAME, plant.Name);
     }
 
     #endregion
@@ -506,7 +506,7 @@ public class PlantCatalogTests : IClassFixture<PlantCatalogServiceFixture>
         var varieties = await response.Content.ReadFromJsonAsync<List<PlantVarietyViewModel>>(options);
            
 
-        return varieties;
+        return varieties!;
     }
 
     private async Task<List<PlantVarietyViewModel>> GetPlantVarietiesBasedOnTestPlantToWorkWith()

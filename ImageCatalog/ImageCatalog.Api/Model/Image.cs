@@ -4,15 +4,15 @@ namespace ImageCatalog.Api.Model;
 
 public class Image : BaseEntity, IEntity
 {
-    public string UserProfileId { get; private set; }
-    public string ImageName { get; private set; }
-    public string Label { get; private set; }
+    public string UserProfileId { get; private set; } = string.Empty;
+    public string ImageName { get; private set; } = string.Empty;
+    public string Label { get; private set; } = string.Empty;
     public RelatedEntityTypEnum RelatedEntityType { get; private set; }
-    public string RelatedEntityId { get; private set; }
-    public string FileName { get; private set; }
-    public string FileType { get; private set; }
+    public string RelatedEntityId { get; private set; } = string.Empty;
+    public string FileName { get; private set; } = string.Empty;
+    public string FileType { get; private set; } = string.Empty;
     public DateTime CreatedDateTimeUtc { get; private set; }
-    public IList<RelatedEntity> RelatedEntities { get; private set; }
+    public IList<RelatedEntity>? RelatedEntities { get; private set; }
 
     private Image()
     {

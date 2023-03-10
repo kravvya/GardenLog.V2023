@@ -6,7 +6,7 @@ namespace PlantHarvest.Api.Schedules;
 
 public interface IScheduleBuilder
 {
-    Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string growInstructionId, string plantVarietyId, string gardenId);
+    Task<ReadOnlyCollection<CreatePlantScheduleCommand>?> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string? growInstructionId, string? plantVarietyId, string gardenId);
 }
 
 public class ScheduleBuilder : IScheduleBuilder
@@ -14,7 +14,7 @@ public class ScheduleBuilder : IScheduleBuilder
     private readonly IPlantCatalogApiClient _plantCatalogApi;
     private readonly IUserManagementApiClient _userManagementApi;
     private readonly ILogger<ScheduleBuilder> _logger;
-    private List<IScheduler> _schedulers;
+    private List<IScheduler>? _schedulers;
 
     public ScheduleBuilder(IPlantCatalogApiClient plantCatalogApi, IUserManagementApiClient userManagementApi, ILogger<ScheduleBuilder> logger)
     {
@@ -24,8 +24,10 @@ public class ScheduleBuilder : IScheduleBuilder
         LoadSchedulers();
     }
 
-    public async Task<ReadOnlyCollection<CreatePlantScheduleCommand>> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string growInstructionId, string plantVarietyId, string gardenId)
+    public async Task<ReadOnlyCollection<CreatePlantScheduleCommand>?> GeneratePlantCalendarBasedOnGrowInstruction(PlantHarvestCycle plantHarvest, string plantId, string? growInstructionId, string? plantVarietyId, string gardenId)
     {
+        if (growInstructionId == null) return null;
+
         List<CreatePlantScheduleCommand> plantSchedules = new List<CreatePlantScheduleCommand>();
 
         var growInstructionTask = _plantCatalogApi.GetPlantGrowInstruction(plantId, growInstructionId);
@@ -35,8 +37,8 @@ public class ScheduleBuilder : IScheduleBuilder
 
         var growInstruction = growInstructionTask.Result;
         var garden = gardenTask.Result;
-        int? daysToMaturityMin;
-        int? daysToMaturityMax;
+        int? daysToMaturityMin = null;
+        int? daysToMaturityMax = null;
 
         if (growInstruction == null || garden == null)
         {
@@ -46,33 +48,42 @@ public class ScheduleBuilder : IScheduleBuilder
         if (!string.IsNullOrEmpty(plantVarietyId))
         {
             var plantVariety = await _plantCatalogApi.GetPlantVariety(plantId, plantVarietyId);
-            daysToMaturityMin = plantVariety.DaysToMaturityMin;
-            daysToMaturityMax = plantVariety.DaysToMaturityMax;
+            if (plantVariety != null)
+            {
+                daysToMaturityMin = plantVariety.DaysToMaturityMin;
+                daysToMaturityMax = plantVariety.DaysToMaturityMax;
+            }
         }
-        else
+
+        if (!daysToMaturityMin.HasValue || !daysToMaturityMax.HasValue)
         {
             var plant = await _plantCatalogApi.GetPlant(plantId);
-            daysToMaturityMin = plant.DaysToMaturityMin;
-            daysToMaturityMax = plant.DaysToMaturityMax;
+            if (plant != null)
+            {
+                daysToMaturityMin = plant.DaysToMaturityMin;
+                daysToMaturityMax = plant.DaysToMaturityMax;
+            }
         }
 
-
-        _schedulers.Where(s => s.CanSchedule(growInstruction)).ToList().ForEach(s =>
+        if (_schedulers != null)
         {
-            try
+            _schedulers.Where(s => s.CanSchedule(growInstruction)).ToList().ForEach(s =>
             {
-                var schedule = s.Schedule(plantHarvest, growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
-                if (schedule != null)
+                try
                 {
-                    plantSchedules.Add(schedule);
+                    var schedule = s.Schedule(plantHarvest, growInstruction, garden, daysToMaturityMin, daysToMaturityMax);
+                    if (schedule != null)
+                    {
+                        plantSchedules.Add(schedule);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical("Excountered excetion processing scheduler", ex);
-            }
-           
-        });
+                catch (Exception ex)
+                {
+                    _logger.LogCritical("Excountered excetion processing scheduler", ex);
+                }
+
+            });
+        }
 
         return plantSchedules.AsReadOnly();
     }
@@ -86,7 +97,7 @@ public class ScheduleBuilder : IScheduleBuilder
         {
             if (type.GetInterfaces().Contains(typeof(IScheduler)))
             {
-                IScheduler obj = (IScheduler)Activator.CreateInstance(type);
+                IScheduler obj = (IScheduler)Activator.CreateInstance(type)!;
                 Console.WriteLine("Instance created: " + obj.GetType().Name);
                 _schedulers.Add(obj);
             }

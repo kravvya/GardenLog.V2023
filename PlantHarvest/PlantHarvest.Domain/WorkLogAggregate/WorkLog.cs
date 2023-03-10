@@ -5,12 +5,12 @@ namespace PlantHarvest.Domain.WorkLogAggregate;
 
 public class WorkLog : BaseEntity, IAggregateRoot
 {
-    public string Log { get; private set; }
+    public string Log { get; private set; } = string.Empty;
     public DateTime EnteredDateTime { get; private set; }
     public DateTime EventDateTime { get; private set; }
     public WorkLogReasonEnum Reason { get; private set; }
-    public string UserProfileId { get; private set; }
-    public IList<RelatedEntity>RelatedEntities { get; private set; }
+    public string UserProfileId { get; private set; } = string.Empty;
+    public IList<RelatedEntity>? RelatedEntities { get; private set; }
 
     private WorkLog()
     {

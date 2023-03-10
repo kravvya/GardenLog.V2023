@@ -11,7 +11,7 @@ public interface IGardenRepository :  IRepository<Garden>
     void DeleteGardenBed(string gardenBedId, Garden garden);
     void UpdateGardenBed(string gardenBedId, Garden garden);
 
-    Task<GardenBedViewModel> GetGardenBed(string gardenId, string id);
+    Task<GardenBedViewModel?> GetGardenBed(string gardenId, string id);
     Task<IReadOnlyCollection<GardenBedViewModel>> GetGardenBeds(string gardenId);
     Task<string> GetIdByNameAsync(string name, string userProfileId);
 }

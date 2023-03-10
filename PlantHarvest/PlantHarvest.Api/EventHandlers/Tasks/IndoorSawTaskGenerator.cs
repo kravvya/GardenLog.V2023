@@ -51,7 +51,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
                 await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                 {
                     PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = plantHarvest.SeedingDate.Value,
+                    CompletedDateTime = plantHarvest.SeedingDate.HasValue?plantHarvest.SeedingDate.Value:DateTime.Now,
                     Notes = task.Notes,
                     TargetDateEnd = task.TargetDateEnd,
                     TargetDateStart = task.TargetDateStart

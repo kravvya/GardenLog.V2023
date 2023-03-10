@@ -4,12 +4,12 @@ namespace PlantHarvest.Domain.HarvestAggregate
 {
     public class HarvestCycle : BaseEntity, IAggregateRoot
     {
-        public string HarvestCycleName { get; private set; }
+        public string HarvestCycleName { get; private set; } = string.Empty;
         public DateTime StartDate { get; private set; }
         public DateTime? EndDate { get; private set; }
-        public string Notes { get; private set; }
-        public string UserProfileId { get; private set; }
-        public string GardenId { get; private set; }
+        public string Notes { get; private set; } = string.Empty;
+        public string UserProfileId { get; private set; } = string.Empty;
+        public string GardenId { get; private set; } = string.Empty;
 
         private readonly List<PlantHarvestCycle> _plants = new();
         public IReadOnlyCollection<PlantHarvestCycle> Plants => _plants.AsReadOnly();

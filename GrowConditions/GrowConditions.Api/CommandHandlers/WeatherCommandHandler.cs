@@ -35,27 +35,40 @@ namespace GrowConditions.Api.CommandHandlers
 
                 _logger.LogInformation("Fetch weather is going to get gardens/coordinates");
 
-                List<GardenViewModel> gardens = await _userManagementApiClient.GetAllGardens();
-
-                _logger.LogInformation("Fetch weather found {count} coordinates", gardens.Count);
-
-                foreach (var garden in gardens.Where(g => g.Latitude != -1 && g.Longitude != -1 && g.Latitude != 0 && g.Longitude != 0))
+                List<GardenViewModel>? gardens = await _userManagementApiClient.GetAllGardens();
+                if (gardens != null)
                 {
-                    try
-                    {
-                        _logger.LogInformation("Fetch weather is going to get weather for {Latitude} {Longitude}", garden.Latitude, garden.Longitude);
-                        var weather = await _openWeatherApiClient.GetWeatherUpdate(garden);
-                        _logger.LogInformation("Fetch weather received. Last update at: {date}", weather.UpdatedDateLocal);
+                    _logger.LogInformation("Fetch weather found {count} coordinates", gardens.Count);
 
-                       _weatherRepository.Add(weather);
-                    }
-                    catch (Exception ex)
+                    foreach (var garden in gardens.Where(g => g.Latitude != -1 && g.Longitude != -1 && g.Latitude != 0 && g.Longitude != 0))
                     {
-                        _logger.LogError("Exception during Fetch weather report for {Latitude} {Longitude}.  {exception}", garden.Latitude, garden.Longitude, ex);
+                        try
+                        {
+                            _logger.LogInformation("Fetch weather is going to get weather for {Latitude} {Longitude}", garden.Latitude, garden.Longitude);
+                            var weather = await _openWeatherApiClient.GetWeatherUpdate(garden);
+                            if (weather != null)
+                            {
+                                _logger.LogInformation("Fetch weather received. Last update at: {date}", weather.UpdatedDateLocal);
+
+                                _weatherRepository.Add(weather);
+                            }
+                            else
+                            {
+                                _logger.LogError("Fetch weather did not received for garden: {garden}", garden.GardenId);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError("Exception during Fetch weather report for {Latitude} {Longitude}.  {exception}", garden.Latitude, garden.Longitude, ex);
+                        }
                     }
+
+                    await _unitOfWork.SaveChangesAsync();
                 }
-
-                await _unitOfWork.SaveChangesAsync();
+                else
+                {
+                    _logger.LogError("Did not find any gardens to update weather.");
+                }
             }
             catch (Exception ex)
             {

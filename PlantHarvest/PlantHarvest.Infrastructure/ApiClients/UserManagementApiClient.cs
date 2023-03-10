@@ -6,7 +6,7 @@ namespace PlantHarvest.Infrastructure.ApiClients;
 
 public interface IUserManagementApiClient
 {
-    Task<GardenViewModel> GetGarden(string gardenId);
+    Task<GardenViewModel?> GetGarden(string gardenId);
 }
 
 public class UserManagementApiClient : IUserManagementApiClient
@@ -24,14 +24,20 @@ public class UserManagementApiClient : IUserManagementApiClient
         _logger = logger;
         _cache = cache;
         var plantUrl = confguration["Services:UserManagement.Api"];
-        _logger.LogInformation($"User Mgmt URL @ {plantUrl}");
+
+        if(plantUrl == null )
+        {
+            _logger.LogCritical("Unable to get User Management Api");
+            throw new ArgumentException("Unable to get User Management Api", nameof(confguration));
+        }
+        _logger.LogInformation("User Mgmt URL @ {plantUrl}", plantUrl);
 
         _httpClient.BaseAddress = new Uri(plantUrl);
     }
 
-    public async Task<GardenViewModel> GetGarden(string gardenId)
+    public async Task<GardenViewModel?> GetGarden(string gardenId)
     {
-        GardenViewModel garden = null;
+        GardenViewModel? garden;
         string key = string.Format(GARDEN_CACHE_KEY, gardenId);
 
         if (!_cache.TryGetValue(key, out garden))
@@ -42,7 +48,7 @@ public class UserManagementApiClient : IUserManagementApiClient
 
             if (!response.IsSuccess)
             {
-                _logger.LogError($"Unable to get Garden deatil for gardenId: {gardenId}");
+                _logger.LogError("Unable to get Garden deatil for gardenId: {gardenId}", gardenId);
                 return null;
             }
 

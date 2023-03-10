@@ -8,7 +8,7 @@ public record CreatePlantCommand : PlantBase
 
 public record UpdatePlantCommand : PlantBase
 {
-    public string PlantId { get; init; }
+    public string PlantId { get; init; } = string.Empty;
 }
 
 public class CreatePlantCommandValidator : PlantValidator<CreatePlantCommand>
@@ -33,7 +33,7 @@ public record CreatePlantGrowInstructionCommand : PlantGrowInstructionBase
 
 public record UpdatePlantGrowInstructionCommand : PlantGrowInstructionBase
 {
-    public string PlantGrowInstructionId { get; init; }
+    public string PlantGrowInstructionId { get; init; } = string.Empty;
 }
 
 #endregion
@@ -44,7 +44,7 @@ public record CreatePlantVarietyCommand : PlantVarietyBase
 
 public record UpdatePlantVarietyCommand : PlantVarietyBase
 {
-    public string PlantVarietyId { get; init; }
+    public string PlantVarietyId { get; init; } = string.Empty;
 }
 
 #endregion

@@ -28,7 +28,7 @@ public class Auth0ManagementApiClient : IAuth0ManagementApiClient
         _logger = logger;
 
         var authSettings = configurationService.GetAuthSettings();
-        _logger.LogInformation($"Auth @ {authSettings.Authority}");
+        _logger.LogInformation("Auth @ {authSettings.Authority}", authSettings.Authority);
 
         if (authSettings.Authority == null) throw new ArgumentException("Unable to set up Auth0 client. Authority is missing from the configuration file", "Authority");
 
@@ -132,7 +132,7 @@ public class Auth0ManagementApiClient : IAuth0ManagementApiClient
             throw new ArgumentException(response.ErrorMessage, "UserName");
         }
 
-        return response.Response.Count > 0 ? response.Response[0].UserId : string.Empty;
+        return response.Response!= null && response.Response.Count > 0 ? response.Response[0].UserId : string.Empty;
     }
 }
 

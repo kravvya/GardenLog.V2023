@@ -45,7 +45,7 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
         return images.AsReadOnly();
     }
 
-    private async Task<IReadOnlyCollection<ImageViewModel>> SearchForImages(RelatedEntityTypEnum relatedEntityType, string relatedEntityId, string userFilter)
+    private async Task<IReadOnlyCollection<ImageViewModel>> SearchForImages(RelatedEntityTypEnum relatedEntityType, string? relatedEntityId, string userFilter)
     {
         List<FilterDefinition<Image>> filters = new();
 

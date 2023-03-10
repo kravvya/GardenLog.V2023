@@ -10,17 +10,15 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
     private readonly IPlantTaskCommandHandler _taskCommandHandler;
     private readonly IPlantTaskQueryHandler _taskQueryHandler;
     private readonly IPlantCatalogApiClient _plantCatalogApi;
-    private readonly IHarvestQueryHandler _harvestQueryHandler;
     private readonly ILogger<GerminateTaskGenerator> _logger;
 
     public const string GERMINATE_TASK_TITLE = "Record germination date";
 
-    public GerminateTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, IHarvestQueryHandler harvestQueryHandler, ILogger<GerminateTaskGenerator> logger)
+    public GerminateTaskGenerator(IPlantTaskCommandHandler taskCommandHandler, IPlantTaskQueryHandler taskQueryHandler, IPlantCatalogApiClient plantCatalogApi, ILogger<GerminateTaskGenerator> logger)
     {
         _taskCommandHandler = taskCommandHandler;
         _taskQueryHandler = taskQueryHandler;
         _plantCatalogApi = plantCatalogApi;
-        _harvestQueryHandler = harvestQueryHandler;
         _logger = logger;
     }
 
@@ -68,7 +66,7 @@ public class GerminateTaskGenerator : INotificationHandler<HarvestEvent>
         }
         else
         {
-            _logger.LogError($"Unable to complete task for recording when seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant is not found");
+            _logger.LogError("Unable to complete task for recording when seeds were germinated for : {harvestEvent.TriggerEntity.EntityId}. Plant is not found", harvestEvent.TriggerEntity.EntityId);
         }
     }
 

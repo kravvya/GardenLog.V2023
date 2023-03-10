@@ -5,10 +5,10 @@ namespace PlantCatalog.Domain.PlantAggregate.Events
 {
     public record PlantEvent : BaseDomainEvent
     {
-        private string _plantId { get; init; }
-        public Plant Plant { get; init; }
+        private string _plantId { get; init; } = string.Empty;
+        public Plant? Plant { get; init; }
         public PlantEventTriggerEnum Trigger { get; init; }
-        public Meta.TriggerEntity TriggerEntity { get; init; }
+        public Meta.TriggerEntity? TriggerEntity { get; init; }
         public string PlantId { get { return Plant!= null?Plant.Id: _plantId; } init { } }
         private PlantEvent() { }
 

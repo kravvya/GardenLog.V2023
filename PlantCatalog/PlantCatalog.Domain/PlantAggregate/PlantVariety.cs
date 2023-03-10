@@ -4,14 +4,14 @@ namespace PlantCatalog.Domain.PlantAggregate;
 
 public class PlantVariety : BaseEntity, IEntity
 {
-    public string PlantId { get; private set; }
-    public string PlantName { get; set; }
-    public string Name { get; private set; }
-    public string Description { get; private set; }
+    public string PlantId { get; private set; } = string.Empty;
+    public string PlantName { get; set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
     public int? DaysToMaturityMin { get; private set; }
     public int? DaysToMaturityMax { get; private set; }
     public int? HeightInInches { get; private set; }
-    public string Title { get; private set; }
+    public string Title { get; private set; } = string.Empty;
     public bool IsHeirloom { get; private set; }
     public MoistureRequirementEnum MoistureRequirement { get; private set; }
     public LightRequirementEnum LightRequirement { get; private set; }

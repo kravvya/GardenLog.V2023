@@ -29,7 +29,7 @@ public class GardenCommandHandler : IGardenCommandHandler
 
     public async Task<string> CreateGarden(CreateGardenCommand request)
     {
-        var userProfileId = _httpContextAccessor.HttpContext.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        var userProfileId = _httpContextAccessor.HttpContext!.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
 
         var existingGardenId = await _gardenRepository.GetIdByNameAsync(request.Name, userProfileId);
         if (!string.IsNullOrEmpty(existingGardenId))

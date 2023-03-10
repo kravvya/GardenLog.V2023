@@ -140,6 +140,6 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
 
         var workLogs = await response.Content.ReadFromJsonAsync<List<WorkLogViewModel>>(options);
 
-        return workLogs;
+        return workLogs!;
     }
 }

@@ -34,7 +34,7 @@ public class OutsideSawTaskGenerator : INotificationHandler<HarvestEvent>//, INo
 
     private async Task CompleteOutsideSowTasks(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(p => p.Id == harvestEvent.TriggerEntity!.EntityId);
         if (plantHarvest.PlantingMethod != PlantingMethodEnum.DirectSeed) return;
 
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.SowOutside });
@@ -45,7 +45,7 @@ public class OutsideSawTaskGenerator : INotificationHandler<HarvestEvent>//, INo
                 await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                 {
                     PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = plantHarvest.SeedingDate.Value,
+                    CompletedDateTime = plantHarvest.SeedingDate.HasValue?plantHarvest.SeedingDate.Value:DateTime.Now,
                     Notes = task.Notes,
                     TargetDateEnd = task.TargetDateEnd,
                     TargetDateStart = task.TargetDateStart
@@ -56,7 +56,7 @@ public class OutsideSawTaskGenerator : INotificationHandler<HarvestEvent>//, INo
 
     private async Task DeleteOutsideSowTask(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.SowOutside });
         if (tasks != null && tasks.Any())
         {
@@ -69,7 +69,7 @@ public class OutsideSawTaskGenerator : INotificationHandler<HarvestEvent>//, INo
 
     private async Task CreateOutsideSowTask(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var schedule = plant.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.SowOutside);
 
         if (schedule != null)

@@ -7,7 +7,7 @@ public abstract record PlantScheduleBase
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public WorkLogReasonEnum TaskType { get; set; }
-    public string Notes { get; set; }
+    public string Notes { get; set; } = string.Empty;
     public bool IsSystemGenerated { get; set; }
     
 }

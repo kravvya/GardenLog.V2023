@@ -1,11 +1,11 @@
 ﻿namespace PlantCatalog.Contract.Base;
 
 public abstract record PlantVarietyBase
-{    
-    public string Name { get; set; }    
-    public string Description { get; set; }
-    public string Title { get; set; }
-    public string PlantId { get; set; }    
+{
+    public string Name { get; set; } = string.Empty; 
+    public string Description { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string PlantId { get; set; } = string.Empty;
     public int? DaysToMaturityMin { get; set; }
     public int? DaysToMaturityMax { get; set; }
     public int? HeightInInches { get; set; }    

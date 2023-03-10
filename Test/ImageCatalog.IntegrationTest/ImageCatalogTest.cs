@@ -138,7 +138,7 @@ namespace ImageCatalog.IntegrationTest
             }
 
             var image = images.FirstOrDefault();
-            return image;
+            return image!;
         }
 
         private async Task<List<ImageViewModel>> RunImageSearch(GetImagesByRelatedEntity search)
@@ -158,7 +158,7 @@ namespace ImageCatalog.IntegrationTest
             _output.WriteLine($"Service responded with {response.StatusCode} code and {returnString} message");
 
             var images = await response.Content.ReadFromJsonAsync<List<ImageViewModel>>(options);
-            return images;
+            return images!;
         }
     }
 }

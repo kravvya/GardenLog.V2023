@@ -35,13 +35,13 @@ public class HarvestQueryHandler : IHarvestQueryHandler
     public async Task<IReadOnlyCollection<HarvestCycleViewModel>> GetAllHarvestCycles()
     {
         _logger.LogInformation("Received request to get all harvest cycles");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
         return await _harvestCycleRepository.GetAllHarvestCycles(userProfileId);
     }
 
     public async Task<HarvestCycleViewModel> GetHarvestCycleByHarvestCycleId(string harvestCycleId)
     {
-        _logger.LogInformation($"Received request to get {harvestCycleId} harvest cycle");
+        _logger.LogInformation("Received request to get {harvestCycleId} harvest cycle", harvestCycleId);
 
         var harvest = await _harvestCycleRepository.GetByIdAsync(harvestCycleId);
         return _mapper.Map<HarvestCycleViewModel>(harvest);
@@ -50,8 +50,8 @@ public class HarvestQueryHandler : IHarvestQueryHandler
 
     public async Task<string> GetHarvestCycleIdByHarvestCycleName(string name)
     {
-        _logger.LogInformation($"Received request to get id for {name} harvest cycle");
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        _logger.LogInformation("Received request to get id for {name} harvest cycle", name);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
         var harvestId = await _harvestCycleRepository.GetIdByNameAsync(name, userProfileId);
         return harvestId;
     }
@@ -61,7 +61,7 @@ public class HarvestQueryHandler : IHarvestQueryHandler
 
     public async Task<PlantHarvestCycleViewModel> GetPlantHarvestCycle(string harvestCycleId, string id)
     {
-        _logger.LogInformation($"Received request to get plant harvest cycle for {id}");
+        _logger.LogInformation("Received request to get plant harvest cycle for {id}", id);
 
         try
         {
@@ -70,14 +70,14 @@ public class HarvestQueryHandler : IHarvestQueryHandler
         }
         catch (Exception ex)
         {
-            _logger.LogCritical($"Exception readding platn harvest cycle for {id}", ex);
+            _logger.LogCritical(ex, "Exception readding platn harvest cycle for {id}", id);
             throw;
         }
     }
 
     public async Task<IReadOnlyCollection<PlantHarvestCycleViewModel>> GetPlantHarvestCycles(string harvestCycleId)
     {
-        _logger.LogInformation($"Received request to get plant harvest cycles for {harvestCycleId}");
+        _logger.LogInformation("Received request to get plant harvest cycles for {harvestCycleId}", harvestCycleId);
 
         try
         {
@@ -86,14 +86,14 @@ public class HarvestQueryHandler : IHarvestQueryHandler
         }
         catch (Exception ex)
         {
-            _logger.LogCritical($"Exception readding plant harvest cycles for {harvestCycleId}", ex);
+            _logger.LogCritical(ex,"Exception readding plant harvest cycles for {harvestCycleId}", harvestCycleId);
             throw;
         }
     }
 
     public async Task<IReadOnlyCollection<PlantHarvestCycleIdentityOnlyViewModel>> GetPlantHarvestCyclesByPlantId(string plantId)
     {
-        _logger.LogInformation($"Received request to get plant harvest cycles for plant {plantId}");
+        _logger.LogInformation("Received request to get plant harvest cycles for plant {plantId}", plantId);
 
         try
         {
@@ -102,7 +102,7 @@ public class HarvestQueryHandler : IHarvestQueryHandler
         }
         catch (Exception ex)
         {
-            _logger.LogCritical($"Exception readding plant harvest cycles for plant {plantId}", ex);
+            _logger.LogCritical(ex,"Exception readding plant harvest cycles for plant {plantId}", plantId);
             throw;
         }
     }

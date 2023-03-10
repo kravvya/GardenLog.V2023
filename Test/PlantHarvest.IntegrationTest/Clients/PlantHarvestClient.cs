@@ -288,7 +288,7 @@ namespace PlantHarvest.IntegrationTest.Clients
                 },
             };
             var plants = await response.Content.ReadFromJsonAsync<List<PlantHarvestCycleViewModel>>(options);
-            PlantHarvestCycleViewModel plant = null;
+            PlantHarvestCycleViewModel? plant;
 
             if (plants == null || plants.Count == 0 || plants.FirstOrDefault(p => p.PlantId == plantId) == null)
             {
@@ -304,7 +304,7 @@ namespace PlantHarvest.IntegrationTest.Clients
                 plant = plants.First(p => p.PlantVarietyId == plantVarietyId);
             }
 
-            return plant;
+            return plant!;
         }
 
         public async Task<string> CreatePlantHarvestCycleToWorkWith(string harvestId, string plantId, string plantVarietyId)

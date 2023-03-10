@@ -7,7 +7,7 @@ public class OutdoorSowScheduler : SchedulerBase, IScheduler
 {
     public bool CanSchedule(PlantGrowInstructionViewModel growInstruction)
     {
-        return growInstruction.PlantingMethod == plant.PlantingMethodEnum.DirectSeed;
+        return growInstruction.PlantingMethod == Plant.PlantingMethodEnum.DirectSeed;
     }
 
     public CreatePlantScheduleCommand? Schedule(PlantHarvestCycle plantHarvest, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)

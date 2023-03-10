@@ -5,8 +5,8 @@ namespace PlantHarvest.Domain.HarvestAggregate;
 
 public class PlantHarvestCycle : BaseEntity, IEntity
 {
-    public string PlantId { get; private set; }
-    public string PlantName { get; private set; }
+    public string PlantId { get; private set; } = string.Empty;
+    public string PlantName { get; private set; } = string.Empty;
 
     public string? PlantVarietyId { get; private set; }
     public string? PlantVarietyName { get; private set; }
@@ -33,7 +33,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     public decimal? TotalWeightInPounds { get; private set; }
     public int? TotalItems { get; private set; }
 
-    public string Notes { get; private set; }
+    public string Notes { get; private set; } = string.Empty;
     public int? DesiredNumberOfPlants { get; private set; }
     public int? SpacingInInches { get; private set; }
     public double? PlantsPerFoot { get; private set; }

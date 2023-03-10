@@ -11,6 +11,7 @@ namespace UserManagement.IntegrationTest;
 
 public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
 {
+
     private readonly ITestOutputHelper _output;
     private readonly GardenClient _gardenClient;
     private readonly UserProfileClient _userProfileClient;
@@ -26,7 +27,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
         _gardenClient = fixture.GardenClient;
         _userProfileClient = fixture.UserProfileClient;
         _output = output;
-        _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now.ToString("F")}");
+        _output.WriteLine($"Service id {fixture.FixtureId} @ {DateTime.Now:F}");
     }
 
     #region Garden
@@ -42,7 +43,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Assert.NotEmpty(returnString);
-            Assert.True(Guid.TryParse(returnString, out var harvestCycleId));
+            Assert.True(Guid.TryParse(returnString, out _));
         }
         else
         {
@@ -71,7 +72,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
     {
         var garden = await GetGardenToWorkWith(TEST_GARDEN_NAME);
 
-        garden.Notes = $"{garden.Notes} last updated: {DateTime.Now.ToString()}";
+        garden.Notes = $"{garden.Notes} last updated: {DateTime.Now}";
 
         var response = await _gardenClient.UpdateGarden(garden);
 
@@ -133,7 +134,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
         var garden = await GetGardenToWorkWith(TEST_GARDEN_NAME);
 
         Assert.NotNull(garden);
-        Assert.Equal(garden.Name, TEST_GARDEN_NAME);
+        Assert.Equal(TEST_GARDEN_NAME, garden.Name);
     }
 
     #endregion
@@ -148,7 +149,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
 
         if (original != null)
         {
-            var response = await _gardenClient.DeleteGardenBed(gardenId, original.GardenBedId);
+            _ = await _gardenClient.DeleteGardenBed(gardenId, original.GardenBedId);
         }
 
         var gardenBedId = await CreateGardenBedIdToWorkWith(gardenId, TEST_GARDEN_BED_NAME);
@@ -266,7 +267,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
         };
         var garden = await response.Content.ReadFromJsonAsync<GardenViewModel>(options);
 
-        _output.WriteLine($"GetGardenIdToWorkWith - Found  {garden.GardenId} garden to work with.");
+        _output.WriteLine($"GetGardenIdToWorkWith - Found  {garden!.GardenId} garden to work with.");
         return garden;
     }
 
@@ -285,7 +286,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
                 },
         };
         var gardenBeds = await response.Content.ReadFromJsonAsync<List<GardenBedViewModel>>(options);
-        GardenBedViewModel gardenBed = null;
+        GardenBedViewModel? gardenBed = null;
 
         if (gardenBeds == null || gardenBeds.Count == 0)
         {
@@ -303,7 +304,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
             gardenBed = gardenBeds.First(p => p.Name == gardenBedName);
         }
 
-        return gardenBed;
+        return gardenBed!;
     }
 
     private async Task<List<GardenBedViewModel>> GetGardenBedsToWorkWith(string gardenId)
@@ -332,7 +333,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
             gardenBeds = await response.Content.ReadFromJsonAsync<List<GardenBedViewModel>>(options);
         }
 
-        return gardenBeds;
+        return gardenBeds!;
 
     }
 
@@ -344,7 +345,7 @@ public partial class GardenTests : IClassFixture<UserManagementServiceFixture>
 
         Assert.NotEmpty(returnString);
         Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
-        Assert.True(Guid.TryParse(returnString, out var plantGardenId));
+        Assert.True(Guid.TryParse(returnString, out _));
 
         return returnString;
     }

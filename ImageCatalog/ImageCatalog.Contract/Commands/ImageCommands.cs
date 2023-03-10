@@ -8,8 +8,8 @@ public record CreateImageCommand : ImageBase;
 
 public record UpdateImageCommand
 {
-    public string ImageId { get; set; }
-    public string Label { get; set; }
+    public string ImageId { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 }
 
 

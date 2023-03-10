@@ -105,11 +105,11 @@ public static class HttpClientTestHelper
 
 internal class MockHttpMessageHandler : HttpMessageHandler
 {
-    private readonly HttpResponseMessage _expectedResponse;
+    private readonly HttpResponseMessage? _expectedResponse;
 
-    private readonly Dictionary<string, HttpResponseMessage> _expectedResponses;
+    private readonly Dictionary<string, HttpResponseMessage>? _expectedResponses;
 
-    private readonly HttpRequestException _expectedException;
+    private readonly HttpRequestException? _expectedException;
 
     public MockHttpMessageHandler(HttpResponseMessage expectedResponse)
     {
@@ -136,13 +136,13 @@ internal class MockHttpMessageHandler : HttpMessageHandler
 
         HttpResponseMessage response;
 
-        if (_expectedResponses != null && _expectedResponses.ContainsKey(request.RequestUri.AbsolutePath))
+        if (_expectedResponses != null && _expectedResponses.ContainsKey(request.RequestUri!.AbsolutePath))
         {
             response = _expectedResponses[request.RequestUri.AbsolutePath];
         }
         else
         {
-            response = _expectedResponse;
+            response = _expectedResponse!;
         }
 
         response.RequestMessage = request;

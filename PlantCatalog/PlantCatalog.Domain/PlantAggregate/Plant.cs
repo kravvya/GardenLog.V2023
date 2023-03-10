@@ -5,15 +5,15 @@ namespace PlantCatalog.Domain.PlantAggregate;
 
 public class Plant : BaseEntity, IAggregateRoot
 {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public string Color { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
+    public string Color { get; private set; } = string.Empty;
     public PlantLifecycleEnum Lifecycle { get; private set; }
     public PlantTypeEnum Type { get; private set; }
     public MoistureRequirementEnum MoistureRequirement { get; private set; }
     public LightRequirementEnum LightRequirement { get; private set; }
     public GrowToleranceEnum GrowTolerance { get; private set; }
-    public string GardenTip { get; private set; }
+    public string GardenTip { get; private set; } = string.Empty;
     public int? SeedViableForYears { get; private set; }
     public int? DaysToMaturityMin { get; set; }
     public int? DaysToMaturityMax { get; set; }

@@ -37,7 +37,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
         if (data != null)
         {
             if (data.TryGetValue("_id", out var id))
-                return id.ToString();
+                return id.ToString()!;
         }
         return string.Empty;
     }

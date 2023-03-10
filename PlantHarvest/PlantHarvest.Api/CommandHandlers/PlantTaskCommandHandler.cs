@@ -38,7 +38,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
     {
         _logger.LogInformation("Received request to create a new task {0}", request);
 
-        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers);
+        string userProfileId = _httpContextAccessor.HttpContext?.User.GetUserProfileId(_httpContextAccessor.HttpContext.Request.Headers)!;
 
 
         var task = PlantTask.Create(request.Title, request.Type

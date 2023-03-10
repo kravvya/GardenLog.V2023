@@ -35,7 +35,7 @@ public class ImageCatalogServiceFixture : ImageCatalogApplicationFactory<Program
     public FileCatalogClient FileCatalogClient { get; init; }
     public string FixtureId { get; init; }
 
-    protected virtual void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
@@ -47,7 +47,7 @@ public class ImageCatalogServiceFixture : ImageCatalogApplicationFactory<Program
         }
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);

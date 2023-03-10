@@ -135,7 +135,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
         var plant = await GetHarvestCycleToWorkWith(TEST_HARVEST_CYCLE_NAME);
 
         Assert.NotNull(plant);
-        Assert.Equal(plant.HarvestCycleName, TEST_HARVEST_CYCLE_NAME);
+        Assert.Equal(TEST_HARVEST_CYCLE_NAME, plant.HarvestCycleName);
     }
 
     #endregion
@@ -166,7 +166,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
 
         Assert.NotNull(plant);
         _output.WriteLine($"Found '{plant.PlantVarietyId}' Plant Harvest Cycle");
-        Assert.NotEmpty(plant.PlantVarietyId);
+        Assert.NotEmpty(plant.PlantVarietyId!);
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
             schedule = plant.PlantCalendar.FirstOrDefault();
         }
 
-        schedule.Notes += $" Last update on {DateTime.Now}";
+        schedule!.Notes += $" Last update on {DateTime.Now}";
 
         var response = await _plantHarvestClient.UpdatePlantSchedule(schedule);
 
@@ -298,7 +298,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
             schedule = plant.PlantCalendar.FirstOrDefault();
         }
 
-        var response = await _plantHarvestClient.DeletePlantSchedule(plant.HarvestCycleId, plant.PlantHarvestCycleId, schedule.PlantScheduleId);
+        var response = await _plantHarvestClient.DeletePlantSchedule(plant.HarvestCycleId, plant.PlantHarvestCycleId, schedule!.PlantScheduleId);
 
         var returnString = await response.Content.ReadAsStringAsync();
 
@@ -336,7 +336,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
             gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
         }
 
-        gardenBedPlant.X ++;
+        gardenBedPlant!.X ++;
 
         var response = await _plantHarvestClient.UpdateGardenBedPlantHarvestCycle(gardenBedPlant);
 
@@ -363,7 +363,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
             gardenBedPlant = plant.GardenBedLayout.FirstOrDefault();
         }
 
-        var response = await _plantHarvestClient.DeleteGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId, gardenBedPlant.GardenBedPlantHarvestCycleId);
+        var response = await _plantHarvestClient.DeleteGardenBedPlantHarvestCycle(plant.HarvestCycleId, plant.PlantHarvestCycleId, gardenBedPlant!.GardenBedPlantHarvestCycleId);
 
         var returnString = await response.Content.ReadAsStringAsync();
 
@@ -397,7 +397,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
         };
         var harvest = await response.Content.ReadFromJsonAsync<HarvestCycleViewModel>(options);
 
-        return harvest;
+        return harvest!;
     }
 
 
@@ -428,7 +428,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
             plants = await response.Content.ReadFromJsonAsync<List<PlantHarvestCycleViewModel>>(options);
         }
 
-        return plants;
+        return plants!;
 
     }
 

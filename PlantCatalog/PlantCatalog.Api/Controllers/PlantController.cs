@@ -112,7 +112,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -138,7 +138,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -217,7 +217,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -244,7 +244,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -332,7 +332,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -358,7 +358,7 @@ public class PlantController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
         return BadRequest();

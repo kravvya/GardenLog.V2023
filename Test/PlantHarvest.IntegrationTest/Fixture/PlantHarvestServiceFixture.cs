@@ -1,6 +1,5 @@
 ﻿using GardenLog.SharedInfrastructure.ApiClients;
 using PlantHarvest.IntegrationTest.Clients;
-using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace PlantHarvest.IntegrationTest.Fixture;
@@ -37,7 +36,7 @@ public class PlantHarvestServiceFixture : PlantHarvestApplicationFactory<Program
     public PlantTaskClient PlantTaskClient { get; init; }
     public string FixtureId { get; init; }
 
-    protected virtual void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
@@ -49,7 +48,7 @@ public class PlantHarvestServiceFixture : PlantHarvestApplicationFactory<Program
         }
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);

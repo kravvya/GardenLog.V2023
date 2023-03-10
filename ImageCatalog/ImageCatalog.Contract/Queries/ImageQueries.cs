@@ -7,7 +7,7 @@ public record GetImagesByRelatedEntity(RelatedEntityTypEnum RelatedEntityType, s
 
 public record GetImagesByRelatedEntities
 {
-    public List<GetImagesByRelatedEntity> Requests { get; set; }
+    public List<GetImagesByRelatedEntity>? Requests { get; set; }
 }
 
 public class GetImagesByRelatedEntityValidator : AbstractValidator<GetImagesByRelatedEntity>

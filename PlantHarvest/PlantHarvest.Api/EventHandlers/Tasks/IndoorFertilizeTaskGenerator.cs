@@ -44,7 +44,7 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     public async Task Handle(WorkLogEvent workEvent, CancellationToken cancellationToken)
     {
-        if (workEvent.Work.Reason == WorkLogReasonEnum.FertilizeIndoors)
+        if (workEvent.Work!.Reason == WorkLogReasonEnum.FertilizeIndoors)
         {
             await CompleteFertilizeIndoorsTask(workEvent);
             await CreateFertilizeIndoorsTask(workEvent);
@@ -53,7 +53,12 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     private async Task CompleteFertilizeIndoorsTask(WorkLogEvent workEvent)
     {
-        var plantHarvestRelatedEntity = workEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
+        if(workEvent.Work!.RelatedEntities == null)
+        {
+            _logger.LogError("Unable to complete task based on workLog: {workEvent.Work.Id}. No related entities present.", workEvent.Work.Id);
+            return;
+        }
+        var plantHarvestRelatedEntity = workEvent.Work!.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
 
         if (plantHarvestRelatedEntity != null)
         {
@@ -75,14 +80,14 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
         }
         else
         {
-            _logger.LogError($"Unable to complete task based on workLog: {workEvent.Work.Id}. Plant Harvest is not found");
+            _logger.LogError("Unable to complete task based on workLog: {workEvent.Work.Id}. Plant Harvest is not found", workEvent.Work.Id);
         }
     }
 
     private async Task CreateFertilizeIndoorsTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
-        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
+       var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
+        if (plantHarvest.PlantGrowthInstructionId == null || plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
         {
             return;
         }
@@ -125,7 +130,12 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     private async Task CreateFertilizeIndoorsTask(WorkLogEvent workLogEvent)
     {
-        var harvestRelatedEntity = workLogEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.HarvestCycle);
+        if (workLogEvent.Work!.RelatedEntities == null)
+        {
+            _logger.LogError("Unable to complete task based on workLog: {workEvent.Work.Id}. No related entities present.", workLogEvent.Work.Id);
+            return;
+        }
+        var harvestRelatedEntity = workLogEvent.Work!.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.HarvestCycle);
         if (harvestRelatedEntity == null) { return;  }
 
         var plantHarvestRelatedEntity = workLogEvent.Work.RelatedEntities.FirstOrDefault(e => e.EntityType == RelatedEntityTypEnum.PlantHarvestCycle);
@@ -133,7 +143,7 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
         var plantHarvest = await _harvestQueryHandler.GetPlantHarvestCycle(harvestRelatedEntity.EntityId, plantHarvestRelatedEntity.EntityId);
 
-        if (plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
+        if (plantHarvest.PlantGrowthInstructionId == null || plantHarvest.PlantingMethod != PlantingMethodEnum.SeedIndoors || !plantHarvest.GerminationDate.HasValue || plantHarvest.TransplantDate.HasValue)
         {
             return;
         }
@@ -188,7 +198,7 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
 
     private async Task DeleteFertilizeIndoorsTask(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.FertilizeIndoors });
         if (tasks != null && tasks.Any())
         {

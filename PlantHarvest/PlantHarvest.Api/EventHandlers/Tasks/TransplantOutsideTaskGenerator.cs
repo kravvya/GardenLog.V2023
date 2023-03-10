@@ -19,7 +19,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
         switch (harvestEvent.Trigger)
         {
             case HarvestEventTriggerEnum.PlantAddedToHarvestCycle:
-                var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+                var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
                 if (plant != null && plant.PlantingMethod == PlantingMethodEnum.Transplanting)
                 {
                     await CreateTransplantOutsideTask(harvestEvent);
@@ -40,7 +40,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
    
     private async Task CompleteTransplantOutsideTasks(HarvestEvent harvestEvent)
     {
-        var plantHarvest = harvestEvent.Harvest.Plants.First(p => p.Id == harvestEvent.TriggerEntity.EntityId);
+        var plantHarvest = harvestEvent.Harvest!.Plants.First(p => p.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.TransplantOutside });
         if (tasks != null && tasks.Any())
         {
@@ -49,7 +49,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
                 await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                 {
                     PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = plantHarvest.TransplantDate.Value,
+                    CompletedDateTime = plantHarvest.TransplantDate.HasValue? plantHarvest.TransplantDate.Value: DateTime.Now,
                     Notes = task.Notes,
                     TargetDateEnd = task.TargetDateEnd,
                     TargetDateStart = task.TargetDateStart
@@ -65,7 +65,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
                 await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
                 {
                     PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = plantHarvest.TransplantDate.Value,
+                    CompletedDateTime = plantHarvest.TransplantDate.HasValue?plantHarvest.TransplantDate.Value:DateTime.Now,
                     Notes = task.Notes,
                     TargetDateEnd = task.TargetDateEnd,
                     TargetDateStart = task.TargetDateStart
@@ -76,7 +76,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
 
     private async Task DeleteTransplantOutsideTask(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.TransplantOutside });
         if (tasks != null && tasks.Any())
         {
@@ -98,7 +98,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
 
     private async Task CreateTransplantOutsideTask(HarvestEvent harvestEvent)
     {
-        var plant = harvestEvent.Harvest.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity.EntityId);
+        var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var schedule = plant.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.TransplantOutside);
 
         if (schedule != null)

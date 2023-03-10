@@ -6,19 +6,19 @@ namespace PlantHarvest.Domain.WorkLogAggregate;
 
 public class PlantTask : BaseEntity, IAggregateRoot
 {
-    public string Title { get; private set; }
+    public string Title { get; private set; } = string.Empty;
     public WorkLogReasonEnum Type { get; private set; }
     public DateTime CreatedDateTime { get; private set; }
     public DateTime TargetDateStart { get; private set; }
     public DateTime TargetDateEnd { get; private set; }
     public DateTime? CompletedDateTime { get; private set; }
-    public string HarvestCycleId { get; private set; }
-    public string PlantHarvestCycleId { get; private set; }
-    public string PlantName { get; private set; }
-    public string PlantScheduleId { get; private set; }
-    public string Notes { get; private set; }
+    public string HarvestCycleId { get; private set; } = string.Empty;
+    public string PlantHarvestCycleId { get; private set; } = string.Empty;
+    public string PlantName { get; private set; } = string.Empty;
+    public string PlantScheduleId { get; private set; } = string.Empty;
+    public string Notes { get; private set; } = string.Empty;
     public bool IsSystemGenerated { get; private set; }
-    public string UserProfileId { get; private set; }
+    public string UserProfileId { get; private set; } = string.Empty;
 
     private PlantTask()
     {

@@ -2,13 +2,13 @@
 
 public class GardenBed : BaseEntity, IEntity
 {
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     public int? RowNumber { get; private set; }
     public double Length { get; private set; }
     public double Width { get; private set; }
     public double X { get; private set; }
     public double Y { get; private set; }
-    public string Notes { get; private set; }
+    public string Notes { get; private set; } = string.Empty;
     public GardenBedTypeEnum Type { get; private set; }
     public double Rotate { get; set; }
 

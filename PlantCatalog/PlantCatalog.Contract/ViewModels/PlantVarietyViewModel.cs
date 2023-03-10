@@ -4,7 +4,7 @@ namespace PlantCatalog.Contract.ViewModels;
 
 public record PlantVarietyViewModel: PlantVarietyBase
 {
-    public string PlantVarietyId { get; set; }
+    public string PlantVarietyId { get; set; } = string.Empty;
 }
 
 public class PlantVarietyViewModelValidator : PlantVarietyValidator<PlantVarietyViewModel>

@@ -7,7 +7,7 @@ public class PlantSchedule : BaseEntity, IEntity
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public WorkLogReasonEnum TaskType { get; private set; }
-    public string Notes { get; private set; }
+    public string Notes { get; private set; } = string.Empty;
     public bool IsSystemGenerated { get; private set; }
 
     private PlantSchedule()

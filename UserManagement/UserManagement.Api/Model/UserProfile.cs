@@ -4,11 +4,11 @@ namespace UserManagement.Api.Model;
 
 public class UserProfile : BaseEntity, IAggregateRoot
 {
-    public string UserName { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public string EmailAddress { get; private set; }
-    public string UserProfileId { get; private set; }
+    public string UserName { get; private set; } = string.Empty;
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;
+    public string EmailAddress { get; private set; } = string.Empty;
+    public string UserProfileId { get; private set; } = string.Empty;
 
     public DateTime UserProfileCreatedDateTimeUtc { get; private set; }
 
@@ -49,7 +49,7 @@ public class UserProfile : BaseEntity, IAggregateRoot
         }
         else
         {
-            throw new ArgumentException("UserProfileId can not be modified", "UserName");
+            throw new ArgumentException("UserProfileId can not be modified", nameof(identityId));
         }
     }
 

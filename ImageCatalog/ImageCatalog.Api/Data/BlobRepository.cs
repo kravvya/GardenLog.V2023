@@ -22,7 +22,7 @@ public class BlobRepository : IFileRepository
 
     public BlobRepository(IConfiguration configuration, ILogger<BlobRepository> logger, IConfigurationService configurationService)
     {
-        _config = configuration.GetSection(AzureBlobConfig.Key).Get<AzureBlobConfig>();
+        _config = configuration.GetSection(AzureBlobConfig.Key).Get<AzureBlobConfig>()!;
         _logger = logger;
         _configurationService = configurationService;
 

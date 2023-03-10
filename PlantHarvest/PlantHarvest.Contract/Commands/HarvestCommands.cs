@@ -7,7 +7,7 @@ public record CreateHarvestCycleCommand : HarvestCycleBase
 
 public record UpdateHarvestCycleCommand : HarvestCycleBase
 {
-    public string HarvestCycleId { get; init; }
+    public string HarvestCycleId { get; init; } = string.Empty;
 }
 
 public class CreateHarvestCycleCommandValidator : HarvestCycleValidator<CreateHarvestCycleCommand>
@@ -33,7 +33,7 @@ public record CreatePlantHarvestCycleCommand : PlantHarvestCycleBase
 
 public record UpdatePlantHarvestCycleCommand : PlantHarvestCycleBase
 {
-    public string PlantHarvestCycleId { get; init; }
+    public string PlantHarvestCycleId { get; init; } = string.Empty;
 }
 
 public class CreatePlantHarvestCycleCommandValidator : PlantHarvestCycleValidator<CreatePlantHarvestCycleCommand>
@@ -67,7 +67,7 @@ public class CreatePlantScheduleCommandValidator : PlantScheduleValidator<Create
 
 public record UpdatePlantScheduleCommand : PlantScheduleBase
 {
-    public string PlantScheduleId { get; init; }
+    public string PlantScheduleId { get; init; } = string.Empty;
 }
 
 public class UpdatePlantScheduleCommandValidator : PlantScheduleValidator<UpdatePlantScheduleCommand>
@@ -94,7 +94,7 @@ public class CreateGardenBedPlantHarvestCycleCommandValidator : GardenBedPlantHa
 
 public record UpdateGardenBedPlantHarvestCycleCommand : GardenBedPlantHarvestCycleBase
 {
-    public string GardenBedPlantHarvestCycleId { get; init; }
+    public string GardenBedPlantHarvestCycleId { get; init; } = string.Empty;
 }
 
 public class UpdateGardenBedPlantHarvestCycleCommandValidator : GardenBedPlantHarvestCycleValidator<UpdateGardenBedPlantHarvestCycleCommand>

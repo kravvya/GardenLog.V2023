@@ -5,9 +5,9 @@ namespace PlantHarvest.Infrastructure.ApiClients;
 
 public interface IPlantCatalogApiClient
 {
-    Task<PlantViewModel> GetPlant(string plantId);
-    Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId);
-    Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string plantVarietyId);
+    Task<PlantViewModel?> GetPlant(string plantId);
+    Task<PlantGrowInstructionViewModel?> GetPlantGrowInstruction(string plantId, string growInstructionId);
+    Task<PlantVarietyViewModel?> GetPlantVariety(string plantId, string plantVarietyId);
 }
 
 public class PlantCatalogApiClient : IPlantCatalogApiClient
@@ -26,14 +26,20 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
         _logger = logger;
         _cache = cache;
        var plantUrl = confguration["Services:PlantCatalog.Api"];
+
+        if(plantUrl == null)
+        {
+            _logger.LogCritical("Unable to get PlantCatalog Api");
+            throw new ArgumentNullException("Unable to get PlantCatalog Api", nameof(confguration));
+        }
         _logger.LogInformation($"Plant URL @ {plantUrl}");
 
         _httpClient.BaseAddress = new Uri(plantUrl);
     }
 
-    public async Task<PlantGrowInstructionViewModel> GetPlantGrowInstruction(string plantId, string growInstructionId)
+    public async Task<PlantGrowInstructionViewModel?> GetPlantGrowInstruction(string plantId, string growInstructionId)
     {
-        PlantGrowInstructionViewModel growInstruction = null;
+        PlantGrowInstructionViewModel? growInstruction;
         string key = string.Format(GROW_CACHE_KEY, plantId, growInstructionId);
 
         if (!_cache.TryGetValue(key, out growInstruction))
@@ -58,9 +64,9 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
         return growInstruction;
     }
 
-    public async Task<PlantVarietyViewModel> GetPlantVariety(string plantId, string plantVarietyId)
+    public async Task<PlantVarietyViewModel?> GetPlantVariety(string plantId, string plantVarietyId)
     {
-        PlantVarietyViewModel _variety = null;
+        PlantVarietyViewModel? _variety;
 
         string route = Routes.GetPlantVariety.Replace("{plantId}", plantId).Replace("{id}", plantVarietyId);
 
@@ -77,9 +83,9 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
         return _variety;
     }
 
-    public async Task<PlantViewModel> GetPlant(string plantId)
+    public async Task<PlantViewModel?> GetPlant(string plantId)
     {
-        PlantViewModel _plant = null;
+        PlantViewModel? _plant;
         string key = string.Format(PLANT_CACHE_KEY, plantId);
 
         if (!_cache.TryGetValue(key, out _plant))

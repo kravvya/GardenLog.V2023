@@ -4,7 +4,7 @@ public class TransplantScheduler : SchedulerBase, IScheduler
 {
     public bool CanSchedule(PlantGrowInstructionViewModel growInstruction)
     {
-        return growInstruction.PlantingMethod != plant.PlantingMethodEnum.DirectSeed;
+        return growInstruction.PlantingMethod != Plant.PlantingMethodEnum.DirectSeed;
     }
 
     public CreatePlantScheduleCommand? Schedule(PlantHarvestCycle plantHarvest, PlantGrowInstructionViewModel growInstruction, GardenViewModel garden, int? daysToMaturityMin, int? daysToMaturityMax)
@@ -24,7 +24,7 @@ public class TransplantScheduler : SchedulerBase, IScheduler
                 StartDate = startDate.Value,
                 EndDate = endDate,
                 IsSystemGenerated = true,
-                Notes = growInstruction.TransplantInstructions
+                Notes = growInstruction.TransplantInstructions??string.Empty
             };
         }
 

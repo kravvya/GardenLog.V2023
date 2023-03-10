@@ -70,7 +70,7 @@ public class Auth0AuthenticationApiClient : IAuth0AuthenticationApiClient
                 return null;
             }
 
-            token = response.Response.AccessToken;
+            token = response.Response!.AccessToken;
             _cache.Set(key, token, new MemoryCacheEntryOptions()
             {
                 //set expiration to 5 min beforea actual expire
@@ -115,7 +115,7 @@ public class Auth0AuthenticationApiClient : IAuth0AuthenticationApiClient
                 return null;
             }
 
-            token = response.Response.AccessToken;
+            token = response.Response!.AccessToken;
             _cache.Set(key, token, new MemoryCacheEntryOptions()
             {
                 //set expiration to 5 min beforea actual expire

@@ -2,10 +2,10 @@
 
 public record GardenEvent : BaseDomainEvent
 {
-    public Garden PlantLocation { get; init; }
+    public Garden? PlantLocation { get; init; }
     public UserProfileEventTriggerEnum Trigger { get; init; }
-    public UserManagment.Api.Model.Meta.TriggerEntity TriggerEntity { get; init; }
-    public string UserProfileId { get { return PlantLocation.UserProfileId; } init { } }
+    public TriggerEntity? TriggerEntity { get; init; }
+    public string UserProfileId { get { return PlantLocation!.UserProfileId; } init { } }
 
     private GardenEvent() { }
 

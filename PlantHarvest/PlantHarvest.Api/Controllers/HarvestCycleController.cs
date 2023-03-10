@@ -45,7 +45,7 @@ public class HarvestCycleController : Controller
         }
         catch (Exception ex)
         {
-            _logger.LogCritical($"Exceptin getting harvest {id}", ex);
+            _logger.LogCritical(ex,"Exceptin getting harvest {id}", id);
             throw;
         }
     }
@@ -100,7 +100,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -125,7 +125,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -213,7 +213,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -239,7 +239,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -283,7 +283,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -309,7 +309,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -353,7 +353,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
@@ -379,7 +379,7 @@ public class HarvestCycleController : Controller
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(ex.ParamName, ex.Message);
+            ModelState.AddModelError(ex.ParamName!, ex.Message);
             return BadRequest(ModelState);
         }
 
