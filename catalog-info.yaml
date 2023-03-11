@@ -5,3 +5,5 @@ metadata:
   name: gardenlog-monorepo
 spec:
   type: url
+  targets:
+    - ./gardenlogweb/backstage.yaml
