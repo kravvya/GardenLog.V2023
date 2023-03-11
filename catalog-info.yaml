@@ -6,4 +6,4 @@ metadata:
 spec:
   type: url
   targets:
-    - ./blob/main/GardenLogWeb/backstage.yaml
+    - ../../blob/main/GardenLogWeb/backstage.yaml
