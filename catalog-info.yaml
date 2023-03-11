@@ -10,5 +10,5 @@ spec:
     - ./GrowConditions/GrowConditions.Api/backstage.yaml
     - ./ImageCatalog/ImageCatalog.Api/backstage.yaml
     - ./PlantCatalog/PlantCatalog.Api/backstage.yaml
-    - ./PlantHarvest/PlanthHarvest.Api/backstage.yaml
+    - ./PlantHarvest/PlantHarvest.Api/backstage.yaml
     - ./UserManagement/UserManagement.Api/backstage.yaml
