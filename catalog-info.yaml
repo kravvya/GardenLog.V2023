@@ -8,7 +8,7 @@ spec:
   targets:
     - ./GardenLogWeb/backstage.yaml
     - ./GrowGonditions/GrowConditions.api/backstage.yaml
-    - ./Imagecatalog/ImageCatalog.api/backstage.yaml
-    - ./Plantcatalog/PlantCatalog.api/backstage.yaml
-    - ./Plantharvest/PlanthHrvest.api/backstage.yaml
-    - ./Usermanagement/UserManagement.api/backstage.yaml
+    - ./Imagecatalog/ImageCatalog.Api/backstage.yaml
+    - ./Plantcatalog/PlantCatalog.Api/backstage.yaml
+    - ./Plantharvest/PlanthHrvest.Api/backstage.yaml
+    - ./Usermanagement/UserManagement.Api/backstage.yaml
