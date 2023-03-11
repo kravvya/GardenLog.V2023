@@ -5,7 +5,7 @@ metadata:
   title: GardenLog Web Client
   description: Compoenent for GardenLog Web Client
   annotations:
-    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+    github.com/project-slug: kravvya\GardenLog.V2023
   tags: 
     - blazor
 spec:
