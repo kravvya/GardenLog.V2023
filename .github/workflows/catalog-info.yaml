@@ -1,0 +1,14 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: gardenlog-monorepo
+spec:
+  type: url
+  targets:
+    - ./gardenlogweb/backstage.yaml
+    - ./growconditions/gorwconditions.api/backstage.yaml
+    - ./imagecatalog/imagecatalog.api/backstage.yaml
+    - ./plantcatalog/plantcatalog.api/backstage.yaml
+    - ./plantharvest/plantharvest.api/backstage.yaml
+    - ./usermanagement/usermanagement.api/backstage.yaml

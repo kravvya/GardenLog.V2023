@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: plant-harvest-service
+  title: Plant Harvest Service
+  description: Component for Plant Harvest
+  annotations:
+    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+  tags: 
+    - .netcore
+    - domain-service
+spec:
+  type: service
+  owner: growers
+  lifecycle: development

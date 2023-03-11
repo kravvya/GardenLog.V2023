@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gardenlogweb
+  title: GardenLog Web Client
+  description: Compoenent for GardenLog Web Client
+  annotations:
+    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+  tags: 
+    - blazor
+spec:
+  type: service
+  owner: blazor-fan
+  lifecycle: development

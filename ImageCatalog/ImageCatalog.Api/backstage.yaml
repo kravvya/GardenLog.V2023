@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: image-catalog-service
+  title: Image Catalog Service
+  description: Component for Image Catalog
+  annotations:
+    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+  tags: 
+    - .netcore
+    - feature-service
+spec:
+  type: service
+  owner: growers
+  lifecycle: development

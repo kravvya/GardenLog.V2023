@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: grow-conditions-service
+  title: Grow Conditions Service
+  description: Component for Grow Conditions
+  annotations:
+    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+  tags: 
+    - .netcore
+    - feature-service
+spec:
+  type: service
+  owner: weather-geeks
+  lifecycle: development

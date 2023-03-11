@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: plant-catalog-service
+  title: Plant Catalog Service
+  description: Component for Plant Catalog
+  annotations:
+    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+  tags: 
+    - .netcore
+    - domain-service
+spec:
+  type: service
+  owner: growers
+  lifecycle: development
