@@ -7,3 +7,8 @@ spec:
   type: url
   targets:
     - ./GardenLogWeb/backstage.yaml
+    - ./GrowGonditions/GrowConditions.api/backstage.yaml
+    - ./Imagecatalog/ImageCatalog.api/backstage.yaml
+    - ./Plantcatalog/PlantCatalog.api/backstage.yaml
+    - ./Plantharvest/PlanthHrvest.api/backstage.yaml
+    - ./Usermanagement/UserManagement.api/backstage.yaml
