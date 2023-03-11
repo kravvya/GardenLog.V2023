@@ -6,4 +6,4 @@ metadata:
 spec:
   type: url
   targets:
-    - https://github.com/kravvya/GardenLog.V2023/blob/main/GardenLogWeb/backstage.yaml
+    - ./blob/main/GardenLogWeb/backstage.yaml
