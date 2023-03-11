@@ -7,7 +7,7 @@ metadata:
   annotations:
     github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
   tags: 
-    - .netcore
+    - netcore
     - feature-service
 spec:
   type: service
