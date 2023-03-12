@@ -152,18 +152,21 @@ namespace GardenLog.SharedInfrastructure.Extensions
             });
         }
 
-        public static IApplicationBuilder UseSwaggerForAuth(this IApplicationBuilder app, IConfigurationService configurationService)
+        public static IApplicationBuilder UseSwaggerForAuth(this WebApplication app, IConfigurationService configurationService)
         {
+
             app.UseSwagger();
 
-            app.UseSwaggerUI(
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwaggerUI(
                 options =>
                 {
                     //options.OAuthClientSecret(configurationService.GetAuthSettings().ClientSecret);
                     options.OAuthUsePkce();
                     options.OAuthClientId(configurationService.GetAuthSettings().SwaggerClientId);
                 });
-
+            }
             return app;
         }
     }
