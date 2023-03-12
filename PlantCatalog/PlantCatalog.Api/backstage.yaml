@@ -33,7 +33,7 @@ spec:
   system: plant-catalog
   domain: gardenlog.V2023
   definition:
-    $text: http://prd-monitoring-config-api.centralus-infra-core-prd-aks.centralus.chrazure.cloud/openapi/v1/openapi.json https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
+    $text: https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
 
 ---
 apiVersion: backstage.io/v1alpha1
