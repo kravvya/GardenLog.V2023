@@ -49,8 +49,8 @@ spec:
   type: collection
   lifecycle: experimental
   dependsOn:
-    - resource: GardenLog-Db
-    - resource: GardenLog2023-Cluster
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
 
 ---
 apiVersion: backstage.io/v1alpha1
@@ -66,5 +66,5 @@ spec:
   type: collection
   lifecycle: experimental
   dependsOn:
-    - resource: GardenLog-Db
-    - resource: GardenLog2023-Cluster
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
