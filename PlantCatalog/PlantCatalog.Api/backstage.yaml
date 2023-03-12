@@ -16,7 +16,7 @@ spec:
   system: plant-catalog
   domain: gardenlog.V2023
   dependsOn:
-    - resource: PlantCatalog-Collection
+    - resource:PlantCatalog-Collection
   providesApis:
     - plant-catalog-api
 
