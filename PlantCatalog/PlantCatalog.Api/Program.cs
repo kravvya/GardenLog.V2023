@@ -86,10 +86,7 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
-    }
+     app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
