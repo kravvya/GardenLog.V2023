@@ -3,13 +3,93 @@ kind: Component
 metadata:
   name: plant-harvest-service
   title: Plant Harvest Service
-  description: Component for Plant Harvest
+  description: Manage Garden Plans, Tasks and Work Logs
   annotations:
-    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+    github.com/project-slug: 'kravvya/GardenLog.V2023/PlantHarvest'
   tags: 
     - netcore
     - domain-service
 spec:
   type: service
   owner: growers
-  lifecycle: development
+  lifecycle: experimental
+  system: garden-plan
+  domain: gardenlog.V2023
+  dependsOn:
+    - component:plant-catalog-service
+    - component:user-management-service
+    - resource:PlantHarvest-Collection
+    - resource:PlantTask-Collection
+    - resource:WorkLog-Collection
+  providesApis:
+    - plant-harvest-api
+  consumesApis:
+    - plant-catalog-api
+    - user-management-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: plant-harvest-api
+  description: Manage garden plans, tasks and work logs
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: growers
+  system: plant-catalog
+  domain: gardenlog.V2023
+  definition:
+    $text: https://plantharvestapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
+
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: PlantHarvest-Collection
+  title: PlantHarvest-Collection
+  description: MongoDB Coolection for Plants in the Garden Plan
+spec:
+  owner: growers
+  system: garden-plan
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: PlantTask-Collection
+  title: PlantTask-Collection
+  description: MongoDB Coolection for Garden Plan tasks
+spec:
+  owner: growers
+  system: garden-plan
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: WorkLog-Collection
+  title: WorkLog-Collection
+  description: MongoDB Coolection for Garden Plan work logs
+spec:
+  owner: growers
+  system: garden-plan
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster

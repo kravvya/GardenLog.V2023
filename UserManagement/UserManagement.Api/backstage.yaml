@@ -3,13 +3,84 @@ kind: Component
 metadata:
   name: user-management-service
   title: User Management Service
-  description: Component for User Management
+  description: Manage user profiles, gardens and garden beds
   annotations:
-    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+    github.com/project-slug: 'kravvya/GardenLog.V2023/UserManagement'
   tags: 
     - netcore
     - feature-service
 spec:
   type: service
   owner: growers
-  lifecycle: development
+  lifecycle: experimental
+  system: user-management
+  domain: gardenlog.V2023
+  dependsOn:
+    - api:auth0-management-service
+    - api:sendgrid-v3-service
+    - resource:UserProfile-Collection
+  providesApis:
+    - user-management-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: user-management-api
+  description: Manage user profiles, gardens and garden beds
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: growers
+  system: user-management
+  domain: gardenlog.V2023
+  definition:
+    $text: https://usermanagementapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
+
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: UserProfile-Collection
+  title: UserProfile-Collection
+  description: MongoDB Coolection for Managing user profiles, gardens and garden beds
+spec:
+  owner: growers
+  system: user-management
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: auth0-management-service
+  description: "Service for creating users in Auth0"
+  links:
+    - url: https://auth0.com/docs/api
+      title: Auth0 Management Api
+      icon: security
+spec:
+  type: openapi
+  lifecycle: production
+  owner: "Auth0"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: sendgrid-v3-service
+  description: "Service for sending emails"
+  links:
+    - url: https://docs.sendgrid.com/for-developers/sending-email
+      title: SendGrid V3 Api
+      icon: Email
+spec:
+  type: openapi
+  lifecycle: production
+  owner: "SendGrid"
