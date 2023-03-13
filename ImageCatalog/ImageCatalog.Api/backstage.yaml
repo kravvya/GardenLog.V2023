@@ -60,6 +60,10 @@ metadata:
   name: glimages
   title: GLImages Azure blob storage
   description: Azure blob store for photos and thumbnails
+  links:
+    - url: https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview
+      title: What is Azure Blob storage?
+      icon: storage
 spec:
   owner: growers
   system: image-catalog

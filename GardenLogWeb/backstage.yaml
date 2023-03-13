@@ -9,6 +9,18 @@ metadata:
   tags: 
     - blazor
 spec:
-  type: service
+  type: website
   owner: blazor-fan
   lifecycle: development
+  system: garden-plan
+  domain: gardenlog.V2023
+  dependsOn:
+    - component:plant-catalog-service
+    - component:user-management-service
+    - component:plant-harvest-service
+    - component:image-catalog-service
+  consumesApis:
+    - plant-catalog-api
+    - user-management-api
+    - plant-harvest-api
+    - image-catalog-api

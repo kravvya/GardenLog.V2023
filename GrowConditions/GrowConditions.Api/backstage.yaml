@@ -61,7 +61,7 @@ metadata:
   name: open-weather-api
   description: "Service for current weather conditions"
   links:
-    - url: https://openweathermap.org/
+    - url: https://openweathermap.org/api/one-call-3
       title: Open Weather Api
       icon: WbSunny
 spec:
