@@ -14,7 +14,7 @@ metadata:
       icon: dashboard
 spec:
   type: website
-  owner: blazor-fan
+  owner: group:blazor-fan
   lifecycle: development
   system: garden-plan
   domain: gardenlog.V2023
