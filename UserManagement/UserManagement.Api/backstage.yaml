@@ -16,8 +16,8 @@ spec:
   system: user-management
   domain: gardenlog.V2023
   dependsOn:
-    - api:auth0-management-service
-    - api:sendgrid-v3-service
+    - resource:auth0-management-service
+    - resource:sendgrid-v3-service
     - resource:UserProfile-Collection
   providesApis:
     - user-management-api
@@ -57,7 +57,7 @@ spec:
 
 ---
 apiVersion: backstage.io/v1alpha1
-kind: API
+kind: Resource
 metadata:
   name: auth0-management-service
   description: "Service for creating users in Auth0"
@@ -66,13 +66,13 @@ metadata:
       title: Auth0 Management Api
       icon: security
 spec:
-  type: openapi
+  type: api
   lifecycle: production
   owner: "Auth0"
 
 ---
 apiVersion: backstage.io/v1alpha1
-kind: API
+kind: Resource
 metadata:
   name: sendgrid-v3-service
   description: "Service for sending emails"
@@ -81,6 +81,6 @@ metadata:
       title: SendGrid V3 Api
       icon: Email
 spec:
-  type: openapi
+  type: api
   lifecycle: production
   owner: "SendGrid"
