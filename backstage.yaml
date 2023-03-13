@@ -93,3 +93,18 @@ spec:
     email: blazor-fan@slavgl.com
   members: []
   children: []
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: weather-geeks
+  description: Weather Geeks team
+spec:
+  type: team
+  profile:
+    displayName: Weather Geeks
+    email: weather-geeks@slavgl.com
+  children: []
+  members: []
