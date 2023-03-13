@@ -6,10 +6,10 @@ metadata:
 spec:
   type: url
   targets:
+    - ./backstage.yaml
     - ./GardenLogWeb/backstage.yaml
     - ./GrowConditions/GrowConditions.Api/backstage.yaml
     - ./ImageCatalog/ImageCatalog.Api/backstage.yaml
     - ./PlantCatalog/PlantCatalog.Api/backstage.yaml
     - ./PlantHarvest/PlantHarvest.Api/backstage.yaml
     - ./UserManagement/UserManagement.Api/backstage.yaml
-    - ./backstage.yaml
