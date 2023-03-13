@@ -3,13 +3,51 @@ kind: Component
 metadata:
   name: grow-conditions-service
   title: Grow Conditions Service
-  description: Component for Grow Conditions
+  description: Collect weather updates for registered gardens
   annotations:
-    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+    github.com/project-slug: 'kravvya/GardenLog.V2023/GrowConditions'
   tags: 
     - netcore
     - feature-service
 spec:
   type: service
   owner: weather-geeks
-  lifecycle: development
+  lifecycle: experimental
+  system: weather-report
+  domain: gardenlog.V2023
+  dependsOn:
+    - resource:Weather-Collection
+  providesApis:
+    - grow-conditions-api
+    
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: grow-conditions-api
+  description: Collect retrieve weather reports
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: weather-geeks
+  system: weather-report
+  domain: gardenlog.V2023
+  definition:
+    $text: https://growconditionsapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: Weather-Collection
+  title: Weather-Collection
+  description: MongoDB Coolection for Weather updates
+spec:
+  owner: weather-geeks
+  system: weather-report
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
