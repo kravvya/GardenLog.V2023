@@ -4,6 +4,7 @@ kind: Location
 metadata:
   name: GardenLog.V2023
 spec:
+  type: url
   targets:
     - ./backstage.yaml
     - ./GardenLogWeb/backstage.yaml
