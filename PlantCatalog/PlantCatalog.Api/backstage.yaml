@@ -41,7 +41,7 @@ kind: Resource
 metadata:
   name: PlantCatalog-Collection
   title: PlantCatalog-Collection
-  description: MongoDB Coolection for PLants and Grow Instructions
+  description: MongoDB Coolection for Plants and Grow Instructions
 spec:
   owner: growers
   system: plant-catalog

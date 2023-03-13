@@ -3,7 +3,7 @@ kind: Component
 metadata:
   name: image-catalog-service
   title: Image Catalog Service
-  description: Component for Image Catalog
+  description: Store and retrieve photos
   annotations:
     github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
   tags: 
@@ -12,4 +12,56 @@ metadata:
 spec:
   type: service
   owner: growers
-  lifecycle: development
+  lifecycle: experimental
+  system: plant-catalog
+  domain: gardenlog.V2023
+  dependsOn:
+    - resource:ImageCatalog-Collection
+  providesApis:
+    - image-catalog-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: image-catalog-api
+  description: Store and retrieve photos
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: growers
+  system: image-catalog
+  domain: gardenlog.V2023
+  definition:
+    $text: https://imagecatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/swagger/v1/swagger.json
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ImageCatalog-Collection
+  title: ImageCatalog-Collection
+  description: MongoDB Coolection for Photos and thumbnails
+spec:
+  owner: growers
+  system: image-catalog
+  domain: gardenlog.V2023
+  type: collection
+  lifecycle: experimental
+  dependsOn:
+    - resource:GardenLog-Db
+    - resource:GardenLog2023-Cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: glimages
+  title: GLImages Azure blob storage
+  description: Azure blob store for photos and thumbnails
+spec:
+  owner: growers
+  system: image-catalog
+  domain: gardenlog.V2023
+  type: azure-blob
+  lifecycle: experimental

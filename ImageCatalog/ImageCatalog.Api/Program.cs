@@ -50,11 +50,8 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
-    }
-
+    app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
+    
     //// 2. Enable authentication middleware
     app.UseAuthentication();
 
