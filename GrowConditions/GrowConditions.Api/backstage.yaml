@@ -11,7 +11,7 @@ metadata:
     - feature-service
 spec:
   type: service
-  owner: weather-geeks
+  owner: group:weather-geeks
   lifecycle: experimental
   system: weather-report
   domain: gardenlog.V2023
@@ -31,7 +31,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: experimental
-  owner: weather-geeks
+  owner: group:weather-geeks
   system: weather-report
   domain: gardenlog.V2023
   definition:
@@ -45,7 +45,7 @@ metadata:
   title: Weather-Collection
   description: MongoDB Coolection for Weather updates
 spec:
-  owner: weather-geeks
+  owner: group:weather-geeks
   system: weather-report
   domain: gardenlog.V2023
   type: collection
