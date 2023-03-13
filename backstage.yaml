@@ -75,8 +75,8 @@ spec:
   profile:
     displayName: Growers
     email: growers@slavgl.com
-    picture: 
-  members: [kravvya]
+  members: []
+  children: []
 
 
 ---
@@ -91,5 +91,5 @@ spec:
   profile:
     displayName: Blazor Rules!
     email: blazor-fan@slavgl.com
-    picture: 
-  members: [kravvya]
+  members: []
+  children: []
