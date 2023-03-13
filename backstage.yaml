@@ -1,0 +1,109 @@
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: gardenlog.V2023
+  title: GardenLog V2023
+  tags:
+  - business-capability
+spec:
+  owner: group:growers
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: garden-plan
+  title: Garden Plan System
+spec:
+  owner: group:growers
+  domain: domain:gardenlog.V2023
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: weather-report
+  title: Weather Report System
+spec:
+  owner: group:growers
+  domain: domain:gardenlog.V2023
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: image-catalog
+  title: Photo Library System
+spec:
+  owner: group:growers
+  domain: domain:gardenlog.V2023
+  
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: plant-catalog
+  title: Plant Catalog System
+spec:
+  owner: group:growers
+  domain: domain:gardenlog.V2023
+  
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: user-management
+  title: User Management System
+spec:
+  owner: group:growers
+  domain: domain:gardenlog.V2023
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: growers
+  description: Growers team
+spec:
+  type: team
+  profile:
+    displayName: Growers
+    email: growers@slavgl.com
+    picture: 
+  members: [kravvya]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: weather-geeks
+  description: Weather Geeks team
+spec:
+  type: team
+  profile:
+    displayName: Weather Geeks
+    email: weather-geeks@slavgl.com
+    picture: 
+  members: [kravvya]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: blazor-fan
+  description: Blazor Fan team
+spec:
+  type: team
+  profile:
+    displayName: Blazor Rules!
+    email: blazor-fan@slavgl.com
+    picture: 
+  members: [kravvya]

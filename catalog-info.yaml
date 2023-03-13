@@ -12,3 +12,4 @@ spec:
     - ./PlantCatalog/PlantCatalog.Api/backstage.yaml
     - ./PlantHarvest/PlantHarvest.Api/backstage.yaml
     - ./UserManagement/UserManagement.Api/backstage.yaml
+    - backstage.yaml
