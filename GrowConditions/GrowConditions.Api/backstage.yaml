@@ -16,6 +16,7 @@ spec:
   system: weather-report
   domain: gardenlog.V2023
   dependsOn:
+    - component:user-management-service    
     - resource:Weather-Collection
   providesApis:
     - grow-conditions-api
