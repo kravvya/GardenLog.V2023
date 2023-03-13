@@ -6,7 +6,6 @@ metadata:
 spec:
   type: url
   targets:
-    - ./backstage.yaml
     - ./GardenLogWeb/backstage.yaml
     - ./GrowConditions/GrowConditions.Api/backstage.yaml
     - ./ImageCatalog/ImageCatalog.Api/backstage.yaml
