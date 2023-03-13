@@ -8,6 +8,10 @@ metadata:
     github.com/project-slug: kravvya\GardenLog.V2023
   tags: 
     - blazor
+  links:
+    - url: https://kravvya.github.io/GardenLog.V2023/
+      title: Home screen
+      icon: dashboard
 spec:
   type: website
   owner: blazor-fan
