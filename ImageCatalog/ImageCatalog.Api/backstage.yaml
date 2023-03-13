@@ -5,7 +5,7 @@ metadata:
   title: Image Catalog Service
   description: Store and retrieve photos
   annotations:
-    github.com/project-slug: GardenLog.V2023/gardenlog-monorepo
+    github.com/project-slug: 'kravvya/GardenLog.V2023/ImageCatalog'
   tags: 
     - netcore
     - feature-service
@@ -13,10 +13,11 @@ spec:
   type: service
   owner: growers
   lifecycle: experimental
-  system: plant-catalog
+  system: image-catalog
   domain: gardenlog.V2023
   dependsOn:
     - resource:ImageCatalog-Collection
+    - resource:glimages
   providesApis:
     - image-catalog-api
 
