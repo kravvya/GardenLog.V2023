@@ -5,7 +5,7 @@ metadata:
   title: Plant Catalog Service
   description: Manage Plants, Plant Varieties and Grow Instructions
   annotations:
-    github.com/project-slug: https://github.com/kravvya/GardenLog.V2023
+    github.com/project-slug: 'kravvya/GardenLog.V2023'
   tags: 
     - netcore
     - domain-service
