@@ -6,6 +6,7 @@ metadata:
   description: Compoenent for GardenLog Web Client
   annotations:
     github.com/project-slug: 'kravvya/GardenLog.V2023'
+    backstage.io/techdocs-ref: dir:.
   tags: 
     - blazor
   links:
