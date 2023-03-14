@@ -1,0 +1,18 @@
+
+.bg-dark {
+    background-color: #567632!important;
+}
+
+.breadcrumb {
+    background-color:#fff!important;
+}
+
+a {
+   text-decoration: underline;
+   color: rgb(33,37,41); 
+}
+
+a:hover{
+    text-decoration: underline;
+    color: rgb(33,37,41); 
+ }

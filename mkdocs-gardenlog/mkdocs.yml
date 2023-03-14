@@ -1,0 +1,15 @@
+site_name: GardenLog v.2023 Docs
+site_url: https://kravvya.github.io/GardenLog.V2023.Docs/
+repo_url: https://github.com/kravvya/GardenLog.V2023
+nav:
+    - Getting Started: setup.md
+    - Home: index.md
+    - About: about.md
+theme: bootstrap4
+extra_css: [css/gl.css]
+markdown_extensions:
+    - toc:
+        permalink: "#"
+        baselevel: 2
+        separator: "_"
+
