@@ -7,7 +7,8 @@ metadata:
   - business-capability
 spec:
   owner: group:growers
-
+annotations:
+    backstage.io/techdocs-ref: dir:.
 ---
 
 apiVersion: backstage.io/v1alpha1
