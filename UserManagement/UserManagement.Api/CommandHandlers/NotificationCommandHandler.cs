@@ -72,7 +72,7 @@ namespace UserManagement.CommandHandlers
                     Message = tasks
                 };
 
-                await _emailClient.SendEmail(request);
+                await _emailClient.SendEmailToUser(request);
             }
 
             return true;

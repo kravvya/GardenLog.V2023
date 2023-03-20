@@ -8,6 +8,7 @@ namespace UserManagement.Api.Data.ApiClients
     public interface IEmailClient
     {
         Task<bool> SendEmail(SendEmailCommand request);
+        Task<bool> SendEmailToUser(SendEmailCommand request);
     }
 
     public class EmailClient : IEmailClient
