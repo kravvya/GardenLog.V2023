@@ -39,10 +39,9 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
 
     public async Task<PlantGrowInstructionViewModel?> GetPlantGrowInstruction(string plantId, string growInstructionId)
     {
-        PlantGrowInstructionViewModel? growInstruction;
         string key = string.Format(GROW_CACHE_KEY, plantId, growInstructionId);
 
-        if (!_cache.TryGetValue(key, out growInstruction))
+        if (!_cache.TryGetValue(key, out PlantGrowInstructionViewModel? growInstruction))
         {
             string route = Routes.GetPlantGrowInstruction.Replace("{plantId}", plantId).Replace("{id}", growInstructionId);
 
@@ -85,10 +84,9 @@ public class PlantCatalogApiClient : IPlantCatalogApiClient
 
     public async Task<PlantViewModel?> GetPlant(string plantId)
     {
-        PlantViewModel? _plant;
         string key = string.Format(PLANT_CACHE_KEY, plantId);
 
-        if (!_cache.TryGetValue(key, out _plant))
+        if (!_cache.TryGetValue(key, out PlantViewModel? _plant))
         {
             string route = Routes.GetPlantById.Replace("{id}", plantId);
 

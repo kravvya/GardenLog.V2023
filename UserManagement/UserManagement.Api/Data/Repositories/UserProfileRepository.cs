@@ -99,4 +99,14 @@ public class UserProfileRepository : BaseRepository<UserProfile>, IUserProfileRe
        
         return data;
     }
+
+    public async Task<IReadOnlyCollection<UserProfileViewModel>> GetAllUserProfiles()
+    {
+        var data = await Collection
+           .Find<UserProfile>(_ => true)
+           .As<UserProfileViewModel>()
+           .ToListAsync();
+
+        return data;
+    }
 }

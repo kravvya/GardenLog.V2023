@@ -56,6 +56,35 @@ namespace UserManagement.Api.Data.ApiClients
             return false;
         }
 
+        public async Task<bool> SendEmailToUser(SendEmailCommand request)
+        {
+
+            try
+            {
+                var message = new SendGridMessage()
+                {
+                    From = new EmailAddress("admin@slavgl.com", "GardenLog"),
+                    Subject = request.Subject
+                };
+
+                message.AddContent(MimeType.Html, request.Message);
+                message.AddTo(new EmailAddress(request.EmailAddress, request.Name));
+
+                var response = await _sendGridClient.SendEmailAsync(message);
+
+                if (response != null)
+                {
+                    return response.StatusCode == System.Net.HttpStatusCode.Accepted;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Exception sending email", ex);
+            }
+            return false;
+        }
+
         //public async Task<bool> SendEmailAsyncOld(SendEmailCommand request)
         //{
         //    try

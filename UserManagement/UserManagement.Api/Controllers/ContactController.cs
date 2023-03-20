@@ -7,12 +7,12 @@ namespace UserManagement.Controllers;
 
 [Route(GardenRoutes.GardenBase)]
 [ApiController]
-public class Contactontroller : Controller
+public class ContactController : Controller
 {
     private readonly IContactCommandHandler _commadnHandler;
-    private readonly ILogger<Contactontroller> _logger;
+    private readonly ILogger<ContactController> _logger;
 
-    public Contactontroller(IContactCommandHandler commadnHandler, ILogger<Contactontroller> logger)
+    public ContactController(IContactCommandHandler commadnHandler, ILogger<ContactController> logger)
     {
         _commadnHandler = commadnHandler;
         _logger = logger;

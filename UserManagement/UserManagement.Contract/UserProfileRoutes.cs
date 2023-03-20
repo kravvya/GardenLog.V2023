@@ -11,4 +11,7 @@ public class UserProfileRoutes
     public const string DeleteUserProfile = UserProfileBase + "/{userProfileId}";
 
     public const string SendEmail = UserProfileBase + "/email";
+
+    public const string WeeklyTasks = UserProfileBase + "/notifications/weeklytasks";
+    public const string PastDueTasks = UserProfileBase + "/notifications/pastduetasks";
 }

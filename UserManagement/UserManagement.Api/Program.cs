@@ -64,6 +64,9 @@ try
     builder.Services.AddScoped<IEmailClient, EmailClient>();
     builder.Services.AddScoped<IContactCommandHandler, ContactCommandHandler>();
 
+    builder.RegisterHttpClient<IPlantHarvestApiClient, PlantHarvestApiClient>();
+    builder.Services.AddScoped<INotificationCommandHandler, NotificationCommandHandler>();
+
     builder.Services.AddScoped<IUserProfileCommandHandler, UserProfileCommandHandler>();
     builder.Services.AddScoped<IUserProfileQueryHandler, UserProfileQueryHandler>();
 

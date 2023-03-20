@@ -53,6 +53,27 @@ public static class HttpClientExtensions
         return response;
     }
 
+    public static async Task<ApiObjectResponse<string>> ApiPostAsync(this HttpClient httpClient, string requestUri, object content, List<KeyValuePair<string, string>> headers)
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = HttpMethod.Post,
+            RequestUri = new Uri(requestUri, UriKind.Relative),
+            Content = GenerateByteContent(content)
+        };
+
+        headers.ForEach(i => httpRequestMessage.Headers.Add(i.Key, i.Value));
+
+        var result = await httpClient.SendAsync(httpRequestMessage);
+        var response = await ProcessHttpResponse<string>(result);
+
+        if (response.IsSuccess) response.Response = await result.Content.ReadAsStringAsync();
+
+        return response;
+    }
+
+    
+
     public static async Task<ApiObjectResponse<TObject>> ApiPostAsync<TObject>(this HttpClient httpClient, string requestUri, object content)
         where TObject : new()
     {

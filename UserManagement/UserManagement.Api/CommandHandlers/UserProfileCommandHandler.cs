@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using GardenLog.SharedInfrastructure.Extensions;
-using MediatR;
-using UserManagement.Api.Data.ApiClients;
+﻿using UserManagement.Api.Data.ApiClients;
 
 namespace UserManagement.CommandHandlers
 {
