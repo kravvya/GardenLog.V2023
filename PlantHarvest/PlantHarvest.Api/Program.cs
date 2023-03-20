@@ -47,7 +47,7 @@ try
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-
+    builder.Services.AddRazorPages();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.RegisterSwaggerForAuth("Plant Harvest Api");

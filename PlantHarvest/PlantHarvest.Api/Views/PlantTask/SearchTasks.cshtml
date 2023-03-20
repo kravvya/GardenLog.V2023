@@ -1,0 +1,62 @@
+﻿@model IReadOnlyCollection<PlantTaskViewModel>
+
+    @{
+     DateTime _now = DateTime.Now;
+
+     string GetTableClass(PlantTaskViewModel task, string level)
+    {
+        if (level.Equals("row") && !task.CompletedDateTime.HasValue)
+        {
+            //we are past due - red alert
+            if (task.TargetDateStart < _now) return "style=background-color: #dc3545";
+
+            if (task.TargetDateStart < _now.AddDays(2)) return "style=background-color: #ffc107";
+        }
+        else
+        {
+            switch (task.Type)
+            {
+                case WorkLogReasonEnum.Harvest:
+                    return "style=background-color: #198754";
+                case WorkLogReasonEnum.Issue:
+                    return "style=background-color: #dc3545";
+                case WorkLogReasonEnum.IssueResolution:
+                    return "style=background-color: #ffc107";
+            }
+        }
+
+        return "";
+    }
+    }
+
+<h4>Tasksfor upcomming week</h4>
+<hr />
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Reason</th>
+                <th scope="col">Plant</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+                <th scope="col">Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in Model.OrderBy(t => t.CreatedDateTime))
+            {
+                <tr @GetTableClass(task, "row")>
+                    <td @GetTableClass(task, "column")>&nbsp;&nbsp;</td>
+                    <td>@task.Type.ToString()</td>
+                    <td><span class="fw-semibold">@task.PlantName</span></td>
+                    <td>@task.TargetDateStart.ToString("MM/dd")</td>
+                    <td>@task.TargetDateEnd.ToString("MM/dd")</td>
+                    <td colspan="1">@task.Notes</td>                   
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

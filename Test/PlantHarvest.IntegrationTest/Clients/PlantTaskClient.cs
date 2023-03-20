@@ -1,8 +1,8 @@
 ﻿using GardenLog.SharedInfrastructure.Extensions;
 using PlantHarvest.Contract;
 using PlantHarvest.Contract.Commands;
+using PlantHarvest.Contract.Query;
 using PlantHarvest.Contract.ViewModels;
-using System.Threading.Tasks;
 
 namespace PlantHarvest.IntegrationTest.Clients
 {
@@ -66,6 +66,20 @@ namespace PlantHarvest.IntegrationTest.Clients
             var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.GetCompleteTaskCount}/";
             return await this._httpClient.GetAsync(url.Replace("{harvetId}", harvestCycleId));
         }
+
+        public async Task<HttpResponseMessage> SearchTasks(string format)
+        {
+            var url = $"{this._baseUrl.OriginalString}{HarvestRoutes.SearchTasks}/";
+            var search = new PlantTaskSearch()
+            {
+                IncludeResolvedTasks = true
+            };
+
+            using var requestContent = search.ToJsonStringContent();
+
+            return await this._httpClient.PostAsync(url.Replace("{format}", format),requestContent );
+        }
+
 
         private static CreatePlantTaskCommand PopulateCreatePlantTaskCommand(string harvestCycleId, string plantHarvestCycelId)
         {

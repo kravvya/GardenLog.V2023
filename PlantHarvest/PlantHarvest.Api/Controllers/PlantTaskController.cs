@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using PlantHarvest.Contract.Query;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlantHarvest.Api.Controllers;
 
@@ -41,6 +42,24 @@ public class PlantTaskController : Controller
     public async Task<ActionResult<IReadOnlyCollection<PlantTaskViewModel>>> GetActiveTasks()
     {
         return Ok(await _queryHandler.GetActivePlantTasks());
+    }
+
+    [HttpPost()]
+    [ActionName("SearchTasks")]
+    [Route(HarvestRoutes.SearchTasks)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<PlantTaskViewModel>), (int)HttpStatusCode.OK)]
+    [Produces("application/json", "text/html")]
+    public async Task<ActionResult<IReadOnlyCollection<PlantTaskViewModel>>> SearchTasks([FromBody] PlantTaskSearch search, string format)
+    {
+        var data = await _queryHandler.SearchPlantTasks(search);
+
+        if (format == "html")
+        {
+            return View(data); // return JSON if the format parameter is "json"
+        }
+       
+        return Ok(data);
     }
 
     [HttpPost]

@@ -1,9 +1,11 @@
 ﻿using PlantHarvest.Contract.ViewModels;
 using PlantHarvest.IntegrationTest.Clients;
 using PlantHarvest.IntegrationTest.Fixture;
+using SendGrid;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Xunit.Abstractions;
 
 namespace PlantHarvest.IntegrationTest;
@@ -119,6 +121,35 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
     }
 
     [Fact]
+    public async Task Search_Should_Return_PlantTasksInJson()
+    {
+        var response = await _plantTaskClient.SearchTasks("json");
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.NotNull(response.Content);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+        _output.WriteLine($"Service to update task responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.NotEmpty(returnString);
+    }
+
+    [Fact]
+    public async Task Search_Should_Return_PlantTasksInHtml()
+    {
+        var response = await _plantTaskClient.SearchTasks("html");
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.NotNull(response.Content);
+
+        var returnString = await response.Content.ReadAsStringAsync();
+        _output.WriteLine($"Service to update task responded with {response.StatusCode} code and {returnString} message");
+
+        Assert.NotEmpty(returnString);
+        Assert.Contains("table", returnString);
+    }
+
+    [Fact]
     public async Task Get_Should_Return_ActivePlantTasks()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
@@ -134,7 +165,7 @@ public partial class PlantHarvestTests // : IClassFixture<PlantHarvestServiceFix
     public async Task Get_PlantTask_Completed_Count()
     {
         var harvestId = await _plantHarvestClient.GetHarvestCycleIdToWorkWith(PlantHarvestTests.TEST_HARVEST_CYCLE_NAME);
-        
+
         var response = await _plantTaskClient.GetCompleteTaskCount(harvestId);
 
         var returnString = await response.Content.ReadAsStringAsync();

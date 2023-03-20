@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using PlantHarvest.Contract.Query;
 
 namespace PlantHarvest.Infrastructure.Data.Repositories;
@@ -72,10 +73,25 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
         {
             filters.Add(builder.Eq("Type", search.Reason.Value.ToString()));
         }
-        if (!search.IncludeResolvedTasks)
+       
+        if (search.IsPastDue)
         {
+            filters.Add(builder.Lte("TargetDateStart", DateTime.Now));
             filters.Add(builder.Eq("CompletedDateTime", BsonNull.Value));
         }
+        else
+        {
+            if (!search.IncludeResolvedTasks)
+            {
+                filters.Add(builder.Eq("CompletedDateTime", BsonNull.Value));
+            }
+            if (search.DueInNumberOfDays.HasValue)
+            {
+                filters.Add(builder.Lte("TargetDateStart", DateTime.Now.AddDays(search.DueInNumberOfDays.Value)));
+            }
+        }
+
+
         filters.Add(builder.Eq("UserProfileId", userProfileId));
 
         var data = await Collection
