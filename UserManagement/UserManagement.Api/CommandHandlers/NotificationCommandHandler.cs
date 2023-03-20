@@ -30,8 +30,7 @@ namespace UserManagement.CommandHandlers
 
             foreach (var user in users)
             {
-                if (string.IsNullOrWhiteSpace(user.EmailAddress) || string.IsNullOrWhiteSpace(user.FirstName)
-                    || string.IsNullOrWhiteSpace(user.LastName) || user.FirstName.Contains("Test")) continue;
+                if (IsInValidUser(user)) continue;
 
                 var tasks = await _harvestApiClient.GetTasks(user.UserProfileId, false);
 
@@ -45,7 +44,7 @@ namespace UserManagement.CommandHandlers
                     Message = tasks
                 };
 
-                await _emailClient.SendEmail(request);
+                await _emailClient.SendEmailToUser(request);
             }
 
             return true;
@@ -57,8 +56,7 @@ namespace UserManagement.CommandHandlers
 
             foreach (var user in users)
             {
-                if (string.IsNullOrWhiteSpace(user.EmailAddress) || string.IsNullOrWhiteSpace(user.FirstName)
-                    || string.IsNullOrWhiteSpace(user.LastName) || user.FirstName.Contains("Test") || user.LastName.Contains("Tester")) continue;
+                if (IsInValidUser(user)) continue;
 
                 var tasks = await _harvestApiClient.GetTasks(user.UserProfileId, true);
 
@@ -76,6 +74,12 @@ namespace UserManagement.CommandHandlers
             }
 
             return true;
+        }
+
+       private bool IsInValidUser(UserProfileViewModel user)
+        {
+            return string.IsNullOrWhiteSpace(user.EmailAddress) || string.IsNullOrWhiteSpace(user.FirstName)
+                    || string.IsNullOrWhiteSpace(user.LastName) || user.FirstName.Contains("Test") || user.LastName.Contains("Tester");
         }
     }
 }
