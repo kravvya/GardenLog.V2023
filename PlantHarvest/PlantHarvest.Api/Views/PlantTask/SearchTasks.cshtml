@@ -1,32 +1,52 @@
-﻿@model IReadOnlyCollection<PlantTaskViewModel>
+﻿@using System.ComponentModel;
+@model IReadOnlyCollection<PlantTaskViewModel>
 
 @{
     DateTime _now = DateTime.Now;
+    Dictionary<WorkLogReasonEnum, string> reasons = new();
 
     string GetTableClass(PlantTaskViewModel task, string level)
     {
         if (level.Equals("row") && !task.CompletedDateTime.HasValue)
         {
             //we are past due - red alert
-            if (task.TargetDateStart < _now) return "style=background-color: #dc3545";
+            if (task.TargetDateStart < _now) return "#dc3545";
 
-            if (task.TargetDateStart < _now.AddDays(2)) return "style=background-color: #ffc107";
+            if (task.TargetDateStart < _now.AddDays(2)) return "#ffc107";
         }
         else
         {
             switch (task.Type)
             {
                 case WorkLogReasonEnum.Harvest:
-                    return "style=background-color: #198754";
+                    return "#198754";
                 case WorkLogReasonEnum.Issue:
-                    return "style=background-color: #dc3545";
+                    return "#dc3545";
                 case WorkLogReasonEnum.IssueResolution:
-                    return "style=background-color: #ffc107";
+                    return "#ffc107;";
             }
         }
 
-        return "";
+        return "inherit";
     }
+
+    string GetTaskDescription(WorkLogReasonEnum value)
+    {
+        if (reasons.TryGetValue(value, out string? task)) return task;
+
+        var fieldInfo = value.GetType().GetField(value.ToString());
+
+        if (fieldInfo == null) return value.ToString();
+
+        var attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+        task =  attributes.Length > 0 ? attributes[0].Description : value.ToString();
+
+        reasons.TryAdd(value, task);
+
+        return task;
+    }
+
 }
 @if (Model.Count > 0)
 {
@@ -34,27 +54,27 @@
     <hr />
 
     <div>
-        <table class="table">
+        <table class="table" style="width: 100%;">
             <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Task</th>
-                    <th scope="col">Plant</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
-                    <th scope="col">Note</th>
+                <tr style ="border:1px solid black;">
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;"></th>
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;">Task</th>
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;">Plant</th>
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;">Start</th>
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;">End</th>
+                    <th scope="col" style="padding-top: 10px; border-top:1px solid black;">Note</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var task in Model.OrderBy(t => t.CreatedDateTime))
+                @foreach (var task in Model.OrderBy(t => t.CreatedDateTime)) 
                 {
-                    <tr @GetTableClass(task, "row")>
-                        <td @GetTableClass(task, "column")>&nbsp;&nbsp;</td>
-                        <td>@task.Type.ToString()</td>
-                        <td><span class="fw-semibold">@task.PlantName</span></td>
-                        <td>@task.TargetDateStart.ToString("MM/dd")</td>
-                        <td>@task.TargetDateEnd.ToString("MM/dd")</td>
-                        <td colspan="1">@task.Notes</td>                   
+                    <tr style="background-color:@GetTableClass(task, "row");">
+                        <td style="background-color:@GetTableClass(task, "column"); padding-top:10px; border-top:1px solid black;">&nbsp;&nbsp;</td>
+                        <td style="padding-top: 10px; border-top:1px solid black;">@GetTaskDescription(@task.Type)</td>
+                        <td style="padding-top: 10px; border-top:1px solid black;"><span class="fw-semibold">@task.PlantName</span></td>
+                        <td style="padding-top: 10px; border-top:1px solid black;">@task.TargetDateStart.ToString("MM/dd")</td>
+                        <td style="padding-top: 10px; border-top:1px solid black;">@task.TargetDateEnd.ToString("MM/dd")</td>
+                        <td style="padding-top: 10px; border-top:1px solid black;" colspan="1">@task.Notes</td>
                     </tr>
                 }
             </tbody>
