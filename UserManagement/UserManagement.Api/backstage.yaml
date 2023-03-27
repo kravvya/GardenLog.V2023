@@ -16,12 +16,14 @@ spec:
   system: user-management
   domain: gardenlog.V2023
   dependsOn:
+    - component:plant-harvest-service
     - resource:auth0-management-service
     - resource:sendgrid-v3-service
     - resource:UserProfile-Collection
   providesApis:
     - user-management-api
-
+  consumesApis:
+    - api:plant-harvest-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
