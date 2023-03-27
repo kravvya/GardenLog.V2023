@@ -56,7 +56,7 @@ public class PlantTaskController : Controller
 
         if (format == "html")
         {
-            return View(data); // return JSON if the format parameter is "json"
+            return View(( data, search.IsPastDue)); // return JSON if the format parameter is "json"
         }
        
         return Ok(data);

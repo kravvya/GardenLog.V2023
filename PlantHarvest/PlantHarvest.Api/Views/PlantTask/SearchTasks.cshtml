@@ -1,5 +1,5 @@
 ﻿@using System.ComponentModel;
-@model IReadOnlyCollection<PlantTaskViewModel>
+@model (IReadOnlyCollection<PlantTaskViewModel> data, bool isReadOnly)
 
 @{
     DateTime _now = DateTime.Now;
@@ -47,10 +47,15 @@
         return task;
     }
 
+    string GetViewTitle(bool isReadOnly)
+    {
+        return isReadOnly ? "Past Due Tasks" : "Tasks for upcomming week";
+    }
+
 }
-@if (Model.Count > 0)
+@if (Model.data.Count > 0)
 {
-    <h4>Tasks for upcomming week</h4>
+    <h4>@GetViewTitle(Model.isReadOnly)</h4>
     <hr />
 
     <div>
@@ -66,7 +71,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var task in Model.OrderBy(t => t.CreatedDateTime)) 
+                @foreach (var task in Model.data.OrderBy(t => t.CreatedDateTime)) 
                 {
                     <tr style="background-color:@GetTableClass(task, "row");">
                         <td style="background-color:@GetTableClass(task, "column"); padding-top:10px; border-top:1px solid black;">&nbsp;&nbsp;</td>
