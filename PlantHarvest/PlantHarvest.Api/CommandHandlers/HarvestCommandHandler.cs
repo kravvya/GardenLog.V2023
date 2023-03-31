@@ -128,7 +128,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
             var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
 
-            if (harvest.Plants.Any(g => g.PlantId == command.PlantId && (g.PlantVarietyId == command.PlantVarietyId)))
+            if (harvest.Plants.Any(g => g.PlantId == command.PlantId && (g.PlantVarietyId == command.PlantVarietyId) && (g.PlantGrowthInstructionId == command.PlantGrowthInstructionId)))
             {
                 throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
             }
@@ -169,7 +169,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         _logger.LogInformation("Received request to create plant harvest cycle {@plantHarvestCycle}", command);
         var harvest = await _harvestCycleRepository.GetByIdAsync(command.HarvestCycleId);
 
-        if (harvest.Plants.Any(g => g.PlantId == command.PlantId && g.PlantVarietyId == command.PlantVarietyId && g.Id != command.PlantHarvestCycleId))
+        if (harvest.Plants.Any(g => g.PlantId == command.PlantId && g.PlantVarietyId == command.PlantVarietyId && g.Id != command.PlantHarvestCycleId && g.PlantGrowthInstructionId == command.PlantGrowthInstructionId))
         {
             throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
         }
