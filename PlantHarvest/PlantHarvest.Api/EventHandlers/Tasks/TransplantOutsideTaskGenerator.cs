@@ -114,7 +114,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
                 TargetDateStart = schedule.StartDate,
                 TargetDateEnd = schedule.EndDate,
                 Type = WorkLogReasonEnum.TransplantOutside,
-                Title = "Trnsplant Outside",
+                Title = "Transplant Outside",
                 Notes = schedule.Notes,
             };
 
@@ -135,7 +135,7 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
                     TargetDateStart = schedule.StartDate.AddDays(-1 * GlobalConstants.DEFAULT_HardenOffPeriodInDays),
                     TargetDateEnd = schedule.StartDate,
                     Type = WorkLogReasonEnum.Harden,
-                    Title = "Harded Off",
+                    Title = "Harden Off",
                     Notes = "Bringing the seedlings outdoors for several periods of time. Start with just a couple of hours and gradually increase every day"
                 };
 
