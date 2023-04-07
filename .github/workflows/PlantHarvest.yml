@@ -59,7 +59,9 @@ jobs:
       run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.UnitTest/PlantHarvest.UnitTest.csproj -c Release --no-build
 
     - name: Test
-      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.IntegrationTest/PlantHarvest.IntegrationTest.csproj -e Production
+      env:
+        ASPNETCORE_ENVIRONMENT: Production
+      run: dotnet test ~/work/GardenLog.V2023/GardenLog.V2023/Test/PlantHarvest.IntegrationTest/PlantHarvest.IntegrationTest.csproj -c Release --no-build
       
   build:
     runs-on: ubuntu-latest
