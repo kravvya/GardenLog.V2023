@@ -49,7 +49,15 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
 
         await _mediator.DispatchDomainEventsAsync(task);
 
-        await _unitOfWork.SaveChangesAsync();
+        try
+        {
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception storing task.", ex);
+        }
+       
 
         return task.Id;
     }

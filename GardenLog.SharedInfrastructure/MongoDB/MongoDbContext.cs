@@ -26,7 +26,7 @@ public class MongoDbContext : IUnitOfWork
 
         if(Settings == null || Settings.Server == null || Settings.DatabaseName == null || Settings.UserName==null)
         {
-            _logger.LogCritical("Did not get MOngoDB connection setting. ");
+            _logger.LogCritical("Did not get MongoDB connection setting. ");
             throw new ArgumentNullException(nameof(configurationService));
         }
         // Every command will be stored and it'll be processed at SaveChanges
