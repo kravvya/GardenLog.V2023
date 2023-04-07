@@ -158,7 +158,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         }
         catch (Exception ex)
         {
-            _logger.LogCritical("Exception adding plant grow instruction", ex);
+            _logger.LogCritical("Exception adding plant harvest cycle", ex);
             throw;
         }
 
