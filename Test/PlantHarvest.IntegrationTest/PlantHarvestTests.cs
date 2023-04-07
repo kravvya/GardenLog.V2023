@@ -75,7 +75,7 @@ public partial class PlantHarvestTests : IClassFixture<PlantHarvestServiceFixtur
     {
         var harvest = await GetHarvestCycleToWorkWith(TEST_HARVEST_CYCLE_NAME);
 
-        harvest.Notes = $"{harvest.Notes} last pdated: {DateTime.Now.ToString()}";
+        harvest.Notes = harvest.Notes.Length<900? $"{harvest.Notes} last pdated: {DateTime.Now.ToString()}" : $"{harvest.Notes.Substring(0, 100)} last pdated: {DateTime.Now.ToString()}";
 
         var response = await _plantHarvestClient.UpdateHarvestCycle(harvest);
 
