@@ -94,6 +94,7 @@ public class IndoorSawTaskGenerator : INotificationHandler<HarvestEvent>//, INot
                 Type = WorkLogReasonEnum.SowIndoors,
                 Title = "Sow Seeds Indoors",
                 Notes = schedule.Notes,
+                CompletedDateTime = plantHarvest.SeedingDate.HasValue ? plantHarvest.SeedingDate.Value : null, //in case if seeds were already planted when plant was addede to harvest
             };
 
             await _taskCommandHandler.CreatePlantTask(command);
