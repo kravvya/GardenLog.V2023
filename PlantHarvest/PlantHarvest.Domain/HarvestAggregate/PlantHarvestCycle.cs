@@ -88,7 +88,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
 
     public static PlantHarvestCycle Create(PlantHarvestCycleBase plant)
     {
-        return new PlantHarvestCycle()
+        var harvestPlant =  new PlantHarvestCycle()
         {
             Id = Guid.NewGuid().ToString(),
             PlantId = plant.PlantId,
@@ -97,18 +97,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             PlantVarietyName = plant.PlantVarietyName,
             PlantGrowthInstructionId = plant.PlantGrowthInstructionId,
             PlantGrowthInstructionName = plant.PlantGrowthInstructionName,
-            NumberOfSeeds = plant.NumberOfSeeds,
-            SeedCompanyId = plant.SeedVendorId,
-            SeedCompanyName = plant.SeedVendorName,
-            SeedingDate = plant.SeedingDate,
-            GerminationDate = plant.GerminationDate,
-            GerminationRate = plant.GerminationRate,
-            NumberOfTransplants = plant.NumberOfTransplants,
-            TransplantDate = plant.TransplantDate,
-            FirstHarvestDate = plant.FirstHarvestDate,
-            LastHarvestDate = plant.LastHarvestDate,
-            TotalWeightInPounds = plant.TotalWeightInPounds,
-            TotalItems = plant.TotalItems,
+
             Notes = plant.Notes,
             DesiredNumberOfPlants = plant.DesiredNumberOfPlants,
             SpacingInInches = plant.SpacingInInches,
@@ -116,6 +105,14 @@ public class PlantHarvestCycle : BaseEntity, IEntity
             PlantingMethod = plant.PlantingMethod,
         };
 
+
+        harvestPlant.Set<DateTime?>(() => harvestPlant.SeedingDate, plant.SeedingDate);
+        harvestPlant.Set<DateTime?>(() => harvestPlant.GerminationDate, plant.GerminationDate);
+        harvestPlant.Set<DateTime?>(() => harvestPlant.TransplantDate, plant.TransplantDate);
+        harvestPlant.Set<DateTime?>(() => harvestPlant.FirstHarvestDate, plant.FirstHarvestDate);
+        harvestPlant.Set<DateTime?>(() => harvestPlant.LastHarvestDate, plant.LastHarvestDate);
+
+        return harvestPlant;
     }
 
 
@@ -167,7 +164,8 @@ public class PlantHarvestCycle : BaseEntity, IEntity
                 if (LastHarvestDate.HasValue) this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleCompleted, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 break;
             default:
-                if (!this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleUpdated))
+                if (!this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleUpdated) &&
+                        !this.DomainEvents.Any(e => ((HarvestChildEvent)e).Trigger == HarvestEventTriggerEnum.PlantAddedToHarvestCycle))
                 {
                     this.DomainEvents.Add(new HarvestChildEvent(HarvestEventTriggerEnum.PlantHarvestCycleUpdated, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id)));
                 }
