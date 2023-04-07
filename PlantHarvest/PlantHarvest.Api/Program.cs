@@ -102,6 +102,8 @@ try
 
     app.MapControllers();
 
+    Log.Logger.Information("PlantUrl {0}", builder.Configuration["Services:UserManagement.Api"]);
+
     app.Run();
 }
 catch (Exception ex)
