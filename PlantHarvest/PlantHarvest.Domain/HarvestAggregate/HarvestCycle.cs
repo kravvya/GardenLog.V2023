@@ -109,7 +109,7 @@ namespace PlantHarvest.Domain.HarvestAggregate
         public string AddPlantHarvestCycle(CreatePlantHarvestCycleCommand command)
         {
             command.HarvestCycleId = this.Id;
-            var plant = PlantHarvestCycle.Create(command);
+            var plant = PlantHarvestCycle.Create(command, AddChildDomainEvent);
 
             this._plants.Add(plant);
 

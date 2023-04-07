@@ -86,7 +86,7 @@ public class PlantHarvestCycle : BaseEntity, IEntity
     }
 
 
-    public static PlantHarvestCycle Create(PlantHarvestCycleBase plant)
+    public static PlantHarvestCycle Create(PlantHarvestCycleBase plant, Action<HarvestEventTriggerEnum, TriggerEntity> addHarvestEvent)
     {
         var harvestPlant =  new PlantHarvestCycle()
         {
@@ -120,6 +120,11 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         harvestPlant.Set<DateTime?>(() => harvestPlant.FirstHarvestDate, plant.FirstHarvestDate);
         harvestPlant.Set<DateTime?>(() => harvestPlant.LastHarvestDate, plant.LastHarvestDate);
 
+        foreach (var evt in harvestPlant.DomainEvents)
+        {
+            addHarvestEvent(((HarvestChildEvent)evt).Trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, harvestPlant.Id));
+        }
+
         return harvestPlant;
     }
 
@@ -148,8 +153,6 @@ public class PlantHarvestCycle : BaseEntity, IEntity
         {
             addHarvestEvent(((HarvestChildEvent)evt).Trigger, new TriggerEntity(EntityTypeEnum.PlantHarvestCycle, this.Id));
         }
-
-
     }
 
     protected override void AddDomainEvent(string attributeName)
