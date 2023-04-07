@@ -11,9 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\PlantHarvest\PlantHarvest.Api\appsettings.Development.json" Link="appsettings.Development.json" />
     <Content Include="..\..\PlantHarvest\PlantHarvest.Api\appsettings.json" Link="appsettings.json" />
-    <Content Include="..\..\PlantHarvest\PlantHarvest.Api\appsettings.Production.json" Link="appsettings.Production.json" />
   </ItemGroup>
 
   <ItemGroup>
