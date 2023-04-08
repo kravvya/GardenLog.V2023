@@ -19,7 +19,7 @@ internal class AdminImageProcessor
         IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
 
         IMongoDBContext context = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
-        IUnitOfWork unitOfWork = new MongoDBUnitOfWork(context);
+        IUnitOfWork unitOfWork = new MongoDBUnitOfWork(context, loggerFactory.CreateLogger<MongoDBUnitOfWork>());
 
         AdminImageRepository imageRepository = new AdminImageRepository(unitOfWork, loggerFactory.CreateLogger<ImageRepository>());
         AdminPlantRepository plantRepository = new AdminPlantRepository(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
