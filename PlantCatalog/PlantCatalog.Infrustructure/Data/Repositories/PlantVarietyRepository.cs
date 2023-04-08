@@ -86,6 +86,11 @@ namespace PlantCatalog.Infrustructure.Data.Repositories
 
         protected override void OnModelCreating()
         {
+            if (BsonClassMap.IsClassMapRegistered(typeof(PlantVariety)))
+            {
+                return;
+            }
+
             BsonClassMap.RegisterClassMap<PlantVariety>(p =>
             {
                 p.AutoMap();

@@ -53,16 +53,17 @@ try
     builder.RegisterSwaggerForAuth("Plant Harvest Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
+    builder.Services.AddScoped<IUnitOfWork, MongoDBUnitOfWork>();
 
     builder.Services.AddScoped<IScheduleBuilder, ScheduleBuilder>();
 
     builder.RegisterHttpClient<IPlantCatalogApiClient, PlantCatalogApiClient>();
     builder.RegisterHttpClient<IUserManagementApiClient, UserManagementApiClient>();
 
-    builder.Services.AddSingleton<IHarvestCycleRepository, HarvestCycleRepository>();
-    builder.Services.AddSingleton<IWorkLogRepository, WorkLogRepository>();
-    builder.Services.AddSingleton<IPlantTaskRepository, PlantTaskRepository>();
+    builder.Services.AddScoped<IHarvestCycleRepository, HarvestCycleRepository>();
+    builder.Services.AddScoped<IWorkLogRepository, WorkLogRepository>();
+    builder.Services.AddScoped<IPlantTaskRepository, PlantTaskRepository>();
 
     builder.Services.AddScoped<IHarvestCommandHandler, HarvestCommandHandler>();
     builder.Services.AddScoped<IHarvestQueryHandler, HarvestQueryHandler>();

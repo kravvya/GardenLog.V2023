@@ -159,6 +159,11 @@ public class PlantRepository : BaseRepository<Plant>, IPlantRepository
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(Plant)))
+        {
+            return;
+        }
+
         BsonClassMap.RegisterClassMap<Plant>(p =>
         {
             p.AutoMap();

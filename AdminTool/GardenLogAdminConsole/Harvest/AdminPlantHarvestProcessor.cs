@@ -18,7 +18,9 @@ internal class AdminPlantHarvestProcessor
     {
         IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
 
-        IUnitOfWork unitOfWork = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
+        IMongoDBContext context = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
+
+        IUnitOfWork unitOfWork = new MongoDBUnitOfWork(context);
 
         AdminPlantRepository plantRepository = new(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
         AdminHarvestRepository harvestRepository = new(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());
@@ -68,7 +70,8 @@ internal class AdminPlantHarvestProcessor
     {
         IConfigurationService configurationService = new ConfigurationService(config, loggerFactory.CreateLogger<ConfigurationService>());
 
-        IUnitOfWork unitOfWork = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
+        IMongoDBContext context = new MongoDbContext(configurationService, loggerFactory.CreateLogger<MongoDbContext>());
+        IUnitOfWork unitOfWork = new MongoDBUnitOfWork(context);
 
         AdminPlantRepository plantRepository = new(unitOfWork, loggerFactory.CreateLogger<PlantRepository>());
         AdminHarvestRepository harvestRepository = new(unitOfWork, loggerFactory.CreateLogger<HarvestCycleRepository>());

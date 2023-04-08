@@ -58,6 +58,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             throw new ArgumentException("Garden Plan with this name already exists", nameof(request.HarvestCycleName));
         }
 
+        _unitOfWork.Initialize(this.GetType().Name);
+
         var harvest = HarvestCycle.Create(
            userProfileId,
            request.HarvestCycleName,
@@ -70,7 +72,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         await _mediator.DispatchDomainEventsAsync(harvest);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
         return harvest.Id;
     }
@@ -87,6 +89,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             throw new ArgumentException("Another garden plan with this name already exists", nameof(request.HarvestCycleName));
         }
 
+        _unitOfWork.Initialize(this.GetType().Name);
+
         var harvest = await _harvestCycleRepository.GetByIdAsync(request.HarvestCycleId);
 
         harvest.Update(request.HarvestCycleName, request.StartDate, request.EndDate, request.Notes, request.GardenId);
@@ -95,7 +99,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         await _mediator.DispatchDomainEventsAsync(harvest);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
         return harvest.Id;
     }
@@ -105,13 +109,15 @@ public class HarvestCommandHandler : IHarvestCommandHandler
         _logger.LogInformation("Received request to delete harvest cycle {@id}", id);
         var harvest = await _harvestCycleRepository.GetByIdAsync(id);
 
+        _unitOfWork.Initialize(this.GetType().Name);
+
         harvest.Delete();
 
         _harvestCycleRepository.Delete(id);
 
         await _mediator.DispatchDomainEventsAsync(harvest);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
         return id;
     }
@@ -133,6 +139,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
                 throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
             }
 
+            _unitOfWork.Initialize(this.GetType().Name);
+
             var plantHarvestId = harvest.AddPlantHarvestCycle(command);
 
             try
@@ -152,7 +160,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
             await _mediator.DispatchDomainEventsAsync(harvest);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
             return plantHarvestId;
         }
@@ -174,6 +182,8 @@ public class HarvestCommandHandler : IHarvestCommandHandler
             throw new ArgumentException("This plant is already a part of this plan", nameof(command.PlantVarietyId));
         }
 
+        _unitOfWork.Initialize(this.GetType().Name);
+
         harvest.UpdatePlantHarvestCycle(command);
 
         try
@@ -193,7 +203,7 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         await _mediator.DispatchDomainEventsAsync(harvest);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
         return command.PlantHarvestCycleId;
     }
@@ -204,13 +214,15 @@ public class HarvestCommandHandler : IHarvestCommandHandler
 
         var harvest = await _harvestCycleRepository.GetByIdAsync(harvestCycleId);
 
+        _unitOfWork.Initialize(this.GetType().Name);
+
         harvest.DeletePlantHarvestCycle(id);
 
         _harvestCycleRepository.DeletePlantHarvestCycle(id, harvest);
 
         await _mediator.DispatchDomainEventsAsync(harvest);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(this.GetType().Name);
 
         return id;
     }

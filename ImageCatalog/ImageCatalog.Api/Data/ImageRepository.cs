@@ -80,6 +80,11 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(Image)))
+        {
+            return;
+        }
+
         BsonClassMap.RegisterClassMap<Image>(p =>
         {
             p.AutoMap();

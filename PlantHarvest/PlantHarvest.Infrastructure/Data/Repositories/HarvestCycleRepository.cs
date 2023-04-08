@@ -92,7 +92,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
          .Project(Builders<HarvestCycle>.Projection.Include(p => p.Plants))
          .As<PlantHarvestCycleViewModelProjection>()
          .FirstAsync();
-        
+
         data.Plants.ForEach(g =>
             {
                 g.HarvestCycleId = data._id;
@@ -108,7 +108,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
                 });
             }
         );
-      
+
         return data.Plants.First(p => p.PlantHarvestCycleId == id);
     }
 
@@ -174,6 +174,11 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(HarvestCycle)))
+        {
+            return;
+        }
+
         #region Harvest Cycle
         BsonClassMap.RegisterClassMap<HarvestCycle>(p =>
         {
@@ -189,6 +194,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.MapConstructor(longestCtor, p.ClassType.GetProperties().Where(c => c.Name != "Id").Select(c => c.Name).ToArray());
 
         });
+
 
         if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
         {

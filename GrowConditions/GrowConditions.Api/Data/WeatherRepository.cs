@@ -62,6 +62,11 @@ namespace GrowConditions.Api.Data
 
         protected override void OnModelCreating()
         {
+            if (BsonClassMap.IsClassMapRegistered(typeof(WeatherUpdate)))
+            {
+                return;
+            }
+
             BsonClassMap.RegisterClassMap<WeatherUpdate>(p =>
             {
                 p.AutoMap();

@@ -53,10 +53,12 @@ try
     builder.RegisterSwaggerForAuth("User Management Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
+    builder.Services.AddScoped<IUnitOfWork, MongoDBUnitOfWork>();
 
-    builder.Services.AddSingleton<IUserProfileRepository, UserProfileRepository>();
-    builder.Services.AddSingleton<IGardenRepository, GardenRepository>();
+
+    builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+    builder.Services.AddScoped<IGardenRepository, GardenRepository>();
 
     builder.Services.AddHttpClient<IAuth0AuthenticationApiClient, Auth0AuthenticationApiClient>();
     builder.Services.AddHttpClient<IAuth0ManagementApiClient, Auth0ManagementApiClient>();

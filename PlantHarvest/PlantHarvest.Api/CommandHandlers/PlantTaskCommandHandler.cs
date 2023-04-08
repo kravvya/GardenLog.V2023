@@ -56,6 +56,7 @@ public class PlantTaskCommandHandler : IPlantTaskCommandHandler
         catch (Exception ex)
         {
             _logger.LogCritical("Exception storing task.", ex);
+            throw;
         }
        
 

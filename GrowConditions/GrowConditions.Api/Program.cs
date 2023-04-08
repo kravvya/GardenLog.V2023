@@ -47,12 +47,13 @@ try
     builder.RegisterSwaggerForAuth("Grow Conditions Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
+    builder.Services.AddScoped<IUnitOfWork, MongoDBUnitOfWork>();
 
     builder.Services.AddHttpClient<IOpenWeatherApiClient, OpenWeatherApiClient>();
     builder.RegisterHttpClient<IUserManagementApiClient, UserManagementApiClient>();
 
-    builder.Services.AddSingleton<IWeatherRepository, WeatherRepository>();
+    builder.Services.AddScoped<IWeatherRepository, WeatherRepository>();
 
     builder.Services.AddScoped<IWeatherCommandHandler, WeatherCommandHandler>();
     builder.Services.AddScoped<IWeatherQueryHandler, WeatherQueryHandler>();

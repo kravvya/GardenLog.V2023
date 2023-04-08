@@ -57,10 +57,12 @@ try
     builder.RegisterSwaggerForAuth("Plant Catalog Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
+    builder.Services.AddScoped<IUnitOfWork, MongoDBUnitOfWork>();
 
-    builder.Services.AddSingleton<IPlantRepository, PlantRepository>();
-    builder.Services.AddSingleton<IPlantVarietyRepository, PlantVarietyRepository>();
+
+    builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+    builder.Services.AddScoped<IPlantVarietyRepository, PlantVarietyRepository>();
 
     builder.Services.AddScoped<IPlantCommandHandler, PlantCommandHandler>();
     builder.Services.AddScoped<IPlantQueryHandler, PlantQueryHandler>();

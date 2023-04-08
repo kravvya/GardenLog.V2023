@@ -110,6 +110,10 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(PlantTask)))
+        {
+            return;
+        }
 
         BsonClassMap.RegisterClassMap<PlantTask>(p =>
         {

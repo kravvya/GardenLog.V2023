@@ -26,10 +26,11 @@ try
     builder.RegisterSwaggerForAuth("Image Catalog Api");
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-    builder.Services.AddSingleton<IUnitOfWork, MongoDbContext>();
+    builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
+    builder.Services.AddScoped<IUnitOfWork, MongoDBUnitOfWork>();
 
     builder.Services.AddSingleton<IFileRepository, BlobRepository>();
-    builder.Services.AddSingleton<IImageRepository, ImageRepository>();
+    builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
     builder.Services.AddScoped<IImageQueryHandler, ImageQueryHandler>();
     builder.Services.AddScoped<IImageCommandHandler, ImageCommandHandler>();

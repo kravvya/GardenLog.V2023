@@ -22,6 +22,10 @@ public class UserProfileRepository : BaseRepository<UserProfile>, IUserProfileRe
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(UserProfile)))
+        {
+            return;
+        }
 
         BsonClassMap.RegisterClassMap<UserProfile>(p =>
         {

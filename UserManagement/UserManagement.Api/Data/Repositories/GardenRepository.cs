@@ -169,6 +169,10 @@ public class GardenRepository : BaseRepository<Garden>, IGardenRepository
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(Garden)))
+        {
+            return;
+        }
 
         BsonClassMap.RegisterClassMap<Garden>(p =>
         {

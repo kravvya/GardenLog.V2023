@@ -8,7 +8,13 @@ using MongoDB.Driver.Linq;
 
 namespace GardenLog.SharedInfrastructure.MongoDB;
 
-public class MongoDbContext : IUnitOfWork
+public interface IMongoDBContext
+{
+    T GetCollection<T, Y>(string collectionName);
+    Task<int> ApplyChangesAsync(List<Func<Task>> commands);
+}
+
+public class MongoDbContext : IMongoDBContext
 {
     private readonly ILogger<MongoDbContext> _logger;
 
@@ -17,7 +23,7 @@ public class MongoDbContext : IUnitOfWork
     protected MongoSettings? Settings { get; set; }
     protected IClientSessionHandle? Session { get; set; }
 
-    private readonly List<Func<Task>> _commands;
+   
 
     public MongoDbContext(IConfigurationService configurationService, ILogger<MongoDbContext> logger)
     {
@@ -29,13 +35,11 @@ public class MongoDbContext : IUnitOfWork
             _logger.LogCritical("Did not get MongoDB connection setting. ");
             throw new ArgumentNullException(nameof(configurationService));
         }
-        // Every command will be stored and it'll be processed at SaveChanges
-        _commands = new List<Func<Task>>();
 
         OnConfiguring();
     }
 
-    public void OnConfiguring()
+    private void OnConfiguring()
     {
         _logger.LogInformation("Got connection string. Start with {server}", Settings!.Server);
 
@@ -67,22 +71,10 @@ public class MongoDbContext : IUnitOfWork
     {
         return (T)Database!.GetCollection<Y>(collectionName);
     }
+     
 
-    public async Task<int> SaveChangesAsync()
+    public async Task<int> ApplyChangesAsync(List<Func<Task>> commands)
     {
-        int numberOfChanges = await ApplyChangesAsync(_commands);
-        _commands.Clear();
-        return numberOfChanges;
-    }
-
-    public void AddCommand(Func<Task> func)
-    {
-        _commands.Add(func);
-    }
-
-    private async Task<int> ApplyChangesAsync(List<Func<Task>> commands)
-    {
-
         using (Session = await MongoClient!.StartSessionAsync())
         {
             Session.StartTransaction();

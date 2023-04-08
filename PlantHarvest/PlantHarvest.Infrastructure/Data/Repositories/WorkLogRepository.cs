@@ -42,6 +42,10 @@ public class WorkLogRepository : BaseRepository<WorkLog>, IWorkLogRepository
 
     protected override void OnModelCreating()
     {
+        if (BsonClassMap.IsClassMapRegistered(typeof(WorkLog)))
+        {
+            return;
+        }
 
         BsonClassMap.RegisterClassMap<WorkLog>(p =>
         {
