@@ -16,10 +16,8 @@ namespace GardenLog.SharedInfrastructure.MongoDB
             _unitOfWork = unitOfWork;
 
             //It is very importent to register models before getting Collection. Run into issues, when get collection was automatically mapping documents. 
-            _logger.LogInformation("Setting up Mongo Context");
             OnModelCreating();
 
-            _logger.LogInformation("Setting up Mongo Context");
             Collection = GetCollection();
         }
 

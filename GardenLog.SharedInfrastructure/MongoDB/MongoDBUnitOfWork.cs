@@ -35,15 +35,15 @@ public class MongoDBUnitOfWork : IUnitOfWork
     {
         if (!string.IsNullOrWhiteSpace(_rootHandler))
         {
-            if (!string.IsNullOrWhiteSpace(handlerName) && handlerName == _rootHandler)
+            if (string.IsNullOrWhiteSpace(handlerName) || handlerName != _rootHandler)
             {
-                int numberOfChanges = await _context.ApplyChangesAsync(_commands);
-                _commands.Clear();
-                return numberOfChanges;
+                return 0;
             }
         }
 
-        return 0;
+        int numberOfChanges = await _context.ApplyChangesAsync(_commands);
+        _commands.Clear();
+        return numberOfChanges;
     }
 
     public void AddCommand(Func<Task> func)
@@ -56,6 +56,6 @@ public class MongoDBUnitOfWork : IUnitOfWork
         return _context.GetCollection<T, Y>(collectionName);
     }
 
-  
+
 }
 
