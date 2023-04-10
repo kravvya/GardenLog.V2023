@@ -40,7 +40,7 @@ public class PlantHarvestApiClient : IPlantHarvestApiClient
         var search = new PlantTaskSearch();
 
         if (pastDueOnly) search.IsPastDue = pastDueOnly;
-        else search.DueInNumberOfDays = 7;
+        else search.DueInNumberOfDays = 6;
 
         using var requestContent = search.ToJsonStringContent();
 
