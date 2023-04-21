@@ -108,7 +108,7 @@ jobs:
       uses: Azure/container-apps-deploy-action@v1
       with:
         containerAppName: ${{ env.CONTAINER_APP_CONTAINER_NAME }}
-        resourceGroup: ${{ secrets.RESOURCE_GROUP
+        resourceGroup: ${{ secrets.RESOURCE_GROUP }}
         acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         acrUsername: ${{ secrets.REGISTRY_USERNAME }}
         acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
