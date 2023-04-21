@@ -4,6 +4,7 @@ using GardenLog.SharedInfrastructure;
 using GardenLog.SharedInfrastructure.Extensions;
 using GardenLog.SharedInfrastructure.MongoDB;
 using GardenLog.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using PlantHarvest.Domain.WorkLogAggregate;
 using PlantHarvest.Infrastructure.ApiClients;
@@ -79,7 +80,7 @@ try
         options.AddGlWebPolicy();
     });
 
-    builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
     // 1. Add Authentication Services
     builder.RegisterForAuthentication();
