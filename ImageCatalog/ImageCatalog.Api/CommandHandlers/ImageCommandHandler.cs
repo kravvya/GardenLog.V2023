@@ -24,7 +24,7 @@ public class ImageCommandHandler : IImageCommandHandler
     {
         _logger.LogInformation("Received request to create a new image {@plant}", request);
 
-        var image = Image.Create(
+        var image = Model.Image.Create(
             request.ImageName,
             request.Label,
             request.RelatedEntityType,

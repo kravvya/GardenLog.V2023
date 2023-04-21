@@ -7,13 +7,13 @@ using MongoDB.Driver;
 
 namespace ImageCatalog.Api.Data;
 
-public interface IImageRepository : IRepository<Image>
+public interface IImageRepository : IRepository<Model.Image>
 {
     Task<IReadOnlyCollection<ImageViewModel>> GetImagesByRelatedEntitiesAsync(GetImagesByRelatedEntities request, string userProfileId);
     Task<IReadOnlyCollection<ImageViewModel>> GetImagesByRelatedEntityAsync(GetImagesByRelatedEntity request, string userProfileId);
 }
 
-public class ImageRepository : BaseRepository<Image>, IImageRepository
+public class ImageRepository : BaseRepository<Model.Image>, IImageRepository
 {
     private const string IMAGE_COLLECTION_NAME = "ImageCatalog-Collection";
     private readonly ILogger<ImageRepository> _logger;
@@ -47,25 +47,25 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
 
     private async Task<IReadOnlyCollection<ImageViewModel>> SearchForImages(RelatedEntityTypEnum relatedEntityType, string? relatedEntityId, string userFilter)
     {
-        List<FilterDefinition<Image>> filters = new();
+        List<FilterDefinition<Model.Image>> filters = new();
 
-        filters.Add(Builders<Image>.Filter.Eq("RelatedEntityType", relatedEntityType.ToString()));
+        filters.Add(Builders<Model.Image>.Filter.Eq("RelatedEntityType", relatedEntityType.ToString()));
 
         if (!string.IsNullOrWhiteSpace(userFilter))
         {
-            filters.Add(Builders<Image>.Filter.Eq("UserProfileId", userFilter));
+            filters.Add(Builders<Model.Image>.Filter.Eq("UserProfileId", userFilter));
         }
 
         if (!string.IsNullOrWhiteSpace(relatedEntityId))
         {
-            filters.Add(Builders<Image>.Filter.Eq("RelatedEntityId", relatedEntityId));
+            filters.Add(Builders<Model.Image>.Filter.Eq("RelatedEntityId", relatedEntityId));
         }
 
 
-        var filter = Builders<Image>.Filter.And(filters);
+        var filter = Builders<Model.Image>.Filter.And(filters);
 
         var data = await Collection
-          .Find<Image>(filter)
+          .Find<Model.Image>(filter)
           .As<ImageViewModel>()
           .ToListAsync();
 
@@ -73,9 +73,9 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
 
     }
 
-    protected override IMongoCollection<Image> GetCollection()
+    protected override IMongoCollection<Model.Image> GetCollection()
     {
-        return _unitOfWork.GetCollection<IMongoCollection<Image>, Image>(IMAGE_COLLECTION_NAME);
+        return _unitOfWork.GetCollection<IMongoCollection<Model.Image>, Model.Image>(IMAGE_COLLECTION_NAME);
     }
 
     protected override void OnModelCreating()
@@ -85,7 +85,7 @@ public class ImageRepository : BaseRepository<Image>, IImageRepository
             return;
         }
 
-        BsonClassMap.RegisterClassMap<Image>(p =>
+        BsonClassMap.RegisterClassMap<Model.Image>(p =>
         {
             p.AutoMap();
             //ignore elements not int he document 

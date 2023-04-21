@@ -4,7 +4,7 @@ global using GardenLog.SharedKernel;
 global using GardenLog.SharedKernel.Enum;
 global using GardenLog.SharedKernel.Interfaces;
 global using ImageCatalog.Api.Data;
-global using ImageCatalog.Api.Model;
+global using Model = ImageCatalog.Api.Model;
 global using ImageCatalog.Api.Model.Enum;
 global using ImageCatalog.Api.Model.Meta;
 global using ImageCatalog.Api.Services;
