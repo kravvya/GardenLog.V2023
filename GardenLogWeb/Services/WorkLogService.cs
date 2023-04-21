@@ -138,7 +138,7 @@ public class WorkLogService : IWorkLogService
 
         var url = HarvestRoutes.GetWorkLogs.Replace("{entityType}", entityType.ToString()).Replace("{entityId}", entityId);
 
-        var response = await httpClient.ApiGetAsync<List<WorkLogModel>>(url);
+        var response = await httpClient.ApiGetAsync<List<WorkLogModel>>(url, _logger);
 
         if (!response.IsSuccess)
         {

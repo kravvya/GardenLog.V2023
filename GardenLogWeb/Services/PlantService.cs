@@ -145,7 +145,7 @@ public class PlantService : IPlantService
         {
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-            var response = await httpClient.ApiGetAsync<PlantModel>(Routes.GetPlantById.Replace("{id}", plantId));
+            var response = await httpClient.ApiGetAsync<PlantModel>(Routes.GetPlantById.Replace("{id}", plantId), _logger);
 
             if (!response.IsSuccess)
             {
@@ -462,7 +462,7 @@ public class PlantService : IPlantService
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
             var url = Routes.GetPlantGrowInstructions.Replace("{plantId}", plantId);
 
-            var response = await httpClient.ApiGetAsync<List<PlantGrowInstructionViewModel>>(url);
+            var response = await httpClient.ApiGetAsync<List<PlantGrowInstructionViewModel>>(url, _logger);
 
             if (!response.IsSuccess)
             {
@@ -493,7 +493,7 @@ public class PlantService : IPlantService
 
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<PlantGrowInstructionViewModel>(route);
+        var response = await httpClient.ApiGetAsync<PlantGrowInstructionViewModel>(route, _logger);
 
         if (!response.IsSuccess)
         {
@@ -592,7 +592,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantModel>>(Routes.GetAllPlants);
+        var response = await httpClient.ApiGetAsync<List<PlantModel>>(Routes.GetAllPlants, _logger);
 
         if (!response.IsSuccess)
         {
@@ -607,7 +607,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantNameModel>>(Routes.GetAllPlantNames);
+        var response = await httpClient.ApiGetAsync<List<PlantNameModel>>(Routes.GetAllPlantNames, _logger);
 
         if (!response.IsSuccess)
         {
@@ -701,7 +701,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetAllPlantVarieties);
+        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetAllPlantVarieties, _logger);
 
         if (!response.IsSuccess)
         {
@@ -718,7 +718,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetPlantVarieties.Replace("{plantId}", plantId));
+        var response = await httpClient.ApiGetAsync<List<PlantVarietyModel>>(Routes.GetPlantVarieties.Replace("{plantId}", plantId), _logger);
 
         if (!response.IsSuccess)
         {
@@ -733,7 +733,7 @@ public class PlantService : IPlantService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-        var response = await httpClient.ApiGetAsync<PlantVarietyModel>(Routes.GetPlantVariety.Replace("{plantId}", plantId).Replace("{id}", plantVerietyId));
+        var response = await httpClient.ApiGetAsync<PlantVarietyModel>(Routes.GetPlantVariety.Replace("{plantId}", plantId).Replace("{id}", plantVerietyId), _logger);
 
         if (!response.IsSuccess)
         {

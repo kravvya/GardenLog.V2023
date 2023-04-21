@@ -2,10 +2,11 @@ using Blazored.Toast;
 using FluentValidation;
 using GardenLogWeb;
 using GardenLogWeb.Services.Auth;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Polly;
+using Polly.Extensions.Http;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -60,7 +61,7 @@ else
     harvestServiceUrl = "https://localhost:44336/";
     userServiceUrl = "http://localhost:5212/";
 
-    serviceUrl = "https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
+    //serviceUrl = "https://plantcatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
     imageServiceUrl = "https://imagecatalogapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
     harvestServiceUrl = "https://plantharvestapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io/";
     userServiceUrl = "https://usermanagementapi-containerapp.politecoast-efa2ff8d.eastus.azurecontainerapps.io";
@@ -77,19 +78,38 @@ else
     }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(); //this is needed to parse roles from array to individual roles
 };
 
+var retryPolicy = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .WaitAndRetryAsync(new[]
+        {
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromSeconds(5),
+            TimeSpan.FromSeconds(10)
+        },
+        onRetry: (outcome, timespan, retryAttempt, context) =>
+        {
+            context.GetLogger()?.LogWarning("Delaying for {delay}ms, then making retry {retry}.", timespan.TotalMilliseconds, retryAttempt);
+        }
+    );
+
 builder.Services.AddHttpClient(GlobalConstants.PLANTCATALOG_API, client => client.BaseAddress = new Uri(serviceUrl))
                                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
-                                .ConfigureHandler(authorizedUrls: new[] { serviceUrl }));
+                                .ConfigureHandler(authorizedUrls: new[] { serviceUrl }))
+                                .AddPolicyHandler(retryPolicy);
 builder.Services.AddHttpClient(GlobalConstants.IMAGEPLANTCATALOG_API, client => client.BaseAddress = new Uri(imageServiceUrl))
                                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
-                                .ConfigureHandler(authorizedUrls: new[] { imageServiceUrl }));
+                                .ConfigureHandler(authorizedUrls: new[] { imageServiceUrl }))
+                                .AddPolicyHandler(retryPolicy);
 builder.Services.AddHttpClient(GlobalConstants.PLANTHARVEST_API, client => client.BaseAddress = new Uri(harvestServiceUrl))
                                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
-                                .ConfigureHandler(authorizedUrls: new[] { harvestServiceUrl }));
+                                .ConfigureHandler(authorizedUrls: new[] { harvestServiceUrl }))
+                                .AddPolicyHandler(retryPolicy);
 builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_API, client => client.BaseAddress = new Uri(userServiceUrl))
                                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
-                                .ConfigureHandler(authorizedUrls: new[] { userServiceUrl }));
-builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_NO_AUTH, client => client.BaseAddress = new Uri(userServiceUrl));
+                                .ConfigureHandler(authorizedUrls: new[] { userServiceUrl }))
+                                .AddPolicyHandler(retryPolicy);
+builder.Services.AddHttpClient(GlobalConstants.USERMANAGEMENT_NO_AUTH, client => client.BaseAddress = new Uri(userServiceUrl))
+                                .AddPolicyHandler(retryPolicy); 
 
 builder.Services.AddValidatorsFromAssemblyContaining<PlantViewModelValidator>();
 

@@ -68,7 +68,7 @@ public class PlantTaskService : IPlantTaskService
 
         else
         {
-            _logger.LogInformation($"Active tasks are in cache. Found {tasks!.Count}");
+            _logger.LogInformation("Active tasks are in cache. Found {@count}", tasks!.Count);
         }
 
         return tasks;
@@ -153,7 +153,7 @@ public class PlantTaskService : IPlantTaskService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiGetAsync<long>(HarvestRoutes.GetCompleteTaskCount.Replace("{harvestId}", harvestCycleId));
+        var response = await httpClient.ApiGetAsync<long>(HarvestRoutes.GetCompleteTaskCount.Replace("{harvestId}", harvestCycleId), _logger);
 
         if (!response.IsSuccess)
         {
@@ -171,7 +171,7 @@ public class PlantTaskService : IPlantTaskService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantTaskModel>>(HarvestRoutes.GetTasks);
+        var response = await httpClient.ApiGetAsync<List<PlantTaskModel>>(HarvestRoutes.GetTasks, _logger);
 
         if (!response.IsSuccess)
         {
@@ -186,7 +186,7 @@ public class PlantTaskService : IPlantTaskService
     {
         var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTHARVEST_API);
 
-        var response = await httpClient.ApiGetAsync<List<PlantTaskModel>>(HarvestRoutes.GetActiveTasks);
+        var response = await httpClient.ApiGetAsync<List<PlantTaskModel>>(HarvestRoutes.GetActiveTasks, _logger);
 
         if (!response.IsSuccess)
         {

@@ -104,7 +104,7 @@ namespace GardenLogWeb.Services
             {
                 var httpClient = _httpClientFactory.CreateClient(GlobalConstants.PLANTCATALOG_API);
 
-                var response = await httpClient.ApiGetAsync<GardenModel>(GardenRoutes.GetGarden.Replace("{gardenId}", gardenId));
+                var response = await httpClient.ApiGetAsync<GardenModel>(GardenRoutes.GetGarden.Replace("{gardenId}", gardenId), _logger);
 
                 if (!response.IsSuccess)
                 {
@@ -202,7 +202,7 @@ namespace GardenLogWeb.Services
         #region Garden Bed Functions
         public async Task<List<GardenBedModel>> GetGardenBeds(string gardenId, bool useCache)
         {
-            List<GardenBedModel>? gardenBedList=null;
+            List<GardenBedModel>? gardenBedList = null;
 
             if (useCache)
             {
@@ -327,7 +327,7 @@ namespace GardenLogWeb.Services
 
             var url = GardenRoutes.GetGardens;
 
-            var response = await httpClient.ApiGetAsync<List<GardenModel>>(url);
+            var response = await httpClient.ApiGetAsync<List<GardenModel>>(url, _logger);
 
             if (!response.IsSuccess)
             {
@@ -398,7 +398,7 @@ namespace GardenLogWeb.Services
         {
             var httpClient = _httpClientFactory.CreateClient(GlobalConstants.USERMANAGEMENT_API);
 
-            var response = await httpClient.ApiGetAsync<List<GardenBedModel>>(GardenRoutes.GetGardenBeds.Replace("{gardenId}", gardenId));
+            var response = await httpClient.ApiGetAsync<List<GardenBedModel>>(GardenRoutes.GetGardenBeds.Replace("{gardenId}", gardenId), _logger);
 
             if (!response.IsSuccess)
             {

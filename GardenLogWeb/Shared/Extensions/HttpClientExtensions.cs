@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.Extensions.Logging;
+using Polly;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
@@ -13,10 +15,14 @@ public static class HttpClientExtensions
         OPTIONS.Converters.Add(new JsonStringEnumConverter());
     }
 
-    public static async Task<ApiObjectResponse<TObject>> ApiGetAsync<TObject>(this HttpClient httpClient, string requestUri)
+    public static async Task<ApiObjectResponse<TObject>> ApiGetAsync<TObject>(this HttpClient httpClient, string requestUri, ILogger logger)
         where TObject : new()
     {
-        var result = await httpClient.GetAsync(requestUri);
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        var context = new Polly.Context().WithLogger(logger);
+        request.SetPolicyExecutionContext(context);
+
+        var result = await httpClient.SendAsync(request);
 
         return await ProcessHttpResponse<TObject>(result);
 
@@ -74,9 +80,10 @@ public static class HttpClientExtensions
 
     private static async Task<ApiObjectResponse<TObject>> ProcessHttpResponse<TObject>(HttpResponseMessage result)
     {
-        ApiObjectResponse<TObject> response = new();
-
-        response.StatusCode = result.StatusCode;
+        ApiObjectResponse<TObject> response = new()
+        {
+            StatusCode = result.StatusCode
+        };
 
         if (result.IsSuccessStatusCode && !typeof(TObject).ToString().Equals("System.String"))
         {            

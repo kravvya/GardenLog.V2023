@@ -107,7 +107,7 @@ public class UserProfileService : IUserProfileService
 
         var url = UserProfileRoutes.GetUserProfile;
 
-        var response = await httpClient.ApiGetAsync<UserProfileModel>(url);
+        var response = await httpClient.ApiGetAsync<UserProfileModel>(url, _logger);
 
         if (!response.IsSuccess)
         {
