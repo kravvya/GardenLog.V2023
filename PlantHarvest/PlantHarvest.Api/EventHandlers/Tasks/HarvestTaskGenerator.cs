@@ -98,6 +98,9 @@ public class HarvestTaskGenerator : INotificationHandler<HarvestEvent>
             daysToMaturityMax = plant.DaysToMaturityMax.Value;
         }
 
+        //if we do not know when plant is going to mature - avoid crating Harvest task.
+        if(daysToMaturityMin <= 0 &&  daysToMaturityMax <= 0) {  return; }
+
         var firstHarvestDate = plantHarvest.TransplantDate.Value.AddDays(daysToMaturityMin);
         var schedule = plantHarvest.PlantCalendar.FirstOrDefault(s => s.TaskType == WorkLogReasonEnum.Harvest);
 

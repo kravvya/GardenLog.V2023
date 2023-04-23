@@ -322,9 +322,13 @@
 
             if (_plantHarvest != null && _growInstructions?.Count > 0)
             {
-                var growIntructionId = _growInstructions.First().PlantGrowInstructionId;
-                _plantHarvest.PlantGrowthInstructionId = growIntructionId;
-                ReloadGrowOptions(new ChangeEventArgs() { Value = growIntructionId });
+                //if we are in edit mode and there is already Grow instruction selected. Do not overwrite with first default option
+                if(_plantHarvest.PlantGrowthInstructionId == null)
+                {
+                    _plantHarvest.PlantGrowthInstructionId = _growInstructions.First().PlantGrowInstructionId;
+                }
+               
+                ReloadGrowOptions(new ChangeEventArgs() { Value = _plantHarvest.PlantGrowthInstructionId });
             }
         }
         StateHasChanged();
