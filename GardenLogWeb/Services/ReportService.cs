@@ -35,8 +35,8 @@ public class ReportService : IReportService
         ws.Cell(1, 2).Value = "Variety";
         ws.Cell(1, 3).Value = "Garden Location";
         ws.Cell(1, 4).Value = "Qty";
-        ws.Cell(1, 5).Value = "PLant Start Date";
-        ws.Cell(1, 6).Value = "PLant End Date";
+        ws.Cell(1, 5).Value = "Plant Start Date";
+        ws.Cell(1, 6).Value = "Plant End Date";
 
         ws.Cell(1, 1).Style.Font.Bold = true;
         ws.Cell(1, 2).Style.Font.Bold = true;

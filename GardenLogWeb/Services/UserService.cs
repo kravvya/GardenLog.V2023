@@ -2,7 +2,7 @@
 
 public interface IUserProfileService
 {
-    Task<UserProfileModel> GetUserProfile( bool forceRefresh);
+    Task<UserProfileModel> GetUserProfile(bool forceRefresh);
     Task<ApiObjectResponse<string>> CreateUserProfile(UserProfileModel workModel);
     Task<ApiResponse> UpdateUserProfile(UserProfileModel workModel);
 }
@@ -13,15 +13,16 @@ public class UserProfileService : IUserProfileService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ICacheService _cacheService;
     private readonly IGardenLogToastService _toastService;
-    private const int CACHE_DURATION = 10;
+    private readonly int _cacheDuration;
     private const string USER_KEY = "UserProfile";
 
-    public UserProfileService(ILogger<UserProfileService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService)
+    public UserProfileService(ILogger<UserProfileService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IConfiguration configuration)
     {
         _logger = logger;
         _httpClientFactory = clientFactory;
         _cacheService = cacheService;
         _toastService = toastService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     #region Public User Functions
@@ -37,7 +38,7 @@ public class UserProfileService : IUserProfileService
             user = await GetUserProfile();
 
             // Save data in cache.
-            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(_cacheDuration));
         }
         else
         {
@@ -65,7 +66,7 @@ public class UserProfileService : IUserProfileService
         {
             user.UserProfileId = response.Response!;
 
-            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(_cacheDuration));
 
             _toastService.ShowToast($"User Profile saved", GardenLogToastLevel.Success);
         }
@@ -89,7 +90,7 @@ public class UserProfileService : IUserProfileService
         }
         else
         {
-            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(USER_KEY, user, DateTime.Now.AddMinutes(_cacheDuration));
 
             _toastService.ShowToast($"User Profile successfully saved.", GardenLogToastLevel.Success);
         }

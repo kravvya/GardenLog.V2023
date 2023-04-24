@@ -18,16 +18,17 @@ public class PlantTaskService : IPlantTaskService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ICacheService _cacheService;
     private readonly IGardenLogToastService _toastService;
-    private const int CACHE_DURATION = 1;
+    private readonly int _cacheDuration;
     private const string PLANT_TASK_KEY = "PlantTasks";
     private const string PLANT_ACTIVE_TASK_KEY = "ActivePlantTasks";
 
-    public PlantTaskService(ILogger<PlantTaskService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService)
+    public PlantTaskService(ILogger<PlantTaskService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IConfiguration configuration)
     {
         _logger = logger;
         _httpClientFactory = clientFactory;
         _cacheService = cacheService;
         _toastService = toastService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     #region Public Plant Task Functions
@@ -42,7 +43,7 @@ public class PlantTaskService : IPlantTaskService
             tasks = await GetPlantTasks();
 
             // Save data in cache.
-            _cacheService.Set(PLANT_TASK_KEY, tasks, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(PLANT_TASK_KEY, tasks, DateTime.Now.AddMinutes(_cacheDuration));
         }
 
         else
@@ -63,7 +64,7 @@ public class PlantTaskService : IPlantTaskService
             tasks = await GetActivePlantTasks();
 
             // Save data in cache.
-            _cacheService.Set(PLANT_ACTIVE_TASK_KEY, tasks, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(PLANT_ACTIVE_TASK_KEY, tasks, DateTime.Now.AddMinutes(_cacheDuration));
         }
 
         else

@@ -25,17 +25,18 @@ namespace GardenLogWeb.Services
         private readonly IGardenLogToastService _toastService;
         private readonly IImageService _imageService;
 
-        private const int CACHE_DURATION = 10;
+        private readonly int _cacheDuration = 10;
         private const string GARDENS_KEY = "Gardens";
         private const string GARDEN_BED_KEY = "Garden_{0}_Bed";
 
-        public GardenService(ILogger<GardenService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService)
+        public GardenService(ILogger<GardenService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService, IConfiguration configuration)
         {
             _logger = logger;
             _httpClientFactory = clientFactory;
             _cacheService = cacheService;
             _toastService = toastService;
             _imageService = imageService;
+            if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
         }
 
         #region Garden Functions
@@ -77,7 +78,7 @@ namespace GardenLogWeb.Services
                     }
 
                     // Save data in cache.
-                    _cacheService.Set(GARDENS_KEY, gardens, DateTime.Now.AddMinutes(CACHE_DURATION));
+                    _cacheService.Set(GARDENS_KEY, gardens, DateTime.Now.AddMinutes(_cacheDuration));
                 }
 
             }

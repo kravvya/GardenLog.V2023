@@ -18,16 +18,17 @@ public class WorkLogService : IWorkLogService
     private readonly ICacheService _cacheService;
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
-    private const int CACHE_DURATION = 10;
+    private readonly int _cacheDuration;
     private const string WORK_LOG_KEY = "WorkLogs_{0}_{1}";
 
-    public WorkLogService(ILogger<WorkLogService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService)
+    public WorkLogService(ILogger<WorkLogService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService, IConfiguration configuration)
     {
         _logger = logger;
         _httpClientFactory = clientFactory;
         _cacheService = cacheService;
         _toastService = toastService;
         _imageService = imageService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     #region Public Work Log Functions
@@ -43,7 +44,7 @@ public class WorkLogService : IWorkLogService
             workLogs = await GetWorkLogs(entityType, entityId);
 
             // Save data in cache.
-            _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(_cacheDuration));
         }
 
         else
@@ -167,7 +168,7 @@ public class WorkLogService : IWorkLogService
             else
             {
                 workLogs = new List<WorkLogModel>();
-                _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(CACHE_DURATION));
+                _cacheService.Set(key, workLogs, DateTime.Now.AddMinutes(_cacheDuration));
             }
             workLogs.Add(workLog);
         }

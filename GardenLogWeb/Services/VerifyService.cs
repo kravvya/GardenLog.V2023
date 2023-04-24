@@ -16,10 +16,12 @@ public class VerifyService : IVerifyService
     private const string KEY_TEMPLATE = "Verify_{0}";
     private const string COLOR_KEY = "Colors";
     private readonly ICacheService _cacheService;
+    private readonly int _cacheDuration;
 
-    public VerifyService(ICacheService cacheService)
+    public VerifyService(ICacheService cacheService, IConfiguration configuration)
     {
         _cacheService = cacheService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     public IReadOnlyCollection<KeyValuePair<string, string>> GetCodeList<TENUM>(bool excludeDefault) where TENUM: Enum
@@ -62,7 +64,7 @@ public class VerifyService : IVerifyService
             };
 
             // Save data in cache.
-            _cacheService.Set(COLOR_KEY, colors, DateTime.Now.AddMinutes(10));
+            _cacheService.Set(COLOR_KEY, colors, DateTime.Now.AddMinutes(_cacheDuration));
         }
 
         return colors!;
