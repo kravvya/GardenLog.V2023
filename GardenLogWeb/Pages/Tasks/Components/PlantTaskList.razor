@@ -288,8 +288,13 @@
         switch (task.Type)
         {
             case WorkLogReasonEnum.FertilizeIndoors:
+            case WorkLogReasonEnum.FertilizeOutside:
                 _workLogForm.Initialize(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
                 await _workLogFormModal.OpenModal("Add new note", GlobalConstants.ModalFormColor);
+                break;
+            case WorkLogReasonEnum.Harden:
+                _workLogForm.Initialize(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
+                await _workLogFormModal.OpenModal("Harden Off", GlobalConstants.ModalFormColor);
                 break;
             default:
                 _plantHarvestMiniForm.Initialize(task.HarvestCycleId, task.PlantHarvestCycleId, task.Type);
