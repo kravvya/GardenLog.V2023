@@ -86,8 +86,6 @@ try
     // 1. Add Authentication Services
     builder.RegisterForAuthentication();
 
-    //TODO Add Healthchecks!!!!
-
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
