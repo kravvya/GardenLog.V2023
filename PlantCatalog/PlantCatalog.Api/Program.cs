@@ -55,6 +55,7 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.RegisterSwaggerForAuth("Plant Catalog Api");
+    builder.Services.AddBasicHealthChecks();
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
@@ -83,8 +84,6 @@ try
     // 1. Add Authentication Services
     builder.RegisterForAuthentication();
 
-    //TODO Add Healthchecks!!!!
-
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -92,6 +91,7 @@ try
 
     //Aapp Container ingress is EntityHandling HTTPs redirects. This is not needed.
     //app.UseHttpsRedirection();
+    app.UseKubernetesHealthChecks();
 
     //// 2. Enable authentication middleware
     app.UseAuthentication();
