@@ -40,5 +40,10 @@ public static class HealthCheckExtensions
              new HealthCheckOptions
              {
                  Predicate = x => x.Tags.Contains("liveness")
+             })
+             .UseHealthChecks("/",
+             new HealthCheckOptions
+             {
+                 Predicate = x => x.Tags.Contains("liveness")
              });
 }
