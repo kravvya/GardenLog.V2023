@@ -51,6 +51,7 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.RegisterSwaggerForAuth("User Management Api");
+    builder.Services.AddBasicHealthChecks();
 
     builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
     builder.Services.AddSingleton<IMongoDBContext, MongoDbContext>();
@@ -91,6 +92,8 @@ try
 
     // Configure the HTTP request pipeline.
     app.UseSwaggerForAuth(app.Services.GetRequiredService<IConfigurationService>());
+
+    app.UseKubernetesHealthChecks();
 
     // 2. Enable authentication middleware
     app.UseAuthentication();
