@@ -2,6 +2,7 @@
 @inject IPlantService _plantService;
 @inject IHarvestCycleService _harvestService;
 @inject IGardenService _gardenService;
+@inject ICacheService _cacheService;
 @inject ILogger<PlantHarvestList> _logger;
 
 @inject NavigationManager _navigationManager;
@@ -164,6 +165,7 @@
     private bool _collapseNavMenu = true;
     private string _filterCssClass = "d-none d-md-block";
     private string _filterTtile = "Show Filters";
+    private string _filterCacheKey = "PlantHarvestFilter";
 
 
     protected PlantHarvestFilter _filter { get; set; } = new();
@@ -234,15 +236,20 @@
         _filteredHarvestPlants = _harvestPlants;
 
         //_filter = new PlantHarvestFilter();
-
-        _filter.ModelChanged += FilterChanged!;
+        if (_cacheService.TryGetValue(_filterCacheKey, out PlantHarvestFilter? filter))
+        {
+            _filter = filter!;
+            FilterChanged(this, new EventArgs());
+            _cacheService.Remove(_filterCacheKey);
+        }
+        _filter!.ModelChanged += FilterChanged!;
 
         _harvest = harvest;
         StateHasChanged();
     }
 
     private async Task CloseImageFormModal()
-    {        
+    {
         await _imageFormModal!.CloseModal();
         StateHasChanged();
     }
@@ -296,12 +303,13 @@
 
     private void EditPlantHarvest(PlantHarvestCycleModel plant)
     {
+        _cacheService.Set(_filterCacheKey, _filter);
         _navigationManager.NavigateToGardenPlanEditPlant(plant.HarvestCycleId, plant.PlantHarvestCycleId);
     }
 
     private void AddPlantToHarvest()
     {
-        if (_harvest!=null)
+        if (_harvest != null)
             _navigationManager.NavigateToGardenPlanAddPlant(_harvest.HarvestCycleId);
     }
 
@@ -344,6 +352,7 @@
 
         _filterDescription = description.ToString();
         _filteredHarvestPlants = harvestPlants;
+              
         base.StateHasChanged();
     }
 
@@ -355,15 +364,15 @@
 
         if (harvestPlant.GardenBedLayout.Count > 2) return "Multiple locations";
 
-        foreach(var bed in harvestPlant.GardenBedLayout)
+        foreach (var bed in harvestPlant.GardenBedLayout)
         {
             var location = _gardenBeds.FirstOrDefault(b => b.GardenBedId == bed.GardenBedId);
-            if(location!=null)
+            if (location != null)
             {
                 if (sb.Length > 0) sb.Append(",");
 
                 sb.AppendLine(location.Name);
-            }            
+            }
         }
 
         return sb.ToString();
@@ -371,12 +380,13 @@
 
     private void ViewPlantHarvestLogs(PlantHarvestCycleModel harvest)
     {
+        _cacheService.Set(_filterCacheKey, _filter);
         _navigationManager.NavigateToGardenPlanWorkLogsForPlant(harvest.HarvestCycleId, harvest.PlantHarvestCycleId);
     }
 
     public void Dispose()
-    {
-         _filter.ModelChanged -= FilterChanged!;
+    {        
+        _filter.ModelChanged -= FilterChanged!;
     }
 
 }

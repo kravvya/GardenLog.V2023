@@ -5,6 +5,7 @@ public interface ICacheService
     TItem Set<TItem>(object key, TItem value);
     TItem Set<TItem>(object key, TItem value, DateTime expireAfter);
     bool TryGetValue<TItem>(object key, out TItem? value);
+    bool Remove(object key);
 }
 
 public class CacheService : ICacheService
@@ -56,6 +57,11 @@ public class CacheService : ICacheService
             _cache.Add(key, new CacheItem(value, expireAfter));
         }
         return value;
+    }
+
+    public bool Remove(object key)
+    {
+        return _cache.Remove(key);
     }
 
     private record CacheItem(object Item, DateTime? ExporeAfter);
