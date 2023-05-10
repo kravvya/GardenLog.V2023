@@ -148,9 +148,11 @@ public class PlantTaskRepository : BaseRepository<PlantTask>, IPlantTaskReposito
         BsonClassMap.RegisterClassMap<PlantTaskViewModel>(p =>
         {
             p.AutoMap();
+            p.MapIdField(m => m.PlantTaskId);
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.PlantTaskId).SetElementName("_id");
+            //p.MapMember(m => m.PlantTaskId).SetElementName("_id");
+            p.MapIdField(m =>  m.PlantTaskId);
         });
     }
 
