@@ -23,7 +23,7 @@ internal class PlantsHelper
             StartSeedWeeksAheadOfWeatherCondition = 15,
             StartSeedWeeksRange = 1,
             StartSeedAheadOfWeatherCondition = WeatherConditionEnum.BeforeLastFrost,
-            FertilizeFrequencyForSeedlingsInWeeks = 2,
+            FertilizerFrequencyForSeedlingsInWeeks = 2,
             FertilizerForSeedlings = FertilizerEnum.HalfBalanced,
 
             DaysToSproutMin = 7,

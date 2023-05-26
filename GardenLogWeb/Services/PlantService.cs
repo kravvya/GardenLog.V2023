@@ -36,6 +36,7 @@ public class PlantService : IPlantService
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
 
+    private readonly int _cacheDuration;
     private readonly Random _random = new();
     private const string PLANTS_KEY = "Plants";
     private const string PLANT_NAMES_KEY = "PlantNames";
@@ -43,13 +44,14 @@ public class PlantService : IPlantService
     private const string PLANT_GROW_INSTRUCTION_KEY = "Plant_{0}_GrowInstruction";
 
 
-    public PlantService(ILogger<PlantService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService _toastService, IImageService imageService)
+    public PlantService(ILogger<PlantService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService _toastService, IImageService imageService, IConfiguration configuration)
     {
         _logger = logger;
         _httpClientFactory = clientFactory;
         _cacheService = cacheService;
         this._toastService = _toastService;
         _imageService = imageService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     #region Public Plant Functions
@@ -98,7 +100,7 @@ public class PlantService : IPlantService
                 }
 
                 // Save data in cache.
-                _cacheService.Set(PLANTS_KEY, plants, DateTime.Now.AddMinutes(10));
+                _cacheService.Set(PLANTS_KEY, plants, DateTime.Now.AddMinutes(_cacheDuration));
             }
         }
 
@@ -120,7 +122,7 @@ public class PlantService : IPlantService
             plantNames = await GetAllPlantNames();
 
             // Save data in cache.
-            _cacheService.Set(PLANT_NAMES_KEY, plantNames, DateTime.Now.AddMinutes(10));
+            _cacheService.Set(PLANT_NAMES_KEY, plantNames, DateTime.Now.AddMinutes(_cacheDuration));
         }
         else
         {
@@ -775,7 +777,7 @@ public class PlantService : IPlantService
     {
         string cacheKey = string.Format(PLANT_VARIETY_KEY, plantId);
 
-        _cacheService.Set(cacheKey, plantVarietyList, DateTime.Now.AddMinutes(10));
+        _cacheService.Set(cacheKey, plantVarietyList, DateTime.Now.AddMinutes(_cacheDuration));
     }
 
     private void RemoveFromPlantVarietyList(string plantId, string plantVarietyId)
@@ -824,7 +826,7 @@ public class PlantService : IPlantService
     {
         string cacheKey = string.Format(PLANT_GROW_INSTRUCTION_KEY, plantId);
 
-        _cacheService.Set(cacheKey, plantGrowInstructions, DateTime.Now.AddMinutes(10));
+        _cacheService.Set(cacheKey, plantGrowInstructions, DateTime.Now.AddMinutes(_cacheDuration));
     }
 
     private void RemoveFromPlanGrowInstructionList(string plantId, string plantGrowInstructionId)

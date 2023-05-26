@@ -3,6 +3,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PlantHarvest.Api.EventHandlers.Tasks;
 using PlantHarvest.Domain.HarvestAggregate.Events;
 using PlantHarvest.Domain.WorkLogAggregate.Events;
 using PlantHarvest.Infrastructure.ApiClients;
@@ -239,6 +240,79 @@ public class TaskGeneratorsShould
 
     #endregion
 
+    #region "Harden off"
+    [Fact]
+    public async Task TaskGenerator_Creates_HardenOff_Task_When_PlantHarvest_Seeded()
+    {
+        var hardenOffTaskGenerator = new HardenOffTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _harvestQueryHandlerMock.Object, new Mock<ILogger<HardenOffTaskGenerator>>().Object);
+
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { SeedingDate = DateTime.Now, NumberOfSeeds = 100, PlantingMethod = Contract.Enum.PlantingMethodEnum.SeedIndoors, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleSeeded);
+
+        harvest.AddPlantSchedule(HarvestHelper.GetCommandToCreateSchedule(plantHarvestId, WorkLogReasonEnum.TransplantOutside));
+
+        await hardenOffTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.Harden)), Times.Once);
+
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Complete_HardenOff_Task_When_PlantHarvest_Is_Transplanted()
+    {
+        var hardenOffTaskGenerator = new HardenOffTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _harvestQueryHandlerMock.Object, new Mock<ILogger<HardenOffTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.UpdatePlantHarvestCycle(new UpdatePlantHarvestCycleCommand() { TransplantDate = DateTime.UtcNow, NumberOfTransplants = 50, SeedVendorName = "Good seeds", PlantHarvestCycleId = plantHarvestId });
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleTransplanted);
+
+        await hardenOffTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+
+        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(1));
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Deletes_HardenOff_Task_When_PlantHarvest_Removed()
+    {
+        var hardenOffTaskGenerator = new HardenOffTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _harvestQueryHandlerMock.Object, new Mock<ILogger<HardenOffTaskGenerator>>().Object);
+
+        var harvest = HarvestHelper.GetHarvestCycle();
+        var plantHarvestId = harvest.AddPlantHarvestCycle(HarvestHelper.GetCommandToCreatePlantHarvestCycle(Contract.Enum.PlantingMethodEnum.SeedIndoors));
+        harvest.DeletePlantHarvestCycle(plantHarvestId);
+        var evt = harvest.DomainEvents.First(e => ((HarvestEvent)e).Trigger == HarvestEventTriggerEnum.PlantHarvestCycleDeleted);
+
+        await hardenOffTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(1));
+    }
+
+    [Fact]
+    public async Task TaskGenerator_Complete_HardenOff_Task_When_WorkLog_HardenOff_CreateNewFertilizeTask()
+    {
+        var schedule = HarvestHelper.GetPlantScheduleViewModel(HarvestHelper.PLANT_HARVEST_CYCLE_ID, WorkLogReasonEnum.TransplantOutside, DateTime.Now.AddDays(90));
+        var plantHarvest = HarvestHelper.GetPlantHarvestCycleViewModel(Contract.Enum.PlantingMethodEnum.SeedIndoors, schedule);
+        plantHarvest.GerminationDate = DateTime.Now;
+
+        _harvestQueryHandlerMock.SetupGet(x => x.GetPlantHarvestCycle(It.IsAny<string>(), It.IsAny<string>()).Result).Returns(plantHarvest);
+
+        var hardenOffTaskGenerator = new HardenOffTaskGenerator(_taskCommandHandlerMock.Object, _taskQueryHandlerMock.Object, _harvestQueryHandlerMock.Object, new Mock<ILogger<HardenOffTaskGenerator>>().Object);
+
+        var workLog = HarvestHelper.GetWorkLog(HarvestHelper.HARVEST_CYCLE_ID, "Test Harvest", HarvestHelper.PLANT_HARVEST_CYCLE_ID, "Test Plant", WorkLogReasonEnum.Harden);
+
+        var evt = workLog.DomainEvents.First(e => ((WorkLogEvent)e).Work!.Reason == WorkLogReasonEnum.Harden);
+
+        await hardenOffTaskGenerator.Handle((WorkLogEvent)evt, new CancellationToken());
+
+        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Once);
+        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.Harden)), Times.Once);
+    }
+    #endregion
+
     #region "Transplant Outside"
     [Fact]
     public async Task TaskGenerator_Creates_TransplantOutside_Task_When_PlantHarvest_Seeded()
@@ -256,7 +330,6 @@ public class TaskGeneratorsShould
         await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
 
         _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.TransplantOutside)), Times.Once);
-        _taskCommandHandlerMock.Verify(t => t.CreatePlantTask(It.Is<CreatePlantTaskCommand>(c => c.Type == WorkLogReasonEnum.Harden)), Times.Once);
 
     }
 
@@ -277,7 +350,7 @@ public class TaskGeneratorsShould
         await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
 
 
-        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(2));
+        _taskCommandHandlerMock.Verify(t => t.CompletePlantTask(It.Is<UpdatePlantTaskCommand>(c => c.PlantTaskId == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(1));
     }
 
     [Fact]
@@ -292,7 +365,7 @@ public class TaskGeneratorsShould
 
         await tranplantOutsideTaskGenerator.Handle((HarvestEvent)evt, new CancellationToken());
 
-        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(2));
+        _taskCommandHandlerMock.Verify(t => t.DeletePlantTask(It.Is<string>(c => c == HarvestHelper.PLANT_TASK_ID)), Times.Exactly(1));
     }
     #endregion
 

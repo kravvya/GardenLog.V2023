@@ -102,8 +102,8 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
         //assume this is first time we are going to fertilize. So use germination date as a base. All subsequent fertilizations will be based onthe last fertilie event from WorkLog
         if (growInstruction != null)
         {
-            var firstFertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
-                                plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
+            var firstFertilizeDate = growInstruction.FertilizerFrequencyForSeedlingsInWeeks.HasValue ?
+                                plantHarvest.GerminationDate.Value.AddDays(7 * growInstruction.FertilizerFrequencyForSeedlingsInWeeks.Value) :
                                 plantHarvest.GerminationDate.Value.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
 
 
@@ -156,8 +156,8 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
         }
 
         //we just fertilized. So use worklog eventdate as a base. 
-        var fertilizeDate = growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue ?
-                            workLogEvent.Work.EventDateTime.AddDays(7 * growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value) :
+        var fertilizeDate = growInstruction.FertilizerFrequencyForSeedlingsInWeeks.HasValue ?
+                            workLogEvent.Work.EventDateTime.AddDays(7 * growInstruction.FertilizerFrequencyForSeedlingsInWeeks.Value) :
                             workLogEvent.Work.EventDateTime.AddDays(7 * GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks);
 
         //make sure that fertilization date is before projected transplant date
@@ -189,8 +189,8 @@ public class IndoorFertilizeTaskGenerator : INotificationHandler<HarvestEvent>, 
     {
         StringBuilder notes = new();
         notes.Append($"Fertilize with {growInstruction.FertilizerForSeedlings.GetDescription()} ");
-        if (growInstruction.FertilizeFrequencyForSeedlingsInWeeks.HasValue)
-            notes.Append($" every {growInstruction.FertilizeFrequencyForSeedlingsInWeeks.Value} weeks.");
+        if (growInstruction.FertilizerFrequencyForSeedlingsInWeeks.HasValue)
+            notes.Append($" every {growInstruction.FertilizerFrequencyForSeedlingsInWeeks.Value} weeks.");
         else
             notes.Append($" every {GlobalConstants.DEFAULT_FertilizeFrequencyForSeedlingsInWeeks} weeks.");
         return notes.ToString();

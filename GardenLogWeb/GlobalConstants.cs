@@ -36,5 +36,7 @@ public static class GlobalConstants
     public const string ROLE_WRITE_GROW_INSTRUCTIONS = "write:grow-instructions";
 
     public const string ModalFormColor = "#A0C136";
+
+    public const string GLOBAL_CACHE_DURATION = "Cache:Duration";
 }
 

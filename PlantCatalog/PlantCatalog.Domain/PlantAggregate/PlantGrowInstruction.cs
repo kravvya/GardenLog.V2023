@@ -69,7 +69,7 @@ public class PlantGrowInstruction : BaseEntity
             FertilizerAtPlanting = command.FertilizerAtPlanting,
             FertilizerForSeedlings = command.FertilizerForSeedlings,
             Fertilizer = command.Fertilizer,
-            FertilizerFrequencyForSeedlingsInWeeks = command.FertilizeFrequencyForSeedlingsInWeeks,
+            FertilizerFrequencyForSeedlingsInWeeks = command.FertilizerFrequencyForSeedlingsInWeeks,
             FertilizeFrequencyInWeeks = command.FertilizeFrequencyInWeeks,
             DaysToSproutMin = command.DaysToSproutMin,
             DaysToSproutMax = command.DaysToSproutMax,
@@ -101,7 +101,7 @@ public class PlantGrowInstruction : BaseEntity
         Set<FertilizerEnum>(() => this.FertilizerAtPlanting, command.FertilizerAtPlanting);
         Set<FertilizerEnum>(() => this.FertilizerForSeedlings, command.FertilizerForSeedlings);
         Set<FertilizerEnum>(() => this.Fertilizer, command.Fertilizer);
-        Set<int?>(() => this.FertilizerFrequencyForSeedlingsInWeeks, command.FertilizeFrequencyForSeedlingsInWeeks);
+        Set<int?>(() => this.FertilizerFrequencyForSeedlingsInWeeks, command.FertilizerFrequencyForSeedlingsInWeeks);
         Set<int?>(() => this.FertilizeFrequencyInWeeks, command.FertilizeFrequencyInWeeks);
         Set<int?>(() => this.DaysToSproutMin, command.DaysToSproutMin);
         Set<int?>(() => this.DaysToSproutMax, command.DaysToSproutMax);

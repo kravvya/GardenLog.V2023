@@ -33,11 +33,11 @@ public class HarvestCycleService : IHarvestCycleService
     private readonly IGardenLogToastService _toastService;
     private readonly IImageService _imageService;
     private readonly IGardenService _gardenService;
-    private const int CACHE_DURATION = 10;
+    private readonly int _cacheDuration;
     private const string HARVESTS_KEY = "HarvestCycles";
     private const string PLANT_HARVESTS_KEY = "PlantHarvestCycles_{0}";
 
-    public HarvestCycleService(ILogger<PlantService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService, IGardenService gardenService)
+    public HarvestCycleService(ILogger<PlantService> logger, IHttpClientFactory clientFactory, ICacheService cacheService, IGardenLogToastService toastService, IImageService imageService, IGardenService gardenService, IConfiguration configuration)
     {
         _logger = logger;
         _httpClientFactory = clientFactory;
@@ -45,6 +45,7 @@ public class HarvestCycleService : IHarvestCycleService
         _toastService = toastService;
         _imageService = imageService;
         _gardenService = gardenService;
+        if (!int.TryParse(configuration[GlobalConstants.GLOBAL_CACHE_DURATION], out _cacheDuration)) _cacheDuration = 10;
     }
 
     #region Public Harvest Cycle Functions
@@ -88,7 +89,7 @@ public class HarvestCycleService : IHarvestCycleService
                     }
                 }
                 // Save data in cache.
-                _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
+                _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(_cacheDuration));
             }
         }
         else
@@ -290,7 +291,7 @@ public class HarvestCycleService : IHarvestCycleService
                     });
                 }
                 // Save data in cache.
-                _cacheService.Set(key, plants, DateTime.Now.AddMinutes(CACHE_DURATION));
+                _cacheService.Set(key, plants, DateTime.Now.AddMinutes(_cacheDuration));
             }
         }
         else
@@ -467,7 +468,7 @@ public class HarvestCycleService : IHarvestCycleService
         else
         {
             harvests = new List<HarvestCycleModel>();
-            _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(CACHE_DURATION));
+            _cacheService.Set(HARVESTS_KEY, harvests, DateTime.Now.AddMinutes(_cacheDuration));
         }
         harvests.Add(harvest);
 

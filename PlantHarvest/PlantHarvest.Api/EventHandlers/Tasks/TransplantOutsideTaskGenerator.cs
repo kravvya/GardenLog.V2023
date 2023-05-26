@@ -56,37 +56,12 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
                 });
             };
         }
-
-        tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plantHarvest.Id, Reason = WorkLogReasonEnum.Harden });
-        if (tasks != null && tasks.Any())
-        {
-            foreach (var task in tasks)
-            {
-                await _taskCommandHandler.CompletePlantTask(new UpdatePlantTaskCommand()
-                {
-                    PlantTaskId = task.PlantTaskId,
-                    CompletedDateTime = plantHarvest.TransplantDate.HasValue?plantHarvest.TransplantDate.Value:DateTime.Now,
-                    Notes = task.Notes,
-                    TargetDateEnd = task.TargetDateEnd,
-                    TargetDateStart = task.TargetDateStart
-                });
-            };
-        }
     }
 
     private async Task DeleteTransplantOutsideTask(HarvestEvent harvestEvent)
     {
         var plant = harvestEvent.Harvest!.Plants.First(plant => plant.Id == harvestEvent.TriggerEntity!.EntityId);
         var tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.TransplantOutside });
-        if (tasks != null && tasks.Any())
-        {
-            foreach (var task in tasks)
-            {
-                await _taskCommandHandler.DeletePlantTask(task.PlantTaskId);
-            }
-        }
-
-        tasks = await _taskQueryHandler.SearchPlantTasks(new Contract.Query.PlantTaskSearch() { PlantHarvestCycleId = plant.Id, Reason = WorkLogReasonEnum.Harden });
         if (tasks != null && tasks.Any())
         {
             foreach (var task in tasks)
@@ -119,28 +94,6 @@ public class TransplantOutsideTaskGenerator : INotificationHandler<HarvestEvent>
             };
 
             await _taskCommandHandler.CreatePlantTask(command);
-
-            //only create Harden Off task if plats were grown from seeds inside
-            if (plant.PlantingMethod == PlantingMethodEnum.SeedIndoors)
-            {
-
-                command = new CreatePlantTaskCommand()
-                {
-                    CreatedDateTime = DateTime.UtcNow,
-                    HarvestCycleId = harvestEvent.HarvestId,
-                    IsSystemGenerated = true,
-                    PlantHarvestCycleId = plant.Id,
-                    PlantName = string.IsNullOrEmpty(plant.PlantVarietyName) ? plant.PlantName : $"{plant.PlantName} - {plant.PlantVarietyName}",
-                    PlantScheduleId = schedule.Id,
-                    TargetDateStart = schedule.StartDate.AddDays(-1 * GlobalConstants.DEFAULT_HardenOffPeriodInDays),
-                    TargetDateEnd = schedule.StartDate,
-                    Type = WorkLogReasonEnum.Harden,
-                    Title = "Harden Off",
-                    Notes = "Bringing the seedlings outdoors for several periods of time. Start with just a couple of hours and gradually increase every day"
-                };
-
-                await _taskCommandHandler.CreatePlantTask(command);
-            }
         }
 
     }

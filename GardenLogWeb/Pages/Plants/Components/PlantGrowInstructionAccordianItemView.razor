@@ -118,10 +118,10 @@
     {
         System.Text.StringBuilder sb = new();
         sb.Append($"{_verifyService.GetDescription(grow.FertilizerForSeedlings)}");
-        if (grow.FertilizeFrequencyForSeedlingsInWeeks.HasValue)
+        if (grow.FertilizerFrequencyForSeedlingsInWeeks.HasValue)
         {
-            sb.Append($"  every {grow.FertilizeFrequencyForSeedlingsInWeeks.Value} ");
-            sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizeFrequencyForSeedlingsInWeeks.Value));
+            sb.Append($"  every {grow.FertilizerFrequencyForSeedlingsInWeeks.Value} ");
+            sb.AppendFormat(" {0}.", GetWeeks(grow.FertilizerFrequencyForSeedlingsInWeeks.Value));
         }
         return sb.ToString();
     }

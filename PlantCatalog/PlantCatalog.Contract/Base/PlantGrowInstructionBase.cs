@@ -27,7 +27,7 @@ public abstract record PlantGrowInstructionBase
     public FertilizerEnum FertilizerForSeedlings {get; set;}
     public FertilizerEnum Fertilizer { get; set; }
 
-    public int? FertilizeFrequencyForSeedlingsInWeeks { get; set; }
+    public int? FertilizerFrequencyForSeedlingsInWeeks { get; set; }
     public int? FertilizeFrequencyInWeeks { get; set; }
 
     public int? DaysToSproutMin { get; set; }

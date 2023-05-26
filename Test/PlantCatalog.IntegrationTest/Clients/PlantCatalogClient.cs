@@ -141,7 +141,7 @@ namespace PlantCatalog.IntegrationTest.Clients
                 PlantId = plantId,
                 DaysToSproutMax = 7,
                 DaysToSproutMin = 1,
-                FertilizeFrequencyForSeedlingsInWeeks = 1,
+                FertilizerFrequencyForSeedlingsInWeeks = 1,
                 FertilizeFrequencyInWeeks = 4,
                 Fertilizer = Contract.Enum.FertilizerEnum.AllPurpose,
                 FertilizerAtPlanting = Contract.Enum.FertilizerEnum.Nitrogen,
