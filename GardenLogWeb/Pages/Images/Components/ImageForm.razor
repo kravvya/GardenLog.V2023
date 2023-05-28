@@ -79,6 +79,7 @@
 
         if (response.IsSuccess)
         {
+            _isDisabled = false;
             if (OnClose != null) await OnClose(_image!);
         }
     }
@@ -86,7 +87,7 @@
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         var file = e.GetMultipleFiles().FirstOrDefault();
-        if (file != null && _image!= null)
+        if (file != null && _image != null)
         {
             _fileSize = e.File.Size;
             _progressDisplay = "";

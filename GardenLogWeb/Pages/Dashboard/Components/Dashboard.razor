@@ -166,30 +166,32 @@
                 <div class="card-body">
                     @if (_images != null)
                     {
-                        <div id="carouselExampleIndicators" class="carousel carousel-dark  slide" data-bs-ride="carousel">
+                        <div id="carouselImages" class="carousel slide" data-ride="carousel">
                             <div class="carousel-indicators">
                                 @for (int index = 0; index < _images.Count; index++)
                                 {
-                                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@index" class="@(index==0?"active":"")" aria-current="@(index=0)" aria-label="@_images[index].Label"></button>
+                                    <button type="button" data-bs-target="#carouselImages" data-bs-slide-to="@index" class="@(index==0?"active":"")" aria-current="@(index==0)" aria-label="@_images[index].Label"></button>
                                 }
                             </div>
                             <div class="carousel-inner">
                                 @foreach (var (image, index) in _images.Select((img, i) => (img, i)))
                                 {
-                                    <div class="carousel-item @(index==0)">
-                                        <img src="@_imageService.GetRawImageUrl(image.FileName)" alt="@image.Label" class="d-block w-100">
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>@image.Label</h5>
-                                            <p>@image.CreatedDateTimeUtc.ToShortDateString()</p>
-                                        </div>
+                                    <div class="carousel-item @(index==0 ? "active" : "")">
+                                        <div class=" d-flex justify-content-center">
+                                            <img src="@_imageService.GetRawImageUrl(image.FileName)" alt="@image.Label" class="d-block" style="max-height:400px">
+                                            <div class="carousel-caption d-none d-md-block">
+                                                <h5>@image.Label</h5>
+                                                <p>@image.CreatedDateTimeUtc.ToShortDateString()</p>
+                                            </div>
+                                         </div>
                                     </div>
                                 }
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselImages" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselImages" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
