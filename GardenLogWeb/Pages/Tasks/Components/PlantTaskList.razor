@@ -289,6 +289,8 @@
         {
             case WorkLogReasonEnum.FertilizeIndoors:
             case WorkLogReasonEnum.FertilizeOutside:
+            case WorkLogReasonEnum.IssueResolution:
+            case WorkLogReasonEnum.Maintenance:
                 _workLogForm.Initialize(await _harvestService.BuildRelatedEntities(RelatedEntityTypEnum.PlantHarvestCycle, task.PlantHarvestCycleId, task.HarvestCycleId), task.Type);
                 await _workLogFormModal.OpenModal("Add new note", GlobalConstants.ModalFormColor);
                 break;
