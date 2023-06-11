@@ -221,7 +221,7 @@ public class HarvestCycleRepository : BaseRepository<HarvestCycle>, IHarvestCycl
             p.AutoMap();
             //ignore elements not in the document 
             p.SetIgnoreExtraElements(true);
-            p.MapMember(m => m.HarvestCycleId).SetElementName("_id");
+            p.MapIdMember(m => m.HarvestCycleId);
         });
 
         #endregion
