@@ -35,7 +35,7 @@ public abstract class SchedulerBase
                 firstFrost = new DateTime(year, garden.FirstFrostDate.Month, garden.FirstFrostDate.Day);
 
                 double growDays = (firstFrost - lastFrost).TotalDays;
-                startDate = lastFrost.AddDays(growDays / 2);
+                startDate = lastFrost.AddDays(growDays / 2).AddDays(7 * weeksAhead);
                 break;
             case Plant.WeatherConditionEnum.WarmSoil:
                 DateTime warmSoil = new DateTime(year, garden.WarmSoilDate.Month, garden.WarmSoilDate.Day);
